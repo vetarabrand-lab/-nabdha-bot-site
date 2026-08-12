@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | بوت نبضة</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --danger:#D14343;
+    --warn:#B8860B;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Tajawal','Segoe UI',sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.6;
+  }
+  a{text-decoration:none; color:inherit;}
+  .container{max-width:1180px; margin:0 auto; padding:0 24px;}
+
+  header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{
+    width:38px; height:38px; border-radius:12px;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logout-btn{
+    background:#fff; border:1.5px solid var(--border); color:var(--wa-teal-dark);
+    font-weight:700; font-size:14px; padding:9px 18px; border-radius:100px; cursor:pointer;
+  }
+  .logout-btn:hover{border-color:var(--wa-teal);}
+
+  /* ---------- LOGIN ---------- */
+  .login-wrap{
+    min-height:calc(100vh - 72px); display:flex; align-items:center; justify-content:center; padding:40px 20px;
+  }
+  .login-card{
+    background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow);
+    padding:40px; width:100%; max-width:400px;
+  }
+  .login-card h1{font-size:22px; font-weight:900; margin-bottom:6px; text-align:center;}
+  .login-card p.sub{color:var(--muted); font-size:14px; text-align:center; margin-bottom:26px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-weight:700; font-size:14px; margin-bottom:6px;}
+  .field input{
+    width:100%; border:1.5px solid var(--border); border-radius:12px; padding:12px 14px;
+    font-family:inherit; font-size:15px; background:#FCFEFD;
+  }
+  .field input:focus{outline:none; border-color:var(--wa-teal);}
+  .login-btn{
+    width:100%; padding:14px; border:none; border-radius:100px; background:var(--wa-green);
+    color:#04210F; font-weight:800; font-size:15.5px; cursor:pointer; margin-top:6px;
+    box-shadow:0 12px 24px -8px rgba(37,211,102,.55);
+  }
+  .login-btn:disabled{opacity:.6; cursor:not-allowed;}
+  .login-error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3; border-radius:10px; padding:12px 14px; font-size:13.5px; margin-bottom:16px; display:none;}
+
+  /* ---------- DASHBOARD ---------- */
+  #dashboardScreen{display:none;}
+  .dash-wrap{padding:36px 0 60px;}
+  .dash-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .dash-head h1{font-size:24px; font-weight:900;}
+  .dash-head p{color:var(--muted); font-size:14px;}
+
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px;}
+  .stat-card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;}
+  .stat-card .n{font-size:28px; font-weight:900; color:var(--wa-teal-dark);}
+  .stat-card .l{color:var(--muted); font-size:13.5px; font-weight:600; margin-top:4px;}
+
+  .toolbar{display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap;}
+  .toolbar input, .toolbar select{
+    border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit;
+    font-size:14.5px; background:#fff;
+  }
+  .toolbar input{flex:1; min-width:220px;}
+  .toolbar input:focus, .toolbar select:focus{outline:none; border-color:var(--wa-teal);}
+
+  .table-wrap{background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; overflow-x:auto;}
+  table{width:100%; border-collapse:collapse; min-width:800px;}
+  thead th{
+    text-align:right; font-size:13px; font-weight:800; color:var(--muted);
+    padding:14px 16px; background:#F6FAF8; border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  tbody td{padding:14px 16px; font-size:14px; border-bottom:1px solid var(--border); vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#FBFDFC;}
+  .biz-name{font-weight:800;}
+  .biz-sub{color:var(--muted); font-size:12.5px; margin-top:2px;}
+  .badge{
+    display:inline-flex; align-items:center; padding:4px 11px; border-radius:100px;
+    font-size:12px; font-weight:800; white-space:nowrap;
+  }
+  .badge.trial{background:rgba(184,134,11,.13); color:var(--warn);}
+  .badge.active{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .badge.past_due{background:rgba(209,67,67,.12); color:var(--danger);}
+  .badge.canceled{background:#EEE; color:var(--muted);}
+  .status-select{
+    border:1.5px solid var(--border); border-radius:10px; padding:6px 10px; font-family:inherit;
+    font-size:13px; background:#fff; cursor:pointer;
+  }
+  .empty-row td{text-align:center; color:var(--muted); padding:40px 16px;}
+  .save-hint{font-size:11.5px; color:var(--wa-green-dark); margin-right:6px; opacity:0; transition:opacity .3s ease;}
+  .save-hint.show{opacity:1;}
+
+  @media (max-width:860px){
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span>لوحة تحكم <span style="color:var(--wa-teal-dark)">بوت نبضة</span></span>
+    </div>
+    <button class="logout-btn" id="logoutBtn" style="display:none;">تسجيل الخروج</button>
+  </nav>
+</header>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="loginScreen">
+  <div class="login-card">
+    <h1>تسجيل دخول الإدارة</h1>
+    <p class="sub">هذي الصفحة خاصة بمالك المنصة فقط</p>
+    <div class="login-error" id="loginError"></div>
+    <form id="loginForm">
+      <div class="field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="loginEmail" required autocomplete="username">
+      </div>
+      <div class="field">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="login-btn" id="loginBtn">تسجيل الدخول</button>
+    </form>
+  </div>
+</div>
+
+<!-- DASHBOARD SCREEN -->
+<div id="dashboardScreen">
+  <div class="container dash-wrap">
+    <div class="dash-head">
+      <div>
+        <h1>المشتركون</h1>
+        <p>متابعة طلبات التسجيل الجديدة وحالة الاشتراكات</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="n" id="statTotal">–</div><div class="l">إجمالي المشتركين</div></div>
+      <div class="stat-card"><div class="n" id="statTrial">–</div><div class="l">تجريبي</div></div>
+      <div class="stat-card"><div class="n" id="statActive">–</div><div class="l">نشط</div></div>
+      <div class="stat-card"><div class="n" id="statMsgsToday">–</div><div class="l">رسائل اليوم</div></div>
+    </div>
+
+    <div class="toolbar">
+      <input type="text" id="searchInput" placeholder="ابحث بالاسم أو البريد أو رقم الجوال...">
+      <select id="statusFilter">
+        <option value="">كل الحالات</option>
+        <option value="trial">تجريبي</option>
+        <option value="active">نشط</option>
+        <option value="past_due">متأخر بالدفع</option>
+        <option value="canceled">ملغى</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>النشاط</th>
+            <th>التواصل</th>
+            <th>الباقة</th>
+            <th>الحالة</th>
+            <th>تاريخ التسجيل</th>
+          </tr>
+        </thead>
+        <tbody id="clientsTbody">
+          <tr class="empty-row"><td colspan="5">جاري تحميل البيانات...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const loginScreen = document.getElementById('loginScreen');
+  const dashboardScreen = document.getElementById('dashboardScreen');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+  const loginBtn = document.getElementById('loginBtn');
+
+  const statusLabels = {
+    trial: 'تجريبي',
+    active: 'نشط',
+    past_due: 'متأخر بالدفع',
+    canceled: 'ملغى'
+  };
+
+  let allClients = [];
+  let plansMap = {};
+
+  function showDashboard(){
+    loginScreen.style.display = 'none';
+    dashboardScreen.style.display = 'block';
+    logoutBtn.style.display = 'inline-block';
+    loadDashboard();
+  }
+  function showLogin(){
+    loginScreen.style.display = 'flex';
+    dashboardScreen.style.display = 'none';
+    logoutBtn.style.display = 'none';
+  }
+
+  // تحقق من وجود جلسة مسجّلة دخول مسبقاً
+  supabaseClient.auth.getSession().then(function(res){
+    if(res.data.session){ showDashboard(); } else { showLogin(); }
+  });
+
+  loginForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    loginError.style.display = 'none';
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'جاري الدخول...';
+
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+
+    loginBtn.disabled = false;
+    loginBtn.textContent = 'تسجيل الدخول';
+
+    if(error){
+      loginError.textContent = 'بيانات الدخول غير صحيحة، حاول مرة ثانية.';
+      loginError.style.display = 'block';
+      return;
+    }
+    showDashboard();
+  });
+
+  logoutBtn.addEventListener('click', async function(){
+    await supabaseClient.auth.signOut();
+    showLogin();
+  });
+
+  async function loadDashboard(){
+    const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar');
+    plansMap = {};
+    (plans || []).forEach(function(p){ plansMap[p.id] = p.name_ar; });
+
+    const { data: clients, error } = await supabaseClient
+      .from('clients')
+      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, created_at')
+      .order('created_at', { ascending: false });
+
+    if(error){
+      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="5">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
+      return;
+    }
+    allClients = clients || [];
+
+    const todayStr = new Date().toISOString().slice(0,10);
+    const { count: msgsToday } = await supabaseClient
+      .from('whatsapp_messages_log')
+      .select('id', { count: 'exact', head: true })
+      .gte('created_at', todayStr + 'T00:00:00Z');
+
+    document.getElementById('statTotal').textContent = allClients.length;
+    document.getElementById('statTrial').textContent = allClients.filter(function(c){ return c.subscription_status === 'trial'; }).length;
+    document.getElementById('statActive').textContent = allClients.filter(function(c){ return c.subscription_status === 'active'; }).length;
+    document.getElementById('statMsgsToday').textContent = (msgsToday || 0);
+
+    renderTable();
+  }
+
+  function renderTable(){
+    const search = document.getElementById('searchInput').value.trim().toLowerCase();
+    const statusF = document.getElementById('statusFilter').value;
+    const tbody = document.getElementById('clientsTbody');
+
+    let rows = allClients.filter(function(c){
+      const hay = [c.business_name_ar, c.business_name, c.owner_email, c.owner_phone].join(' ').toLowerCase();
+      const matchesSearch = !search || hay.includes(search);
+      const matchesStatus = !statusF || c.subscription_status === statusF;
+      return matchesSearch && matchesStatus;
+    });
+
+    if(rows.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">ما فيه نتائج مطابقة</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    rows.forEach(function(c){
+      const tr = document.createElement('tr');
+      const dateStr = new Date(c.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
+      const planName = plansMap[c.plan_id] || '—';
+
+      tr.innerHTML =
+        '<td><div class="biz-name">' + (c.business_name_ar || c.business_name || '—') + '</div>' +
+          (c.business_name && c.business_name !== c.business_name_ar ? '<div class="biz-sub">' + c.business_name + '</div>' : '') + '</td>' +
+        '<td><div>' + (c.owner_email || '—') + '</div><div class="biz-sub">' + (c.owner_phone || '—') + '</div></td>' +
+        '<td>' + planName + '</td>' +
+        '<td></td>' +
+        '<td>' + dateStr + '</td>';
+
+      const statusTd = tr.children[3];
+      const select = document.createElement('select');
+      select.className = 'status-select';
+      ['trial','active','past_due','canceled'].forEach(function(s){
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = statusLabels[s];
+        if(s === c.subscription_status){ opt.selected = true; }
+        select.appendChild(opt);
+      });
+      const hint = document.createElement('span');
+      hint.className = 'save-hint';
+      hint.textContent = '✓ تم الحفظ';
+
+      select.addEventListener('change', async function(){
+        const newStatus = select.value;
+        const { error } = await supabaseClient.from('clients').update({ subscription_status: newStatus }).eq('id', c.id);
+        if(!error){
+          c.subscription_status = newStatus;
+          hint.classList.add('show');
+          setTimeout(function(){ hint.classList.remove('show'); }, 1800);
+          document.getElementById('statTrial').textContent = allClients.filter(function(x){ return x.subscription_status === 'trial'; }).length;
+          document.getElementById('statActive').textContent = allClients.filter(function(x){ return x.subscription_status === 'active'; }).length;
+        }
+      });
+
+      statusTd.appendChild(select);
+      statusTd.appendChild(hint);
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById('searchInput').addEventListener('input', renderTable);
+  document.getElementById('statusFilter').addEventListener('change', renderTable);
+</script>
+
+</body>
+</html>
