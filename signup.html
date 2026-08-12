@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سجّل نشاطك | بوت نبضة</title>
+<meta name="description" content="سجّل نشاطك التجاري في بوت نبضة وابدأ تجربتك مع بوت واتساب ذكي مخصص لك.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --wa-bubble:#DCF8C6;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --danger:#D14343;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Tajawal','Segoe UI',sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.7;
+  }
+  a{text-decoration:none; color:inherit;}
+  ul{list-style:none;}
+  .container{max-width:900px; margin:0 auto; padding:0 24px;}
+
+  /* header (same identity as landing page) */
+  header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{
+    width:38px; height:38px; border-radius:12px;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .back-link{font-weight:700; font-size:14px; color:var(--wa-teal-dark); display:flex; align-items:center; gap:6px;}
+
+  /* hero strip */
+  .hero-strip{
+    background:linear-gradient(150deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green));
+    color:#fff; padding:56px 0 46px; text-align:center;
+  }
+  .hero-strip .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.16);
+    font-weight:700; font-size:13.5px; padding:7px 16px; border-radius:100px; margin-bottom:16px;
+  }
+  .hero-strip .dot{width:7px; height:7px; border-radius:50%; background:var(--wa-green); display:inline-block; background:#fff;}
+  .hero-strip h1{font-size:clamp(26px,4vw,36px); font-weight:900; margin-bottom:10px;}
+  .hero-strip p{color:rgba(255,255,255,.88); max-width:520px; margin:0 auto; font-size:16px;}
+
+  /* form card */
+  .form-wrap{margin:-40px auto 80px; position:relative; z-index:2;}
+  .form-card{
+    background:var(--card); border:1px solid var(--border); border-radius:24px;
+    box-shadow:var(--shadow); padding:40px;
+  }
+  .form-section-title{font-size:15px; font-weight:800; color:var(--wa-teal-dark); margin:28px 0 14px;}
+  .form-section-title:first-child{margin-top:0;}
+  .field{margin-bottom:18px;}
+  .field label{display:block; font-weight:700; font-size:14.5px; margin-bottom:7px;}
+  .field .hint{color:var(--muted); font-size:12.5px; margin-top:5px;}
+  .field input, .field textarea, .field select{
+    width:100%; border:1.5px solid var(--border); border-radius:12px; padding:13px 14px;
+    font-family:inherit; font-size:15px; color:var(--ink); background:#FCFEFD; transition:border-color .15s ease;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--wa-teal);}
+  .field textarea{resize:vertical; min-height:96px;}
+  .row-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+
+  .plans{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:8px;}
+  .plan-card{
+    border:1.5px solid var(--border); border-radius:16px; padding:18px 14px; cursor:pointer; text-align:center;
+    transition:border-color .15s ease, box-shadow .15s ease; position:relative;
+  }
+  .plan-card:hover{border-color:var(--wa-teal);}
+  .plan-card.selected{border-color:var(--wa-green); box-shadow:0 0 0 3px rgba(37,211,102,.18);}
+  .plan-card .p-name{font-weight:800; font-size:15px; margin-bottom:6px;}
+  .plan-card .p-price{font-weight:900; font-size:22px; color:var(--wa-teal-dark);}
+  .plan-card .p-price span{font-size:12px; font-weight:600; color:var(--muted);}
+  .plan-card .p-limit{font-size:12.5px; color:var(--muted); margin-top:4px;}
+  .plans-loading{color:var(--muted); font-size:14px; padding:12px 0;}
+
+  .honeypot{position:absolute; left:-9999px; opacity:0; height:0;}
+
+  .submit-btn{
+    width:100%; padding:16px; border:none; border-radius:100px; background:var(--wa-green);
+    color:#04210F; font-weight:800; font-size:16px; cursor:pointer; margin-top:8px;
+    box-shadow:0 12px 24px -8px rgba(37,211,102,.55); transition:background .2s ease, transform .15s ease;
+  }
+  .submit-btn:hover{background:var(--wa-green-dark); transform:translateY(-2px);}
+  .submit-btn:disabled{opacity:.6; cursor:not-allowed; transform:none;}
+
+  .form-note{text-align:center; color:var(--muted); font-size:13px; margin-top:16px;}
+
+  .alert{border-radius:12px; padding:14px 16px; font-size:14px; margin-bottom:20px; display:none;}
+  .alert.error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3; display:block;}
+
+  /* success state */
+  .success-card{display:none; text-align:center; padding:20px 8px;}
+  .success-icon{
+    width:64px; height:64px; border-radius:50%; background:rgba(37,211,102,.15); color:var(--wa-green-dark);
+    display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 20px;
+  }
+  .success-card h2{font-size:22px; margin-bottom:10px;}
+  .success-card p{color:var(--muted); max-width:420px; margin:0 auto 22px;}
+  .success-steps{text-align:right; background:#F6FAF8; border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:22px;}
+  .success-steps li{font-size:14px; margin-bottom:8px; display:flex; gap:8px;}
+  .success-steps li b{color:var(--wa-teal-dark);}
+
+  footer{text-align:center; padding:30px 0 40px; color:var(--muted); font-size:13px;}
+
+  @media (max-width:720px){
+    .row-2{grid-template-columns:1fr;}
+    .plans{grid-template-columns:1fr;}
+    .form-card{padding:26px 20px;}
+    .form-wrap{margin-top:-24px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+    </div>
+    <a class="back-link" href="index.html">→ الرجوع للرئيسية</a>
+  </nav>
+</header>
+
+<section class="hero-strip">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> سجّل نشاطك</div>
+    <h1>خلّي بوت نبضة يشتغل لحساب نشاطك</h1>
+    <p>عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.</p>
+  </div>
+</section>
+
+<div class="form-wrap container">
+  <div class="form-card">
+
+    <div class="alert error" id="errorAlert"></div>
+
+    <form id="signupForm">
+      <div class="form-section-title">بيانات النشاط</div>
+      <div class="row-2">
+        <div class="field">
+          <label>اسم النشاط (بالعربي) *</label>
+          <input type="text" id="businessNameAr" required placeholder="مثال: متجر جُمان للبهارات">
+        </div>
+        <div class="field">
+          <label>اسم النشاط (بالإنجليزي)</label>
+          <input type="text" id="businessName" placeholder="Juman Spices">
+        </div>
+      </div>
+
+      <div class="form-section-title">بيانات التواصل</div>
+      <div class="row-2">
+        <div class="field">
+          <label>البريد الإلكتروني *</label>
+          <input type="email" id="ownerEmail" required placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label>رقم جوالك (للتواصل معك) *</label>
+          <input type="tel" id="ownerPhone" required placeholder="9665xxxxxxxx">
+        </div>
+      </div>
+      <div class="field">
+        <label>رقم واتساب النشاط الذي تريد ربطه بالبوت</label>
+        <input type="tel" id="whatsappDisplayNumber" placeholder="9665xxxxxxxx">
+        <div class="hint">إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.</div>
+      </div>
+
+      <div class="form-section-title">تعليمات البوت</div>
+      <div class="field">
+        <label>عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *</label>
+        <textarea id="systemPrompt" required placeholder="مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال..."></textarea>
+        <div class="hint">هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.</div>
+      </div>
+      <div class="field">
+        <label>رسالة الترحيب الأولى (اختياري)</label>
+        <input type="text" id="welcomeMessage" placeholder="أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟">
+      </div>
+
+      <div class="form-section-title">اختر باقتك</div>
+      <div class="plans" id="plansContainer">
+        <div class="plans-loading">جاري تحميل الباقات...</div>
+      </div>
+      <input type="hidden" id="selectedPlanId">
+
+      <!-- honeypot anti-spam -->
+      <div class="honeypot">
+        <label>اتركه فاضي</label>
+        <input type="text" id="websiteHp" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">إرسال طلب التسجيل</button>
+      <p class="form-note">بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.</p>
+    </form>
+
+    <div class="success-card" id="successCard">
+      <div class="success-icon">✓</div>
+      <h2>تم استلام تسجيلك بنجاح!</h2>
+      <p>شكراً لك، حسابك الآن بحالة "تجريبي". هذي الخطوات الجاية:</p>
+      <ul class="success-steps">
+        <li><b>1.</b> فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.</li>
+        <li><b>2.</b> نساعدك تربط رقم واتساب نشاطك عبر Meta.</li>
+        <li><b>3.</b> نفعّل اشتراكك بعد تأكيد الباقة والدفع.</li>
+        <li><b>4.</b> بوتك يبدأ يرد على عملائك تلقائياً 🎉</li>
+      </ul>
+      <a href="index.html" class="submit-btn" style="display:inline-block; width:auto; padding:14px 34px;">الرجوع للصفحة الرئيسية</a>
+    </div>
+
+  </div>
+</div>
+
+<footer>© 2026 بوت نبضة. جميع الحقوق محفوظة.</footer>
+
+<script>
+  const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const plansContainer = document.getElementById('plansContainer');
+  const selectedPlanIdInput = document.getElementById('selectedPlanId');
+  let plansData = [];
+
+  async function loadPlans(){
+    const { data, error } = await supabaseClient
+      .from('subscription_plans')
+      .select('id, code, name_ar, monthly_price_sar, monthly_message_limit')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    if(error || !data || data.length === 0){
+      plansContainer.innerHTML = '<div class="plans-loading">تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.</div>';
+      return;
+    }
+    plansData = data;
+    plansContainer.innerHTML = '';
+
+    // لو المستخدم جاء من رابط فيه ?plan=code (مثال: signup.html?plan=pro) نختار الباقة تلقائياً
+    const requestedPlan = new URLSearchParams(window.location.search).get('plan');
+    let preselectIndex = data.findIndex(function(p){ return p.code === requestedPlan; });
+    if(preselectIndex === -1){ preselectIndex = data.length > 1 ? 1 : 0; }
+
+    data.forEach(function(plan, idx){
+      const card = document.createElement('div');
+      card.className = 'plan-card' + (idx === preselectIndex ? ' selected' : '');
+      card.dataset.planId = plan.id;
+      card.innerHTML =
+        '<div class="p-name">' + plan.name_ar + '</div>' +
+        '<div class="p-price">' + Number(plan.monthly_price_sar).toLocaleString('ar') + '<span> ريال/شهر</span></div>' +
+        '<div class="p-limit">حتى ' + Number(plan.monthly_message_limit).toLocaleString('ar') + ' رسالة</div>';
+      card.addEventListener('click', function(){
+        document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
+        card.classList.add('selected');
+        selectedPlanIdInput.value = plan.id;
+      });
+      plansContainer.appendChild(card);
+    });
+    selectedPlanIdInput.value = data[preselectIndex].id;
+  }
+  loadPlans();
+
+  const form = document.getElementById('signupForm');
+  const errorAlert = document.getElementById('errorAlert');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    errorAlert.style.display = 'none';
+
+    // honeypot: لو تعبّى يبدو إنه بوت سبام، نتجاهل الطلب بصمت
+    if(document.getElementById('websiteHp').value.trim() !== ''){
+      return;
+    }
+
+    const businessNameAr = document.getElementById('businessNameAr').value.trim();
+    const businessName = document.getElementById('businessName').value.trim() || businessNameAr;
+    const ownerEmail = document.getElementById('ownerEmail').value.trim();
+    const ownerPhone = document.getElementById('ownerPhone').value.trim();
+    const whatsappDisplayNumber = document.getElementById('whatsappDisplayNumber').value.trim() || null;
+    const systemPrompt = document.getElementById('systemPrompt').value.trim();
+    const welcomeMessage = document.getElementById('welcomeMessage').value.trim() || null;
+    const planId = selectedPlanIdInput.value || null;
+
+    if(!businessNameAr || !ownerEmail || !ownerPhone || !systemPrompt){
+      errorAlert.textContent = 'الرجاء تعبئة كل الحقول المطلوبة (المعلّمة بـ *).';
+      errorAlert.style.display = 'block';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري الإرسال...';
+
+    const { error } = await supabaseClient.from('clients').insert({
+      business_name: businessName,
+      business_name_ar: businessNameAr,
+      owner_email: ownerEmail,
+      owner_phone: ownerPhone,
+      whatsapp_display_number: whatsappDisplayNumber,
+      system_prompt: systemPrompt,
+      welcome_message: welcomeMessage,
+      plan_id: planId,
+      subscription_status: 'trial'
+    });
+
+    if(error){
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'إرسال طلب التسجيل';
+      errorAlert.textContent = 'حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.';
+      errorAlert.style.display = 'block';
+      console.error(error);
+      return;
+    }
+
+    form.style.display = 'none';
+    document.getElementById('successCard').style.display = 'block';
+  });
+</script>
+
+</body>
+</html>

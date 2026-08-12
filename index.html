@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بوت نبضة | منصّة بوت واتساب ذكي لأعمالك</title>
+<meta name="description" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --wa-bubble:#DCF8C6;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Tajawal', 'Segoe UI', sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  img,svg{display:block; max-width:100%;}
+  a{text-decoration:none; color:inherit;}
+  ul{list-style:none;}
+  .container{max-width:1180px; margin:0 auto; padding:0 24px;}
+  .section{padding:96px 0;}
+  .section-head{text-align:center; max-width:640px; margin:0 auto 56px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(37,211,102,.12); color:var(--wa-teal-dark);
+    font-weight:700; font-size:14px; padding:8px 16px; border-radius:100px;
+    margin-bottom:18px;
+  }
+  .eyebrow span.dot{width:7px; height:7px; border-radius:50%; background:var(--wa-green); display:inline-block;}
+  h1,h2,h3{font-weight:900; letter-spacing:-.01em;}
+  .section-head h2{font-size:clamp(28px,4vw,40px); margin-bottom:14px;}
+  .section-head p{color:var(--muted); font-size:18px;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:15px 30px; border-radius:100px; font-weight:700; font-size:16px;
+    cursor:pointer; border:none; transition:transform .15s ease, box-shadow .15s ease, background .2s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--wa-green); color:#04210F; box-shadow:0 12px 24px -8px rgba(37,211,102,.55);}
+  .btn-primary:hover{background:var(--wa-green-dark);}
+  .btn-outline{background:#fff; color:var(--wa-teal-dark); border:1.5px solid var(--border);}
+  .btn-outline:hover{border-color:var(--wa-teal);}
+  .btn-ghost-light{background:rgba(255,255,255,.14); color:#fff; border:1.5px solid rgba(255,255,255,.4); backdrop-filter:blur(4px);}
+  .btn-ghost-light:hover{background:rgba(255,255,255,.24);}
+  .btn-block{width:100%;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(246,250,248,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{
+    width:38px; height:38px; border-radius:12px;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nav-links{display:flex; align-items:center; gap:36px; font-weight:500; color:var(--muted);}
+  .nav-links a:hover{color:var(--wa-teal-dark);}
+  .nav-cta{display:flex; align-items:center; gap:14px;}
+  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px;}
+  .burger span{width:24px; height:2.5px; background:var(--ink); border-radius:2px;}
+  .mobile-menu{display:none; flex-direction:column; gap:4px; padding:8px 24px 20px; border-top:1px solid var(--border);}
+  .mobile-menu a{padding:12px 4px; font-weight:600; border-bottom:1px solid var(--border);}
+  .mobile-menu.open{display:flex;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:linear-gradient(150deg, var(--wa-teal-dark) 0%, var(--wa-teal) 48%, var(--wa-green) 100%);
+    color:#fff; overflow:hidden;
+    padding:88px 0 70px;
+  }
+  .hero::before{
+    content:''; position:absolute; inset:0; opacity:.15;
+    background-image:radial-gradient(circle, #fff 1.5px, transparent 1.5px);
+    background-size:26px 26px;
+  }
+  .hero-grid{
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:1.05fr .95fr; gap:56px; align-items:center;
+  }
+  .hero h1{font-size:clamp(32px,5vw,52px); line-height:1.25; margin-bottom:22px;}
+  .hero h1 em{font-style:normal; color:#DFFFEE; text-decoration:underline; text-decoration-color:rgba(255,255,255,.4); text-underline-offset:8px;}
+  .hero p.lead{font-size:19px; color:rgba(255,255,255,.88); max-width:520px; margin-bottom:34px;}
+  .hero-ctas{display:flex; flex-wrap:wrap; gap:14px; margin-bottom:38px;}
+  .hero-trust{display:flex; flex-wrap:wrap; gap:26px; font-size:14px; color:rgba(255,255,255,.85);}
+  .hero-trust li{display:flex; align-items:center; gap:8px; font-weight:600;}
+
+  /* phone mockup */
+  .phone-wrap{display:flex; justify-content:center;}
+  .phone{
+    width:300px; background:#0B141A; border-radius:38px; padding:14px;
+    box-shadow:0 40px 70px -20px rgba(0,0,0,.55), 0 0 0 8px rgba(255,255,255,.06);
+    transform:rotate(1.5deg);
+  }
+  .phone-screen{background:#0B141A; border-radius:26px; overflow:hidden;}
+  .phone-topbar{
+    background:var(--wa-teal-dark); color:#fff; padding:14px 16px;
+    display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700;
+  }
+  .phone-avatar{width:32px; height:32px; border-radius:50%; background:var(--wa-green); display:flex; align-items:center; justify-content:center; font-size:15px;}
+  .phone-status{font-size:11px; font-weight:400; color:rgba(255,255,255,.7);}
+  .phone-body{
+    min-height:340px; padding:16px 12px; display:flex; flex-direction:column; gap:10px; justify-content:flex-end;
+    background-image:linear-gradient(rgba(11,20,26,.94), rgba(11,20,26,.94)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23ffffff' fill-opacity='0.05'/%3E%3C/svg%3E");
+  }
+  .bubble{
+    max-width:78%; padding:10px 13px; border-radius:12px; font-size:13.5px; line-height:1.55;
+    opacity:0; transform:translateY(8px); animation:pop .5s ease forwards;
+  }
+  .bubble.in{align-self:flex-start; background:#202C33; color:#E9EDEF; border-top-right-radius:2px;}
+  .bubble.out{align-self:flex-end; background:var(--wa-bubble); color:#111B12; border-top-left-radius:2px;}
+  .bubble .t{display:block; font-size:10px; color:#8696A0; margin-top:4px; text-align:left;}
+  .bubble.out .t{color:#4A7A4E;}
+  @keyframes pop{to{opacity:1; transform:translateY(0);}}
+  .phone-inputbar{
+    display:flex; align-items:center; gap:8px; padding:10px 12px; background:#1F2C33;
+  }
+  .phone-inputbar .pill{flex:1; background:#2A3942; border-radius:100px; height:34px;}
+  .phone-inputbar .mic{width:34px; height:34px; border-radius:50%; background:var(--wa-green); display:flex; align-items:center; justify-content:center;}
+
+  /* ---------- STATS ---------- */
+  .stats{background:#fff; border-bottom:1px solid var(--border); border-top:1px solid var(--border);}
+  .stats .container{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; padding:44px 24px;}
+  .stat{text-align:center;}
+  .stat b{display:block; font-size:32px; font-weight:900; color:var(--wa-teal-dark);}
+  .stat span{color:var(--muted); font-size:14px; font-weight:600;}
+
+  /* ---------- FEATURES ---------- */
+  .features-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .feature-card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:30px; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .feature-card:hover{transform:translateY(-6px); box-shadow:var(--shadow); border-color:transparent;}
+  .feature-icon{
+    width:52px; height:52px; border-radius:14px; margin-bottom:18px;
+    display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); color:#fff;
+  }
+  .feature-card h3{font-size:18px; margin-bottom:8px;}
+  .feature-card p{color:var(--muted); font-size:14.5px;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .how{background:linear-gradient(180deg,#fff, var(--bg));}
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; counter-reset:step;}
+  .step{
+    position:relative; background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:30px 24px; text-align:center;
+  }
+  .step-num{
+    width:44px; height:44px; border-radius:50%; background:var(--wa-teal-dark); color:#fff;
+    font-weight:900; display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+  }
+  .step h3{font-size:16px; margin-bottom:8px;}
+  .step p{color:var(--muted); font-size:14px;}
+  .step-arrow{position:absolute; top:38px; left:-30px; color:var(--border); font-size:22px;}
+  .step:first-child .step-arrow{display:none;}
+
+  /* ---------- PRICING ---------- */
+  .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:stretch;}
+  .price-card{
+    background:var(--card); border:1.5px solid var(--border); border-radius:24px;
+    padding:36px 30px; display:flex; flex-direction:column; position:relative;
+  }
+  .price-card.popular{
+    border-color:var(--wa-green); box-shadow:0 24px 50px -18px rgba(37,211,102,.4); transform:scale(1.035);
+  }
+  .badge-popular{
+    position:absolute; top:-14px; right:50%; transform:translateX(50%);
+    background:var(--wa-green); color:#04210F; font-size:12.5px; font-weight:800;
+    padding:6px 18px; border-radius:100px; white-space:nowrap;
+  }
+  .price-card h3{font-size:20px; margin-bottom:6px;}
+  .price-card .desc{color:var(--muted); font-size:14px; margin-bottom:22px;}
+  .price-value{display:flex; align-items:baseline; gap:6px; margin-bottom:6px;}
+  .price-value b{font-size:40px; font-weight:900;}
+  .price-value span{color:var(--muted); font-size:14px;}
+  .price-limit{color:var(--wa-teal-dark); font-weight:700; font-size:14px; margin-bottom:24px;}
+  .price-features{display:flex; flex-direction:column; gap:12px; margin-bottom:28px; flex:1;}
+  .price-features li{display:flex; align-items:flex-start; gap:10px; font-size:14.5px; color:var(--ink);}
+  .check{
+    width:20px; height:20px; border-radius:50%; background:rgba(37,211,102,.15); color:var(--wa-green-dark);
+    display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px; font-weight:900;
+  }
+
+  /* ---------- FAQ ---------- */
+  .faq{max-width:760px; margin:0 auto;}
+  .faq-item{background:var(--card); border:1px solid var(--border); border-radius:14px; margin-bottom:14px; overflow:hidden;}
+  .faq-q{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    padding:20px 24px; cursor:pointer; font-weight:700; font-size:16px;
+  }
+  .faq-q .plus{font-size:22px; color:var(--wa-teal-dark); transition:transform .25s ease; flex-shrink:0;}
+  .faq-item.open .plus{transform:rotate(45deg);}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease;}
+  .faq-a p{padding:0 24px 20px; color:var(--muted); font-size:14.5px;}
+
+  /* ---------- CTA BANNER ---------- */
+  .cta-banner{
+    background:linear-gradient(120deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green));
+    border-radius:32px; padding:64px 40px; text-align:center; color:#fff;
+    margin:0 24px;
+  }
+  .cta-banner h2{font-size:clamp(24px,3.6vw,34px); margin-bottom:14px;}
+  .cta-banner p{color:rgba(255,255,255,.88); margin-bottom:30px; font-size:17px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:#08201B; color:rgba(255,255,255,.7); padding:64px 0 28px;}
+  .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:36px; margin-bottom:44px;}
+  .footer-brand p{margin-top:14px; font-size:14px; max-width:280px; color:rgba(255,255,255,.55);}
+  footer h4{color:#fff; font-size:15px; margin-bottom:16px;}
+  footer ul li{margin-bottom:10px; font-size:14px;}
+  footer ul li a:hover{color:#fff;}
+  .footer-bottom{border-top:1px solid rgba(255,255,255,.1); padding-top:24px; text-align:center; font-size:13px; color:rgba(255,255,255,.45);}
+
+  /* ---------- REVEAL ---------- */
+  .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.show{opacity:1; transform:translateY(0);}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:960px){
+    .hero-grid{grid-template-columns:1fr; text-align:center;}
+    .hero p.lead{margin-inline:auto;}
+    .hero-ctas, .hero-trust{justify-content:center;}
+    .phone-wrap{margin-top:20px;}
+    .stats .container{grid-template-columns:repeat(2,1fr);}
+    .features-grid{grid-template-columns:repeat(2,1fr);}
+    .steps{grid-template-columns:repeat(2,1fr); row-gap:32px;}
+    .step-arrow{display:none !important;}
+    .pricing-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;}
+    .price-card.popular{transform:none;}
+    .footer-grid{grid-template-columns:1fr 1fr; row-gap:30px;}
+  }
+  @media (max-width:720px){
+    .nav-links{display:none;}
+    .nav-cta .btn-outline{display:none;}
+    .burger{display:flex;}
+    .section{padding:64px 0;}
+  }
+  @media (max-width:560px){
+    .features-grid{grid-template-columns:1fr;}
+    .steps{grid-template-columns:1fr;}
+    .stats .container{grid-template-columns:repeat(2,1fr); gap:28px;}
+    .footer-grid{grid-template-columns:1fr; text-align:center;}
+    .footer-brand p{margin-inline:auto;}
+    .cta-banner{margin:0 12px; padding:48px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">المزايا</a>
+      <a href="#how">كيف يعمل</a>
+      <a href="#pricing">الباقات</a>
+      <a href="#faq">الأسئلة الشائعة</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#pricing" class="btn btn-outline">تسجيل الدخول</a>
+      <a href="signup.html" class="btn btn-primary">ابدأ الآن مجاناً</a>
+      <button class="burger" id="burger" aria-label="القائمة"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">المزايا</a>
+    <a href="#how">كيف يعمل</a>
+    <a href="#pricing">الباقات</a>
+    <a href="#faq">الأسئلة الشائعة</a>
+    <a href="signup.html" class="btn btn-primary btn-block" style="margin-top:10px;">ابدأ الآن مجاناً</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow" style="background:rgba(255,255,255,.16); color:#fff;"><span class="dot"></span> مدعوم بالذكاء الاصطناعي Claude</div>
+      <h1>بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت</h1>
+      <p class="lead">وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.</p>
+      <div class="hero-ctas">
+        <a href="signup.html" class="btn btn-primary">ابدأ تجربتك المجانية</a>
+        <a href="#how" class="btn btn-ghost-light">شاهد كيف يعمل</a>
+      </div>
+      <ul class="hero-trust">
+        <li>✅ متوافق مع WhatsApp Cloud API الرسمي</li>
+        <li>✅ عربي أولاً بالكامل</li>
+        <li>✅ إعداد خلال دقائق</li>
+      </ul>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-topbar">
+            <div class="phone-avatar">🌿</div>
+            <div>متجر ورد<div class="phone-status">نشط الآن • بوت نبضة</div></div>
+          </div>
+          <div class="phone-body">
+            <div class="bubble in" style="animation-delay:.2s">مرحباً، هل التوصيل متوفر للرياض؟<span class="t">10:0٢ ص</span></div>
+            <div class="bubble out" style="animation-delay:.9s">أهلاً بك 🌿 نعم، نوصّل لجميع مناطق الرياض خلال 24 ساعة، والشحن مجاني فوق 200 ريال.<span class="t">10:0٢ ص ✓✓</span></div>
+            <div class="bubble in" style="animation-delay:1.6s">تمام، كيف أطلب؟<span class="t">10:03 ص</span></div>
+            <div class="bubble out" style="animation-delay:2.3s">تقدر تطلب مباشرة من متجرنا هنا: store.example.com 🛍️ وإذا احتجت مساعدة أنا موجود!<span class="t">10:03 ص ✓✓</span></div>
+          </div>
+          <div class="phone-inputbar">
+            <div class="mic">🎤</div>
+            <div class="pill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="container">
+    <div class="stat"><b>&lt; 3 ثوانٍ</b><span>متوسط زمن رد البوت</span></div>
+    <div class="stat"><b>24/7</b><span>خدمة عملاء بلا توقف</span></div>
+    <div class="stat"><b>100%</b><span>تخصيص حسب نشاطك</span></div>
+    <div class="stat"><b>Claude AI</b><span>محرك ذكاء اصطناعي متقدم</span></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> المزايا</div>
+      <h2>كل ما يحتاجه نشاطك في بوت واحد</h2>
+      <p>منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">🤖</div>
+        <h3>ذكاء اصطناعي بمستوى Claude</h3>
+        <p>ردود طبيعية ودقيقة تفهم سياق المحادثة، لا ردود آلية جامدة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎨</div>
+        <h3>هوية مخصصة لنشاطك</h3>
+        <p>علّم البوت بأسلوب نشاطك، منتجاتك، وسياساتك — بلغتك أنت وبدون كود.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🧠</div>
+        <h3>يتذكر المحادثة</h3>
+        <p>ذاكرة سياق لكل عميل، فما يفقد الخيط لو رجع يسأل بعد شوي.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🇸🇦</div>
+        <h3>عربي أولاً بالكامل</h3>
+        <p>مبني من الصفر لدعم العربية ولهجاتها، وواجهة RTL كاملة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔗</div>
+        <h3>ربط رسمي وآمن</h3>
+        <p>يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📊</div>
+        <h3>سجل وتحليلات كاملة</h3>
+        <p>راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how" id="how">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> كيف يعمل</div>
+      <h2>من التسجيل إلى أول رد تلقائي، بأربع خطوات</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <h3>سجّل نشاطك</h3>
+        <p>أنشئ حسابك واختر الباقة المناسبة لحجم عملائك.</p>
+        <div class="step-arrow">◂</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <h3>اربط رقم واتساب</h3>
+        <p>وصّل رقم نشاطك الرسمي عبر WhatsApp Cloud API بخطوات مبسّطة.</p>
+        <div class="step-arrow">◂</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <h3>خصّص تعليمات البوت</h3>
+        <p>اكتب نبذة عن نشاطك، أسلوبك، والأسئلة الشائعة — بالعربي وبدون كود.</p>
+        <div class="step-arrow">◂</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <h3>البوت يشتغل لحاله</h3>
+        <p>يرد على عملائك فوراً، ويحوّل لك أي محادثة تحتاج تدخّلك أنت.</p>
+        <div class="step-arrow">◂</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> الباقات</div>
+      <h2>باقة تناسب كل حجم نشاط</h2>
+      <p>اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <h3>أساسي</h3>
+        <p class="desc">للمشاريع الناشئة والحسابات الشخصية</p>
+        <div class="price-value"><b>199</b><span>ريال / شهرياً</span></div>
+        <div class="price-limit">حتى 1,000 رسالة شهرياً</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> رقم واتساب رسمي واحد</li>
+          <li><span class="check">✓</span> بوت ذكاء اصطناعي مخصص</li>
+          <li><span class="check">✓</span> ذاكرة محادثة لكل عميل</li>
+          <li><span class="check">✓</span> سجل محادثات أساسي</li>
+        </ul>
+        <a href="signup.html?plan=basic" class="btn btn-outline btn-block">ابدأ بالأساسي</a>
+      </div>
+      <div class="price-card popular reveal">
+        <span class="badge-popular">الأكثر طلباً</span>
+        <h3>احترافي</h3>
+        <p class="desc">للأنشطة التجارية المتنامية</p>
+        <div class="price-value"><b>699</b><span>ريال / شهرياً</span></div>
+        <div class="price-limit">حتى 5,000 رسالة شهرياً</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> كل مزايا الباقة الأساسية</li>
+          <li><span class="check">✓</span> تخصيص متقدم لشخصية البوت</li>
+          <li><span class="check">✓</span> تحليلات وتقارير استخدام</li>
+          <li><span class="check">✓</span> دعم فني بأولوية</li>
+        </ul>
+        <a href="signup.html?plan=pro" class="btn btn-primary btn-block">ابدأ بالاحترافي</a>
+      </div>
+      <div class="price-card reveal">
+        <h3>مؤسسات</h3>
+        <p class="desc">لسلاسل المتاجر والفرق الكبيرة</p>
+        <div class="price-value"><b>1,999</b><span>ريال / شهرياً</span></div>
+        <div class="price-limit">حتى 20,000 رسالة شهرياً</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> كل مزايا الباقة الاحترافية</li>
+          <li><span class="check">✓</span> أرقام واتساب متعددة</li>
+          <li><span class="check">✓</span> مدير حساب مخصص</li>
+          <li><span class="check">✓</span> تكاملات مخصصة عند الطلب</li>
+        </ul>
+        <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block">تواصل معنا</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> الأسئلة الشائعة</div>
+      <h2>عندك سؤال؟ عندنا جواب</h2>
+    </div>
+    <div class="faq reveal">
+      <div class="faq-item">
+        <div class="faq-q">هل أحتاج رقم واتساب منفصل عن رقمي الحالي؟ <span class="plus">+</span></div>
+        <div class="faq-a"><p>نعم، يفضّل ربط رقم مخصص لنشاطك عبر WhatsApp Business Cloud API الرسمي من Meta، حتى يبقى رقمك الشخصي منفصلاً تماماً.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">هل بيانات عملائي ومحادثاتي آمنة؟ <span class="plus">+</span></div>
+        <div class="faq-a"><p>كل المحادثات مشفّرة وتُخزّن في قاعدة بيانات خاصة بنشاطك فقط، ولا نشاركها مع أي طرف ثالث.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">هل يفهم البوت اللهجات الخليجية؟ <span class="plus">+</span></div>
+        <div class="faq-a"><p>نعم، البوت مبني على نموذج Claude ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">هل فيه فترة تجريبية مجانية؟ <span class="plus">+</span></div>
+        <div class="faq-a"><p>نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">هل أقدر ألغي اشتراكي في أي وقت؟ <span class="plus">+</span></div>
+        <div class="faq-a"><p>بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner reveal">
+  <h2>جاهز تخلي واتساب نشاطك يشتغل لحاله؟</h2>
+  <p>انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.</p>
+  <a href="signup.html" class="btn btn-primary">ابدأ تجربتك المجانية الآن</a>
+</div>
+
+<div style="height:96px;"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="color:#fff;">
+          <div class="logo-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff"/></svg>
+          </div>
+          <span>بوت نبضة</span>
+        </div>
+        <p>منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.</p>
+      </div>
+      <div>
+        <h4>المنتج</h4>
+        <ul>
+          <li><a href="#features">المزايا</a></li>
+          <li><a href="#pricing">الباقات</a></li>
+          <li><a href="#how">كيف يعمل</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>الشركة</h4>
+        <ul>
+          <li><a href="#">من نحن</a></li>
+          <li><a href="#">تواصل معنا</a></li>
+          <li><a href="#">الوظائف</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>الدعم</h4>
+        <ul>
+          <li><a href="#faq">الأسئلة الشائعة</a></li>
+          <li><a href="#">سياسة الخصوصية</a></li>
+          <li><a href="#">الشروط والأحكام</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 بوت نبضة. جميع الحقوق محفوظة.</div>
+  </div>
+</footer>
+
+<script>
+  // mobile menu
+  document.getElementById('burger').addEventListener('click', function(){
+    document.getElementById('mobileMenu').classList.toggle('open');
+  });
+  document.querySelectorAll('#mobileMenu a').forEach(function(a){
+    a.addEventListener('click', function(){ document.getElementById('mobileMenu').classList.remove('open'); });
+  });
+
+  // faq accordion
+  document.querySelectorAll('.faq-item').forEach(function(item){
+    var q = item.querySelector('.faq-q');
+    var a = item.querySelector('.faq-a');
+    q.addEventListener('click', function(){
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(function(other){
+        other.classList.remove('open');
+        other.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // scroll reveal
+  var revealEls = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(function(el){ io.observe(el); });
+</script>
+
+</body>
+</html>
