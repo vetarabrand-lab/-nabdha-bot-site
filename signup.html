@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سجّل نشاطك | بوت نبضة</title>
-<meta name="description" content="سجّل نشاطك التجاري في بوت نبضة وابدأ تجربتك مع بوت واتساب ذكي مخصص لك.">
+<title id="pageTitle">سجّل نشاطك | بوت نبضة</title>
+<meta name="description" id="pageDesc" content="سجّل نشاطك التجاري في بوت نبضة وابدأ تجربتك مع بوت واتساب ذكي مخصص لك.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -31,20 +31,27 @@
     font-family:'Tajawal','Segoe UI',sans-serif;
     background:var(--bg); color:var(--ink); line-height:1.7;
   }
+  html[lang="en"] body{ font-family:'Inter','Segoe UI',sans-serif; }
   a{text-decoration:none; color:inherit;}
   ul{list-style:none;}
   .container{max-width:900px; margin:0 auto; padding:0 24px;}
 
   /* header (same identity as landing page) */
   header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
-  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; gap:14px;}
   .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
   .logo-badge{
     width:38px; height:38px; border-radius:12px;
     background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
     display:flex; align-items:center; justify-content:center;
   }
+  .nav-right{display:flex; align-items:center; gap:14px;}
   .back-link{font-weight:700; font-size:14px; color:var(--wa-teal-dark); display:flex; align-items:center; gap:6px;}
+  .lang-btn{
+    background:#fff; color:var(--wa-teal-dark); border:1.5px solid var(--border);
+    font-weight:800; font-size:13.5px; padding:8px 14px; border-radius:100px; cursor:pointer;
+  }
+  .lang-btn:hover{border-color:var(--wa-teal);}
 
   /* hero strip */
   .hero-strip{
@@ -55,7 +62,7 @@
     display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.16);
     font-weight:700; font-size:13.5px; padding:7px 16px; border-radius:100px; margin-bottom:16px;
   }
-  .hero-strip .dot{width:7px; height:7px; border-radius:50%; background:var(--wa-green); display:inline-block; background:#fff;}
+  .hero-strip .dot{width:7px; height:7px; border-radius:50%; display:inline-block; background:#fff;}
   .hero-strip h1{font-size:clamp(26px,4vw,36px); font-weight:900; margin-bottom:10px;}
   .hero-strip p{color:rgba(255,255,255,.88); max-width:520px; margin:0 auto; font-size:16px;}
 
@@ -115,6 +122,7 @@
   .success-card h2{font-size:22px; margin-bottom:10px;}
   .success-card p{color:var(--muted); max-width:420px; margin:0 auto 22px;}
   .success-steps{text-align:right; background:#F6FAF8; border:1px solid var(--border); border-radius:14px; padding:18px 20px; margin-bottom:22px;}
+  html[dir="ltr"] .success-steps{text-align:left;}
   .success-steps li{font-size:14px; margin-bottom:8px; display:flex; gap:8px;}
   .success-steps li b{color:var(--wa-teal-dark);}
 
@@ -125,6 +133,7 @@
     .plans{grid-template-columns:1fr;}
     .form-card{padding:26px 20px;}
     .form-wrap{margin-top:-24px;}
+    .back-link span.txt{display:none;}
   }
 </style>
 </head>
@@ -136,17 +145,20 @@
       <div class="logo-badge">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
       </div>
-      <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+      <span data-i18n="brandBot">بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
     </div>
-    <a class="back-link" href="index.html">→ الرجوع للرئيسية</a>
+    <div class="nav-right">
+      <button class="lang-btn" id="langBtn">English</button>
+      <a class="back-link" href="index.html"><span data-i18n="backArrow">→</span> <span class="txt" data-i18n="backLink">الرجوع للرئيسية</span></a>
+    </div>
   </nav>
 </header>
 
 <section class="hero-strip">
   <div class="container">
-    <div class="eyebrow"><span class="dot"></span> سجّل نشاطك</div>
-    <h1>خلّي بوت نبضة يشتغل لحساب نشاطك</h1>
-    <p>عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.</p>
+    <div class="eyebrow"><span class="dot"></span> <span data-i18n="hero.eyebrow">سجّل نشاطك</span></div>
+    <h1 data-i18n="hero.title">خلّي بوت نبضة يشتغل لحساب نشاطك</h1>
+    <p data-i18n="hero.sub">عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.</p>
   </div>
 </section>
 
@@ -156,49 +168,49 @@
     <div class="alert error" id="errorAlert"></div>
 
     <form id="signupForm">
-      <div class="form-section-title">بيانات النشاط</div>
+      <div class="form-section-title" data-i18n="form.s1">بيانات النشاط</div>
       <div class="row-2">
         <div class="field">
-          <label>اسم النشاط (بالعربي) *</label>
-          <input type="text" id="businessNameAr" required placeholder="مثال: متجر جُمان للبهارات">
+          <label data-i18n="form.bizNameAr">اسم النشاط (بالعربي) *</label>
+          <input type="text" id="businessNameAr" required data-i18n-placeholder="form.bizNameArPh" placeholder="مثال: متجر جُمان للبهارات">
         </div>
         <div class="field">
-          <label>اسم النشاط (بالإنجليزي)</label>
-          <input type="text" id="businessName" placeholder="Juman Spices">
+          <label data-i18n="form.bizNameEn">اسم النشاط (بالإنجليزي)</label>
+          <input type="text" id="businessName" data-i18n-placeholder="form.bizNameEnPh" placeholder="Juman Spices">
         </div>
       </div>
 
-      <div class="form-section-title">بيانات التواصل</div>
+      <div class="form-section-title" data-i18n="form.s2">بيانات التواصل</div>
       <div class="row-2">
         <div class="field">
-          <label>البريد الإلكتروني *</label>
+          <label data-i18n="form.email">البريد الإلكتروني *</label>
           <input type="email" id="ownerEmail" required placeholder="you@example.com">
         </div>
         <div class="field">
-          <label>رقم جوالك (للتواصل معك) *</label>
+          <label data-i18n="form.phone">رقم جوالك (للتواصل معك) *</label>
           <input type="tel" id="ownerPhone" required placeholder="9665xxxxxxxx">
         </div>
       </div>
       <div class="field">
-        <label>رقم واتساب النشاط الذي تريد ربطه بالبوت</label>
+        <label data-i18n="form.waNumber">رقم واتساب النشاط الذي تريد ربطه بالبوت</label>
         <input type="tel" id="whatsappDisplayNumber" placeholder="9665xxxxxxxx">
-        <div class="hint">إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.</div>
+        <div class="hint" data-i18n="form.waNumberHint">إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.</div>
       </div>
 
-      <div class="form-section-title">تعليمات البوت</div>
+      <div class="form-section-title" data-i18n="form.s3">تعليمات البوت</div>
       <div class="field">
-        <label>عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *</label>
-        <textarea id="systemPrompt" required placeholder="مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال..."></textarea>
-        <div class="hint">هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.</div>
+        <label data-i18n="form.prompt">عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *</label>
+        <textarea id="systemPrompt" required data-i18n-placeholder="form.promptPh" placeholder="مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال..."></textarea>
+        <div class="hint" data-i18n="form.promptHint">هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.</div>
       </div>
       <div class="field">
-        <label>رسالة الترحيب الأولى (اختياري)</label>
-        <input type="text" id="welcomeMessage" placeholder="أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟">
+        <label data-i18n="form.welcome">رسالة الترحيب الأولى (اختياري)</label>
+        <input type="text" id="welcomeMessage" data-i18n-placeholder="form.welcomePh" placeholder="أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟">
       </div>
 
-      <div class="form-section-title">اختر باقتك</div>
+      <div class="form-section-title" data-i18n="form.s4">اختر باقتك</div>
       <div class="plans" id="plansContainer">
-        <div class="plans-loading">جاري تحميل الباقات...</div>
+        <div class="plans-loading" data-i18n="form.loadingPlans">جاري تحميل الباقات...</div>
       </div>
       <input type="hidden" id="selectedPlanId">
 
@@ -208,36 +220,175 @@
         <input type="text" id="websiteHp" tabindex="-1" autocomplete="off">
       </div>
 
-      <button type="submit" class="submit-btn" id="submitBtn">إرسال طلب التسجيل</button>
-      <p class="form-note">بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.</p>
+      <button type="submit" class="submit-btn" id="submitBtn" data-i18n="form.submit">إرسال طلب التسجيل</button>
+      <p class="form-note" data-i18n="form.note">بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.</p>
     </form>
 
     <div class="success-card" id="successCard">
       <div class="success-icon">✓</div>
-      <h2>تم استلام تسجيلك بنجاح!</h2>
-      <p>شكراً لك، حسابك الآن بحالة "تجريبي". هذي الخطوات الجاية:</p>
+      <h2 data-i18n="success.title">تم استلام تسجيلك بنجاح!</h2>
+      <p data-i18n="success.sub">شكراً لك، حسابك الآن بحالة "تجريبي". هذي الخطوات الجاية:</p>
       <ul class="success-steps">
-        <li><b>1.</b> فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.</li>
-        <li><b>2.</b> نساعدك تربط رقم واتساب نشاطك عبر Meta.</li>
-        <li><b>3.</b> نفعّل اشتراكك بعد تأكيد الباقة والدفع.</li>
-        <li><b>4.</b> بوتك يبدأ يرد على عملائك تلقائياً 🎉</li>
+        <li><b>1.</b> <span data-i18n="success.s1">فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.</span></li>
+        <li><b>2.</b> <span data-i18n="success.s2">نساعدك تربط رقم واتساب نشاطك عبر Meta.</span></li>
+        <li><b>3.</b> <span data-i18n="success.s3">نفعّل اشتراكك بعد تأكيد الباقة والدفع.</span></li>
+        <li><b>4.</b> <span data-i18n="success.s4">بوتك يبدأ يرد على عملائك تلقائياً 🎉</span></li>
       </ul>
-      <a href="index.html" class="submit-btn" style="display:inline-block; width:auto; padding:14px 34px;">الرجوع للصفحة الرئيسية</a>
+      <a href="index.html" class="submit-btn" style="display:inline-block; width:auto; padding:14px 34px;" data-i18n="success.back">الرجوع للصفحة الرئيسية</a>
     </div>
 
   </div>
 </div>
 
-<footer>© 2026 بوت نبضة. جميع الحقوق محفوظة.</footer>
+<footer data-i18n="footer.copy">© 2026 بوت نبضة. جميع الحقوق محفوظة.</footer>
 
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  var translations = {
+    ar: {
+      pageTitle: "سجّل نشاطك | بوت نبضة",
+      pageDesc: "سجّل نشاطك التجاري في بوت نبضة وابدأ تجربتك مع بوت واتساب ذكي مخصص لك.",
+      brandBot: 'بوت <span style="color:var(--wa-teal-dark)">نبضة</span>',
+      backArrow: "→", backLink: "الرجوع للرئيسية",
+      "hero.eyebrow": "سجّل نشاطك",
+      "hero.title": "خلّي بوت نبضة يشتغل لحساب نشاطك",
+      "hero.sub": "عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.",
+      "form.s1": "بيانات النشاط",
+      "form.bizNameAr": "اسم النشاط (بالعربي) *", "form.bizNameArPh": "مثال: متجر جُمان للبهارات",
+      "form.bizNameEn": "اسم النشاط (بالإنجليزي)", "form.bizNameEnPh": "Juman Spices",
+      "form.s2": "بيانات التواصل",
+      "form.email": "البريد الإلكتروني *",
+      "form.phone": "رقم جوالك (للتواصل معك) *",
+      "form.waNumber": "رقم واتساب النشاط الذي تريد ربطه بالبوت",
+      "form.waNumberHint": "إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.",
+      "form.s3": "تعليمات البوت",
+      "form.prompt": "عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *",
+      "form.promptPh": "مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال...",
+      "form.promptHint": "هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.",
+      "form.welcome": "رسالة الترحيب الأولى (اختياري)", "form.welcomePh": "أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟",
+      "form.s4": "اختر باقتك",
+      "form.loadingPlans": "جاري تحميل الباقات...",
+      "form.submit": "إرسال طلب التسجيل",
+      "form.note": "بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.",
+      "form.errorRequired": "الرجاء تعبئة كل الحقول المطلوبة (المعلّمة بـ *).",
+      "form.errorSubmit": "حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.",
+      "form.submitting": "جاري الإرسال...",
+      "form.plansError": "تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.",
+      "form.perMonth": "ريال/شهر", "form.upTo": "حتى", "form.msgWord": "رسالة",
+      "success.title": "تم استلام تسجيلك بنجاح!",
+      "success.sub": 'شكراً لك، حسابك الآن بحالة "تجريبي". هذي الخطوات الجاية:',
+      "success.s1": "فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.",
+      "success.s2": "نساعدك تربط رقم واتساب نشاطك عبر Meta.",
+      "success.s3": "نفعّل اشتراكك بعد تأكيد الباقة والدفع.",
+      "success.s4": "بوتك يبدأ يرد على عملائك تلقائياً 🎉",
+      "success.back": "الرجوع للصفحة الرئيسية",
+      "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
+    },
+    en: {
+      pageTitle: "Sign Up | Nabda Bot",
+      pageDesc: "Sign up your business with Nabda Bot and start your trial with a smart, custom WhatsApp bot.",
+      brandBot: 'Nabda <span style="color:var(--wa-teal-dark)">Bot</span>',
+      backArrow: "←", backLink: "Back to Home",
+      "hero.eyebrow": "Sign Up Your Business",
+      "hero.title": "Get Nabda Bot working for your business",
+      "hero.sub": "Fill in the details below, and our team will reach out within 24 hours to connect your WhatsApp number and activate your subscription.",
+      "form.s1": "Business Details",
+      "form.bizNameAr": "Business Name (Arabic) *", "form.bizNameArPh": "e.g. Juman Spices Store",
+      "form.bizNameEn": "Business Name (English)", "form.bizNameEnPh": "Juman Spices",
+      "form.s2": "Contact Details",
+      "form.email": "Email Address *",
+      "form.phone": "Your Phone Number (for us to reach you) *",
+      "form.waNumber": "The business WhatsApp number you want to connect",
+      "form.waNumberHint": "If you don't have a number ready yet, leave this blank — our team will help you set one up.",
+      "form.s3": "Bot Instructions",
+      "form.prompt": "Tell us about your business (what you sell, shipping policy, common questions...) *",
+      "form.promptPh": "e.g. We sell authentic spices and herbs through our online store on Zid. Shipping within Saudi Arabia takes 3-5 business days, free over 200 SAR...",
+      "form.promptHint": "This is the text the bot relies on to reply to your customers — the clearer it is, the more accurate the replies.",
+      "form.welcome": "First welcome message (optional)", "form.welcomePh": "Welcome to Juman Store 🌿 How can I help you?",
+      "form.s4": "Choose Your Plan",
+      "form.loadingPlans": "Loading plans...",
+      "form.submit": "Submit Sign-up Request",
+      "form.note": "By submitting, our team will reach out to complete setup and payment — no upfront commitment.",
+      "form.errorRequired": "Please fill in all required fields (marked with *).",
+      "form.errorSubmit": "Something went wrong while submitting your request. Please try again or contact us directly.",
+      "form.submitting": "Submitting...",
+      "form.plansError": "Couldn't load plans. Refresh the page or contact us directly.",
+      "form.perMonth": "SAR/month", "form.upTo": "Up to", "form.msgWord": "messages",
+      "success.title": "Your sign-up was received!",
+      "success.sub": 'Thank you — your account is now in "trial" status. Here\\'s what happens next:',
+      "success.s1": "Our team reviews your request and reaches out within 24 hours.",
+      "success.s2": "We help you connect your business WhatsApp number via Meta.",
+      "success.s3": "We activate your subscription after confirming your plan and payment.",
+      "success.s4": "Your bot starts replying to your customers automatically 🎉",
+      "success.back": "Back to Home",
+      "footer.copy": "© 2026 Nabda Bot. All rights reserved."
+    }
+  };
+
+  var currentLang = 'ar';
+
+  function applyLanguage(lang){
+    currentLang = lang;
+    var t = translations[lang];
+    document.getElementById('htmlRoot').setAttribute('lang', lang);
+    document.getElementById('htmlRoot').setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.getElementById('pageTitle').textContent = t.pageTitle;
+    document.getElementById('pageDesc').setAttribute('content', t.pageDesc);
+    document.title = t.pageTitle;
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(t[key] !== undefined){ el.innerHTML = t[key]; }
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-placeholder');
+      if(t[key] !== undefined){ el.setAttribute('placeholder', t[key]); }
+    });
+
+    document.getElementById('langBtn').textContent = lang === 'ar' ? 'English' : 'العربية';
+
+    if(plansData.length){ renderPlans(); }
+
+    localStorage.setItem('nabda_lang', lang);
+  }
+
+  function toggleLanguage(){
+    applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
+  }
+  document.getElementById('langBtn').addEventListener('click', toggleLanguage);
+
+  var savedLang = localStorage.getItem('nabda_lang');
+  if(savedLang === 'en'){ applyLanguage('en'); }
+
   const plansContainer = document.getElementById('plansContainer');
   const selectedPlanIdInput = document.getElementById('selectedPlanId');
   let plansData = [];
+  let preselectedIndex = 0;
+
+  function renderPlans(){
+    var t = translations[currentLang];
+    plansContainer.innerHTML = '';
+    plansData.forEach(function(plan, idx){
+      const card = document.createElement('div');
+      card.className = 'plan-card' + (idx === preselectedIndex ? ' selected' : '');
+      card.dataset.planId = plan.id;
+      var planName = currentLang === 'en' && plan.name_en ? plan.name_en : plan.name_ar;
+      card.innerHTML =
+        '<div class="p-name">' + planName + '</div>' +
+        '<div class="p-price">' + Number(plan.monthly_price_sar).toLocaleString(currentLang === 'ar' ? 'ar' : 'en') + '<span> ' + t['form.perMonth'] + '</span></div>' +
+        '<div class="p-limit">' + t['form.upTo'] + ' ' + Number(plan.monthly_message_limit).toLocaleString(currentLang === 'ar' ? 'ar' : 'en') + ' ' + t['form.msgWord'] + '</div>';
+      card.addEventListener('click', function(){
+        document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
+        card.classList.add('selected');
+        selectedPlanIdInput.value = plan.id;
+        preselectedIndex = idx;
+      });
+      plansContainer.appendChild(card);
+    });
+  }
 
   async function loadPlans(){
     const { data, error } = await supabaseClient
@@ -247,33 +398,19 @@
       .order('sort_order', { ascending: true });
 
     if(error || !data || data.length === 0){
-      plansContainer.innerHTML = '<div class="plans-loading">تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.</div>';
+      plansContainer.innerHTML = '<div class="plans-loading">' + translations[currentLang]['form.plansError'] + '</div>';
       return;
     }
     plansData = data;
-    plansContainer.innerHTML = '';
 
     // لو المستخدم جاء من رابط فيه ?plan=code (مثال: signup.html?plan=pro) نختار الباقة تلقائياً
     const requestedPlan = new URLSearchParams(window.location.search).get('plan');
-    let preselectIndex = data.findIndex(function(p){ return p.code === requestedPlan; });
-    if(preselectIndex === -1){ preselectIndex = data.length > 1 ? 1 : 0; }
+    let idx = data.findIndex(function(p){ return p.code === requestedPlan; });
+    if(idx === -1){ idx = data.length > 1 ? 1 : 0; }
+    preselectedIndex = idx;
 
-    data.forEach(function(plan, idx){
-      const card = document.createElement('div');
-      card.className = 'plan-card' + (idx === preselectIndex ? ' selected' : '');
-      card.dataset.planId = plan.id;
-      card.innerHTML =
-        '<div class="p-name">' + plan.name_ar + '</div>' +
-        '<div class="p-price">' + Number(plan.monthly_price_sar).toLocaleString('ar') + '<span> ريال/شهر</span></div>' +
-        '<div class="p-limit">حتى ' + Number(plan.monthly_message_limit).toLocaleString('ar') + ' رسالة</div>';
-      card.addEventListener('click', function(){
-        document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
-        card.classList.add('selected');
-        selectedPlanIdInput.value = plan.id;
-      });
-      plansContainer.appendChild(card);
-    });
-    selectedPlanIdInput.value = data[preselectIndex].id;
+    renderPlans();
+    selectedPlanIdInput.value = data[preselectedIndex].id;
   }
   loadPlans();
 
@@ -290,6 +427,7 @@
       return;
     }
 
+    const t = translations[currentLang];
     const businessNameAr = document.getElementById('businessNameAr').value.trim();
     const businessName = document.getElementById('businessName').value.trim() || businessNameAr;
     const ownerEmail = document.getElementById('ownerEmail').value.trim();
@@ -300,13 +438,13 @@
     const planId = selectedPlanIdInput.value || null;
 
     if(!businessNameAr || !ownerEmail || !ownerPhone || !systemPrompt){
-      errorAlert.textContent = 'الرجاء تعبئة كل الحقول المطلوبة (المعلّمة بـ *).';
+      errorAlert.textContent = t['form.errorRequired'];
       errorAlert.style.display = 'block';
       return;
     }
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'جاري الإرسال...';
+    submitBtn.textContent = t['form.submitting'];
 
     const { error } = await supabaseClient.from('clients').insert({
       business_name: businessName,
@@ -322,8 +460,8 @@
 
     if(error){
       submitBtn.disabled = false;
-      submitBtn.textContent = 'إرسال طلب التسجيل';
-      errorAlert.textContent = 'حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.';
+      submitBtn.textContent = t['form.submit'];
+      errorAlert.textContent = t['form.errorSubmit'];
       errorAlert.style.display = 'block';
       console.error(error);
       return;

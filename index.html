@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بوت نبضة | منصّة بوت واتساب ذكي لأعمالك</title>
-<meta name="description" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
+<title id="pageTitle">بوت نبضة | منصّة بوت واتساب ذكي لأعمالك</title>
+<meta name="description" id="pageDesc" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --wa-green:#25D366;
@@ -32,6 +32,7 @@
     line-height:1.7;
     overflow-x:hidden;
   }
+  html[lang="en"] body{ font-family:'Inter', 'Segoe UI', sans-serif; }
   img,svg{display:block; max-width:100%;}
   a{text-decoration:none; color:inherit;}
   ul{list-style:none;}
@@ -62,6 +63,11 @@
   .btn-ghost-light{background:rgba(255,255,255,.14); color:#fff; border:1.5px solid rgba(255,255,255,.4); backdrop-filter:blur(4px);}
   .btn-ghost-light:hover{background:rgba(255,255,255,.24);}
   .btn-block{width:100%;}
+  .lang-btn{
+    background:#fff; color:var(--wa-teal-dark); border:1.5px solid var(--border);
+    font-weight:800; font-size:13.5px; padding:8px 14px; border-radius:100px; cursor:pointer;
+  }
+  .lang-btn:hover{border-color:var(--wa-teal);}
 
   /* ---------- NAV ---------- */
   header{
@@ -84,6 +90,7 @@
   .mobile-menu{display:none; flex-direction:column; gap:4px; padding:8px 24px 20px; border-top:1px solid var(--border);}
   .mobile-menu a{padding:12px 4px; font-weight:600; border-bottom:1px solid var(--border);}
   .mobile-menu.open{display:flex;}
+  .mobile-lang-row{display:flex; justify-content:center; padding-top:6px;}
 
   /* ---------- HERO ---------- */
   .hero{
@@ -176,7 +183,7 @@
   }
   .step h3{font-size:16px; margin-bottom:8px;}
   .step p{color:var(--muted); font-size:14px;}
-  .step-arrow{position:absolute; top:38px; left:-30px; color:var(--border); font-size:22px;}
+  .step-arrow{position:absolute; top:38px; inset-inline-start:-30px; color:var(--border); font-size:22px;}
   .step:first-child .step-arrow{display:none;}
 
   /* ---------- PRICING ---------- */
@@ -257,6 +264,7 @@
   @media (max-width:720px){
     .nav-links{display:none;}
     .nav-cta .btn-outline{display:none;}
+    .nav-cta .lang-btn{display:none;}
     .burger{display:flex;}
     .section{padding:64px 0;}
   }
@@ -278,26 +286,28 @@
       <div class="logo-badge">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
       </div>
-      <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+      <span data-i18n="brandBot">بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
     </div>
     <div class="nav-links">
-      <a href="#features">المزايا</a>
-      <a href="#how">كيف يعمل</a>
-      <a href="#pricing">الباقات</a>
-      <a href="#faq">الأسئلة الشائعة</a>
+      <a href="#features" data-i18n="nav.features">المزايا</a>
+      <a href="#how" data-i18n="nav.how">كيف يعمل</a>
+      <a href="#pricing" data-i18n="nav.pricing">الباقات</a>
+      <a href="#faq" data-i18n="nav.faq">الأسئلة الشائعة</a>
     </div>
     <div class="nav-cta">
-      <a href="portal.html" class="btn btn-outline">تسجيل الدخول</a>
-      <a href="signup.html" class="btn btn-primary">ابدأ الآن مجاناً</a>
+      <button class="lang-btn" id="langBtn">English</button>
+      <a href="portal.html" class="btn btn-outline" data-i18n="nav.login">تسجيل الدخول</a>
+      <a href="signup.html" class="btn btn-primary" data-i18n="nav.start">ابدأ الآن مجاناً</a>
       <button class="burger" id="burger" aria-label="القائمة"><span></span><span></span><span></span></button>
     </div>
   </nav>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#features">المزايا</a>
-    <a href="#how">كيف يعمل</a>
-    <a href="#pricing">الباقات</a>
-    <a href="#faq">الأسئلة الشائعة</a>
-    <a href="signup.html" class="btn btn-primary btn-block" style="margin-top:10px;">ابدأ الآن مجاناً</a>
+    <a href="#features" data-i18n="nav.features">المزايا</a>
+    <a href="#how" data-i18n="nav.how">كيف يعمل</a>
+    <a href="#pricing" data-i18n="nav.pricing">الباقات</a>
+    <a href="#faq" data-i18n="nav.faq">الأسئلة الشائعة</a>
+    <a href="signup.html" class="btn btn-primary btn-block" style="margin-top:10px;" data-i18n="nav.start">ابدأ الآن مجاناً</a>
+    <div class="mobile-lang-row"><button class="lang-btn" id="langBtnMobile">English</button></div>
   </div>
 </header>
 
@@ -305,17 +315,17 @@
 <section class="hero">
   <div class="container hero-grid">
     <div>
-      <div class="eyebrow" style="background:rgba(255,255,255,.16); color:#fff;"><span class="dot"></span> مدعوم بالذكاء الاصطناعي Claude</div>
-      <h1>بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت</h1>
-      <p class="lead">وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.</p>
+      <div class="eyebrow" style="background:rgba(255,255,255,.16); color:#fff;"><span class="dot"></span> <span data-i18n="hero.eyebrow">مدعوم بالذكاء الاصطناعي Claude</span></div>
+      <h1 data-i18n="hero.title">بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت</h1>
+      <p class="lead" data-i18n="hero.lead">وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.</p>
       <div class="hero-ctas">
-        <a href="signup.html" class="btn btn-primary">ابدأ تجربتك المجانية</a>
-        <a href="#how" class="btn btn-ghost-light">شاهد كيف يعمل</a>
+        <a href="signup.html" class="btn btn-primary" data-i18n="hero.ctaPrimary">ابدأ تجربتك المجانية</a>
+        <a href="#how" class="btn btn-ghost-light" data-i18n="hero.ctaSecondary">شاهد كيف يعمل</a>
       </div>
       <ul class="hero-trust">
-        <li>✅ متوافق مع WhatsApp Cloud API الرسمي</li>
-        <li>✅ عربي أولاً بالكامل</li>
-        <li>✅ إعداد خلال دقائق</li>
+        <li data-i18n="hero.trust1">✅ متوافق مع WhatsApp Cloud API الرسمي</li>
+        <li data-i18n="hero.trust2">✅ عربي أولاً بالكامل</li>
+        <li data-i18n="hero.trust3">✅ إعداد خلال دقائق</li>
       </ul>
     </div>
     <div class="phone-wrap">
@@ -323,13 +333,13 @@
         <div class="phone-screen">
           <div class="phone-topbar">
             <div class="phone-avatar">🌿</div>
-            <div>متجر ورد<div class="phone-status">نشط الآن • بوت نبضة</div></div>
+            <div><span data-i18n="phone.name">متجر ورد</span><div class="phone-status" data-i18n="phone.status">نشط الآن • بوت نبضة</div></div>
           </div>
           <div class="phone-body">
-            <div class="bubble in" style="animation-delay:.2s">مرحباً، هل التوصيل متوفر للرياض؟<span class="t">10:0٢ ص</span></div>
-            <div class="bubble out" style="animation-delay:.9s">أهلاً بك 🌿 نعم، نوصّل لجميع مناطق الرياض خلال 24 ساعة، والشحن مجاني فوق 200 ريال.<span class="t">10:0٢ ص ✓✓</span></div>
-            <div class="bubble in" style="animation-delay:1.6s">تمام، كيف أطلب؟<span class="t">10:03 ص</span></div>
-            <div class="bubble out" style="animation-delay:2.3s">تقدر تطلب مباشرة من متجرنا هنا: store.example.com 🛍️ وإذا احتجت مساعدة أنا موجود!<span class="t">10:03 ص ✓✓</span></div>
+            <div class="bubble in" style="animation-delay:.2s"><span data-i18n="phone.msg1">مرحباً، هل التوصيل متوفر للرياض؟</span><span class="t" data-i18n="phone.t1">10:0٢ ص</span></div>
+            <div class="bubble out" style="animation-delay:.9s"><span data-i18n="phone.msg2">أهلاً بك 🌿 نعم، نوصّل لجميع مناطق الرياض خلال 24 ساعة، والشحن مجاني فوق 200 ريال.</span><span class="t" data-i18n="phone.t2">10:0٢ ص ✓✓</span></div>
+            <div class="bubble in" style="animation-delay:1.6s"><span data-i18n="phone.msg3">تمام، كيف أطلب؟</span><span class="t" data-i18n="phone.t3">10:03 ص</span></div>
+            <div class="bubble out" style="animation-delay:2.3s"><span data-i18n="phone.msg4">تقدر تطلب مباشرة من متجرنا هنا: store.example.com 🛍️ وإذا احتجت مساعدة أنا موجود!</span><span class="t" data-i18n="phone.t4">10:03 ص ✓✓</span></div>
           </div>
           <div class="phone-inputbar">
             <div class="mic">🎤</div>
@@ -344,10 +354,10 @@
 <!-- STATS -->
 <section class="stats">
   <div class="container">
-    <div class="stat"><b>&lt; 3 ثوانٍ</b><span>متوسط زمن رد البوت</span></div>
-    <div class="stat"><b>24/7</b><span>خدمة عملاء بلا توقف</span></div>
-    <div class="stat"><b>100%</b><span>تخصيص حسب نشاطك</span></div>
-    <div class="stat"><b>Claude AI</b><span>محرك ذكاء اصطناعي متقدم</span></div>
+    <div class="stat"><b>&lt; 3 <span data-i18n="stats.sec">ثوانٍ</span></b><span data-i18n="stats.l1">متوسط زمن رد البوت</span></div>
+    <div class="stat"><b>24/7</b><span data-i18n="stats.l2">خدمة عملاء بلا توقف</span></div>
+    <div class="stat"><b>100%</b><span data-i18n="stats.l3">تخصيص حسب نشاطك</span></div>
+    <div class="stat"><b>Claude AI</b><span data-i18n="stats.l4">محرك ذكاء اصطناعي متقدم</span></div>
   </div>
 </section>
 
@@ -355,40 +365,40 @@
 <section class="section" id="features">
   <div class="container">
     <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot"></span> المزايا</div>
-      <h2>كل ما يحتاجه نشاطك في بوت واحد</h2>
-      <p>منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.</p>
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="features.eyebrow">المزايا</span></div>
+      <h2 data-i18n="features.title">كل ما يحتاجه نشاطك في بوت واحد</h2>
+      <p data-i18n="features.sub">منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.</p>
     </div>
     <div class="features-grid">
       <div class="feature-card reveal">
         <div class="feature-icon">🤖</div>
-        <h3>ذكاء اصطناعي بمستوى Claude</h3>
-        <p>ردود طبيعية ودقيقة تفهم سياق المحادثة، لا ردود آلية جامدة.</p>
+        <h3 data-i18n="features.f1t">ذكاء اصطناعي بمستوى Claude</h3>
+        <p data-i18n="features.f1d">ردود طبيعية ودقيقة تفهم سياق المحادثة، لا ردود آلية جامدة.</p>
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon">🎨</div>
-        <h3>هوية مخصصة لنشاطك</h3>
-        <p>علّم البوت بأسلوب نشاطك، منتجاتك، وسياساتك — بلغتك أنت وبدون كود.</p>
+        <h3 data-i18n="features.f2t">هوية مخصصة لنشاطك</h3>
+        <p data-i18n="features.f2d">علّم البوت بأسلوب نشاطك، منتجاتك، وسياساتك — بلغتك أنت وبدون كود.</p>
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon">🧠</div>
-        <h3>يتذكر المحادثة</h3>
-        <p>ذاكرة سياق لكل عميل، فما يفقد الخيط لو رجع يسأل بعد شوي.</p>
+        <h3 data-i18n="features.f3t">يتذكر المحادثة</h3>
+        <p data-i18n="features.f3d">ذاكرة سياق لكل عميل، فما يفقد الخيط لو رجع يسأل بعد شوي.</p>
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon">🇸🇦</div>
-        <h3>عربي أولاً بالكامل</h3>
-        <p>مبني من الصفر لدعم العربية ولهجاتها، وواجهة RTL كاملة.</p>
+        <h3 data-i18n="features.f4t">عربي أولاً بالكامل</h3>
+        <p data-i18n="features.f4d">مبني من الصفر لدعم العربية ولهجاتها، وواجهة RTL كاملة.</p>
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon">🔗</div>
-        <h3>ربط رسمي وآمن</h3>
-        <p>يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.</p>
+        <h3 data-i18n="features.f5t">ربط رسمي وآمن</h3>
+        <p data-i18n="features.f5d">يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.</p>
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon">📊</div>
-        <h3>سجل وتحليلات كاملة</h3>
-        <p>راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.</p>
+        <h3 data-i18n="features.f6t">سجل وتحليلات كاملة</h3>
+        <p data-i18n="features.f6d">راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.</p>
       </div>
     </div>
   </div>
@@ -398,32 +408,32 @@
 <section class="section how" id="how">
   <div class="container">
     <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot"></span> كيف يعمل</div>
-      <h2>من التسجيل إلى أول رد تلقائي، بأربع خطوات</h2>
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="how.eyebrow">كيف يعمل</span></div>
+      <h2 data-i18n="how.title">من التسجيل إلى أول رد تلقائي، بأربع خطوات</h2>
     </div>
     <div class="steps">
       <div class="step reveal">
         <div class="step-num">1</div>
-        <h3>سجّل نشاطك</h3>
-        <p>أنشئ حسابك واختر الباقة المناسبة لحجم عملائك.</p>
+        <h3 data-i18n="how.s1t">سجّل نشاطك</h3>
+        <p data-i18n="how.s1d">أنشئ حسابك واختر الباقة المناسبة لحجم عملائك.</p>
         <div class="step-arrow">◂</div>
       </div>
       <div class="step reveal">
         <div class="step-num">2</div>
-        <h3>اربط رقم واتساب</h3>
-        <p>وصّل رقم نشاطك الرسمي عبر WhatsApp Cloud API بخطوات مبسّطة.</p>
+        <h3 data-i18n="how.s2t">اربط رقم واتساب</h3>
+        <p data-i18n="how.s2d">وصّل رقم نشاطك الرسمي عبر WhatsApp Cloud API بخطوات مبسّطة.</p>
         <div class="step-arrow">◂</div>
       </div>
       <div class="step reveal">
         <div class="step-num">3</div>
-        <h3>خصّص تعليمات البوت</h3>
-        <p>اكتب نبذة عن نشاطك، أسلوبك، والأسئلة الشائعة — بالعربي وبدون كود.</p>
+        <h3 data-i18n="how.s3t">خصّص تعليمات البوت</h3>
+        <p data-i18n="how.s3d">اكتب نبذة عن نشاطك، أسلوبك، والأسئلة الشائعة — بالعربي وبدون كود.</p>
         <div class="step-arrow">◂</div>
       </div>
       <div class="step reveal">
         <div class="step-num">4</div>
-        <h3>البوت يشتغل لحاله</h3>
-        <p>يرد على عملائك فوراً، ويحوّل لك أي محادثة تحتاج تدخّلك أنت.</p>
+        <h3 data-i18n="how.s4t">البوت يشتغل لحاله</h3>
+        <p data-i18n="how.s4d">يرد على عملائك فوراً، ويحوّل لك أي محادثة تحتاج تدخّلك أنت.</p>
         <div class="step-arrow">◂</div>
       </div>
     </div>
@@ -434,50 +444,50 @@
 <section class="section" id="pricing">
   <div class="container">
     <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot"></span> الباقات</div>
-      <h2>باقة تناسب كل حجم نشاط</h2>
-      <p>اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.</p>
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="pricing.eyebrow">الباقات</span></div>
+      <h2 data-i18n="pricing.title">باقة تناسب كل حجم نشاط</h2>
+      <p data-i18n="pricing.sub">اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card reveal">
-        <h3>أساسي</h3>
-        <p class="desc">للمشاريع الناشئة والحسابات الشخصية</p>
-        <div class="price-value"><b>199</b><span>ريال / شهرياً</span></div>
-        <div class="price-limit">حتى 1,000 رسالة شهرياً</div>
+        <h3 data-i18n="pricing.p1n">أساسي</h3>
+        <p class="desc" data-i18n="pricing.p1d">للمشاريع الناشئة والحسابات الشخصية</p>
+        <div class="price-value"><b>199</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-limit" data-i18n="pricing.p1limit">حتى 1,000 رسالة شهرياً</div>
         <ul class="price-features">
-          <li><span class="check">✓</span> رقم واتساب رسمي واحد</li>
-          <li><span class="check">✓</span> بوت ذكاء اصطناعي مخصص</li>
-          <li><span class="check">✓</span> ذاكرة محادثة لكل عميل</li>
-          <li><span class="check">✓</span> سجل محادثات أساسي</li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p1f1">رقم واتساب رسمي واحد</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p1f2">بوت ذكاء اصطناعي مخصص</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p1f3">ذاكرة محادثة لكل عميل</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p1f4">سجل محادثات أساسي</span></li>
         </ul>
-        <a href="signup.html?plan=basic" class="btn btn-outline btn-block">ابدأ بالأساسي</a>
+        <a href="signup.html?plan=basic" class="btn btn-outline btn-block" data-i18n="pricing.p1cta">ابدأ بالأساسي</a>
       </div>
       <div class="price-card popular reveal">
-        <span class="badge-popular">الأكثر طلباً</span>
-        <h3>احترافي</h3>
-        <p class="desc">للأنشطة التجارية المتنامية</p>
-        <div class="price-value"><b>699</b><span>ريال / شهرياً</span></div>
-        <div class="price-limit">حتى 5,000 رسالة شهرياً</div>
+        <span class="badge-popular" data-i18n="pricing.popular">الأكثر طلباً</span>
+        <h3 data-i18n="pricing.p2n">احترافي</h3>
+        <p class="desc" data-i18n="pricing.p2d">للأنشطة التجارية المتنامية</p>
+        <div class="price-value"><b>699</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-limit" data-i18n="pricing.p2limit">حتى 5,000 رسالة شهرياً</div>
         <ul class="price-features">
-          <li><span class="check">✓</span> كل مزايا الباقة الأساسية</li>
-          <li><span class="check">✓</span> تخصيص متقدم لشخصية البوت</li>
-          <li><span class="check">✓</span> تحليلات وتقارير استخدام</li>
-          <li><span class="check">✓</span> دعم فني بأولوية</li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f1">كل مزايا الباقة الأساسية</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f2">تخصيص متقدم لشخصية البوت</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f3">تحليلات وتقارير استخدام</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f4">دعم فني بأولوية</span></li>
         </ul>
-        <a href="signup.html?plan=pro" class="btn btn-primary btn-block">ابدأ بالاحترافي</a>
+        <a href="signup.html?plan=pro" class="btn btn-primary btn-block" data-i18n="pricing.p2cta">ابدأ بالاحترافي</a>
       </div>
       <div class="price-card reveal">
-        <h3>مؤسسات</h3>
-        <p class="desc">لسلاسل المتاجر والفرق الكبيرة</p>
-        <div class="price-value"><b>1,999</b><span>ريال / شهرياً</span></div>
-        <div class="price-limit">حتى 20,000 رسالة شهرياً</div>
+        <h3 data-i18n="pricing.p3n">مؤسسات</h3>
+        <p class="desc" data-i18n="pricing.p3d">لسلاسل المتاجر والفرق الكبيرة</p>
+        <div class="price-value"><b>1,999</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-limit" data-i18n="pricing.p3limit">حتى 20,000 رسالة شهرياً</div>
         <ul class="price-features">
-          <li><span class="check">✓</span> كل مزايا الباقة الاحترافية</li>
-          <li><span class="check">✓</span> أرقام واتساب متعددة</li>
-          <li><span class="check">✓</span> مدير حساب مخصص</li>
-          <li><span class="check">✓</span> تكاملات مخصصة عند الطلب</li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p3f1">كل مزايا الباقة الاحترافية</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p3f2">أرقام واتساب متعددة</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p3f3">مدير حساب مخصص</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p3f4">تكاملات مخصصة عند الطلب</span></li>
         </ul>
-        <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block">تواصل معنا</a>
+        <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block" data-i18n="pricing.p3cta">تواصل معنا</a>
       </div>
     </div>
   </div>
@@ -487,29 +497,29 @@
 <section class="section" id="faq">
   <div class="container">
     <div class="section-head reveal">
-      <div class="eyebrow"><span class="dot"></span> الأسئلة الشائعة</div>
-      <h2>عندك سؤال؟ عندنا جواب</h2>
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="faq.eyebrow">الأسئلة الشائعة</span></div>
+      <h2 data-i18n="faq.title">عندك سؤال؟ عندنا جواب</h2>
     </div>
     <div class="faq reveal">
       <div class="faq-item">
-        <div class="faq-q">هل أحتاج رقم واتساب منفصل عن رقمي الحالي؟ <span class="plus">+</span></div>
-        <div class="faq-a"><p>نعم، يفضّل ربط رقم مخصص لنشاطك عبر WhatsApp Business Cloud API الرسمي من Meta، حتى يبقى رقمك الشخصي منفصلاً تماماً.</p></div>
+        <div class="faq-q"><span data-i18n="faq.q1">هل أحتاج رقم واتساب منفصل عن رقمي الحالي؟</span> <span class="plus">+</span></div>
+        <div class="faq-a"><p data-i18n="faq.a1">نعم، يفضّل ربط رقم مخصص لنشاطك عبر WhatsApp Business Cloud API الرسمي من Meta، حتى يبقى رقمك الشخصي منفصلاً تماماً.</p></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">هل بيانات عملائي ومحادثاتي آمنة؟ <span class="plus">+</span></div>
-        <div class="faq-a"><p>كل المحادثات مشفّرة وتُخزّن في قاعدة بيانات خاصة بنشاطك فقط، ولا نشاركها مع أي طرف ثالث.</p></div>
+        <div class="faq-q"><span data-i18n="faq.q2">هل بيانات عملائي ومحادثاتي آمنة؟</span> <span class="plus">+</span></div>
+        <div class="faq-a"><p data-i18n="faq.a2">كل المحادثات مشفّرة وتُخزّن في قاعدة بيانات خاصة بنشاطك فقط، ولا نشاركها مع أي طرف ثالث.</p></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">هل يفهم البوت اللهجات الخليجية؟ <span class="plus">+</span></div>
-        <div class="faq-a"><p>نعم، البوت مبني على نموذج Claude ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.</p></div>
+        <div class="faq-q"><span data-i18n="faq.q3">هل يفهم البوت اللهجات الخليجية؟</span> <span class="plus">+</span></div>
+        <div class="faq-a"><p data-i18n="faq.a3">نعم، البوت مبني على نموذج Claude ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.</p></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">هل فيه فترة تجريبية مجانية؟ <span class="plus">+</span></div>
-        <div class="faq-a"><p>نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.</p></div>
+        <div class="faq-q"><span data-i18n="faq.q4">هل فيه فترة تجريبية مجانية؟</span> <span class="plus">+</span></div>
+        <div class="faq-a"><p data-i18n="faq.a4">نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.</p></div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">هل أقدر ألغي اشتراكي في أي وقت؟ <span class="plus">+</span></div>
-        <div class="faq-a"><p>بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.</p></div>
+        <div class="faq-q"><span data-i18n="faq.q5">هل أقدر ألغي اشتراكي في أي وقت؟</span> <span class="plus">+</span></div>
+        <div class="faq-a"><p data-i18n="faq.a5">بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.</p></div>
       </div>
     </div>
   </div>
@@ -517,9 +527,9 @@
 
 <!-- CTA BANNER -->
 <div class="cta-banner reveal">
-  <h2>جاهز تخلي واتساب نشاطك يشتغل لحاله؟</h2>
-  <p>انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.</p>
-  <a href="signup.html" class="btn btn-primary">ابدأ تجربتك المجانية الآن</a>
+  <h2 data-i18n="ctaBanner.title">جاهز تخلي واتساب نشاطك يشتغل لحاله؟</h2>
+  <p data-i18n="ctaBanner.sub">انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.</p>
+  <a href="signup.html" class="btn btn-primary" data-i18n="ctaBanner.cta">ابدأ تجربتك المجانية الآن</a>
 </div>
 
 <div style="height:96px;"></div>
@@ -533,40 +543,172 @@
           <div class="logo-badge">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff"/></svg>
           </div>
-          <span>بوت نبضة</span>
+          <span data-i18n="footer.brand">بوت نبضة</span>
         </div>
-        <p>منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.</p>
+        <p data-i18n="footer.desc">منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.</p>
       </div>
       <div>
-        <h4>المنتج</h4>
+        <h4 data-i18n="footer.h1">المنتج</h4>
         <ul>
-          <li><a href="#features">المزايا</a></li>
-          <li><a href="#pricing">الباقات</a></li>
-          <li><a href="#how">كيف يعمل</a></li>
+          <li><a href="#features" data-i18n="nav.features">المزايا</a></li>
+          <li><a href="#pricing" data-i18n="nav.pricing">الباقات</a></li>
+          <li><a href="#how" data-i18n="nav.how">كيف يعمل</a></li>
         </ul>
       </div>
       <div>
-        <h4>الشركة</h4>
+        <h4 data-i18n="footer.h2">الشركة</h4>
         <ul>
-          <li><a href="#">من نحن</a></li>
-          <li><a href="#">تواصل معنا</a></li>
-          <li><a href="#">الوظائف</a></li>
+          <li><a href="#" data-i18n="footer.about">من نحن</a></li>
+          <li><a href="#" data-i18n="footer.contact">تواصل معنا</a></li>
+          <li><a href="#" data-i18n="footer.jobs">الوظائف</a></li>
         </ul>
       </div>
       <div>
-        <h4>الدعم</h4>
+        <h4 data-i18n="footer.h3">الدعم</h4>
         <ul>
-          <li><a href="#faq">الأسئلة الشائعة</a></li>
-          <li><a href="#">سياسة الخصوصية</a></li>
-          <li><a href="#">الشروط والأحكام</a></li>
+          <li><a href="#faq" data-i18n="nav.faq">الأسئلة الشائعة</a></li>
+          <li><a href="#" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
+          <li><a href="#" data-i18n="footer.terms">الشروط والأحكام</a></li>
         </ul>
       </div>
     </div>
-    <div class="footer-bottom">© 2026 بوت نبضة. جميع الحقوق محفوظة.</div>
+    <div class="footer-bottom" data-i18n="footer.copy">© 2026 بوت نبضة. جميع الحقوق محفوظة.</div>
   </div>
 </footer>
 
 <script>
+  var translations = {
+    ar: {
+      pageTitle: "بوت نبضة | منصّة بوت واتساب ذكي لأعمالك",
+      pageDesc: "بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.",
+      brandBot: 'بوت <span style="color:var(--wa-teal-dark)">نبضة</span>',
+      "nav.features": "المزايا", "nav.how": "كيف يعمل", "nav.pricing": "الباقات", "nav.faq": "الأسئلة الشائعة",
+      "nav.login": "تسجيل الدخول", "nav.start": "ابدأ الآن مجاناً",
+      "hero.eyebrow": "مدعوم بالذكاء الاصطناعي Claude",
+      "hero.title": 'بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت',
+      "hero.lead": "وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.",
+      "hero.ctaPrimary": "ابدأ تجربتك المجانية", "hero.ctaSecondary": "شاهد كيف يعمل",
+      "hero.trust1": "✅ متوافق مع WhatsApp Cloud API الرسمي", "hero.trust2": "✅ عربي أولاً بالكامل", "hero.trust3": "✅ إعداد خلال دقائق",
+      "phone.name": "متجر ورد", "phone.status": "نشط الآن • بوت نبضة",
+      "phone.msg1": "مرحباً، هل التوصيل متوفر للرياض؟", "phone.t1": "10:0٢ ص",
+      "phone.msg2": "أهلاً بك 🌿 نعم، نوصّل لجميع مناطق الرياض خلال 24 ساعة، والشحن مجاني فوق 200 ريال.", "phone.t2": "10:0٢ ص ✓✓",
+      "phone.msg3": "تمام، كيف أطلب؟", "phone.t3": "10:03 ص",
+      "phone.msg4": "تقدر تطلب مباشرة من متجرنا هنا: store.example.com 🛍️ وإذا احتجت مساعدة أنا موجود!", "phone.t4": "10:03 ص ✓✓",
+      "stats.sec": "ثوانٍ", "stats.l1": "متوسط زمن رد البوت", "stats.l2": "خدمة عملاء بلا توقف", "stats.l3": "تخصيص حسب نشاطك", "stats.l4": "محرك ذكاء اصطناعي متقدم",
+      "features.eyebrow": "المزايا", "features.title": "كل ما يحتاجه نشاطك في بوت واحد", "features.sub": "منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.",
+      "features.f1t": "ذكاء اصطناعي بمستوى Claude", "features.f1d": "ردود طبيعية ودقيقة تفهم سياق المحادثة، لا ردود آلية جامدة.",
+      "features.f2t": "هوية مخصصة لنشاطك", "features.f2d": "علّم البوت بأسلوب نشاطك، منتجاتك، وسياساتك — بلغتك أنت وبدون كود.",
+      "features.f3t": "يتذكر المحادثة", "features.f3d": "ذاكرة سياق لكل عميل، فما يفقد الخيط لو رجع يسأل بعد شوي.",
+      "features.f4t": "عربي أولاً بالكامل", "features.f4d": "مبني من الصفر لدعم العربية ولهجاتها، وواجهة RTL كاملة.",
+      "features.f5t": "ربط رسمي وآمن", "features.f5d": "يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.",
+      "features.f6t": "سجل وتحليلات كاملة", "features.f6d": "راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.",
+      "how.eyebrow": "كيف يعمل", "how.title": "من التسجيل إلى أول رد تلقائي، بأربع خطوات",
+      "how.s1t": "سجّل نشاطك", "how.s1d": "أنشئ حسابك واختر الباقة المناسبة لحجم عملائك.",
+      "how.s2t": "اربط رقم واتساب", "how.s2d": "وصّل رقم نشاطك الرسمي عبر WhatsApp Cloud API بخطوات مبسّطة.",
+      "how.s3t": "خصّص تعليمات البوت", "how.s3d": "اكتب نبذة عن نشاطك، أسلوبك، والأسئلة الشائعة — بالعربي وبدون كود.",
+      "how.s4t": "البوت يشتغل لحاله", "how.s4d": "يرد على عملائك فوراً، ويحوّل لك أي محادثة تحتاج تدخّلك أنت.",
+      "pricing.eyebrow": "الباقات", "pricing.title": "باقة تناسب كل حجم نشاط", "pricing.sub": "اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.",
+      "pricing.perMonth": "ريال / شهرياً", "pricing.popular": "الأكثر طلباً",
+      "pricing.p1n": "أساسي", "pricing.p1d": "للمشاريع الناشئة والحسابات الشخصية", "pricing.p1limit": "حتى 1,000 رسالة شهرياً",
+      "pricing.p1f1": "رقم واتساب رسمي واحد", "pricing.p1f2": "بوت ذكاء اصطناعي مخصص", "pricing.p1f3": "ذاكرة محادثة لكل عميل", "pricing.p1f4": "سجل محادثات أساسي", "pricing.p1cta": "ابدأ بالأساسي",
+      "pricing.p2n": "احترافي", "pricing.p2d": "للأنشطة التجارية المتنامية", "pricing.p2limit": "حتى 5,000 رسالة شهرياً",
+      "pricing.p2f1": "كل مزايا الباقة الأساسية", "pricing.p2f2": "تخصيص متقدم لشخصية البوت", "pricing.p2f3": "تحليلات وتقارير استخدام", "pricing.p2f4": "دعم فني بأولوية", "pricing.p2cta": "ابدأ بالاحترافي",
+      "pricing.p3n": "مؤسسات", "pricing.p3d": "لسلاسل المتاجر والفرق الكبيرة", "pricing.p3limit": "حتى 20,000 رسالة شهرياً",
+      "pricing.p3f1": "كل مزايا الباقة الاحترافية", "pricing.p3f2": "أرقام واتساب متعددة", "pricing.p3f3": "مدير حساب مخصص", "pricing.p3f4": "تكاملات مخصصة عند الطلب", "pricing.p3cta": "تواصل معنا",
+      "faq.eyebrow": "الأسئلة الشائعة", "faq.title": "عندك سؤال؟ عندنا جواب",
+      "faq.q1": "هل أحتاج رقم واتساب منفصل عن رقمي الحالي؟", "faq.a1": "نعم، يفضّل ربط رقم مخصص لنشاطك عبر WhatsApp Business Cloud API الرسمي من Meta، حتى يبقى رقمك الشخصي منفصلاً تماماً.",
+      "faq.q2": "هل بيانات عملائي ومحادثاتي آمنة؟", "faq.a2": "كل المحادثات مشفّرة وتُخزّن في قاعدة بيانات خاصة بنشاطك فقط، ولا نشاركها مع أي طرف ثالث.",
+      "faq.q3": "هل يفهم البوت اللهجات الخليجية؟", "faq.a3": "نعم، البوت مبني على نموذج Claude ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.",
+      "faq.q4": "هل فيه فترة تجريبية مجانية؟", "faq.a4": "نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.",
+      "faq.q5": "هل أقدر ألغي اشتراكي في أي وقت؟", "faq.a5": "بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.",
+      "ctaBanner.title": "جاهز تخلي واتساب نشاطك يشتغل لحاله؟", "ctaBanner.sub": "انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.", "ctaBanner.cta": "ابدأ تجربتك المجانية الآن",
+      "footer.brand": "بوت نبضة", "footer.desc": "منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.",
+      "footer.h1": "المنتج", "footer.h2": "الشركة", "footer.h3": "الدعم",
+      "footer.about": "من نحن", "footer.contact": "تواصل معنا", "footer.jobs": "الوظائف",
+      "footer.privacy": "سياسة الخصوصية", "footer.terms": "الشروط والأحكام", "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
+    },
+    en: {
+      pageTitle: "Nabda Bot | Smart WhatsApp Bot Platform for Your Business",
+      pageDesc: "Nabda Bot replies to your WhatsApp customers automatically with AI, around the clock, in your business's own voice.",
+      brandBot: 'Nabda <span style="color:var(--wa-teal-dark)">Bot</span>',
+      "nav.features": "Features", "nav.how": "How it works", "nav.pricing": "Pricing", "nav.faq": "FAQ",
+      "nav.login": "Log In", "nav.start": "Start Free",
+      "hero.eyebrow": "Powered by Claude AI",
+      "hero.title": 'A WhatsApp bot that replies to your customers <em>around the clock</em>, in your business\\'s own voice',
+      "hero.lead": "Connect your business WhatsApp number to Nabda, and customize your bot's personality and instructions in minutes. A smart bot that answers your customers automatically, and hands off important conversations to your team.",
+      "hero.ctaPrimary": "Start Your Free Trial", "hero.ctaSecondary": "See how it works",
+      "hero.trust1": "✅ Official WhatsApp Cloud API", "hero.trust2": "✅ Arabic-first, fully supported", "hero.trust3": "✅ Setup in minutes",
+      "phone.name": "Ward Store", "phone.status": "Active now • Nabda Bot",
+      "phone.msg1": "Hi, is delivery available to Riyadh?", "phone.t1": "10:02 AM",
+      "phone.msg2": "Welcome 🌿 Yes, we deliver to all Riyadh areas within 24 hours, free shipping over 200 SAR.", "phone.t2": "10:02 AM ✓✓",
+      "phone.msg3": "Great, how do I order?", "phone.t3": "10:03 AM",
+      "phone.msg4": "You can order directly from our store here: store.example.com 🛍️ Let me know if you need help!", "phone.t4": "10:03 AM ✓✓",
+      "stats.sec": "seconds", "stats.l1": "Average bot reply time", "stats.l2": "Non-stop customer service", "stats.l3": "Customized to your business", "stats.l4": "Advanced AI engine",
+      "features.eyebrow": "Features", "features.title": "Everything your business needs in one bot", "features.sub": "A complete platform connecting advanced AI to your business's official WhatsApp number.",
+      "features.f1t": "Claude-grade AI", "features.f1d": "Natural, accurate replies that understand context — no rigid scripted responses.",
+      "features.f2t": "A voice built for your brand", "features.f2d": "Teach the bot your tone, products, and policies — in your own words, no code needed.",
+      "features.f3t": "Remembers the conversation", "features.f3d": "Context memory per customer, so nothing gets lost if they come back later.",
+      "features.f4t": "Arabic-first, end to end", "features.f4d": "Built from the ground up to support Arabic and its dialects, with a full RTL interface.",
+      "features.f5t": "Official and secure connection", "features.f5d": "Runs on Meta's official WhatsApp Business Cloud API — no bans, no risk.",
+      "features.f6t": "Full logs and analytics", "features.f6d": "Track every conversation and monitor your monthly message usage transparently.",
+      "how.eyebrow": "How it works", "how.title": "From sign-up to your first automated reply, in four steps",
+      "how.s1t": "Sign up", "how.s1d": "Create your account and pick the plan that fits your customer volume.",
+      "how.s2t": "Connect your WhatsApp number", "how.s2d": "Link your official business number via the WhatsApp Cloud API in a few simple steps.",
+      "how.s3t": "Customize your bot's instructions", "how.s3d": "Write a brief about your business, tone, and FAQs — in plain language, no code.",
+      "how.s4t": "The bot runs on its own", "how.s4d": "It replies to your customers instantly, and hands off any conversation that needs you.",
+      "pricing.eyebrow": "Pricing", "pricing.title": "A plan for every business size", "pricing.sub": "Simple monthly subscription, no hidden fees — change or cancel your plan anytime.",
+      "pricing.perMonth": "SAR / month", "pricing.popular": "Most popular",
+      "pricing.p1n": "Basic", "pricing.p1d": "For startups and personal accounts", "pricing.p1limit": "Up to 1,000 messages / month",
+      "pricing.p1f1": "One official WhatsApp number", "pricing.p1f2": "Custom AI bot", "pricing.p1f3": "Per-customer conversation memory", "pricing.p1f4": "Basic conversation logs", "pricing.p1cta": "Start with Basic",
+      "pricing.p2n": "Professional", "pricing.p2d": "For growing businesses", "pricing.p2limit": "Up to 5,000 messages / month",
+      "pricing.p2f1": "Everything in Basic", "pricing.p2f2": "Advanced bot personality customization", "pricing.p2f3": "Usage analytics and reports", "pricing.p2f4": "Priority support", "pricing.p2cta": "Start with Pro",
+      "pricing.p3n": "Enterprise", "pricing.p3d": "For store chains and large teams", "pricing.p3limit": "Up to 20,000 messages / month",
+      "pricing.p3f1": "Everything in Pro", "pricing.p3f2": "Multiple WhatsApp numbers", "pricing.p3f3": "Dedicated account manager", "pricing.p3f4": "Custom integrations on request", "pricing.p3cta": "Contact us",
+      "faq.eyebrow": "FAQ", "faq.title": "Got a question? We've got answers",
+      "faq.q1": "Do I need a WhatsApp number separate from my current one?", "faq.a1": "Yes, we recommend connecting a dedicated number for your business via Meta's official WhatsApp Business Cloud API, so your personal number stays completely separate.",
+      "faq.q2": "Is my customer data and conversations secure?", "faq.a2": "All conversations are encrypted and stored in a database dedicated to your business only — we never share it with any third party.",
+      "faq.q3": "Does the bot understand Gulf Arabic dialects?", "faq.a3": "Yes, the bot is built on Claude and interacts naturally with both formal Arabic and everyday Gulf dialects.",
+      "faq.q4": "Is there a free trial?", "faq.a4": "Yes, you can try the platform for free before subscribing to any plan to make sure it fits your business.",
+      "faq.q5": "Can I cancel my subscription anytime?", "faq.a5": "Absolutely — no long contracts or cancellation fees. You can stop your subscription anytime from the dashboard.",
+      "ctaBanner.title": "Ready to put your business's WhatsApp on autopilot?", "ctaBanner.sub": "Join Nabda and start your free trial today — no credit card required.", "ctaBanner.cta": "Start Your Free Trial Now",
+      "footer.brand": "Nabda Bot", "footer.desc": "A Saudi platform for building smart WhatsApp bots for businesses across the Gulf.",
+      "footer.h1": "Product", "footer.h2": "Company", "footer.h3": "Support",
+      "footer.about": "About us", "footer.contact": "Contact us", "footer.jobs": "Careers",
+      "footer.privacy": "Privacy Policy", "footer.terms": "Terms of Service", "footer.copy": "© 2026 Nabda Bot. All rights reserved."
+    }
+  };
+
+  function applyLanguage(lang){
+    var t = translations[lang];
+    document.getElementById('htmlRoot').setAttribute('lang', lang);
+    document.getElementById('htmlRoot').setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.getElementById('pageTitle').textContent = t.pageTitle;
+    document.getElementById('pageDesc').setAttribute('content', t.pageDesc);
+    document.title = t.pageTitle;
+
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(t[key] !== undefined){ el.innerHTML = t[key]; }
+    });
+
+    var btnLabel = lang === 'ar' ? 'English' : 'العربية';
+    document.getElementById('langBtn').textContent = btnLabel;
+    document.getElementById('langBtnMobile').textContent = btnLabel;
+
+    localStorage.setItem('nabda_lang', lang);
+  }
+
+  function toggleLanguage(){
+    var current = document.getElementById('htmlRoot').getAttribute('lang') || 'ar';
+    applyLanguage(current === 'ar' ? 'en' : 'ar');
+  }
+
+  document.getElementById('langBtn').addEventListener('click', toggleLanguage);
+  document.getElementById('langBtnMobile').addEventListener('click', toggleLanguage);
+
+  var savedLang = localStorage.getItem('nabda_lang');
+  if(savedLang === 'en'){ applyLanguage('en'); }
+
   // mobile menu
   document.getElementById('burger').addEventListener('click', function(){
     document.getElementById('mobileMenu').classList.toggle('open');
