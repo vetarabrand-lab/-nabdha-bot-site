@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">الشروط والأحكام | بوت نبضة</title>
+<meta name="description" id="pageDesc" content="الشروط والأحكام الخاصة باستخدام منصة بوت نبضة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ font-family:'Tajawal','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.8; }
+  html[lang="en"] body{ font-family:'Inter','Segoe UI',sans-serif; }
+  a{text-decoration:none; color:var(--wa-teal-dark);}
+  a:hover{text-decoration:underline;}
+  ul,ol{margin:0 0 14px 0; padding-inline-start:22px;}
+  li{margin-bottom:6px; font-size:15px;}
+  .container{max-width:900px; margin:0 auto; padding:0 24px;}
+
+  header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; gap:14px;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{
+    width:38px; height:38px; border-radius:12px;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nav-right{display:flex; align-items:center; gap:14px;}
+  .back-link{font-weight:700; font-size:14px; color:var(--wa-teal-dark); display:flex; align-items:center; gap:6px;}
+  .lang-btn{
+    background:#fff; color:var(--wa-teal-dark); border:1.5px solid var(--border);
+    font-weight:800; font-size:13.5px; padding:8px 14px; border-radius:100px; cursor:pointer;
+  }
+  .lang-btn:hover{border-color:var(--wa-teal);}
+
+  .hero-strip{
+    background:linear-gradient(150deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green));
+    color:#fff; padding:56px 0 46px; text-align:center;
+  }
+  .hero-strip .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.16);
+    font-weight:700; font-size:13.5px; padding:7px 16px; border-radius:100px; margin-bottom:16px;
+  }
+  .hero-strip .dot{width:7px; height:7px; border-radius:50%; display:inline-block; background:#fff;}
+  .hero-strip h1{font-size:clamp(24px,4vw,34px); font-weight:900; margin-bottom:10px;}
+  .hero-strip p{color:rgba(255,255,255,.88); max-width:560px; margin:0 auto; font-size:15px;}
+
+  .article-wrap{margin:-40px auto 60px; position:relative; z-index:2;}
+  .article-card{
+    background:var(--card); border:1px solid var(--border); border-radius:24px;
+    box-shadow:var(--shadow); padding:44px;
+  }
+  .updated{color:var(--muted); font-size:13px; margin-bottom:24px;}
+  .article-card h2{font-size:18px; font-weight:900; color:var(--wa-teal-dark); margin:28px 0 10px;}
+  .article-card h2:first-of-type{margin-top:0;}
+  .article-card p{color:var(--ink); font-size:15px; margin-bottom:12px;}
+
+  .mini-footer{text-align:center; padding:20px 0 40px; color:var(--muted); font-size:13px;}
+  .mini-footer .links{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-bottom:14px; font-weight:700;}
+  .mini-footer .links a{color:var(--wa-teal-dark);}
+
+  @media (max-width:720px){
+    .article-card{padding:28px 22px;}
+    .article-wrap{margin-top:-24px;}
+    .back-link span.txt{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span data-i18n="brandBot">بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+    </div>
+    <div class="nav-right">
+      <button class="lang-btn" id="langBtn">English</button>
+      <a class="back-link" href="index.html"><span data-i18n="backArrow">→</span> <span class="txt" data-i18n="backLink">الرجوع للرئيسية</span></a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero-strip">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> <span data-i18n="hero.eyebrow">الشروط والأحكام</span></div>
+    <h1 data-i18n="hero.title">شروط استخدام منصة نبضة</h1>
+    <p data-i18n="hero.sub">نص مبدئي يوضح شروط استخدامك لمنصة بوت نبضة، ويُحدّث دورياً مع نمو المنصة.</p>
+  </div>
+</section>
+
+<div class="article-wrap container">
+  <div class="article-card">
+    <div class="updated" data-i18n="updated">آخر تحديث: 13 أغسطس 2026</div>
+
+    <h2 data-i18n="s1.h">1. القبول بالشروط</h2>
+    <p data-i18n="s1.p">باستخدامك لمنصة بوت نبضة ("نبضة"، "المنصة") أو تسجيلك لحساب فيها، فإنك توافق على هذه الشروط والأحكام. إذا ما كنت موافق عليها، الرجاء عدم استخدام المنصة.</p>
+
+    <h2 data-i18n="s2.h">2. وصف الخدمة</h2>
+    <p data-i18n="s2.p">نبضة منصة تتيح لأصحاب الأنشطة التجارية ربط رقم واتساب نشاطهم ببوت ذكاء اصطناعي يرد على استفسارات العملاء تلقائياً حسب تعليمات يحددها صاحب النشاط، مع إمكانية متابعة المحادثات والرد اليدوي من لوحة التحكم.</p>
+
+    <h2 data-i18n="s3.h">3. الاشتراكات والدفع</h2>
+    <p data-i18n="s3.p">تُقدَّم خدمات نبضة عبر باقات اشتراك شهرية بأسعار وحدود رسائل موضحة في صفحة الباقات. يتجدد الاشتراك تلقائياً كل شهر ما لم يتم إلغاؤه، وتقدر تلغي اشتراكك في أي وقت من لوحة التحكم بدون رسوم إلغاء إضافية.</p>
+
+    <h2 data-i18n="s4.h">4. حساب المستخدم</h2>
+    <p data-i18n="s4.p">أنت مسؤول عن دقة البيانات اللي تزودنا فيها عند التسجيل، وعن الحفاظ على سرية بيانات دخولك للوحة التحكم. أي نشاط يصير من خلال حسابك يعتبر بمسؤوليتك.</p>
+
+    <h2 data-i18n="s5.h">5. الاستخدام المقبول</h2>
+    <ul>
+      <li data-i18n="s5.l1">يُمنع استخدام البوت لإرسال رسائل مزعجة أو غير مرغوب فيها (سبام).</li>
+      <li data-i18n="s5.l2">يُمنع استخدام المنصة لأي محتوى مخالف للأنظمة المعمول بها في المملكة العربية السعودية.</li>
+      <li data-i18n="s5.l3">يجب الالتزام بسياسات WhatsApp Business الرسمية من Meta عند استخدام الخدمة.</li>
+    </ul>
+
+    <h2 data-i18n="s6.h">6. الملكية الفكرية</h2>
+    <p data-i18n="s6.p">جميع حقوق الملكية الفكرية الخاصة بمنصة نبضة (التصميم، الكود، العلامة التجارية) مملوكة لنا. محتوى نشاطك التجاري وتعليماتك المخصصة للبوت تبقى ملكاً لك.</p>
+
+    <h2 data-i18n="s7.h">7. حدود المسؤولية</h2>
+    <p data-i18n="s7.p">نقدّم الخدمة "كما هي"، وقد تتأثر بتوفر خدمات أطراف ثالثة مثل WhatsApp Business Cloud API. لا نتحمل مسؤولية أي انقطاع أو خطأ ناتج عن هذه الخدمات الخارجية، ونبذل جهدنا لضمان استقرار المنصة قدر الإمكان.</p>
+
+    <h2 data-i18n="s8.h">8. إنهاء الخدمة</h2>
+    <p data-i18n="s8.p">يحق لنا تعليق أو إنهاء حسابك في حال مخالفة هذه الشروط. وتقدر أنت تلغي حسابك وتوقف اشتراكك في أي وقت من لوحة التحكم.</p>
+
+    <h2 data-i18n="s9.h">9. التعديلات على هذه الشروط</h2>
+    <p data-i18n="s9.p">قد نحدّث هذه الشروط من وقت لآخر. استمرارك في استخدام المنصة بعد أي تحديث يعتبر موافقة منك على الشروط الجديدة.</p>
+
+    <h2 data-i18n="s10.h">10. القانون الحاكم</h2>
+    <p data-i18n="s10.p">تخضع هذه الشروط وتُفسَّر وفقاً لأنظمة المملكة العربية السعودية.</p>
+
+    <h2 data-i18n="s11.h">11. تواصل معنا</h2>
+    <p data-i18n="s11.p">لأي استفسار يخص هذه الشروط، راسلنا على <a href="mailto:info@nabdh.online">info@nabdh.online</a>.</p>
+  </div>
+</div>
+
+<div class="mini-footer">
+  <div class="links">
+    <a href="index.html" data-i18n="link.home">الرئيسية</a>
+    <a href="about.html" data-i18n="link.about">من نحن</a>
+    <a href="contact.html" data-i18n="link.contact">تواصل معنا</a>
+    <a href="privacy.html" data-i18n="link.privacy">سياسة الخصوصية</a>
+    <a href="terms.html" data-i18n="link.terms">الشروط والأحكام</a>
+  </div>
+  <div data-i18n="footer.copy">© 2026 بوت نبضة. جميع الحقوق محفوظة.</div>
+</div>
+
+<script>
+  var translations = {
+    ar: {
+      pageTitle: "الشروط والأحكام | بوت نبضة",
+      pageDesc: "الشروط والأحكام الخاصة باستخدام منصة بوت نبضة.",
+      brandBot: "بوت <span style=\"color:var(--wa-teal-dark)\">نبضة</span>",
+      backArrow: "→",
+      backLink: "الرجوع للرئيسية",
+      "hero.eyebrow": "الشروط والأحكام",
+      "hero.title": "شروط استخدام منصة نبضة",
+      "hero.sub": "نص مبدئي يوضح شروط استخدامك لمنصة بوت نبضة، ويُحدّث دورياً مع نمو المنصة.",
+      "updated": "آخر تحديث: 13 أغسطس 2026",
+      "s1.h": "1. القبول بالشروط",
+      "s1.p": "باستخدامك لمنصة بوت نبضة (\"نبضة\"، \"المنصة\") أو تسجيلك لحساب فيها، فإنك توافق على هذه الشروط والأحكام. إذا ما كنت موافق عليها، الرجاء عدم استخدام المنصة.",
+      "s2.h": "2. وصف الخدمة",
+      "s2.p": "نبضة منصة تتيح لأصحاب الأنشطة التجارية ربط رقم واتساب نشاطهم ببوت ذكاء اصطناعي يرد على استفسارات العملاء تلقائياً حسب تعليمات يحددها صاحب النشاط، مع إمكانية متابعة المحادثات والرد اليدوي من لوحة التحكم.",
+      "s3.h": "3. الاشتراكات والدفع",
+      "s3.p": "تُقدَّم خدمات نبضة عبر باقات اشتراك شهرية بأسعار وحدود رسائل موضحة في صفحة الباقات. يتجدد الاشتراك تلقائياً كل شهر ما لم يتم إلغاؤه، وتقدر تلغي اشتراكك في أي وقت من لوحة التحكم بدون رسوم إلغاء إضافية.",
+      "s4.h": "4. حساب المستخدم",
+      "s4.p": "أنت مسؤول عن دقة البيانات اللي تزودنا فيها عند التسجيل، وعن الحفاظ على سرية بيانات دخولك للوحة التحكم. أي نشاط يصير من خلال حسابك يعتبر بمسؤوليتك.",
+      "s5.h": "5. الاستخدام المقبول",
+      "s5.l1": "يُمنع استخدام البوت لإرسال رسائل مزعجة أو غير مرغوب فيها (سبام).",
+      "s5.l2": "يُمنع استخدام المنصة لأي محتوى مخالف للأنظمة المعمول بها في المملكة العربية السعودية.",
+      "s5.l3": "يجب الالتزام بسياسات WhatsApp Business الرسمية من Meta عند استخدام الخدمة.",
+      "s6.h": "6. الملكية الفكرية",
+      "s6.p": "جميع حقوق الملكية الفكرية الخاصة بمنصة نبضة (التصميم، الكود، العلامة التجارية) مملوكة لنا. محتوى نشاطك التجاري وتعليماتك المخصصة للبوت تبقى ملكاً لك.",
+      "s7.h": "7. حدود المسؤولية",
+      "s7.p": "نقدّم الخدمة \"كما هي\"، وقد تتأثر بتوفر خدمات أطراف ثالثة مثل WhatsApp Business Cloud API. لا نتحمل مسؤولية أي انقطاع أو خطأ ناتج عن هذه الخدمات الخارجية، ونبذل جهدنا لضمان استقرار المنصة قدر الإمكان.",
+      "s8.h": "8. إنهاء الخدمة",
+      "s8.p": "يحق لنا تعليق أو إنهاء حسابك في حال مخالفة هذه الشروط. وتقدر أنت تلغي حسابك وتوقف اشتراكك في أي وقت من لوحة التحكم.",
+      "s9.h": "9. التعديلات على هذه الشروط",
+      "s9.p": "قد نحدّث هذه الشروط من وقت لآخر. استمرارك في استخدام المنصة بعد أي تحديث يعتبر موافقة منك على الشروط الجديدة.",
+      "s10.h": "10. القانون الحاكم",
+      "s10.p": "تخضع هذه الشروط وتُفسَّر وفقاً لأنظمة المملكة العربية السعودية.",
+      "s11.h": "11. تواصل معنا",
+      "s11.p": "لأي استفسار يخص هذه الشروط، راسلنا على <a href=\"mailto:info@nabdh.online\">info@nabdh.online</a>.",
+      "link.home": "الرئيسية",
+      "link.about": "من نحن",
+      "link.contact": "تواصل معنا",
+      "link.privacy": "سياسة الخصوصية",
+      "link.terms": "الشروط والأحكام",
+      "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
+    },
+    en: {
+      pageTitle: "Terms of Service | Nabda Bot",
+      pageDesc: "The Terms of Service for using the Nabda Bot platform.",
+      brandBot: "Nabda <span style=\"color:var(--wa-teal-dark)\">Bot</span>",
+      backArrow: "←",
+      backLink: "Back to Home",
+      "hero.eyebrow": "Terms of Service",
+      "hero.title": "Terms of using the Nabda platform",
+      "hero.sub": "An initial policy explaining the terms of using the Nabda Bot platform, updated periodically as the platform grows.",
+      "updated": "Last updated: August 13, 2026",
+      "s1.h": "1. Acceptance of Terms",
+      "s1.p": "By using the Nabda Bot platform (\"Nabda\", \"the Platform\") or registering an account, you agree to these Terms of Service. If you do not agree, please do not use the platform.",
+      "s2.h": "2. Service Description",
+      "s2.p": "Nabda is a platform that allows business owners to connect their business WhatsApp number to an AI bot that automatically replies to customer inquiries based on instructions set by the business owner, with the ability to monitor conversations and reply manually from the dashboard.",
+      "s3.h": "3. Subscriptions and Payment",
+      "s3.p": "Nabda services are offered through monthly subscription plans with prices and message limits shown on the pricing page. The subscription renews automatically each month unless cancelled, and you can cancel your subscription at any time from the dashboard with no additional cancellation fees.",
+      "s4.h": "4. User Account",
+      "s4.p": "You are responsible for the accuracy of the information you provide during registration, and for keeping your dashboard login credentials confidential. Any activity that occurs through your account is your responsibility.",
+      "s5.h": "5. Acceptable Use",
+      "s5.l1": "Using the bot to send spam or unsolicited messages is prohibited.",
+      "s5.l2": "Using the platform for any content that violates applicable regulations in the Kingdom of Saudi Arabia is prohibited.",
+      "s5.l3": "You must comply with Meta's official WhatsApp Business policies when using the service.",
+      "s6.h": "6. Intellectual Property",
+      "s6.p": "All intellectual property rights related to the Nabda platform (design, code, brand) are owned by us. Your business content and the custom instructions you provide for the bot remain your property.",
+      "s7.h": "7. Limitation of Liability",
+      "s7.p": "We provide the service \"as is\", and it may be affected by the availability of third-party services such as the WhatsApp Business Cloud API. We are not liable for any interruption or error caused by these external services, and we work to keep the platform as stable as possible.",
+      "s8.h": "8. Termination",
+      "s8.p": "We reserve the right to suspend or terminate your account if you violate these terms. You may also cancel your account and stop your subscription at any time from the dashboard.",
+      "s9.h": "9. Changes to These Terms",
+      "s9.p": "We may update these terms from time to time. Continuing to use the platform after any update constitutes your acceptance of the new terms.",
+      "s10.h": "10. Governing Law",
+      "s10.p": "These terms are governed by and interpreted in accordance with the laws of the Kingdom of Saudi Arabia.",
+      "s11.h": "11. Contact Us",
+      "s11.p": "For any question about these terms, email us at <a href=\"mailto:info@nabdh.online\">info@nabdh.online</a>.",
+      "link.home": "Home",
+      "link.about": "About Us",
+      "link.contact": "Contact Us",
+      "link.privacy": "Privacy Policy",
+      "link.terms": "Terms of Service",
+      "footer.copy": "© 2026 Nabda Bot. All rights reserved."
+    }
+  };
+
+  function applyLanguage(lang){
+    var t = translations[lang];
+    document.getElementById('htmlRoot').setAttribute('lang', lang);
+    document.getElementById('htmlRoot').setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.getElementById('pageTitle').textContent = t.pageTitle;
+    document.getElementById('pageDesc').setAttribute('content', t.pageDesc);
+    document.title = t.pageTitle;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(t[key] !== undefined){ el.innerHTML = t[key]; }
+    });
+    document.getElementById('langBtn').textContent = lang === 'ar' ? 'English' : 'العربية';
+    localStorage.setItem('nabda_lang', lang);
+  }
+  function toggleLanguage(){
+    var current = document.getElementById('htmlRoot').getAttribute('lang') || 'ar';
+    applyLanguage(current === 'ar' ? 'en' : 'ar');
+  }
+  document.getElementById('langBtn').addEventListener('click', toggleLanguage);
+  var savedLang = localStorage.getItem('nabda_lang');
+  if(savedLang === 'en'){ applyLanguage('en'); }
+</script>
+
+</body>
+</html>

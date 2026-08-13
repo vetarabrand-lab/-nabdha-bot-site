@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">من نحن | بوت نبضة</title>
+<meta name="description" id="pageDesc" content="تعرّف على منصة بوت نبضة وقصتنا في بناء بوتات واتساب ذكية لأصحاب الأعمال في الخليج.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ font-family:'Tajawal','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.8; }
+  html[lang="en"] body{ font-family:'Inter','Segoe UI',sans-serif; }
+  a{text-decoration:none; color:inherit;}
+  ul,ol{list-style:none;}
+  .container{max-width:900px; margin:0 auto; padding:0 24px;}
+
+  header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; gap:14px;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{
+    width:38px; height:38px; border-radius:12px;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .nav-right{display:flex; align-items:center; gap:14px;}
+  .back-link{font-weight:700; font-size:14px; color:var(--wa-teal-dark); display:flex; align-items:center; gap:6px;}
+  .lang-btn{
+    background:#fff; color:var(--wa-teal-dark); border:1.5px solid var(--border);
+    font-weight:800; font-size:13.5px; padding:8px 14px; border-radius:100px; cursor:pointer;
+  }
+  .lang-btn:hover{border-color:var(--wa-teal);}
+
+  .hero-strip{
+    background:linear-gradient(150deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green));
+    color:#fff; padding:56px 0 46px; text-align:center;
+  }
+  .hero-strip .eyebrow{
+    display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.16);
+    font-weight:700; font-size:13.5px; padding:7px 16px; border-radius:100px; margin-bottom:16px;
+  }
+  .hero-strip .dot{width:7px; height:7px; border-radius:50%; display:inline-block; background:#fff;}
+  .hero-strip h1{font-size:clamp(26px,4vw,36px); font-weight:900; margin-bottom:10px;}
+  .hero-strip p{color:rgba(255,255,255,.88); max-width:560px; margin:0 auto; font-size:16px;}
+
+  .article-wrap{margin:-40px auto 60px; position:relative; z-index:2;}
+  .article-card{
+    background:var(--card); border:1px solid var(--border); border-radius:24px;
+    box-shadow:var(--shadow); padding:44px;
+  }
+  .article-card h2{font-size:20px; font-weight:900; color:var(--wa-teal-dark); margin:32px 0 12px;}
+  .article-card h2:first-child{margin-top:0;}
+  .article-card p{color:var(--ink); font-size:15.5px; margin-bottom:14px;}
+  .article-card p.lead{font-size:17px; color:var(--muted); margin-bottom:8px;}
+  .values-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:18px;}
+  .value-card{background:var(--bg); border:1px solid var(--border); border-radius:16px; padding:20px;}
+  .value-card .icon{font-size:26px; margin-bottom:10px;}
+  .value-card h3{font-size:15px; font-weight:800; margin-bottom:6px;}
+  .value-card p{font-size:13.5px; color:var(--muted); margin:0;}
+  .cta-row{margin-top:32px; padding-top:24px; border-top:1px solid var(--border); text-align:center;}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 28px; border-radius:100px; font-weight:700; font-size:15px;
+    background:var(--wa-green); color:#04210F; box-shadow:0 12px 24px -8px rgba(37,211,102,.55);
+  }
+
+  .mini-footer{text-align:center; padding:20px 0 40px; color:var(--muted); font-size:13px;}
+  .mini-footer .links{display:flex; flex-wrap:wrap; gap:16px; justify-content:center; margin-bottom:14px; font-weight:700;}
+  .mini-footer .links a{color:var(--wa-teal-dark);}
+  .mini-footer .links a:hover{text-decoration:underline;}
+
+  @media (max-width:720px){
+    .article-card{padding:28px 22px;}
+    .article-wrap{margin-top:-24px;}
+    .values-grid{grid-template-columns:1fr;}
+    .back-link span.txt{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span data-i18n="brandBot">بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+    </div>
+    <div class="nav-right">
+      <button class="lang-btn" id="langBtn">English</button>
+      <a class="back-link" href="index.html"><span data-i18n="backArrow">→</span> <span class="txt" data-i18n="backLink">الرجوع للرئيسية</span></a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero-strip">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span> <span data-i18n="hero.eyebrow">من نحن</span></div>
+    <h1 data-i18n="hero.title">نبني تجربة عملاء أذكى لأصحاب الأعمال في الخليج</h1>
+    <p data-i18n="hero.sub">بوت نبضة منصة سعودية تساعد أصحاب الأنشطة التجارية يردون على عملائهم في واتساب تلقائياً، بذكاء وبهوية نشاطهم.</p>
+  </div>
+</section>
+
+<div class="article-wrap container">
+  <div class="article-card">
+
+    <h2 data-i18n="s1.h">قصتنا</h2>
+    <p data-i18n="s1.p1">بدأت فكرة نبضة من ملاحظة بسيطة: أصحاب المتاجر والأنشطة الصغيرة والمتوسطة في الخليج يقضون ساعات طويلة يومياً يردون على نفس الأسئلة المتكررة على واتساب — مواعيد التوصيل، الأسعار، طرق الدفع — بدل ما يركزون على تطوير أعمالهم.</p>
+    <p data-i18n="s1.p2">فبنينا نبضة: بوت واتساب ذكي يفهم نشاطك، يتكلم بلهجتك، ويرد على عملائك فوراً على مدار الساعة، مع تحويل أي محادثة تحتاج تدخل بشري مباشرة لك.</p>
+
+    <h2 data-i18n="s2.h">مهمتنا</h2>
+    <p data-i18n="s2.p1">نساعد أصحاب الأعمال في السعودية والخليج يقدّمون خدمة عملاء احترافية بدون ما يحتاجون فريق دعم كبير أو ميزانية ضخمة — بحل بسيط، عربي بالكامل، وجاهز خلال دقائق.</p>
+
+    <h2 data-i18n="s3.h">ليش نبضة؟</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="icon">🇸🇦</div>
+        <h3 data-i18n="v1.t">عربي أولاً</h3>
+        <p data-i18n="v1.d">مبني من الصفر للعربية ولهجات الخليج، مو ترجمة حرفية من منتج أجنبي.</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">⚡</div>
+        <h3 data-i18n="v2.t">إعداد سريع</h3>
+        <p data-i18n="v2.d">تربط رقم واتساب نشاطك وتخصص تعليمات البوت خلال دقائق، بدون كود.</p>
+      </div>
+      <div class="value-card">
+        <div class="icon">🤝</div>
+        <h3 data-i18n="v3.t">دعم حقيقي</h3>
+        <p data-i18n="v3.d">فريقنا يتابع معك من أول يوم لربط رقمك وتخصيص البوت لنشاطك.</p>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a href="signup.html" class="btn" data-i18n="cta">جرّب نبضة مجاناً</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="mini-footer">
+  <div class="links">
+    <a href="index.html" data-i18n="link.home">الرئيسية</a>
+    <a href="about.html" data-i18n="link.about">من نحن</a>
+    <a href="contact.html" data-i18n="link.contact">تواصل معنا</a>
+    <a href="privacy.html" data-i18n="link.privacy">سياسة الخصوصية</a>
+    <a href="terms.html" data-i18n="link.terms">الشروط والأحكام</a>
+  </div>
+  <div data-i18n="footer.copy">© 2026 بوت نبضة. جميع الحقوق محفوظة.</div>
+</div>
+
+<script>
+  var translations = {
+    ar: {
+      pageTitle: "من نحن | بوت نبضة",
+      pageDesc: "تعرّف على منصة بوت نبضة وقصتنا في بناء بوتات واتساب ذكية لأصحاب الأعمال في الخليج.",
+      brandBot: "بوت <span style=\"color:var(--wa-teal-dark)\">نبضة</span>",
+      backArrow: "→",
+      backLink: "الرجوع للرئيسية",
+      "hero.eyebrow": "من نحن",
+      "hero.title": "نبني تجربة عملاء أذكى لأصحاب الأعمال في الخليج",
+      "hero.sub": "بوت نبضة منصة سعودية تساعد أصحاب الأنشطة التجارية يردون على عملائهم في واتساب تلقائياً، بذكاء وبهوية نشاطهم.",
+      "s1.h": "قصتنا",
+      "s1.p1": "بدأت فكرة نبضة من ملاحظة بسيطة: أصحاب المتاجر والأنشطة الصغيرة والمتوسطة في الخليج يقضون ساعات طويلة يومياً يردون على نفس الأسئلة المتكررة على واتساب — مواعيد التوصيل، الأسعار، طرق الدفع — بدل ما يركزون على تطوير أعمالهم.",
+      "s1.p2": "فبنينا نبضة: بوت واتساب ذكي يفهم نشاطك، يتكلم بلهجتك، ويرد على عملائك فوراً على مدار الساعة، مع تحويل أي محادثة تحتاج تدخل بشري مباشرة لك.",
+      "s2.h": "مهمتنا",
+      "s2.p1": "نساعد أصحاب الأعمال في السعودية والخليج يقدّمون خدمة عملاء احترافية بدون ما يحتاجون فريق دعم كبير أو ميزانية ضخمة — بحل بسيط، عربي بالكامل، وجاهز خلال دقائق.",
+      "s3.h": "ليش نبضة؟",
+      "v1.t": "عربي أولاً",
+      "v1.d": "مبني من الصفر للعربية ولهجات الخليج، مو ترجمة حرفية من منتج أجنبي.",
+      "v2.t": "إعداد سريع",
+      "v2.d": "تربط رقم واتساب نشاطك وتخصص تعليمات البوت خلال دقائق، بدون كود.",
+      "v3.t": "دعم حقيقي",
+      "v3.d": "فريقنا يتابع معك من أول يوم لربط رقمك وتخصيص البوت لنشاطك.",
+      "cta": "جرّب نبضة مجاناً",
+      "link.home": "الرئيسية",
+      "link.about": "من نحن",
+      "link.contact": "تواصل معنا",
+      "link.privacy": "سياسة الخصوصية",
+      "link.terms": "الشروط والأحكام",
+      "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
+    },
+    en: {
+      pageTitle: "About Us | Nabda Bot",
+      pageDesc: "Learn about Nabda Bot and our story building smart WhatsApp bots for businesses across the Gulf.",
+      brandBot: "Nabda <span style=\"color:var(--wa-teal-dark)\">Bot</span>",
+      backArrow: "←",
+      backLink: "Back to Home",
+      "hero.eyebrow": "About Us",
+      "hero.title": "Building a smarter customer experience for Gulf businesses",
+      "hero.sub": "Nabda is a Saudi platform that helps businesses reply to their WhatsApp customers automatically, intelligently, and in their own voice.",
+      "s1.h": "Our Story",
+      "s1.p1": "Nabda started from a simple observation: small and medium business owners across the Gulf spend hours every day answering the same repetitive WhatsApp questions, delivery times, prices, payment methods, instead of focusing on growing their business.",
+      "s1.p2": "So we built Nabda: a smart WhatsApp bot that understands your business, speaks your dialect, and replies to your customers instantly around the clock, while handing off any conversation that needs a human touch straight to you.",
+      "s2.h": "Our Mission",
+      "s2.p1": "We help business owners in Saudi Arabia and the Gulf deliver professional customer service without needing a large support team or a big budget, with a simple, fully Arabic, ready-in-minutes solution.",
+      "s3.h": "Why Nabda?",
+      "v1.t": "Arabic-first",
+      "v1.d": "Built from the ground up for Arabic and Gulf dialects, not a literal translation of a foreign product.",
+      "v2.t": "Fast setup",
+      "v2.d": "Connect your business WhatsApp number and customize your bot's instructions in minutes, no code needed.",
+      "v3.t": "Real support",
+      "v3.d": "Our team works with you from day one to connect your number and customize your bot.",
+      "cta": "Try Nabda for Free",
+      "link.home": "Home",
+      "link.about": "About Us",
+      "link.contact": "Contact Us",
+      "link.privacy": "Privacy Policy",
+      "link.terms": "Terms of Service",
+      "footer.copy": "© 2026 Nabda Bot. All rights reserved."
+    }
+  };
+
+  function applyLanguage(lang){
+    var t = translations[lang];
+    document.getElementById('htmlRoot').setAttribute('lang', lang);
+    document.getElementById('htmlRoot').setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+    document.getElementById('pageTitle').textContent = t.pageTitle;
+    document.getElementById('pageDesc').setAttribute('content', t.pageDesc);
+    document.title = t.pageTitle;
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var key = el.getAttribute('data-i18n');
+      if(t[key] !== undefined){ el.innerHTML = t[key]; }
+    });
+    document.getElementById('langBtn').textContent = lang === 'ar' ? 'English' : 'العربية';
+    localStorage.setItem('nabda_lang', lang);
+  }
+  function toggleLanguage(){
+    var current = document.getElementById('htmlRoot').getAttribute('lang') || 'ar';
+    applyLanguage(current === 'ar' ? 'en' : 'ar');
+  }
+  document.getElementById('langBtn').addEventListener('click', toggleLanguage);
+  var savedLang = localStorage.getItem('nabda_lang');
+  if(savedLang === 'en'){ applyLanguage('en'); }
+</script>
+
+</body>
+</html>
