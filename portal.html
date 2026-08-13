@@ -37,8 +37,8 @@
   .login-card p.sub{color:var(--muted); font-size:13.5px; text-align:center; margin-bottom:24px;}
   .field{margin-bottom:15px;}
   .field label{display:block; font-weight:700; font-size:13.5px; margin-bottom:6px;}
-  .field input, .field textarea{width:100%; border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit; font-size:14.5px; background:#FCFEFD;}
-  .field input:focus, .field textarea:focus{outline:none; border-color:var(--wa-teal);}
+  .field input, .field textarea, .field select{width:100%; border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit; font-size:14.5px; background:#FCFEFD;}
+  .field input:focus, .field textarea:focus, .field select:focus{outline:none; border-color:var(--wa-teal);}
   .primary-btn{width:100%; padding:13px; border:none; border-radius:100px; background:var(--wa-green); color:#04210F; font-weight:800; font-size:15px; cursor:pointer; box-shadow:0 12px 24px -8px rgba(37,211,102,.55);}
   .primary-btn:disabled{opacity:.6; cursor:not-allowed;}
   .alert-box{border-radius:10px; padding:11px 14px; font-size:13px; margin-bottom:14px; display:none;}
@@ -71,7 +71,7 @@
   .stat-card .n{font-size:22px; font-weight:900; color:var(--wa-teal-dark);}
   .stat-card .l{color:var(--muted); font-size:12.5px; font-weight:600; margin-top:2px;}
 
-  .tabs{display:flex; gap:8px; margin-bottom:16px;}
+  .tabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .tab-btn{background:#fff; border:1.5px solid var(--border); border-radius:100px; padding:9px 18px; font-weight:700; font-size:13.5px; cursor:pointer; color:var(--muted);}
   .tab-btn.active{background:var(--wa-teal-dark); color:#fff; border-color:var(--wa-teal-dark);}
 
@@ -138,10 +138,25 @@
   .new-ticket-btn{background:var(--wa-teal-dark); color:#fff; border:none; border-radius:100px; padding:10px 20px; font-weight:700; font-size:13.5px; cursor:pointer;}
   .new-ticket-btn:hover{background:var(--wa-teal);}
 
+  /* broadcast */
+  .campaign-list{display:flex; flex-direction:column; gap:12px;}
+  .campaign-card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px;}
+  .campaign-card .ctop{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px;}
+  .campaign-card .cname{font-weight:800; font-size:14.5px;}
+  .campaign-card .cmeta{color:var(--muted); font-size:12.5px; display:flex; gap:14px; flex-wrap:wrap;}
+  .campaign-card .cmeta b{color:var(--ink);}
+  .status-badge.sending{background:rgba(184,134,11,.13); color:var(--warn);}
+  .status-badge.completed{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.failed{background:rgba(209,67,67,.12); color:var(--danger);}
+  .helper-text{color:var(--muted); font-size:12px; margin-top:5px; line-height:1.5;}
+  .radio-row{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
+  .radio-row label{display:flex; align-items:center; gap:8px; font-weight:600; font-size:13.5px; cursor:pointer;}
+  .cost-note{background:#FFF8EC; border:1px solid #F0DCA6; color:#7A5A00; border-radius:10px; padding:10px 13px; font-size:12.5px; margin-bottom:16px; line-height:1.6;}
+
   /* modal */
   .modal-overlay{display:none; position:fixed; inset:0; background:rgba(11,26,23,.5); align-items:center; justify-content:center; z-index:200; padding:20px;}
   .modal-overlay.show{display:flex;}
-  .modal-card{background:#fff; border-radius:20px; padding:30px; width:100%; max-width:460px; box-shadow:var(--shadow);}
+  .modal-card{background:#fff; border-radius:20px; padding:30px; width:100%; max-width:460px; box-shadow:var(--shadow); max-height:90vh; overflow-y:auto;}
   .modal-card h3{font-size:18px; font-weight:900; margin-bottom:18px;}
   .modal-actions{display:flex; gap:10px; margin-top:20px;}
   .modal-actions button{flex:1; padding:12px; border-radius:100px; font-weight:800; font-size:14.5px; cursor:pointer; border:none;}
@@ -246,6 +261,7 @@
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="inbox">المحادثات</button>
+      <button class="tab-btn" data-tab="broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="support">الدعم الفني</button>
       <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
     </div>
@@ -272,6 +288,16 @@
             <div class="send-hint" id="sendHint"></div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panelBroadcast">
+      <div class="cost-note">⚠️ الرسائل الجماعية تُرسل كقوالب معتمدة من واتساب، وتُحتسب برسوم إضافية حسب نوع القالب بعد الحد المجاني الشهري لباقتك. تأكد أن القالب معتمد (Approved) في Meta Business Manager قبل الإرسال.</div>
+      <div class="support-top">
+        <button class="new-ticket-btn" id="newBroadcastBtn">+ حملة جديدة</button>
+      </div>
+      <div class="campaign-list" id="campaignList">
+        <div class="conv-empty">جاري تحميل الحملات...</div>
       </div>
     </div>
 
@@ -343,6 +369,42 @@
   </div>
 </div>
 
+<!-- MODAL: new broadcast campaign -->
+<div class="modal-overlay" id="newBroadcastModal">
+  <div class="modal-card">
+    <h3>حملة رسائل جماعية جديدة</h3>
+    <div class="alert-box error" id="newBroadcastError"></div>
+    <div class="field">
+      <label>اسم القالب المعتمد (Template Name)</label>
+      <input type="text" id="bcTemplateName" placeholder="مثال: promo_ramadan">
+      <div class="helper-text">لازم يكون القالب معتمد (Approved) مسبقاً من Meta Business Manager بنفس هذا الاسم بالضبط.</div>
+    </div>
+    <div class="field">
+      <label>رمز لغة القالب</label>
+      <input type="text" id="bcTemplateLang" placeholder="ar" value="ar">
+      <div class="helper-text">نفس رمز اللغة اللي اخترته وقت إنشاء القالب في Meta (مثال: ar أو en_US).</div>
+    </div>
+    <div class="field">
+      <label>نص المتغير الأول (اختياري)</label>
+      <input type="text" id="bcVariable1" placeholder="مثال: خصم 20% لفترة محدودة">
+      <div class="helper-text">لو القالب يحتوي متغير مثل {{1}}، اكتب هنا القيمة اللي بترسل لكل المستلمين.</div>
+    </div>
+    <div class="field">
+      <label>المستلمون</label>
+      <div class="radio-row">
+        <label><input type="radio" name="bcRecipients" value="all" checked> كل العملاء اللي راسلوا بوتك من قبل</label>
+        <label><input type="radio" name="bcRecipients" value="custom"> أرقام محددة</label>
+      </div>
+      <textarea id="bcCustomNumbers" style="display:none; min-height:90px;" placeholder="رقم واتساب بكل سطر، مثال:&#10;966501234567&#10;966559876543"></textarea>
+      <div class="helper-text">الحد الأقصى 100 رقم بكل حملة حالياً.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="newBroadcastCancelBtn">إلغاء</button>
+      <button class="modal-confirm" id="newBroadcastConfirmBtn">إرسال الحملة</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
@@ -361,11 +423,18 @@
     closed: 'تم الحل'
   };
 
+  const campaignStatusLabels = {
+    sending: 'جاري الإرسال',
+    completed: 'مكتملة',
+    failed: 'فشلت'
+  };
+
   let myClient = null;
   let conversations = {};
   let activePhone = null;
   let myTickets = [];
   let activeTicketId = null;
+  let myCampaigns = [];
 
   // اسم العميل النهائي ونص رسائل واتساب تجي من WhatsApp API (يتحكم فيها الطرف الآخر بالمحادثة)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في بوابة صاحب النشاط
@@ -496,7 +565,7 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport' };
+      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
     });
   });
@@ -574,6 +643,7 @@
 
     renderConvList();
     loadTickets();
+    loadCampaigns();
   }
 
   function renderConvList(){
@@ -895,6 +965,140 @@
     document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
     document.querySelector('.tab-btn[data-tab="support"]').classList.add('active');
     document.getElementById('panelSupport').classList.add('active');
+  });
+
+  /* ---------- broadcast campaigns (client side) ---------- */
+  async function loadCampaigns(){
+    if(!myClient){ return; }
+    const { data, error } = await supabaseClient
+      .from('broadcast_campaigns')
+      .select('id, template_name, template_language, status, total_recipients, sent_count, failed_count, created_at')
+      .eq('client_id', myClient.id)
+      .order('created_at', { ascending: false });
+
+    if(error){
+      document.getElementById('campaignList').innerHTML = '<div class="conv-empty">تعذّر تحميل الحملات، حدّث الصفحة.</div>';
+      return;
+    }
+    myCampaigns = data || [];
+    renderCampaignList();
+  }
+
+  function renderCampaignList(){
+    const list = document.getElementById('campaignList');
+    if(myCampaigns.length === 0){
+      list.innerHTML = '<div class="conv-empty">ما فيه حملات بعد. اضغط "+ حملة جديدة" لإرسال أول رسالة جماعية.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    myCampaigns.forEach(function(c){
+      const dateStr = new Date(c.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const div = document.createElement('div');
+      div.className = 'campaign-card';
+      div.innerHTML =
+        '<div class="ctop"><span class="cname">' + escapeHtml(c.template_name) + '</span><span class="status-badge ' + c.status + '">' + campaignStatusLabels[c.status] + '</span></div>' +
+        '<div class="cmeta">' +
+          '<span>📅 ' + dateStr + '</span>' +
+          '<span>👥 <b>' + c.total_recipients + '</b> مستلم</span>' +
+          '<span>✅ <b>' + c.sent_count + '</b> تم الإرسال</span>' +
+          '<span>❌ <b>' + c.failed_count + '</b> فشل</span>' +
+        '</div>';
+      list.appendChild(div);
+    });
+  }
+
+  const newBroadcastModal = document.getElementById('newBroadcastModal');
+
+  document.getElementById('newBroadcastBtn').addEventListener('click', function(){
+    document.getElementById('bcTemplateName').value = '';
+    document.getElementById('bcTemplateLang').value = 'ar';
+    document.getElementById('bcVariable1').value = '';
+    document.getElementById('bcCustomNumbers').value = '';
+    document.querySelector('input[name="bcRecipients"][value="all"]').checked = true;
+    document.getElementById('bcCustomNumbers').style.display = 'none';
+    document.getElementById('newBroadcastError').style.display = 'none';
+    newBroadcastModal.classList.add('show');
+  });
+
+  document.getElementById('newBroadcastCancelBtn').addEventListener('click', function(){
+    newBroadcastModal.classList.remove('show');
+  });
+
+  newBroadcastModal.addEventListener('click', function(e){
+    if(e.target === newBroadcastModal){ newBroadcastModal.classList.remove('show'); }
+  });
+
+  document.querySelectorAll('input[name="bcRecipients"]').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.getElementById('bcCustomNumbers').style.display = (this.value === 'custom') ? 'block' : 'none';
+    });
+  });
+
+  document.getElementById('newBroadcastConfirmBtn').addEventListener('click', async function(){
+    const templateName = document.getElementById('bcTemplateName').value.trim();
+    const templateLang = document.getElementById('bcTemplateLang').value.trim() || 'ar';
+    const variable1 = document.getElementById('bcVariable1').value.trim();
+    const recipientsMode = document.querySelector('input[name="bcRecipients"]:checked').value;
+    const errBox = document.getElementById('newBroadcastError');
+    errBox.style.display = 'none';
+
+    if(!templateName){
+      errBox.textContent = 'الرجاء كتابة اسم القالب المعتمد.';
+      errBox.style.display = 'block';
+      return;
+    }
+    if(!myClient){ return; }
+
+    let recipients = 'all';
+    if(recipientsMode === 'custom'){
+      const raw = document.getElementById('bcCustomNumbers').value.trim();
+      recipients = raw.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+      if(recipients.length === 0){
+        errBox.textContent = 'الرجاء كتابة رقم واحد على الأقل.';
+        errBox.style.display = 'block';
+        return;
+      }
+    }
+
+    const btn = document.getElementById('newBroadcastConfirmBtn');
+    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/send-whatsapp-broadcast', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          client_id: myClient.id,
+          template_name: templateName,
+          template_language: templateLang,
+          variable_1: variable1,
+          recipients: recipients
+        })
+      });
+      const json = await res.json();
+
+      btn.disabled = false; btn.textContent = 'إرسال الحملة';
+
+      if(!res.ok){
+        errBox.textContent = json.error || 'تعذّر إرسال الحملة.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      newBroadcastModal.classList.remove('show');
+      await loadCampaigns();
+      alert('تم إرسال الحملة: ' + json.sent + ' نجح، ' + json.failed + ' فشل، من أصل ' + json.total + '.');
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'إرسال الحملة';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
+    }
   });
 </script>
 
