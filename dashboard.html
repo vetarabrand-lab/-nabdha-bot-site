@@ -438,6 +438,17 @@
   let allTickets = [];
   let activeAdminTicketId = null;
 
+  // بيانات النشاط/البريد/الرسائل تجي أصلاً من نماذج عامة (تسجيل مشتركين جدد، رسائل واتساب)
+  // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في لوحة الإدارة
+  function escapeHtml(str){
+    return String(str === null || str === undefined ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function showScreen(name){
     loginScreen.style.display = 'none';
     forgotScreen.style.display = 'none';
@@ -629,12 +640,16 @@
     rows.forEach(function(c){
       const tr = document.createElement('tr');
       const dateStr = new Date(c.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
-      const planName = plansMap[c.plan_id] || '—';
+      const planName = escapeHtml(plansMap[c.plan_id] || '—');
+      const bizNameSafe = escapeHtml(c.business_name_ar || c.business_name || '—');
+      const bizNameEnSafe = escapeHtml(c.business_name || '');
+      const emailSafe = escapeHtml(c.owner_email || '—');
+      const phoneSafe = escapeHtml(c.owner_phone || '—');
 
       tr.innerHTML =
-        '<td><div class="biz-name">' + (c.business_name_ar || c.business_name || '—') + '</div>' +
-          (c.business_name && c.business_name !== c.business_name_ar ? '<div class="biz-sub">' + c.business_name + '</div>' : '') + '</td>' +
-        '<td><div>' + (c.owner_email || '—') + '</div><div class="biz-sub">' + (c.owner_phone || '—') + '</div></td>' +
+        '<td><div class="biz-name">' + bizNameSafe + '</div>' +
+          (c.business_name && c.business_name !== c.business_name_ar ? '<div class="biz-sub">' + bizNameEnSafe + '</div>' : '') + '</td>' +
+        '<td><div>' + emailSafe + '</div><div class="biz-sub">' + phoneSafe + '</div></td>' +
         '<td>' + planName + '</td>' +
         '<td></td>' +
         '<td></td>' +
@@ -727,12 +742,13 @@
     }
     list.innerHTML = '';
     allTickets.forEach(function(t){
-      const bizName = t.clients ? (t.clients.business_name_ar || t.clients.business_name || '—') : '—';
+      const bizName = escapeHtml(t.clients ? (t.clients.business_name_ar || t.clients.business_name || '—') : '—');
+      const subjectSafe = escapeHtml(t.subject);
       const dateStr = new Date(t.updated_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric' });
       const div = document.createElement('div');
       div.className = 'ticket-item' + (t.id === activeAdminTicketId ? ' active' : '');
       div.innerHTML =
-        '<div class="tsubject">' + t.subject.replace(/</g,'&lt;') + '</div>' +
+        '<div class="tsubject">' + subjectSafe + '</div>' +
         '<div class="biz-sub">' + bizName + '</div>' +
         '<div class="tmeta"><span class="badge ' + t.status + '">' + ticketStatusLabels[t.status] + '</span><span class="biz-sub">' + dateStr + '</span></div>';
       div.addEventListener('click', function(){
@@ -768,7 +784,7 @@
       const b = document.createElement('div');
       b.className = 'bubble ' + (m.sender_type === 'admin' ? 'out' : 'in');
       const time = new Date(m.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-      b.innerHTML = m.message.replace(/</g,'&lt;') + '<span class="t">' + time + '</span>';
+      b.innerHTML = escapeHtml(m.message) + '<span class="t">' + time + '</span>';
       body.appendChild(b);
     });
     body.scrollTop = body.scrollHeight;
