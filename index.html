@@ -69,7 +69,6 @@
   }
   .lang-btn:hover{border-color:var(--wa-teal);}
 
-  /* ---------- NAV ---------- */
   header{
     position:sticky; top:0; z-index:100;
     background:rgba(246,250,248,.85); backdrop-filter:blur(10px);
@@ -92,7 +91,6 @@
   .mobile-menu.open{display:flex;}
   .mobile-lang-row{display:flex; justify-content:center; padding-top:6px;}
 
-  /* ---------- HERO ---------- */
   .hero{
     position:relative;
     background:linear-gradient(150deg, var(--wa-teal-dark) 0%, var(--wa-teal) 48%, var(--wa-green) 100%);
@@ -115,7 +113,6 @@
   .hero-trust{display:flex; flex-wrap:wrap; gap:26px; font-size:14px; color:rgba(255,255,255,.85);}
   .hero-trust li{display:flex; align-items:center; gap:8px; font-weight:600;}
 
-  /* phone mockup */
   .phone-wrap{display:flex; justify-content:center;}
   .phone{
     width:300px; background:#0B141A; border-radius:38px; padding:14px;
@@ -148,14 +145,12 @@
   .phone-inputbar .pill{flex:1; background:#2A3942; border-radius:100px; height:34px;}
   .phone-inputbar .mic{width:34px; height:34px; border-radius:50%; background:var(--wa-green); display:flex; align-items:center; justify-content:center;}
 
-  /* ---------- STATS ---------- */
   .stats{background:#fff; border-bottom:1px solid var(--border); border-top:1px solid var(--border);}
   .stats .container{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; padding:44px 24px;}
   .stat{text-align:center;}
   .stat b{display:block; font-size:32px; font-weight:900; color:var(--wa-teal-dark);}
   .stat span{color:var(--muted); font-size:14px; font-weight:600;}
 
-  /* ---------- FEATURES ---------- */
   .features-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
   .feature-card{
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
@@ -170,7 +165,6 @@
   .feature-card h3{font-size:18px; margin-bottom:8px;}
   .feature-card p{color:var(--muted); font-size:14.5px;}
 
-  /* ---------- HOW IT WORKS ---------- */
   .how{background:linear-gradient(180deg,#fff, var(--bg));}
   .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; counter-reset:step;}
   .step{
@@ -186,7 +180,6 @@
   .step-arrow{position:absolute; top:38px; inset-inline-start:-30px; color:var(--border); font-size:22px;}
   .step:first-child .step-arrow{display:none;}
 
-  /* ---------- PRICING ---------- */
   .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:stretch;}
   .price-card{
     background:var(--card); border:1.5px solid var(--border); border-radius:24px;
@@ -213,7 +206,6 @@
     display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px; font-weight:900;
   }
 
-  /* ---------- FAQ ---------- */
   .faq{max-width:760px; margin:0 auto;}
   .faq-item{background:var(--card); border:1px solid var(--border); border-radius:14px; margin-bottom:14px; overflow:hidden;}
   .faq-q{
@@ -225,7 +217,6 @@
   .faq-a{max-height:0; overflow:hidden; transition:max-height .3s ease;}
   .faq-a p{padding:0 24px 20px; color:var(--muted); font-size:14.5px;}
 
-  /* ---------- CTA BANNER ---------- */
   .cta-banner{
     background:linear-gradient(120deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green));
     border-radius:32px; padding:64px 40px; text-align:center; color:#fff;
@@ -234,7 +225,6 @@
   .cta-banner h2{font-size:clamp(24px,3.6vw,34px); margin-bottom:14px;}
   .cta-banner p{color:rgba(255,255,255,.88); margin-bottom:30px; font-size:17px;}
 
-  /* ---------- FOOTER ---------- */
   footer{background:#08201B; color:rgba(255,255,255,.7); padding:64px 0 28px;}
   .footer-grid{display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:36px; margin-bottom:44px;}
   .footer-brand p{margin-top:14px; font-size:14px; max-width:280px; color:rgba(255,255,255,.55);}
@@ -243,11 +233,9 @@
   footer ul li a:hover{color:#fff;}
   .footer-bottom{border-top:1px solid rgba(255,255,255,.1); padding-top:24px; text-align:center; font-size:13px; color:rgba(255,255,255,.45);}
 
-  /* ---------- REVEAL ---------- */
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease;}
   .reveal.show{opacity:1; transform:translateY(0);}
 
-  /* ---------- RESPONSIVE ---------- */
   @media (max-width:960px){
     .hero-grid{grid-template-columns:1fr; text-align:center;}
     .hero p.lead{margin-inline:auto;}
@@ -311,7 +299,6 @@
   </div>
 </header>
 
-<!-- HERO -->
 <section class="hero">
   <div class="container hero-grid">
     <div>
@@ -351,7 +338,6 @@
   </div>
 </section>
 
-<!-- STATS -->
 <section class="stats">
   <div class="container">
     <div class="stat"><b>&lt; 3 <span data-i18n="stats.sec">ثوانٍ</span></b><span data-i18n="stats.l1">متوسط زمن رد البوت</span></div>
@@ -361,7 +347,6 @@
   </div>
 </section>
 
-<!-- FEATURES -->
 <section class="section" id="features">
   <div class="container">
     <div class="section-head reveal">
@@ -404,7 +389,6 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section class="section how" id="how">
   <div class="container">
     <div class="section-head reveal">
@@ -440,7 +424,6 @@
   </div>
 </section>
 
-<!-- PRICING -->
 <section class="section" id="pricing">
   <div class="container">
     <div class="section-head reveal">
@@ -493,7 +476,6 @@
   </div>
 </section>
 
-<!-- FAQ -->
 <section class="section" id="faq">
   <div class="container">
     <div class="section-head reveal">
@@ -525,7 +507,6 @@
   </div>
 </section>
 
-<!-- CTA BANNER -->
 <div class="cta-banner reveal">
   <h2 data-i18n="ctaBanner.title">جاهز تخلي واتساب نشاطك يشتغل لحاله؟</h2>
   <p data-i18n="ctaBanner.sub">انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.</p>
@@ -534,7 +515,6 @@
 
 <div style="height:96px;"></div>
 
-<!-- FOOTER -->
 <footer>
   <div class="container">
     <div class="footer-grid">
@@ -581,100 +561,230 @@
     ar: {
       pageTitle: "بوت نبضة | منصّة بوت واتساب ذكي لأعمالك",
       pageDesc: "بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.",
-      brandBot: 'بوت <span style="color:var(--wa-teal-dark)">نبضة</span>',
-      "nav.features": "المزايا", "nav.how": "كيف يعمل", "nav.pricing": "الباقات", "nav.faq": "الأسئلة الشائعة",
-      "nav.login": "تسجيل الدخول", "nav.start": "ابدأ الآن مجاناً",
+      brandBot: "بوت <span style=\"color:var(--wa-teal-dark)\">نبضة</span>",
+      "nav.features": "المزايا",
+      "nav.how": "كيف يعمل",
+      "nav.pricing": "الباقات",
+      "nav.faq": "الأسئلة الشائعة",
+      "nav.login": "تسجيل الدخول",
+      "nav.start": "ابدأ الآن مجاناً",
       "hero.eyebrow": "مدعوم بالذكاء الاصطناعي Claude",
-      "hero.title": 'بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت',
+      "hero.title": "بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت",
       "hero.lead": "وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.",
-      "hero.ctaPrimary": "ابدأ تجربتك المجانية", "hero.ctaSecondary": "شاهد كيف يعمل",
-      "hero.trust1": "✅ متوافق مع WhatsApp Cloud API الرسمي", "hero.trust2": "✅ عربي أولاً بالكامل", "hero.trust3": "✅ إعداد خلال دقائق",
-      "phone.name": "متجر ورد", "phone.status": "نشط الآن • بوت نبضة",
-      "phone.msg1": "مرحباً، هل التوصيل متوفر للرياض؟", "phone.t1": "10:0٢ ص",
-      "phone.msg2": "أهلاً بك 🌿 نعم، نوصّل لجميع مناطق الرياض خلال 24 ساعة، والشحن مجاني فوق 200 ريال.", "phone.t2": "10:0٢ ص ✓✓",
-      "phone.msg3": "تمام، كيف أطلب؟", "phone.t3": "10:03 ص",
-      "phone.msg4": "تقدر تطلب مباشرة من متجرنا هنا: store.example.com 🛍️ وإذا احتجت مساعدة أنا موجود!", "phone.t4": "10:03 ص ✓✓",
-      "stats.sec": "ثوانٍ", "stats.l1": "متوسط زمن رد البوت", "stats.l2": "خدمة عملاء بلا توقف", "stats.l3": "تخصيص حسب نشاطك", "stats.l4": "محرك ذكاء اصطناعي متقدم",
-      "features.eyebrow": "المزايا", "features.title": "كل ما يحتاجه نشاطك في بوت واحد", "features.sub": "منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.",
-      "features.f1t": "ذكاء اصطناعي بمستوى Claude", "features.f1d": "ردود طبيعية ودقيقة تفهم سياق المحادثة، لا ردود آلية جامدة.",
-      "features.f2t": "هوية مخصصة لنشاطك", "features.f2d": "علّم البوت بأسلوب نشاطك، منتجاتك، وسياساتك — بلغتك أنت وبدون كود.",
-      "features.f3t": "يتذكر المحادثة", "features.f3d": "ذاكرة سياق لكل عميل، فما يفقد الخيط لو رجع يسأل بعد شوي.",
-      "features.f4t": "عربي أولاً بالكامل", "features.f4d": "مبني من الصفر لدعم العربية ولهجاتها، وواجهة RTL كاملة.",
-      "features.f5t": "ربط رسمي وآمن", "features.f5d": "يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.",
-      "features.f6t": "سجل وتحليلات كاملة", "features.f6d": "راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.",
-      "how.eyebrow": "كيف يعمل", "how.title": "من التسجيل إلى أول رد تلقائي، بأربع خطوات",
-      "how.s1t": "سجّل نشاطك", "how.s1d": "أنشئ حسابك واختر الباقة المناسبة لحجم عملائك.",
-      "how.s2t": "اربط رقم واتساب", "how.s2d": "وصّل رقم نشاطك الرسمي عبر WhatsApp Cloud API بخطوات مبسّطة.",
-      "how.s3t": "خصّص تعليمات البوت", "how.s3d": "اكتب نبذة عن نشاطك، أسلوبك، والأسئلة الشائعة — بالعربي وبدون كود.",
-      "how.s4t": "البوت يشتغل لحاله", "how.s4d": "يرد على عملائك فوراً، ويحوّل لك أي محادثة تحتاج تدخّلك أنت.",
-      "pricing.eyebrow": "الباقات", "pricing.title": "باقة تناسب كل حجم نشاط", "pricing.sub": "اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.",
-      "pricing.perMonth": "ريال / شهرياً", "pricing.popular": "الأكثر طلباً",
-      "pricing.p1n": "أساسي", "pricing.p1d": "للمشاريع الناشئة والحسابات الشخصية", "pricing.p1limit": "حتى 1,000 رسالة شهرياً",
-      "pricing.p1f1": "رقم واتساب رسمي واحد", "pricing.p1f2": "بوت ذكاء اصطناعي مخصص", "pricing.p1f3": "ذاكرة محادثة لكل عميل", "pricing.p1f4": "سجل محادثات أساسي", "pricing.p1cta": "ابدأ بالأساسي",
-      "pricing.p2n": "احترافي", "pricing.p2d": "للأنشطة التجارية المتنامية", "pricing.p2limit": "حتى 5,000 رسالة شهرياً",
-      "pricing.p2f1": "كل مزايا الباقة الأساسية", "pricing.p2f2": "تخصيص متقدم لشخصية البوت", "pricing.p2f3": "تحليلات وتقارير استخدام", "pricing.p2f4": "دعم فني بأولوية", "pricing.p2cta": "ابدأ بالاحترافي",
-      "pricing.p3n": "مؤسسات", "pricing.p3d": "لسلاسل المتاجر والفرق الكبيرة", "pricing.p3limit": "حتى 20,000 رسالة شهرياً",
-      "pricing.p3f1": "كل مزايا الباقة الاحترافية", "pricing.p3f2": "أرقام واتساب متعددة", "pricing.p3f3": "مدير حساب مخصص", "pricing.p3f4": "تكاملات مخصصة عند الطلب", "pricing.p3cta": "تواصل معنا",
-      "faq.eyebrow": "الأسئلة الشائعة", "faq.title": "عندك سؤال؟ عندنا جواب",
-      "faq.q1": "هل أحتاج رقم واتساب منفصل عن رقمي الحالي؟", "faq.a1": "نعم، يفضّل ربط رقم مخصص لنشاطك عبر WhatsApp Business Cloud API الرسمي من Meta، حتى يبقى رقمك الشخصي منفصلاً تماماً.",
-      "faq.q2": "هل بيانات عملائي ومحادثاتي آمنة؟", "faq.a2": "كل المحادثات مشفّرة وتُخزّن في قاعدة بيانات خاصة بنشاطك فقط، ولا نشاركها مع أي طرف ثالث.",
-      "faq.q3": "هل يفهم البوت اللهجات الخليجية؟", "faq.a3": "نعم، البوت مبني على نموذج Claude ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.",
-      "faq.q4": "هل فيه فترة تجريبية مجانية؟", "faq.a4": "نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.",
-      "faq.q5": "هل أقدر ألغي اشتراكي في أي وقت؟", "faq.a5": "بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.",
-      "ctaBanner.title": "جاهز تخلي واتساب نشاطك يشتغل لحاله؟", "ctaBanner.sub": "انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.", "ctaBanner.cta": "ابدأ تجربتك المجانية الآن",
-      "footer.brand": "بوت نبضة", "footer.desc": "منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.",
-      "footer.h1": "المنتج", "footer.h2": "الشركة", "footer.h3": "الدعم",
-      "footer.about": "من نحن", "footer.contact": "تواصل معنا", "footer.jobs": "الوظائف",
-      "footer.privacy": "سياسة الخصوصية", "footer.terms": "الشروط والأحكام", "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
+      "hero.ctaPrimary": "ابدأ تجربتك المجانية",
+      "hero.ctaSecondary": "شاهد كيف يعمل",
+      "hero.trust1": "✅ متوافق مع WhatsApp Cloud API الرسمي",
+      "hero.trust2": "✅ عربي أولاً بالكامل",
+      "hero.trust3": "✅ إعداد خلال دقائق",
+      "phone.name": "متجر ورد",
+      "phone.status": "نشط الآن • بوت نبضة",
+      "phone.msg1": "مرحباً، هل التوصيل متوفر للرياض؟",
+      "phone.t1": "10:0٢ ص",
+      "phone.msg2": "أهلاً بك 🌿 نعم، نوصّل لجميع مناطق الرياض خلال 24 ساعة، والشحن مجاني فوق 200 ريال.",
+      "phone.t2": "10:0٢ ص ✓✓",
+      "phone.msg3": "تمام، كيف أطلب؟",
+      "phone.t3": "10:03 ص",
+      "phone.msg4": "تقدر تطلب مباشرة من متجرنا هنا: store.example.com 🛍️ وإذا احتجت مساعدة أنا موجود!",
+      "phone.t4": "10:03 ص ✓✓",
+      "stats.sec": "ثوانٍ",
+      "stats.l1": "متوسط زمن رد البوت",
+      "stats.l2": "خدمة عملاء بلا توقف",
+      "stats.l3": "تخصيص حسب نشاطك",
+      "stats.l4": "محرك ذكاء اصطناعي متقدم",
+      "features.eyebrow": "المزايا",
+      "features.title": "كل ما يحتاجه نشاطك في بوت واحد",
+      "features.sub": "منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.",
+      "features.f1t": "ذكاء اصطناعي بمستوى Claude",
+      "features.f1d": "ردود طبيعية ودقيقة تفهم سياق المحادثة، لا ردود آلية جامدة.",
+      "features.f2t": "هوية مخصصة لنشاطك",
+      "features.f2d": "علّم البوت بأسلوب نشاطك، منتجاتك، وسياساتك — بلغتك أنت وبدون كود.",
+      "features.f3t": "يتذكر المحادثة",
+      "features.f3d": "ذاكرة سياق لكل عميل، فما يفقد الخيط لو رجع يسأل بعد شوي.",
+      "features.f4t": "عربي أولاً بالكامل",
+      "features.f4d": "مبني من الصفر لدعم العربية ولهجاتها، وواجهة RTL كاملة.",
+      "features.f5t": "ربط رسمي وآمن",
+      "features.f5d": "يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.",
+      "features.f6t": "سجل وتحليلات كاملة",
+      "features.f6d": "راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.",
+      "how.eyebrow": "كيف يعمل",
+      "how.title": "من التسجيل إلى أول رد تلقائي، بأربع خطوات",
+      "how.s1t": "سجّل نشاطك",
+      "how.s1d": "أنشئ حسابك واختر الباقة المناسبة لحجم عملائك.",
+      "how.s2t": "اربط رقم واتساب",
+      "how.s2d": "وصّل رقم نشاطك الرسمي عبر WhatsApp Cloud API بخطوات مبسّطة.",
+      "how.s3t": "خصّص تعليمات البوت",
+      "how.s3d": "اكتب نبذة عن نشاطك، أسلوبك، والأسئلة الشائعة — بالعربي وبدون كود.",
+      "how.s4t": "البوت يشتغل لحاله",
+      "how.s4d": "يرد على عملائك فوراً، ويحوّل لك أي محادثة تحتاج تدخّلك أنت.",
+      "pricing.eyebrow": "الباقات",
+      "pricing.title": "باقة تناسب كل حجم نشاط",
+      "pricing.sub": "اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.",
+      "pricing.perMonth": "ريال / شهرياً",
+      "pricing.popular": "الأكثر طلباً",
+      "pricing.p1n": "أساسي",
+      "pricing.p1d": "للمشاريع الناشئة والحسابات الشخصية",
+      "pricing.p1limit": "حتى 1,000 رسالة شهرياً",
+      "pricing.p1f1": "رقم واتساب رسمي واحد",
+      "pricing.p1f2": "بوت ذكاء اصطناعي مخصص",
+      "pricing.p1f3": "ذاكرة محادثة لكل عميل",
+      "pricing.p1f4": "سجل محادثات أساسي",
+      "pricing.p1cta": "ابدأ بالأساسي",
+      "pricing.p2n": "احترافي",
+      "pricing.p2d": "للأنشطة التجارية المتنامية",
+      "pricing.p2limit": "حتى 5,000 رسالة شهرياً",
+      "pricing.p2f1": "كل مزايا الباقة الأساسية",
+      "pricing.p2f2": "تخصيص متقدم لشخصية البوت",
+      "pricing.p2f3": "تحليلات وتقارير استخدام",
+      "pricing.p2f4": "دعم فني بأولوية",
+      "pricing.p2cta": "ابدأ بالاحترافي",
+      "pricing.p3n": "مؤسسات",
+      "pricing.p3d": "لسلاسل المتاجر والفرق الكبيرة",
+      "pricing.p3limit": "حتى 20,000 رسالة شهرياً",
+      "pricing.p3f1": "كل مزايا الباقة الاحترافية",
+      "pricing.p3f2": "أرقام واتساب متعددة",
+      "pricing.p3f3": "مدير حساب مخصص",
+      "pricing.p3f4": "تكاملات مخصصة عند الطلب",
+      "pricing.p3cta": "تواصل معنا",
+      "faq.eyebrow": "الأسئلة الشائعة",
+      "faq.title": "عندك سؤال؟ عندنا جواب",
+      "faq.q1": "هل أحتاج رقم واتساب منفصل عن رقمي الحالي؟",
+      "faq.a1": "نعم، يفضّل ربط رقم مخصص لنشاطك عبر WhatsApp Business Cloud API الرسمي من Meta، حتى يبقى رقمك الشخصي منفصلاً تماماً.",
+      "faq.q2": "هل بيانات عملائي ومحادثاتي آمنة؟",
+      "faq.a2": "كل المحادثات مشفّرة وتُخزّن في قاعدة بيانات خاصة بنشاطك فقط، ولا نشاركها مع أي طرف ثالث.",
+      "faq.q3": "هل يفهم البوت اللهجات الخليجية؟",
+      "faq.a3": "نعم، البوت مبني على نموذج Claude ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.",
+      "faq.q4": "هل فيه فترة تجريبية مجانية؟",
+      "faq.a4": "نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.",
+      "faq.q5": "هل أقدر ألغي اشتراكي في أي وقت؟",
+      "faq.a5": "بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.",
+      "ctaBanner.title": "جاهز تخلي واتساب نشاطك يشتغل لحاله؟",
+      "ctaBanner.sub": "انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.",
+      "ctaBanner.cta": "ابدأ تجربتك المجانية الآن",
+      "footer.brand": "بوت نبضة",
+      "footer.desc": "منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.",
+      "footer.h1": "المنتج",
+      "footer.h2": "الشركة",
+      "footer.h3": "الدعم",
+      "footer.about": "من نحن",
+      "footer.contact": "تواصل معنا",
+      "footer.jobs": "الوظائف",
+      "footer.privacy": "سياسة الخصوصية",
+      "footer.terms": "الشروط والأحكام",
+      "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
     },
     en: {
       pageTitle: "Nabda Bot | Smart WhatsApp Bot Platform for Your Business",
       pageDesc: "Nabda Bot replies to your WhatsApp customers automatically with AI, around the clock, in your business's own voice.",
-      brandBot: 'Nabda <span style="color:var(--wa-teal-dark)">Bot</span>',
-      "nav.features": "Features", "nav.how": "How it works", "nav.pricing": "Pricing", "nav.faq": "FAQ",
-      "nav.login": "Log In", "nav.start": "Start Free",
+      brandBot: "Nabda <span style=\"color:var(--wa-teal-dark)\">Bot</span>",
+      "nav.features": "Features",
+      "nav.how": "How it works",
+      "nav.pricing": "Pricing",
+      "nav.faq": "FAQ",
+      "nav.login": "Log In",
+      "nav.start": "Start Free",
       "hero.eyebrow": "Powered by Claude AI",
-      "hero.title": 'A WhatsApp bot that replies to your customers <em>around the clock</em>, in your business\\'s own voice',
+      "hero.title": "A WhatsApp bot that replies to your customers <em>around the clock</em>, in your business's own voice",
       "hero.lead": "Connect your business WhatsApp number to Nabda, and customize your bot's personality and instructions in minutes. A smart bot that answers your customers automatically, and hands off important conversations to your team.",
-      "hero.ctaPrimary": "Start Your Free Trial", "hero.ctaSecondary": "See how it works",
-      "hero.trust1": "✅ Official WhatsApp Cloud API", "hero.trust2": "✅ Arabic-first, fully supported", "hero.trust3": "✅ Setup in minutes",
-      "phone.name": "Ward Store", "phone.status": "Active now • Nabda Bot",
-      "phone.msg1": "Hi, is delivery available to Riyadh?", "phone.t1": "10:02 AM",
-      "phone.msg2": "Welcome 🌿 Yes, we deliver to all Riyadh areas within 24 hours, free shipping over 200 SAR.", "phone.t2": "10:02 AM ✓✓",
-      "phone.msg3": "Great, how do I order?", "phone.t3": "10:03 AM",
-      "phone.msg4": "You can order directly from our store here: store.example.com 🛍️ Let me know if you need help!", "phone.t4": "10:03 AM ✓✓",
-      "stats.sec": "seconds", "stats.l1": "Average bot reply time", "stats.l2": "Non-stop customer service", "stats.l3": "Customized to your business", "stats.l4": "Advanced AI engine",
-      "features.eyebrow": "Features", "features.title": "Everything your business needs in one bot", "features.sub": "A complete platform connecting advanced AI to your business's official WhatsApp number.",
-      "features.f1t": "Claude-grade AI", "features.f1d": "Natural, accurate replies that understand context — no rigid scripted responses.",
-      "features.f2t": "A voice built for your brand", "features.f2d": "Teach the bot your tone, products, and policies — in your own words, no code needed.",
-      "features.f3t": "Remembers the conversation", "features.f3d": "Context memory per customer, so nothing gets lost if they come back later.",
-      "features.f4t": "Arabic-first, end to end", "features.f4d": "Built from the ground up to support Arabic and its dialects, with a full RTL interface.",
-      "features.f5t": "Official and secure connection", "features.f5d": "Runs on Meta's official WhatsApp Business Cloud API — no bans, no risk.",
-      "features.f6t": "Full logs and analytics", "features.f6d": "Track every conversation and monitor your monthly message usage transparently.",
-      "how.eyebrow": "How it works", "how.title": "From sign-up to your first automated reply, in four steps",
-      "how.s1t": "Sign up", "how.s1d": "Create your account and pick the plan that fits your customer volume.",
-      "how.s2t": "Connect your WhatsApp number", "how.s2d": "Link your official business number via the WhatsApp Cloud API in a few simple steps.",
-      "how.s3t": "Customize your bot's instructions", "how.s3d": "Write a brief about your business, tone, and FAQs — in plain language, no code.",
-      "how.s4t": "The bot runs on its own", "how.s4d": "It replies to your customers instantly, and hands off any conversation that needs you.",
-      "pricing.eyebrow": "Pricing", "pricing.title": "A plan for every business size", "pricing.sub": "Simple monthly subscription, no hidden fees — change or cancel your plan anytime.",
-      "pricing.perMonth": "SAR / month", "pricing.popular": "Most popular",
-      "pricing.p1n": "Basic", "pricing.p1d": "For startups and personal accounts", "pricing.p1limit": "Up to 1,000 messages / month",
-      "pricing.p1f1": "One official WhatsApp number", "pricing.p1f2": "Custom AI bot", "pricing.p1f3": "Per-customer conversation memory", "pricing.p1f4": "Basic conversation logs", "pricing.p1cta": "Start with Basic",
-      "pricing.p2n": "Professional", "pricing.p2d": "For growing businesses", "pricing.p2limit": "Up to 5,000 messages / month",
-      "pricing.p2f1": "Everything in Basic", "pricing.p2f2": "Advanced bot personality customization", "pricing.p2f3": "Usage analytics and reports", "pricing.p2f4": "Priority support", "pricing.p2cta": "Start with Pro",
-      "pricing.p3n": "Enterprise", "pricing.p3d": "For store chains and large teams", "pricing.p3limit": "Up to 20,000 messages / month",
-      "pricing.p3f1": "Everything in Pro", "pricing.p3f2": "Multiple WhatsApp numbers", "pricing.p3f3": "Dedicated account manager", "pricing.p3f4": "Custom integrations on request", "pricing.p3cta": "Contact us",
-      "faq.eyebrow": "FAQ", "faq.title": "Got a question? We've got answers",
-      "faq.q1": "Do I need a WhatsApp number separate from my current one?", "faq.a1": "Yes, we recommend connecting a dedicated number for your business via Meta's official WhatsApp Business Cloud API, so your personal number stays completely separate.",
-      "faq.q2": "Is my customer data and conversations secure?", "faq.a2": "All conversations are encrypted and stored in a database dedicated to your business only — we never share it with any third party.",
-      "faq.q3": "Does the bot understand Gulf Arabic dialects?", "faq.a3": "Yes, the bot is built on Claude and interacts naturally with both formal Arabic and everyday Gulf dialects.",
-      "faq.q4": "Is there a free trial?", "faq.a4": "Yes, you can try the platform for free before subscribing to any plan to make sure it fits your business.",
-      "faq.q5": "Can I cancel my subscription anytime?", "faq.a5": "Absolutely — no long contracts or cancellation fees. You can stop your subscription anytime from the dashboard.",
-      "ctaBanner.title": "Ready to put your business's WhatsApp on autopilot?", "ctaBanner.sub": "Join Nabda and start your free trial today — no credit card required.", "ctaBanner.cta": "Start Your Free Trial Now",
-      "footer.brand": "Nabda Bot", "footer.desc": "A Saudi platform for building smart WhatsApp bots for businesses across the Gulf.",
-      "footer.h1": "Product", "footer.h2": "Company", "footer.h3": "Support",
-      "footer.about": "About us", "footer.contact": "Contact us", "footer.jobs": "Careers",
-      "footer.privacy": "Privacy Policy", "footer.terms": "Terms of Service", "footer.copy": "© 2026 Nabda Bot. All rights reserved."
+      "hero.ctaPrimary": "Start Your Free Trial",
+      "hero.ctaSecondary": "See how it works",
+      "hero.trust1": "✅ Official WhatsApp Cloud API",
+      "hero.trust2": "✅ Arabic-first, fully supported",
+      "hero.trust3": "✅ Setup in minutes",
+      "phone.name": "Ward Store",
+      "phone.status": "Active now • Nabda Bot",
+      "phone.msg1": "Hi, is delivery available to Riyadh?",
+      "phone.t1": "10:02 AM",
+      "phone.msg2": "Welcome 🌿 Yes, we deliver to all Riyadh areas within 24 hours, free shipping over 200 SAR.",
+      "phone.t2": "10:02 AM ✓✓",
+      "phone.msg3": "Great, how do I order?",
+      "phone.t3": "10:03 AM",
+      "phone.msg4": "You can order directly from our store here: store.example.com 🛍️ Let me know if you need help!",
+      "phone.t4": "10:03 AM ✓✓",
+      "stats.sec": "seconds",
+      "stats.l1": "Average bot reply time",
+      "stats.l2": "Non-stop customer service",
+      "stats.l3": "Customized to your business",
+      "stats.l4": "Advanced AI engine",
+      "features.eyebrow": "Features",
+      "features.title": "Everything your business needs in one bot",
+      "features.sub": "A complete platform connecting advanced AI to your business's official WhatsApp number.",
+      "features.f1t": "Claude-grade AI",
+      "features.f1d": "Natural, accurate replies that understand context, no rigid scripted responses.",
+      "features.f2t": "A voice built for your brand",
+      "features.f2d": "Teach the bot your tone, products, and policies, in your own words, no code needed.",
+      "features.f3t": "Remembers the conversation",
+      "features.f3d": "Context memory per customer, so nothing gets lost if they come back later.",
+      "features.f4t": "Arabic-first, end to end",
+      "features.f4d": "Built from the ground up to support Arabic and its dialects, with a full RTL interface.",
+      "features.f5t": "Official and secure connection",
+      "features.f5d": "Runs on Meta's official WhatsApp Business Cloud API, no bans, no risk.",
+      "features.f6t": "Full logs and analytics",
+      "features.f6d": "Track every conversation and monitor your monthly message usage transparently.",
+      "how.eyebrow": "How it works",
+      "how.title": "From sign-up to your first automated reply, in four steps",
+      "how.s1t": "Sign up",
+      "how.s1d": "Create your account and pick the plan that fits your customer volume.",
+      "how.s2t": "Connect your WhatsApp number",
+      "how.s2d": "Link your official business number via the WhatsApp Cloud API in a few simple steps.",
+      "how.s3t": "Customize your bot's instructions",
+      "how.s3d": "Write a brief about your business, tone, and FAQs, in plain language, no code.",
+      "how.s4t": "The bot runs on its own",
+      "how.s4d": "It replies to your customers instantly, and hands off any conversation that needs you.",
+      "pricing.eyebrow": "Pricing",
+      "pricing.title": "A plan for every business size",
+      "pricing.sub": "Simple monthly subscription, no hidden fees, change or cancel your plan anytime.",
+      "pricing.perMonth": "SAR / month",
+      "pricing.popular": "Most popular",
+      "pricing.p1n": "Basic",
+      "pricing.p1d": "For startups and personal accounts",
+      "pricing.p1limit": "Up to 1,000 messages / month",
+      "pricing.p1f1": "One official WhatsApp number",
+      "pricing.p1f2": "Custom AI bot",
+      "pricing.p1f3": "Per-customer conversation memory",
+      "pricing.p1f4": "Basic conversation logs",
+      "pricing.p1cta": "Start with Basic",
+      "pricing.p2n": "Professional",
+      "pricing.p2d": "For growing businesses",
+      "pricing.p2limit": "Up to 5,000 messages / month",
+      "pricing.p2f1": "Everything in Basic",
+      "pricing.p2f2": "Advanced bot personality customization",
+      "pricing.p2f3": "Usage analytics and reports",
+      "pricing.p2f4": "Priority support",
+      "pricing.p2cta": "Start with Pro",
+      "pricing.p3n": "Enterprise",
+      "pricing.p3d": "For store chains and large teams",
+      "pricing.p3limit": "Up to 20,000 messages / month",
+      "pricing.p3f1": "Everything in Pro",
+      "pricing.p3f2": "Multiple WhatsApp numbers",
+      "pricing.p3f3": "Dedicated account manager",
+      "pricing.p3f4": "Custom integrations on request",
+      "pricing.p3cta": "Contact us",
+      "faq.eyebrow": "FAQ",
+      "faq.title": "Got a question? We've got answers",
+      "faq.q1": "Do I need a WhatsApp number separate from my current one?",
+      "faq.a1": "Yes, we recommend connecting a dedicated number for your business via Meta's official WhatsApp Business Cloud API, so your personal number stays completely separate.",
+      "faq.q2": "Is my customer data and conversations secure?",
+      "faq.a2": "All conversations are encrypted and stored in a database dedicated to your business only, we never share it with any third party.",
+      "faq.q3": "Does the bot understand Gulf Arabic dialects?",
+      "faq.a3": "Yes, the bot is built on Claude and interacts naturally with both formal Arabic and everyday Gulf dialects.",
+      "faq.q4": "Is there a free trial?",
+      "faq.a4": "Yes, you can try the platform for free before subscribing to any plan to make sure it fits your business.",
+      "faq.q5": "Can I cancel my subscription anytime?",
+      "faq.a5": "Absolutely, no long contracts or cancellation fees. You can stop your subscription anytime from the dashboard.",
+      "ctaBanner.title": "Ready to put your business's WhatsApp on autopilot?",
+      "ctaBanner.sub": "Join Nabda and start your free trial today, no credit card required.",
+      "ctaBanner.cta": "Start Your Free Trial Now",
+      "footer.brand": "Nabda Bot",
+      "footer.desc": "A Saudi platform for building smart WhatsApp bots for businesses across the Gulf.",
+      "footer.h1": "Product",
+      "footer.h2": "Company",
+      "footer.h3": "Support",
+      "footer.about": "About us",
+      "footer.contact": "Contact us",
+      "footer.jobs": "Careers",
+      "footer.privacy": "Privacy Policy",
+      "footer.terms": "Terms of Service",
+      "footer.copy": "© 2026 Nabda Bot. All rights reserved."
     }
   };
 
@@ -709,7 +819,6 @@
   var savedLang = localStorage.getItem('nabda_lang');
   if(savedLang === 'en'){ applyLanguage('en'); }
 
-  // mobile menu
   document.getElementById('burger').addEventListener('click', function(){
     document.getElementById('mobileMenu').classList.toggle('open');
   });
@@ -717,7 +826,6 @@
     a.addEventListener('click', function(){ document.getElementById('mobileMenu').classList.remove('open'); });
   });
 
-  // faq accordion
   document.querySelectorAll('.faq-item').forEach(function(item){
     var q = item.querySelector('.faq-q');
     var a = item.querySelector('.faq-a');
@@ -734,7 +842,6 @@
     });
   });
 
-  // scroll reveal
   var revealEls = document.querySelectorAll('.reveal');
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(entry){

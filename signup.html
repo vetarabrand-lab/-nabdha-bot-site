@@ -36,7 +36,6 @@
   ul{list-style:none;}
   .container{max-width:900px; margin:0 auto; padding:0 24px;}
 
-  /* header (same identity as landing page) */
   header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
   nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; gap:14px;}
   .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
@@ -53,7 +52,6 @@
   }
   .lang-btn:hover{border-color:var(--wa-teal);}
 
-  /* hero strip */
   .hero-strip{
     background:linear-gradient(150deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green));
     color:#fff; padding:56px 0 46px; text-align:center;
@@ -66,7 +64,6 @@
   .hero-strip h1{font-size:clamp(26px,4vw,36px); font-weight:900; margin-bottom:10px;}
   .hero-strip p{color:rgba(255,255,255,.88); max-width:520px; margin:0 auto; font-size:16px;}
 
-  /* form card */
   .form-wrap{margin:-40px auto 80px; position:relative; z-index:2;}
   .form-card{
     background:var(--card); border:1px solid var(--border); border-radius:24px;
@@ -113,7 +110,6 @@
   .alert{border-radius:12px; padding:14px 16px; font-size:14px; margin-bottom:20px; display:none;}
   .alert.error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3; display:block;}
 
-  /* success state */
   .success-card{display:none; text-align:center; padding:20px 8px;}
   .success-icon{
     width:64px; height:64px; border-radius:50%; background:rgba(37,211,102,.15); color:var(--wa-green-dark);
@@ -214,7 +210,6 @@
       </div>
       <input type="hidden" id="selectedPlanId">
 
-      <!-- honeypot anti-spam -->
       <div class="honeypot">
         <label>اتركه فاضي</label>
         <input type="text" id="websiteHp" tabindex="-1" autocomplete="off">
@@ -251,14 +246,17 @@
     ar: {
       pageTitle: "سجّل نشاطك | بوت نبضة",
       pageDesc: "سجّل نشاطك التجاري في بوت نبضة وابدأ تجربتك مع بوت واتساب ذكي مخصص لك.",
-      brandBot: 'بوت <span style="color:var(--wa-teal-dark)">نبضة</span>',
-      backArrow: "→", backLink: "الرجوع للرئيسية",
+      brandBot: "بوت <span style=\"color:var(--wa-teal-dark)\">نبضة</span>",
+      backArrow: "→",
+      backLink: "الرجوع للرئيسية",
       "hero.eyebrow": "سجّل نشاطك",
       "hero.title": "خلّي بوت نبضة يشتغل لحساب نشاطك",
       "hero.sub": "عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.",
       "form.s1": "بيانات النشاط",
-      "form.bizNameAr": "اسم النشاط (بالعربي) *", "form.bizNameArPh": "مثال: متجر جُمان للبهارات",
-      "form.bizNameEn": "اسم النشاط (بالإنجليزي)", "form.bizNameEnPh": "Juman Spices",
+      "form.bizNameAr": "اسم النشاط (بالعربي) *",
+      "form.bizNameArPh": "مثال: متجر جُمان للبهارات",
+      "form.bizNameEn": "اسم النشاط (بالإنجليزي)",
+      "form.bizNameEnPh": "Juman Spices",
       "form.s2": "بيانات التواصل",
       "form.email": "البريد الإلكتروني *",
       "form.phone": "رقم جوالك (للتواصل معك) *",
@@ -268,7 +266,8 @@
       "form.prompt": "عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *",
       "form.promptPh": "مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال...",
       "form.promptHint": "هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.",
-      "form.welcome": "رسالة الترحيب الأولى (اختياري)", "form.welcomePh": "أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟",
+      "form.welcome": "رسالة الترحيب الأولى (اختياري)",
+      "form.welcomePh": "أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟",
       "form.s4": "اختر باقتك",
       "form.loadingPlans": "جاري تحميل الباقات...",
       "form.submit": "إرسال طلب التسجيل",
@@ -277,9 +276,11 @@
       "form.errorSubmit": "حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.",
       "form.submitting": "جاري الإرسال...",
       "form.plansError": "تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.",
-      "form.perMonth": "ريال/شهر", "form.upTo": "حتى", "form.msgWord": "رسالة",
+      "form.perMonth": "ريال/شهر",
+      "form.upTo": "حتى",
+      "form.msgWord": "رسالة",
       "success.title": "تم استلام تسجيلك بنجاح!",
-      "success.sub": 'شكراً لك، حسابك الآن بحالة "تجريبي". هذي الخطوات الجاية:',
+      "success.sub": "شكراً لك، حسابك الآن بحالة \"تجريبي\". هذي الخطوات الجاية:",
       "success.s1": "فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.",
       "success.s2": "نساعدك تربط رقم واتساب نشاطك عبر Meta.",
       "success.s3": "نفعّل اشتراكك بعد تأكيد الباقة والدفع.",
@@ -290,39 +291,45 @@
     en: {
       pageTitle: "Sign Up | Nabda Bot",
       pageDesc: "Sign up your business with Nabda Bot and start your trial with a smart, custom WhatsApp bot.",
-      brandBot: 'Nabda <span style="color:var(--wa-teal-dark)">Bot</span>',
-      backArrow: "←", backLink: "Back to Home",
+      brandBot: "Nabda <span style=\"color:var(--wa-teal-dark)\">Bot</span>",
+      backArrow: "←",
+      backLink: "Back to Home",
       "hero.eyebrow": "Sign Up Your Business",
       "hero.title": "Get Nabda Bot working for your business",
       "hero.sub": "Fill in the details below, and our team will reach out within 24 hours to connect your WhatsApp number and activate your subscription.",
       "form.s1": "Business Details",
-      "form.bizNameAr": "Business Name (Arabic) *", "form.bizNameArPh": "e.g. Juman Spices Store",
-      "form.bizNameEn": "Business Name (English)", "form.bizNameEnPh": "Juman Spices",
+      "form.bizNameAr": "Business Name (Arabic) *",
+      "form.bizNameArPh": "e.g. Juman Spices Store",
+      "form.bizNameEn": "Business Name (English)",
+      "form.bizNameEnPh": "Juman Spices",
       "form.s2": "Contact Details",
       "form.email": "Email Address *",
       "form.phone": "Your Phone Number (for us to reach you) *",
       "form.waNumber": "The business WhatsApp number you want to connect",
-      "form.waNumberHint": "If you don't have a number ready yet, leave this blank — our team will help you set one up.",
+      "form.waNumberHint": "If you do not have a number ready yet, leave this blank, our team will help you set one up.",
       "form.s3": "Bot Instructions",
       "form.prompt": "Tell us about your business (what you sell, shipping policy, common questions...) *",
       "form.promptPh": "e.g. We sell authentic spices and herbs through our online store on Zid. Shipping within Saudi Arabia takes 3-5 business days, free over 200 SAR...",
-      "form.promptHint": "This is the text the bot relies on to reply to your customers — the clearer it is, the more accurate the replies.",
-      "form.welcome": "First welcome message (optional)", "form.welcomePh": "Welcome to Juman Store 🌿 How can I help you?",
+      "form.promptHint": "This is the text the bot relies on to reply to your customers, the clearer it is, the more accurate the replies.",
+      "form.welcome": "First welcome message (optional)",
+      "form.welcomePh": "Welcome to Juman Store, how can I help you?",
       "form.s4": "Choose Your Plan",
       "form.loadingPlans": "Loading plans...",
       "form.submit": "Submit Sign-up Request",
-      "form.note": "By submitting, our team will reach out to complete setup and payment — no upfront commitment.",
+      "form.note": "By submitting, our team will reach out to complete setup and payment, no upfront commitment.",
       "form.errorRequired": "Please fill in all required fields (marked with *).",
       "form.errorSubmit": "Something went wrong while submitting your request. Please try again or contact us directly.",
       "form.submitting": "Submitting...",
-      "form.plansError": "Couldn't load plans. Refresh the page or contact us directly.",
-      "form.perMonth": "SAR/month", "form.upTo": "Up to", "form.msgWord": "messages",
+      "form.plansError": "Could not load plans. Refresh the page or contact us directly.",
+      "form.perMonth": "SAR/month",
+      "form.upTo": "Up to",
+      "form.msgWord": "messages",
       "success.title": "Your sign-up was received!",
-      "success.sub": 'Thank you — your account is now in "trial" status. Here\\'s what happens next:',
+      "success.sub": "Thank you, your account is now in \"trial\" status. Here is what happens next:",
       "success.s1": "Our team reviews your request and reaches out within 24 hours.",
       "success.s2": "We help you connect your business WhatsApp number via Meta.",
       "success.s3": "We activate your subscription after confirming your plan and payment.",
-      "success.s4": "Your bot starts replying to your customers automatically 🎉",
+      "success.s4": "Your bot starts replying to your customers automatically!",
       "success.back": "Back to Home",
       "footer.copy": "© 2026 Nabda Bot. All rights reserved."
     }
@@ -403,7 +410,6 @@
     }
     plansData = data;
 
-    // لو المستخدم جاء من رابط فيه ?plan=code (مثال: signup.html?plan=pro) نختار الباقة تلقائياً
     const requestedPlan = new URLSearchParams(window.location.search).get('plan');
     let idx = data.findIndex(function(p){ return p.code === requestedPlan; });
     if(idx === -1){ idx = data.length > 1 ? 1 : 0; }
@@ -422,7 +428,6 @@
     e.preventDefault();
     errorAlert.style.display = 'none';
 
-    // honeypot: لو تعبّى يبدو إنه بوت سبام، نتجاهل الطلب بصمت
     if(document.getElementById('websiteHp').value.trim() !== ''){
       return;
     }
