@@ -84,15 +84,24 @@
   .conv-item{padding:14px 16px; border-bottom:1px solid var(--border); cursor:pointer;}
   .conv-item:hover{background:#FBFDFC;}
   .conv-item.active{background:rgba(37,211,102,.09);}
-  .conv-item .cname{font-weight:800; font-size:14px;}
+  .conv-item .cname{font-weight:800; font-size:14px; display:flex; align-items:center; flex-wrap:wrap;}
   .conv-item .cphone{color:var(--muted); font-size:12px; margin-top:2px;}
   .conv-item .cpreview{color:var(--muted); font-size:12.5px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .conv-empty{padding:30px 16px; color:var(--muted); font-size:13.5px; text-align:center;}
+
+  .human-badge{display:inline-flex; align-items:center; gap:4px; background:rgba(209,67,67,.12); color:var(--danger); font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:100px; margin-inline-start:7px;}
 
   .chat-panel{background:var(--card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; overflow:hidden;}
   .chat-head{padding:14px 18px; border-bottom:1px solid var(--border); font-weight:800; font-size:14.5px;}
   .thread-head{padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .thread-head .tsubject{font-weight:800; font-size:14.5px;}
+
+  .takeover-bar{display:none; align-items:center; justify-content:space-between; gap:10px; padding:10px 18px; border-bottom:1px solid var(--border); background:#F6FAF8; font-size:12.5px; color:var(--muted); font-weight:700;}
+  .takeover-bar.paused{background:#FDF4F1; color:var(--danger);}
+  .takeover-btn{border:none; border-radius:100px; padding:7px 16px; font-weight:800; font-size:12px; cursor:pointer; white-space:nowrap;}
+  .takeover-btn.to-pause{background:var(--danger); color:#fff;}
+  .takeover-btn.to-resume{background:var(--wa-green); color:#04210F;}
+
   .chat-body{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; background:#F6FAF8;}
   .bubble{max-width:70%; padding:10px 13px; border-radius:12px; font-size:13.5px; line-height:1.55;}
   .bubble.in{align-self:flex-start; background:#fff; border:1px solid var(--border); border-top-right-radius:2px;}
@@ -248,6 +257,10 @@
         </div>
         <div class="chat-panel">
           <div class="chat-head" id="chatHead" style="display:none;"></div>
+          <div class="takeover-bar" id="takeoverBar">
+            <span id="takeoverStatus"></span>
+            <button class="takeover-btn" id="takeoverBtn"></button>
+          </div>
           <div class="chat-body" id="chatBody">
             <div class="chat-placeholder">اختر محادثة من القائمة لعرضها</div>
           </div>
@@ -527,7 +540,7 @@
     (msgs || []).forEach(function(row){
       const phone = row.customer_phone;
       if(!conversations[phone]){
-        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at };
+        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, botPaused: false };
       }
       if(row.customer_name){ conversations[phone].name = row.customer_name; }
       if(row.inbound_message){
@@ -541,6 +554,18 @@
       const rowDate = new Date(row.created_at);
       if(rowDate.getMonth() === now.getMonth() && rowDate.getFullYear() === now.getFullYear()){
         monthCount++;
+      }
+    });
+
+    // حالة "الرد اليدوي" لكل محادثة — هل صاحب النشاط متولي الرد بنفسه حالياً أو البوت شغّال؟
+    const { data: states } = await supabaseClient
+      .from('whatsapp_conversation_state')
+      .select('customer_phone, bot_paused')
+      .eq('client_id', clientRow.id);
+
+    (states || []).forEach(function(s){
+      if(conversations[s.customer_phone]){
+        conversations[s.customer_phone].botPaused = !!s.bot_paused;
       }
     });
 
@@ -566,10 +591,11 @@
     phones.forEach(function(phone){
       const conv = conversations[phone];
       const lastMsg = conv.messages[conv.messages.length - 1];
+      const badge = conv.botPaused ? '<span class="human-badge">👤 يدوي</span>' : '';
       const div = document.createElement('div');
       div.className = 'conv-item' + (phone === activePhone ? ' active' : '');
       div.innerHTML =
-        '<div class="cname">' + escapeHtml(conv.name) + '</div>' +
+        '<div class="cname">' + escapeHtml(conv.name) + badge + '</div>' +
         '<div class="cphone">' + escapeHtml(phone) + '</div>' +
         '<div class="cpreview">' + (lastMsg ? escapeHtml(lastMsg.text) : '') + '</div>';
       div.addEventListener('click', function(){
@@ -586,10 +612,26 @@
     const head = document.getElementById('chatHead');
     const body = document.getElementById('chatBody');
     const composerWrap = document.getElementById('composerWrap');
+    const bar = document.getElementById('takeoverBar');
+    const status = document.getElementById('takeoverStatus');
+    const btn = document.getElementById('takeoverBtn');
 
     head.style.display = 'block';
     head.textContent = conv.name + ' — ' + phone;
     composerWrap.style.display = 'block';
+
+    bar.style.display = 'flex';
+    if(conv.botPaused){
+      bar.classList.add('paused');
+      status.textContent = '🔴 الرد يدوي الآن — البوت متوقف عن الرد التلقائي لهذا العميل';
+      btn.textContent = 'إرجاع الرد للبوت تلقائياً';
+      btn.className = 'takeover-btn to-resume';
+    } else {
+      bar.classList.remove('paused');
+      status.textContent = '🤖 البوت يرد تلقائياً على هذا العميل';
+      btn.textContent = 'تولّي الرد يدوياً';
+      btn.className = 'takeover-btn to-pause';
+    }
 
     body.innerHTML = '';
     conv.messages.forEach(function(m){
@@ -601,6 +643,32 @@
     });
     body.scrollTop = body.scrollHeight;
   }
+
+  document.getElementById('takeoverBtn').addEventListener('click', async function(){
+    if(!activePhone || !myClient){ return; }
+    const conv = conversations[activePhone];
+    const newPaused = !conv.botPaused;
+    const btn = document.getElementById('takeoverBtn');
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+      .from('whatsapp_conversation_state')
+      .upsert({
+        client_id: myClient.id,
+        customer_phone: activePhone,
+        bot_paused: newPaused,
+        paused_at: newPaused ? new Date().toISOString() : null
+      }, { onConflict: 'client_id,customer_phone' });
+
+    btn.disabled = false;
+    if(error){
+      alert('تعذّر تحديث حالة المحادثة، حاول مرة ثانية.');
+      return;
+    }
+    conv.botPaused = newPaused;
+    renderChat(activePhone);
+    renderConvList();
+  });
 
   document.getElementById('sendBtn').addEventListener('click', async function(){
     const textarea = document.getElementById('replyText');
@@ -630,8 +698,10 @@
         hint.style.color = 'var(--danger)';
         hint.textContent = json.error || 'تعذّر إرسال الرسالة.';
       } else {
+        // إرسال رد يدوي معناه صاحب النشاط تولى المحادثة — نوقف رد البوت التلقائي لهذا العميل تلقائياً
         conversations[activePhone].messages.push({ dir: 'out', text: text, at: new Date().toISOString() });
         conversations[activePhone].lastAt = new Date().toISOString();
+        conversations[activePhone].botPaused = true;
         textarea.value = '';
         renderChat(activePhone);
         renderConvList();
