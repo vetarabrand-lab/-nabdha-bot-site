@@ -81,6 +81,7 @@
   /* inbox */
   .inbox-wrap{display:grid; grid-template-columns:300px 1fr; gap:16px; height:600px; margin-bottom:40px;}
   .conv-list{background:var(--card); border:1px solid var(--border); border-radius:16px; overflow-y:auto;}
+  .conv-list-top{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:10px 14px; margin-bottom:10px; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:700; color:var(--muted);}
   .conv-item{padding:14px 16px; border-bottom:1px solid var(--border); cursor:pointer;}
   .conv-item:hover{background:#FBFDFC;}
   .conv-item.active{background:rgba(37,211,102,.09);}
@@ -90,17 +91,20 @@
   .conv-empty{padding:30px 16px; color:var(--muted); font-size:13.5px; text-align:center;}
 
   .human-badge{display:inline-flex; align-items:center; gap:4px; background:rgba(209,67,67,.12); color:var(--danger); font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:100px; margin-inline-start:7px;}
+  .assignee-badge{display:inline-flex; align-items:center; gap:4px; background:rgba(18,140,126,.13); color:var(--wa-teal-dark); font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:100px; margin-inline-start:7px;}
 
   .chat-panel{background:var(--card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; overflow:hidden;}
   .chat-head{padding:14px 18px; border-bottom:1px solid var(--border); font-weight:800; font-size:14.5px;}
   .thread-head{padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .thread-head .tsubject{font-weight:800; font-size:14.5px;}
 
-  .takeover-bar{display:none; align-items:center; justify-content:space-between; gap:10px; padding:10px 18px; border-bottom:1px solid var(--border); background:#F6FAF8; font-size:12.5px; color:var(--muted); font-weight:700;}
+  .takeover-bar{display:none; align-items:center; justify-content:space-between; gap:10px; padding:10px 18px; border-bottom:1px solid var(--border); background:#F6FAF8; font-size:12.5px; color:var(--muted); font-weight:700; flex-wrap:wrap;}
   .takeover-bar.paused{background:#FDF4F1; color:var(--danger);}
   .takeover-btn{border:none; border-radius:100px; padding:7px 16px; font-weight:800; font-size:12px; cursor:pointer; white-space:nowrap;}
   .takeover-btn.to-pause{background:var(--danger); color:#fff;}
   .takeover-btn.to-resume{background:var(--wa-green); color:#04210F;}
+  .assign-row{display:flex; align-items:center; gap:8px;}
+  .assign-row select{border:1.5px solid var(--border); border-radius:100px; padding:5px 10px; font-size:12px; font-family:inherit; background:#fff;}
 
   .chat-body{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; background:#F6FAF8;}
   .bubble{max-width:70%; padding:10px 13px; border-radius:12px; font-size:13.5px; line-height:1.55;}
@@ -116,10 +120,18 @@
   .send-hint{font-size:12px; color:var(--muted); padding:0 14px 12px;}
 
   /* settings */
-  .settings-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; max-width:640px; margin-bottom:40px;}
+  .settings-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; max-width:640px; margin-bottom:24px;}
   .settings-card .field textarea{min-height:110px; resize:vertical;}
   .save-status{font-size:13px; color:var(--wa-green-dark); margin-top:10px; opacity:0; transition:opacity .3s ease;}
   .save-status.show{opacity:1;}
+
+  /* team */
+  .staff-item{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:#F6FAF8; border-radius:12px; margin-bottom:10px;}
+  .staff-item .sname{font-weight:800; font-size:13.5px;}
+  .staff-item .semail{color:var(--muted); font-size:12px;}
+  .staff-remove-btn{background:none; border:none; color:var(--danger); font-size:12.5px; font-weight:700; cursor:pointer;}
+  .add-staff-btn{background:var(--wa-teal-dark); color:#fff; border:none; border-radius:100px; padding:9px 18px; font-weight:700; font-size:13px; cursor:pointer; margin-top:6px;}
+  .add-staff-btn:hover{background:var(--wa-teal);}
 
   /* support tickets */
   .status-badge{display:inline-flex; align-items:center; padding:4px 11px; border-radius:100px; font-size:11.5px; font-weight:800; white-space:nowrap;}
@@ -284,13 +296,23 @@
 
     <div class="panel active" id="panelInbox">
       <div class="inbox-wrap">
-        <div class="conv-list" id="convList">
-          <div class="conv-empty">جاري تحميل المحادثات...</div>
+        <div style="display:flex; flex-direction:column;">
+          <div class="conv-list-top">
+            <input type="checkbox" id="filterMineOnly">
+            <label for="filterMineOnly">عرض المعيّن لي فقط</label>
+          </div>
+          <div class="conv-list" id="convList" style="flex:1;">
+            <div class="conv-empty">جاري تحميل المحادثات...</div>
+          </div>
         </div>
         <div class="chat-panel">
           <div class="chat-head" id="chatHead" style="display:none;"></div>
           <div class="takeover-bar" id="takeoverBar">
             <span id="takeoverStatus"></span>
+            <div class="assign-row">
+              <span>معيّن إلى:</span>
+              <select id="assignSelect"></select>
+            </div>
             <button class="takeover-btn" id="takeoverBtn"></button>
           </div>
           <div class="chat-body" id="chatBody">
@@ -389,6 +411,15 @@
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
       </div>
+
+      <div class="settings-card" id="teamCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>فريق العمل</label>
+        </div>
+        <div id="staffList"><div class="conv-empty">جاري التحميل...</div></div>
+        <button class="add-staff-btn" id="addStaffBtn" style="display:none;">+ إضافة موظف</button>
+        <div class="helper-text" id="teamHelperNonOwner" style="display:none;">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -449,6 +480,27 @@
   </div>
 </div>
 
+<!-- MODAL: invite staff -->
+<div class="modal-overlay" id="newStaffModal">
+  <div class="modal-card">
+    <h3>إضافة موظف جديد</h3>
+    <div class="alert-box error" id="newStaffError"></div>
+    <div class="field">
+      <label>اسم الموظف</label>
+      <input type="text" id="staffFullName" placeholder="مثال: سارة أحمد">
+    </div>
+    <div class="field">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="staffEmail" placeholder="employee@example.com">
+      <div class="helper-text">بيوصله بريد دعوة يقدر منه يعيّن كلمة مرور ويدخل على نفس بوابة نشاطك.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="newStaffCancelBtn">إلغاء</button>
+      <button class="modal-confirm" id="newStaffConfirmBtn">إرسال الدعوة</button>
+    </div>
+  </div>
+</div>
+
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
@@ -474,12 +526,17 @@
   };
 
   let myClient = null;
+  let myUserId = null;
+  let isOwner = false;
   let conversations = {};
   let activePhone = null;
   let myTickets = [];
   let activeTicketId = null;
   let myCampaigns = [];
   let allMessages = [];
+  let staffList = [];
+  let staffMap = {};
+  let filterMineOnly = false;
 
   // اسم العميل النهائي ونص رسائل واتساب تجي من WhatsApp API (يتحكم فيها الطرف الآخر بالمحادثة)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في بوابة صاحب النشاط
@@ -516,8 +573,13 @@
   });
 
   supabaseClient.auth.getSession().then(function(res){
-    const isRecovery = window.location.hash.includes('type=recovery');
-    if(isRecovery){ return; }
+    const hash = window.location.hash;
+    const isRecovery = hash.includes('type=recovery');
+    const isInvite = hash.includes('type=invite');
+    if(isRecovery || isInvite){
+      if(res.data.session){ showScreen('reset'); }
+      return;
+    }
     if(res.data.session){ showScreen('app'); } else { showScreen('login'); }
   });
 
@@ -617,22 +679,51 @@
 
   async function loadEverything(){
     const { data: { user } } = await supabaseClient.auth.getUser();
+    myUserId = user.id;
 
-    const { data: clientRow, error: clientErr } = await supabaseClient
+    // نحاول أولاً كصاحب حساب، ولو ما لقينا نحاول كموظف مرتبط بحساب نشاط
+    let clientRow = null;
+    const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, business_name_ar, business_name, plan_id, system_prompt, welcome_message')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if(clientErr || !clientRow){
+    if(ownerRes.data){
+      clientRow = ownerRes.data;
+      isOwner = true;
+    } else {
+      const { data: staffRow } = await supabaseClient
+        .from('client_staff')
+        .select('client_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if(staffRow){
+        const { data: cr } = await supabaseClient
+          .from('clients')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message')
+          .eq('id', staffRow.client_id)
+          .maybeSingle();
+        clientRow = cr;
+        isOwner = false;
+      }
+    }
+
+    if(!clientRow){
       document.getElementById('convList').innerHTML = '<div class="conv-empty">تعذّر العثور على حساب مرتبط بهذا الدخول. تواصل مع فريق نبضة.</div>';
       return;
     }
     myClient = clientRow;
-    document.getElementById('bizTag').textContent = clientRow.business_name_ar || clientRow.business_name || '';
+    document.getElementById('bizTag').textContent = (clientRow.business_name_ar || clientRow.business_name || '') + (isOwner ? '' : ' — عضو فريق');
     document.getElementById('settingBizName').value = clientRow.business_name_ar || clientRow.business_name || '';
     document.getElementById('settingPrompt').value = clientRow.system_prompt || '';
     document.getElementById('settingWelcome').value = clientRow.welcome_message || '';
+    document.getElementById('settingPrompt').disabled = !isOwner;
+    document.getElementById('settingWelcome').disabled = !isOwner;
+    document.getElementById('saveSettingsBtn').style.display = isOwner ? 'inline-block' : 'none';
+    // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
+    document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
 
     let planLabel = '—';
     if(clientRow.plan_id){
@@ -640,6 +731,17 @@
       if(plan){ planLabel = plan.name_ar; }
     }
     document.getElementById('statPlan').textContent = planLabel;
+
+    // فريق العمل — نجيبه قبل عرض المحادثات عشان نبني قائمة "معيّن إلى"
+    const { data: staffRows } = await supabaseClient
+      .from('client_staff')
+      .select('id, user_id, full_name, email')
+      .eq('client_id', clientRow.id);
+    staffList = staffRows || [];
+    staffMap = {};
+    staffMap[clientRow.user_id] = 'صاحب الحساب';
+    staffList.forEach(function(s){ if(s.user_id){ staffMap[s.user_id] = s.full_name; } });
+    renderTeam();
 
     const { data: msgs } = await supabaseClient
       .from('whatsapp_messages_log')
@@ -655,7 +757,7 @@
     allMessages.forEach(function(row){
       const phone = row.customer_phone;
       if(!conversations[phone]){
-        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, botPaused: false };
+        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, botPaused: false, assignedTo: null };
       }
       if(row.customer_name){ conversations[phone].name = row.customer_name; }
       if(row.inbound_message){
@@ -672,15 +774,16 @@
       }
     });
 
-    // حالة "الرد اليدوي" لكل محادثة — هل صاحب النشاط متولي الرد بنفسه حالياً أو البوت شغّال؟
+    // حالة "الرد اليدوي" والتعيين لكل محادثة
     const { data: states } = await supabaseClient
       .from('whatsapp_conversation_state')
-      .select('customer_phone, bot_paused')
+      .select('customer_phone, bot_paused, assigned_to')
       .eq('client_id', clientRow.id);
 
     (states || []).forEach(function(s){
       if(conversations[s.customer_phone]){
         conversations[s.customer_phone].botPaused = !!s.bot_paused;
+        conversations[s.customer_phone].assignedTo = s.assigned_to || null;
       }
     });
 
@@ -693,14 +796,55 @@
     renderAnalytics();
   }
 
+  function renderTeam(){
+    const list = document.getElementById('staffList');
+    const addBtn = document.getElementById('addStaffBtn');
+    const nonOwnerHint = document.getElementById('teamHelperNonOwner');
+
+    addBtn.style.display = isOwner ? 'inline-block' : 'none';
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+
+    if(staffList.length === 0){
+      list.innerHTML = '<div class="conv-empty">ما فيه موظفين مضافين بعد.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    staffList.forEach(function(s){
+      const div = document.createElement('div');
+      div.className = 'staff-item';
+      div.innerHTML =
+        '<div><div class="sname">' + escapeHtml(s.full_name) + '</div><div class="semail">' + escapeHtml(s.email) + '</div></div>' +
+        (isOwner ? '<button class="staff-remove-btn" data-id="' + s.id + '">إزالة</button>' : '');
+      list.appendChild(div);
+    });
+
+    if(isOwner){
+      list.querySelectorAll('.staff-remove-btn').forEach(function(btn){
+        btn.addEventListener('click', async function(){
+          if(!confirm('تأكيد إزالة هذا الموظف من الفريق؟')){ return; }
+          const id = btn.dataset.id;
+          const { error } = await supabaseClient.from('client_staff').delete().eq('id', id);
+          if(!error){
+            staffList = staffList.filter(function(s){ return s.id !== id; });
+            renderTeam();
+          }
+        });
+      });
+    }
+  }
+
   function renderConvList(){
     const list = document.getElementById('convList');
-    const phones = Object.keys(conversations).sort(function(a,b){
+    let phones = Object.keys(conversations).sort(function(a,b){
       return new Date(conversations[b].lastAt) - new Date(conversations[a].lastAt);
     });
 
+    if(filterMineOnly){
+      phones = phones.filter(function(p){ return conversations[p].assignedTo === myUserId; });
+    }
+
     if(phones.length === 0){
-      list.innerHTML = '<div class="conv-empty">ما فيه محادثات بعد. أول ما يراسل عميل بوتك، تظهر المحادثة هنا.</div>';
+      list.innerHTML = '<div class="conv-empty">' + (filterMineOnly ? 'ما فيه محادثات معيّنة لك حالياً.' : 'ما فيه محادثات بعد. أول ما يراسل عميل بوتك، تظهر المحادثة هنا.') + '</div>';
       return;
     }
 
@@ -708,11 +852,13 @@
     phones.forEach(function(phone){
       const conv = conversations[phone];
       const lastMsg = conv.messages[conv.messages.length - 1];
-      const badge = conv.botPaused ? '<span class="human-badge">👤 يدوي</span>' : '';
+      const humanBadge = conv.botPaused ? '<span class="human-badge">👤 يدوي</span>' : '';
+      const assigneeName = conv.assignedTo && staffMap[conv.assignedTo] ? staffMap[conv.assignedTo] : null;
+      const assigneeBadge = assigneeName ? '<span class="assignee-badge">🏷️ ' + escapeHtml(assigneeName) + '</span>' : '';
       const div = document.createElement('div');
       div.className = 'conv-item' + (phone === activePhone ? ' active' : '');
       div.innerHTML =
-        '<div class="cname">' + escapeHtml(conv.name) + badge + '</div>' +
+        '<div class="cname">' + escapeHtml(conv.name) + humanBadge + assigneeBadge + '</div>' +
         '<div class="cphone">' + escapeHtml(phone) + '</div>' +
         '<div class="cpreview">' + (lastMsg ? escapeHtml(lastMsg.text) : '') + '</div>';
       div.addEventListener('click', function(){
@@ -724,6 +870,11 @@
     });
   }
 
+  document.getElementById('filterMineOnly').addEventListener('change', function(){
+    filterMineOnly = this.checked;
+    renderConvList();
+  });
+
   function renderChat(phone){
     const conv = conversations[phone];
     const head = document.getElementById('chatHead');
@@ -732,6 +883,7 @@
     const bar = document.getElementById('takeoverBar');
     const status = document.getElementById('takeoverStatus');
     const btn = document.getElementById('takeoverBtn');
+    const assignSelect = document.getElementById('assignSelect');
 
     head.style.display = 'block';
     head.textContent = conv.name + ' — ' + phone;
@@ -740,15 +892,25 @@
     bar.style.display = 'flex';
     if(conv.botPaused){
       bar.classList.add('paused');
-      status.textContent = '🔴 الرد يدوي الآن — البوت متوقف عن الرد التلقائي لهذا العميل';
+      status.textContent = '🔴 الرد يدوي الآن';
       btn.textContent = 'إرجاع الرد للبوت تلقائياً';
       btn.className = 'takeover-btn to-resume';
     } else {
       bar.classList.remove('paused');
-      status.textContent = '🤖 البوت يرد تلقائياً على هذا العميل';
+      status.textContent = '🤖 البوت يرد تلقائياً';
       btn.textContent = 'تولّي الرد يدوياً';
       btn.className = 'takeover-btn to-pause';
     }
+
+    assignSelect.innerHTML = '<option value="">غير معيّن</option>';
+    Object.keys(staffMap).forEach(function(uid){
+      const opt = document.createElement('option');
+      opt.value = uid;
+      opt.textContent = staffMap[uid];
+      if(conv.assignedTo === uid){ opt.selected = true; }
+      assignSelect.appendChild(opt);
+    });
+    if(!conv.assignedTo){ assignSelect.value = ''; }
 
     body.innerHTML = '';
     conv.messages.forEach(function(m){
@@ -761,6 +923,25 @@
     body.scrollTop = body.scrollHeight;
   }
 
+  document.getElementById('assignSelect').addEventListener('change', async function(){
+    if(!activePhone || !myClient){ return; }
+    const val = this.value || null;
+    const { error } = await supabaseClient
+      .from('whatsapp_conversation_state')
+      .upsert({
+        client_id: myClient.id,
+        customer_phone: activePhone,
+        assigned_to: val
+      }, { onConflict: 'client_id,customer_phone' });
+
+    if(error){
+      alert('تعذّر تحديث التعيين، حاول مرة ثانية.');
+      return;
+    }
+    conversations[activePhone].assignedTo = val;
+    renderConvList();
+  });
+
   document.getElementById('takeoverBtn').addEventListener('click', async function(){
     if(!activePhone || !myClient){ return; }
     const conv = conversations[activePhone];
@@ -768,14 +949,17 @@
     const btn = document.getElementById('takeoverBtn');
     btn.disabled = true;
 
+    const payload = {
+      client_id: myClient.id,
+      customer_phone: activePhone,
+      bot_paused: newPaused,
+      paused_at: newPaused ? new Date().toISOString() : null
+    };
+    if(newPaused && !conv.assignedTo){ payload.assigned_to = myUserId; }
+
     const { error } = await supabaseClient
       .from('whatsapp_conversation_state')
-      .upsert({
-        client_id: myClient.id,
-        customer_phone: activePhone,
-        bot_paused: newPaused,
-        paused_at: newPaused ? new Date().toISOString() : null
-      }, { onConflict: 'client_id,customer_phone' });
+      .upsert(payload, { onConflict: 'client_id,customer_phone' });
 
     btn.disabled = false;
     if(error){
@@ -783,6 +967,7 @@
       return;
     }
     conv.botPaused = newPaused;
+    if(newPaused && !conv.assignedTo){ conv.assignedTo = myUserId; }
     renderChat(activePhone);
     renderConvList();
   });
@@ -815,10 +1000,11 @@
         hint.style.color = 'var(--danger)';
         hint.textContent = json.error || 'تعذّر إرسال الرسالة.';
       } else {
-        // إرسال رد يدوي معناه صاحب النشاط تولى المحادثة — نوقف رد البوت التلقائي لهذا العميل تلقائياً
+        // إرسال رد يدوي معناه صاحب النشاط أو الموظف تولى المحادثة — نوقف رد البوت التلقائي ونعيّنها له تلقائياً
         conversations[activePhone].messages.push({ dir: 'out', text: text, at: new Date().toISOString() });
         conversations[activePhone].lastAt = new Date().toISOString();
         conversations[activePhone].botPaused = true;
+        if(!conversations[activePhone].assignedTo){ conversations[activePhone].assignedTo = myUserId; }
         textarea.value = '';
         renderChat(activePhone);
         renderConvList();
@@ -834,7 +1020,7 @@
   });
 
   document.getElementById('saveSettingsBtn').addEventListener('click', async function(){
-    if(!myClient){ return; }
+    if(!myClient || !isOwner){ return; }
     const prompt = document.getElementById('settingPrompt').value.trim();
     const welcome = document.getElementById('settingWelcome').value.trim();
     const status = document.getElementById('saveStatus');
@@ -847,6 +1033,80 @@
     if(!error){
       status.classList.add('show');
       setTimeout(function(){ status.classList.remove('show'); }, 2000);
+    }
+  });
+
+  /* ---------- team management (owner only) ---------- */
+  const newStaffModal = document.getElementById('newStaffModal');
+
+  document.getElementById('addStaffBtn').addEventListener('click', function(){
+    document.getElementById('staffFullName').value = '';
+    document.getElementById('staffEmail').value = '';
+    document.getElementById('newStaffError').style.display = 'none';
+    newStaffModal.classList.add('show');
+  });
+
+  document.getElementById('newStaffCancelBtn').addEventListener('click', function(){
+    newStaffModal.classList.remove('show');
+  });
+
+  newStaffModal.addEventListener('click', function(e){
+    if(e.target === newStaffModal){ newStaffModal.classList.remove('show'); }
+  });
+
+  document.getElementById('newStaffConfirmBtn').addEventListener('click', async function(){
+    const fullName = document.getElementById('staffFullName').value.trim();
+    const email = document.getElementById('staffEmail').value.trim();
+    const errBox = document.getElementById('newStaffError');
+    errBox.style.display = 'none';
+
+    if(!fullName || !email){
+      errBox.textContent = 'الرجاء تعبئة الاسم والبريد الإلكتروني.';
+      errBox.style.display = 'block';
+      return;
+    }
+    if(!myClient){ return; }
+
+    const btn = document.getElementById('newStaffConfirmBtn');
+    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/invite-client-staff', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ client_id: myClient.id, email: email, full_name: fullName })
+      });
+      const json = await res.json();
+
+      btn.disabled = false; btn.textContent = 'إرسال الدعوة';
+
+      if(!res.ok){
+        errBox.textContent = json.error || 'تعذّر إرسال الدعوة.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      newStaffModal.classList.remove('show');
+      alert('تم إرسال دعوة للموظف عبر البريد الإلكتروني.');
+      const { data: staffRows } = await supabaseClient
+        .from('client_staff')
+        .select('id, user_id, full_name, email')
+        .eq('client_id', myClient.id);
+      staffList = staffRows || [];
+      staffMap = {};
+      staffMap[myClient.user_id] = 'صاحب الحساب';
+      staffList.forEach(function(s){ if(s.user_id){ staffMap[s.user_id] = s.full_name; } });
+      renderTeam();
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'إرسال الدعوة';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
     }
   });
 
