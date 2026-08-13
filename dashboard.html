@@ -94,9 +94,16 @@
   /* ---------- DASHBOARD ---------- */
   #dashboardScreen{display:none;}
   .dash-wrap{padding:36px 0 60px;}
-  .dash-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:28px; flex-wrap:wrap; gap:12px;}
+  .dash-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px;}
   .dash-head h1{font-size:24px; font-weight:900;}
   .dash-head p{color:var(--muted); font-size:14px;}
+
+  /* tabs */
+  .tabs{display:flex; gap:8px; margin-bottom:20px;}
+  .tab-btn{background:#fff; border:1.5px solid var(--border); border-radius:100px; padding:9px 18px; font-weight:700; font-size:13.5px; cursor:pointer; color:var(--muted);}
+  .tab-btn.active{background:var(--wa-teal-dark); color:#fff; border-color:var(--wa-teal-dark);}
+  .panel{display:none;}
+  .panel.active{display:block;}
 
   .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px;}
   .stat-card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;}
@@ -135,6 +142,9 @@
   .badge.permanent{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
   .badge.linked{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
   .badge.unlinked{background:#EEE; color:var(--muted);}
+  .badge.open{background:rgba(184,134,11,.13); color:var(--warn);}
+  .badge.in_progress{background:rgba(18,140,126,.13); color:var(--wa-teal);}
+  .badge.closed{background:#EEE; color:var(--muted);}
   .status-select{
     border:1.5px solid var(--border); border-radius:10px; padding:6px 10px; font-family:inherit;
     font-size:13px; background:#fff; cursor:pointer;
@@ -147,6 +157,30 @@
   .empty-row td{text-align:center; color:var(--muted); padding:40px 16px;}
   .save-hint{font-size:11.5px; color:var(--wa-green-dark); margin-right:6px; opacity:0; transition:opacity .3s ease;}
   .save-hint.show{opacity:1;}
+
+  /* ---------- TICKETS (inbox-style layout) ---------- */
+  .inbox-wrap{display:grid; grid-template-columns:300px 1fr; gap:16px; height:600px;}
+  .conv-list{background:var(--card); border:1px solid var(--border); border-radius:16px; overflow-y:auto;}
+  .conv-empty{padding:30px 16px; color:var(--muted); font-size:13.5px; text-align:center;}
+  .ticket-item{padding:14px 16px; border-bottom:1px solid var(--border); cursor:pointer;}
+  .ticket-item:hover{background:#FBFDFC;}
+  .ticket-item.active{background:rgba(37,211,102,.09);}
+  .ticket-item .tsubject{font-weight:800; font-size:14px; margin-bottom:4px;}
+  .ticket-item .tmeta{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px;}
+
+  .chat-panel{background:var(--card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; overflow:hidden;}
+  .thread-head{padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:800; font-size:14.5px;}
+  .chat-body{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; background:#F6FAF8;}
+  .bubble{max-width:70%; padding:10px 13px; border-radius:12px; font-size:13.5px; line-height:1.55;}
+  .bubble.in{align-self:flex-start; background:#fff; border:1px solid var(--border); border-top-right-radius:2px;}
+  .bubble.out{align-self:flex-end; background:rgba(37,211,102,.18); color:#0B1A17; border-top-left-radius:2px;}
+  .bubble .t{display:block; font-size:10px; color:#8696A0; margin-top:4px; text-align:left;}
+  .chat-placeholder{flex:1; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:14px;}
+  .composer{display:flex; gap:10px; padding:14px; border-top:1px solid var(--border);}
+  .composer textarea{flex:1; resize:none; height:44px; border:1.5px solid var(--border); border-radius:14px; padding:11px 14px; font-family:inherit; font-size:14px;}
+  .composer textarea:focus{outline:none; border-color:var(--wa-teal);}
+  .send-btn{background:var(--wa-green); color:#04210F; border:none; border-radius:14px; padding:0 22px; font-weight:800; cursor:pointer;}
+  .send-btn:disabled{opacity:.5; cursor:not-allowed;}
 
   /* ---------- MODAL ---------- */
   .modal-overlay{
@@ -181,6 +215,9 @@
 
   @media (max-width:860px){
     .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .inbox-wrap{grid-template-columns:1fr; height:auto;}
+    .conv-list{max-height:220px;}
+    .chat-panel{height:480px;}
   }
 </style>
 </head>
@@ -263,47 +300,83 @@
   <div class="container dash-wrap">
     <div class="dash-head">
       <div>
-        <h1>المشتركون</h1>
-        <p>متابعة طلبات التسجيل الجديدة وحالة الاشتراكات وربط حسابات دخول العملاء</p>
+        <h1>لوحة التحكم</h1>
+        <p>متابعة المشتركين، حالة الاشتراكات، وتذاكر الدعم</p>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card"><div class="n" id="statTotal">–</div><div class="l">إجمالي المشتركين</div></div>
-      <div class="stat-card"><div class="n" id="statTrial">–</div><div class="l">تجريبي</div></div>
-      <div class="stat-card"><div class="n" id="statActive">–</div><div class="l">نشط</div></div>
-      <div class="stat-card"><div class="n" id="statMsgsToday">–</div><div class="l">رسائل اليوم</div></div>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="clients">المشتركين</button>
+      <button class="tab-btn" data-tab="tickets">تذاكر الدعم</button>
     </div>
 
-    <div class="toolbar">
-      <input type="text" id="searchInput" placeholder="ابحث بالاسم أو البريد أو رقم الجوال...">
-      <select id="statusFilter">
-        <option value="">كل الحالات</option>
-        <option value="trial">تجريبي</option>
-        <option value="active">نشط</option>
-        <option value="expired">منتهي</option>
-        <option value="past_due">متأخر بالدفع</option>
-        <option value="canceled">ملغى</option>
-      </select>
+    <!-- ===== PANEL: CLIENTS ===== -->
+    <div class="panel active" id="panelClients">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="n" id="statTotal">–</div><div class="l">إجمالي المشتركين</div></div>
+        <div class="stat-card"><div class="n" id="statTrial">–</div><div class="l">تجريبي</div></div>
+        <div class="stat-card"><div class="n" id="statActive">–</div><div class="l">نشط</div></div>
+        <div class="stat-card"><div class="n" id="statMsgsToday">–</div><div class="l">رسائل اليوم</div></div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="ابحث بالاسم أو البريد أو رقم الجوال...">
+        <select id="statusFilter">
+          <option value="">كل الحالات</option>
+          <option value="trial">تجريبي</option>
+          <option value="active">نشط</option>
+          <option value="expired">منتهي</option>
+          <option value="past_due">متأخر بالدفع</option>
+          <option value="canceled">ملغى</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>النشاط</th>
+              <th>التواصل</th>
+              <th>الباقة</th>
+              <th>الحالة</th>
+              <th>الأيام المتبقية</th>
+              <th>حساب لوحة العميل</th>
+              <th>تاريخ التسجيل</th>
+            </tr>
+          </thead>
+          <tbody id="clientsTbody">
+            <tr class="empty-row"><td colspan="7">جاري تحميل البيانات...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>النشاط</th>
-            <th>التواصل</th>
-            <th>الباقة</th>
-            <th>الحالة</th>
-            <th>الأيام المتبقية</th>
-            <th>حساب لوحة العميل</th>
-            <th>تاريخ التسجيل</th>
-          </tr>
-        </thead>
-        <tbody id="clientsTbody">
-          <tr class="empty-row"><td colspan="7">جاري تحميل البيانات...</td></tr>
-        </tbody>
-      </table>
+    <!-- ===== PANEL: TICKETS ===== -->
+    <div class="panel" id="panelTickets">
+      <div class="inbox-wrap">
+        <div class="conv-list" id="adminTicketList">
+          <div class="conv-empty">جاري تحميل التذاكر...</div>
+        </div>
+        <div class="chat-panel">
+          <div class="thread-head" id="adminTicketThreadHead" style="display:none;">
+            <span id="adminTicketSubject"></span>
+            <select class="status-select" id="adminTicketStatusSelect">
+              <option value="open">مفتوحة</option>
+              <option value="in_progress">قيد المعالجة</option>
+              <option value="closed">تم الحل</option>
+            </select>
+          </div>
+          <div class="chat-body" id="adminTicketBody">
+            <div class="chat-placeholder">اختر تذكرة من القائمة لعرضها</div>
+          </div>
+          <div id="adminTicketComposerWrap" style="display:none;">
+            <div class="composer">
+              <textarea id="adminTicketReplyText" placeholder="اكتب ردك هنا..."></textarea>
+              <button class="send-btn" id="adminTicketSendBtn">إرسال</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -353,9 +426,17 @@
     canceled: 'ملغى'
   };
 
+  const ticketStatusLabels = {
+    open: 'مفتوحة',
+    in_progress: 'قيد المعالجة',
+    closed: 'تم الحل'
+  };
+
   let allClients = [];
   let plansMap = {};
   let modalClient = null;
+  let allTickets = [];
+  let activeAdminTicketId = null;
 
   function showScreen(name){
     loginScreen.style.display = 'none';
@@ -464,6 +545,18 @@
   logoutBtn.addEventListener('click', async function(){
     await supabaseClient.auth.signOut();
     showScreen('login');
+  });
+
+  /* ---------- tabs ---------- */
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active');
+      const map = { clients: 'panelClients', tickets: 'panelTickets' };
+      document.getElementById(map[btn.dataset.tab]).classList.add('active');
+      if(btn.dataset.tab === 'tickets'){ loadTickets(); }
+    });
   });
 
   async function loadDashboard(){
@@ -609,6 +702,111 @@
 
   document.getElementById('searchInput').addEventListener('input', renderTable);
   document.getElementById('statusFilter').addEventListener('change', renderTable);
+
+  /* ---------- support tickets (admin side) ---------- */
+  async function loadTickets(){
+    const list = document.getElementById('adminTicketList');
+    const { data, error } = await supabaseClient
+      .from('support_tickets')
+      .select('id, subject, status, created_at, updated_at, client_id, clients(business_name_ar, business_name)')
+      .order('updated_at', { ascending: false });
+
+    if(error){
+      list.innerHTML = '<div class="conv-empty">تعذّر تحميل التذاكر، حدّث الصفحة.</div>';
+      return;
+    }
+    allTickets = data || [];
+    renderTicketList();
+  }
+
+  function renderTicketList(){
+    const list = document.getElementById('adminTicketList');
+    if(allTickets.length === 0){
+      list.innerHTML = '<div class="conv-empty">ما فيه تذاكر دعم بعد.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    allTickets.forEach(function(t){
+      const bizName = t.clients ? (t.clients.business_name_ar || t.clients.business_name || '—') : '—';
+      const dateStr = new Date(t.updated_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric' });
+      const div = document.createElement('div');
+      div.className = 'ticket-item' + (t.id === activeAdminTicketId ? ' active' : '');
+      div.innerHTML =
+        '<div class="tsubject">' + t.subject.replace(/</g,'&lt;') + '</div>' +
+        '<div class="biz-sub">' + bizName + '</div>' +
+        '<div class="tmeta"><span class="badge ' + t.status + '">' + ticketStatusLabels[t.status] + '</span><span class="biz-sub">' + dateStr + '</span></div>';
+      div.addEventListener('click', function(){
+        activeAdminTicketId = t.id;
+        renderTicketList();
+        openAdminTicketThread(t.id);
+      });
+      list.appendChild(div);
+    });
+  }
+
+  async function openAdminTicketThread(ticketId){
+    const head = document.getElementById('adminTicketThreadHead');
+    const body = document.getElementById('adminTicketBody');
+    const composerWrap = document.getElementById('adminTicketComposerWrap');
+    const ticket = allTickets.find(function(t){ return t.id === ticketId; });
+    if(!ticket){ return; }
+
+    head.style.display = 'flex';
+    document.getElementById('adminTicketSubject').textContent = ticket.subject;
+    document.getElementById('adminTicketStatusSelect').value = ticket.status;
+    composerWrap.style.display = 'block';
+    body.innerHTML = '<div class="chat-placeholder">جاري التحميل...</div>';
+
+    const { data: msgs } = await supabaseClient
+      .from('support_ticket_messages')
+      .select('sender_type, message, created_at')
+      .eq('ticket_id', ticketId)
+      .order('created_at', { ascending: true });
+
+    body.innerHTML = '';
+    (msgs || []).forEach(function(m){
+      const b = document.createElement('div');
+      b.className = 'bubble ' + (m.sender_type === 'admin' ? 'out' : 'in');
+      const time = new Date(m.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      b.innerHTML = m.message.replace(/</g,'&lt;') + '<span class="t">' + time + '</span>';
+      body.appendChild(b);
+    });
+    body.scrollTop = body.scrollHeight;
+  }
+
+  document.getElementById('adminTicketStatusSelect').addEventListener('change', async function(){
+    if(!activeAdminTicketId){ return; }
+    const newStatus = this.value;
+    const { error } = await supabaseClient
+      .from('support_tickets')
+      .update({ status: newStatus })
+      .eq('id', activeAdminTicketId);
+    if(!error){
+      const t = allTickets.find(function(x){ return x.id === activeAdminTicketId; });
+      if(t){ t.status = newStatus; }
+      renderTicketList();
+    }
+  });
+
+  document.getElementById('adminTicketSendBtn').addEventListener('click', async function(){
+    const textarea = document.getElementById('adminTicketReplyText');
+    const text = textarea.value.trim();
+    if(!text || !activeAdminTicketId){ return; }
+
+    const btn = document.getElementById('adminTicketSendBtn');
+    btn.disabled = true;
+
+    const { error } = await supabaseClient
+      .from('support_ticket_messages')
+      .insert({ ticket_id: activeAdminTicketId, sender_type: 'admin', message: text });
+
+    btn.disabled = false;
+    if(!error){
+      textarea.value = '';
+      await loadTickets();
+      await openAdminTicketThread(activeAdminTicketId);
+    }
+  });
 
   /* ---------- link account modal ---------- */
   const linkModal = document.getElementById('linkModal');
