@@ -133,6 +133,12 @@
   .add-staff-btn{background:var(--wa-teal-dark); color:#fff; border:none; border-radius:100px; padding:9px 18px; font-weight:700; font-size:13px; cursor:pointer; margin-top:6px;}
   .add-staff-btn:hover{background:var(--wa-teal);}
 
+  /* zid / salla integration */
+  .status-badge.zid-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.zid-disconnected{background:#EEE; color:var(--muted);}
+  .status-badge.salla-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.salla-disconnected{background:#EEE; color:var(--muted);}
+
   /* support tickets */
   .status-badge{display:inline-flex; align-items:center; padding:4px 11px; border-radius:100px; font-size:11.5px; font-weight:800; white-space:nowrap;}
   .status-badge.open{background:rgba(184,134,11,.13); color:var(--warn);}
@@ -420,6 +426,26 @@
         <button class="add-staff-btn" id="addStaffBtn" style="display:none;">+ إضافة موظف</button>
         <div class="helper-text" id="teamHelperNonOwner" style="display:none;">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
       </div>
+
+      <div class="settings-card" id="zidCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>ربط متجر زد (Zid)</label>
+        </div>
+        <div id="zidStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <button class="primary-btn" id="connectZidBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;">ربط مع زد</button>
+        <div class="helper-text" id="zidHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div>
+      </div>
+
+      <div class="settings-card" id="sallaCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>ربط متجر سلة (Salla)</label>
+        </div>
+        <div id="sallaStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;">ربط مع سلة</button>
+        <div class="helper-text" id="sallaHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;">اربط زد أو سلة (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
+      </div>
     </div>
   </div>
 </div>
@@ -571,6 +597,42 @@
       showScreen('reset');
     }
   });
+
+  // رجوع من صفحة ربط زد أو سلة (نجاح أو فشل) — نعرض رسالة مرة واحدة وننضّف الرابط من المعاملات
+  (function handleStoreOAuthRedirect(){
+    const params = new URLSearchParams(window.location.search);
+    const zidState = params.get('zid');
+    const sallaState = params.get('salla');
+
+    if(zidState === 'connected'){
+      window.addEventListener('load', function(){
+        setTimeout(function(){ alert('✅ تم ربط متجر زد بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.'); }, 400);
+      });
+    } else if(zidState === 'error'){
+      const msg = params.get('msg') || '';
+      window.addEventListener('load', function(){
+        setTimeout(function(){ alert('⚠️ تعذّر ربط متجر زد' + (msg ? ': ' + decodeURIComponent(msg) : '') + '. حاول مرة ثانية أو تواصل مع الدعم.'); }, 400);
+      });
+    }
+
+    if(sallaState === 'connected'){
+      window.addEventListener('load', function(){
+        setTimeout(function(){ alert('✅ تم ربط متجر سلة بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.'); }, 400);
+      });
+    } else if(sallaState === 'error'){
+      const msg = params.get('msg') || '';
+      window.addEventListener('load', function(){
+        setTimeout(function(){ alert('⚠️ تعذّر ربط متجر سلة' + (msg ? ': ' + decodeURIComponent(msg) : '') + '. حاول مرة ثانية أو تواصل مع الدعم.'); }, 400);
+      });
+    }
+
+    if(zidState || sallaState){
+      params.delete('zid'); params.delete('salla'); params.delete('msg');
+      const qs = params.toString();
+      const newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+      window.history.replaceState({}, '', newUrl);
+    }
+  })();
 
   supabaseClient.auth.getSession().then(function(res){
     const hash = window.location.hash;
@@ -794,7 +856,127 @@
     loadTickets();
     loadCampaigns();
     renderAnalytics();
+    loadZidStatus();
+    loadSallaStatus();
   }
+
+  /* ---------- ربط متجر زد ---------- */
+  async function loadZidStatus(){
+    const statusBox = document.getElementById('zidStatus');
+    const btn = document.getElementById('connectZidBtn');
+    const nonOwnerHint = document.getElementById('zidHelperNonOwner');
+
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+
+    const { data } = await supabaseClient
+      .from('client_zid_credentials')
+      .select('store_name, connected_at')
+      .eq('client_id', myClient.id)
+      .maybeSingle();
+
+    if(data){
+      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      statusBox.innerHTML =
+        '<span class="status-badge zid-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+      btn.style.display = 'none';
+    } else {
+      statusBox.innerHTML = '<span class="status-badge zid-disconnected">⚪ غير متصل بعد</span>';
+      btn.style.display = isOwner ? 'inline-block' : 'none';
+      btn.textContent = 'ربط مع زد';
+    }
+  }
+
+  document.getElementById('connectZidBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner){ return; }
+    const btn = this;
+    btn.disabled = true; btn.textContent = 'جاري التحضير...';
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/zid-oauth-authorize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ client_id: myClient.id })
+      });
+      const json = await res.json();
+
+      if(!res.ok || !json.url){
+        btn.disabled = false; btn.textContent = 'ربط مع زد';
+        alert(json.error || 'تعذّر بدء الربط مع زد، حاول مرة ثانية.');
+        return;
+      }
+      window.location.href = json.url;
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'ربط مع زد';
+      alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+    }
+  });
+
+  /* ---------- ربط متجر سلة ---------- */
+  async function loadSallaStatus(){
+    const statusBox = document.getElementById('sallaStatus');
+    const btn = document.getElementById('connectSallaBtn');
+    const nonOwnerHint = document.getElementById('sallaHelperNonOwner');
+
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+
+    const { data } = await supabaseClient
+      .from('client_salla_credentials')
+      .select('store_name, connected_at')
+      .eq('client_id', myClient.id)
+      .maybeSingle();
+
+    if(data){
+      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      statusBox.innerHTML =
+        '<span class="status-badge salla-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+      btn.style.display = 'none';
+    } else {
+      statusBox.innerHTML = '<span class="status-badge salla-disconnected">⚪ غير متصل بعد</span>';
+      btn.style.display = isOwner ? 'inline-block' : 'none';
+      btn.textContent = 'ربط مع سلة';
+    }
+  }
+
+  document.getElementById('connectSallaBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner){ return; }
+    const btn = this;
+    btn.disabled = true; btn.textContent = 'جاري التحضير...';
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/salla-oauth-authorize', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ client_id: myClient.id })
+      });
+      const json = await res.json();
+
+      if(!res.ok || !json.url){
+        btn.disabled = false; btn.textContent = 'ربط مع سلة';
+        alert(json.error || 'تعذّر بدء الربط مع سلة، حاول مرة ثانية.');
+        return;
+      }
+      window.location.href = json.url;
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'ربط مع سلة';
+      alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+    }
+  });
 
   function renderTeam(){
     const list = document.getElementById('staffList');
