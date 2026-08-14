@@ -200,6 +200,16 @@
   .modal-confirm{background:var(--wa-green); color:#04210F;}
   .modal-confirm:disabled{opacity:.6; cursor:not-allowed;}
   .modal-cancel{background:#F1F1EF; color:var(--ink);}
+  .topup-request-btn{
+    background:var(--wa-green); color:#04210F; border:none; border-radius:100px;
+    padding:10px 22px; font-weight:800; font-size:13.5px; cursor:pointer; white-space:nowrap;
+    box-shadow:0 8px 18px -6px rgba(37,211,102,.5); transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .topup-request-btn:hover{transform:translateY(-1px); box-shadow:0 10px 22px -6px rgba(37,211,102,.6);}
+  .topup-request-btn:disabled{background:#EEE; color:var(--muted); box-shadow:none; cursor:not-allowed; transform:none;}
+  .topup-row{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:14px 0; border-bottom:1px solid var(--border);}
+  .topup-row:last-child{border-bottom:none;}
+  .topup-row .topup-info b{color:var(--wa-teal-dark);}
 
   @media (max-width:820px){
     .inbox-wrap{grid-template-columns:1fr; height:auto;}
@@ -2052,10 +2062,10 @@
     box.innerHTML = '';
     packages.forEach(function(p){
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 0; border-bottom:1px solid var(--border);';
+      row.className = 'topup-row';
       row.innerHTML =
-        '<span>' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
-        '<button class="modal-cancel topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">اطلب هذا الرصيد</button>';
+        '<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
+        '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">💳 اطلب هذا الرصيد</button>';
       box.appendChild(row);
     });
 
