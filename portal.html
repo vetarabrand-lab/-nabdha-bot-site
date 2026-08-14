@@ -623,6 +623,7 @@
   };
 
   let myClient = null;
+  let myPlan = null;
   let myUserId = null;
   let isOwner = false;
   let conversations = {};
@@ -820,7 +821,7 @@
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled')
       .eq('user_id', user.id)
       .maybeSingle();
 
@@ -837,7 +838,7 @@
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -862,8 +863,8 @@
 
     let planLabel = '—';
     if(clientRow.plan_id){
-      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar').eq('id', clientRow.plan_id).single();
-      if(plan){ planLabel = plan.name_ar; }
+      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar').eq('id', clientRow.plan_id).single();
+      if(plan){ planLabel = plan.name_ar; myPlan = plan; }
     }
     document.getElementById('statPlan').textContent = planLabel;
 
@@ -935,6 +936,24 @@
   }
 
   /* ---------- ربط متجر زد ---------- */
+  function storeAddonLockedHtml(suffix){
+    const price = (myPlan && myPlan.store_integration_addon_price_sar) || 25;
+    return '<div class="alert-box error" style="display:block; margin-top:10px;">'
+      + 'ربط المتجر غير مفعّل في باقتك الحالية (' + escapeHtml((myPlan && myPlan.name_ar) || 'الأساسية') + '). '
+      + 'فعّله مقابل ' + price + ' ريال/شهر إضافية، أو رقّي لباقة نمو وما فوق ليكون مجانياً.'
+      + '</div>'
+      + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">تواصل مع الدعم للتفعيل</button>';
+  }
+
+  function bindStoreAddonSupportBtn(suffix){
+    const el = document.getElementById('storeAddonSupportBtn_' + suffix);
+    if(el){
+      el.addEventListener('click', function(){
+        document.querySelector('.tab-btn[data-tab="support"]').click();
+      });
+    }
+  }
+
   async function loadZidStatus(){
     const statusBox = document.getElementById('zidStatus');
     const btn = document.getElementById('connectZidBtn');
@@ -949,12 +968,18 @@
       .eq('client_id', myClient.id)
       .maybeSingle();
 
+    const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
+
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge zid-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
       btn.style.display = 'none';
+    } else if(addonLocked){
+      statusBox.innerHTML = '<span class="status-badge zid-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('zid') : '');
+      btn.style.display = 'none';
+      bindStoreAddonSupportBtn('zid');
     } else {
       statusBox.innerHTML = '<span class="status-badge zid-disconnected">⚪ غير متصل بعد</span>';
       btn.style.display = isOwner ? 'inline-block' : 'none';
@@ -1008,12 +1033,18 @@
       .eq('client_id', myClient.id)
       .maybeSingle();
 
+    const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
+
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge salla-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
       btn.style.display = 'none';
+    } else if(addonLocked){
+      statusBox.innerHTML = '<span class="status-badge salla-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('salla') : '');
+      btn.style.display = 'none';
+      bindStoreAddonSupportBtn('salla');
     } else {
       statusBox.innerHTML = '<span class="status-badge salla-disconnected">⚪ غير متصل بعد</span>';
       btn.style.display = isOwner ? 'inline-block' : 'none';
