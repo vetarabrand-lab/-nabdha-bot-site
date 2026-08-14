@@ -224,6 +224,18 @@
   }
   .price-card h3{font-size:20px; margin-bottom:6px;}
   .price-card .desc{color:var(--muted); font-size:14px; margin-bottom:22px;}
+  .custom-plan-banner{
+    margin-top:22px; background:linear-gradient(120deg, var(--wa-teal-dark), var(--wa-teal));
+    border-radius:20px; padding:34px 32px; color:#fff;
+    display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap;
+  }
+  .custom-plan-banner .cpb-text h3{font-size:20px; font-weight:900; margin-bottom:8px;}
+  .custom-plan-banner .cpb-text p{color:rgba(255,255,255,.85); font-size:14.5px; max-width:520px; margin-bottom:14px;}
+  .custom-plan-banner .cpb-features{display:flex; flex-wrap:wrap; gap:10px 20px; list-style:none; padding:0; margin:0;}
+  .custom-plan-banner .cpb-features li{font-size:13.5px; color:rgba(255,255,255,.92); display:flex; align-items:center; gap:6px;}
+  .custom-plan-banner .cpb-cta{flex-shrink:0;}
+  .custom-plan-banner .btn-white{background:#fff; color:var(--wa-teal-dark); font-weight:800; padding:13px 28px; border-radius:100px; white-space:nowrap;}
+  @media (max-width:720px){ .custom-plan-banner{flex-direction:column; text-align:center; padding:28px 22px;} .custom-plan-banner .cpb-features{justify-content:center;} }
   .price-value{display:flex; align-items:baseline; gap:6px; margin-bottom:6px;}
   .price-value b{font-size:40px; font-weight:900;}
   .price-value span{color:var(--muted); font-size:14px;}
@@ -563,6 +575,7 @@
           <li><span class="check">✓</span> <span data-i18n="pricing.pgf3">رسائل جماعية بدون رسوم تفعيل</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.pgf4">صندوق وارد لفريق العمل</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.pgf5">لوحة الطلبات الموحّدة 🆕</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf6">منشئ قوالب رسائل بالذكاء الاصطناعي</span></li>
         </ul>
         <a href="signup.html?plan=growth" class="btn btn-primary btn-block" data-i18n="pricing.pgcta">ابدأ بباقة نمو</a>
       </div>
@@ -576,6 +589,7 @@
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f2">تخصيص متقدم لشخصية البوت</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f3">تحليلات وتقارير استخدام</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f4">دعم فني بأولوية</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f5">تحويل ذكي للمحادثة لموظف بشري</span></li>
         </ul>
         <a href="signup.html?plan=pro" class="btn btn-outline btn-block" data-i18n="pricing.p2cta">ابدأ بالاحترافي</a>
       </div>
@@ -591,6 +605,22 @@
           <li><span class="check">✓</span> <span data-i18n="pricing.p3f4">تكاملات مخصصة عند الطلب</span></li>
         </ul>
         <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block" data-i18n="pricing.p3cta">تواصل معنا</a>
+      </div>
+    </div>
+
+    <div class="custom-plan-banner reveal">
+      <div class="cpb-text">
+        <h3 data-i18n="pricing.cpTitle">عندك سلسلة متاجر أو حجم طلبات كبير؟</h3>
+        <p data-i18n="pricing.cpDesc">نبني لك باقة مخصصة حسب حجم نشاطك — بدون حدود جاهزة، وبشروط تتفاوض عليها معنا مباشرة.</p>
+        <ul class="cpb-features">
+          <li>✓ <span data-i18n="pricing.cpf1">طلبات وأرقام واتساب بلا حدود</span></li>
+          <li>✓ <span data-i18n="pricing.cpf2">تكاملات API وربط أنظمة مخصصة</span></li>
+          <li>✓ <span data-i18n="pricing.cpf3">مدير حساب ودعم مخصص</span></li>
+          <li>✓ <span data-i18n="pricing.cpf4">اتفاقية مستوى خدمة (SLA) خاصة</span></li>
+        </ul>
+      </div>
+      <div class="cpb-cta">
+        <a href="contact.html" class="btn btn-white" data-i18n="pricing.cpcta">تحدث مع المبيعات</a>
       </div>
     </div>
   </div>
@@ -796,6 +826,7 @@
       "pricing.pgf3": "رسائل جماعية بدون رسوم تفعيل",
       "pricing.pgf4": "صندوق وارد لفريق العمل",
       "pricing.pgf5": "لوحة الطلبات الموحّدة 🆕",
+      "pricing.pgf6": "منشئ قوالب رسائل بالذكاء الاصطناعي",
       "pricing.pgcta": "ابدأ بباقة نمو",
       "pricing.p2n": "احترافي",
       "pricing.p2d": "للأنشطة التجارية المتنامية",
@@ -804,6 +835,7 @@
       "pricing.p2f2": "تخصيص متقدم لشخصية البوت",
       "pricing.p2f3": "تحليلات وتقارير استخدام",
       "pricing.p2f4": "دعم فني بأولوية",
+      "pricing.p2f5": "تحويل ذكي للمحادثة لموظف بشري",
       "pricing.p2cta": "ابدأ بالاحترافي",
       "pricing.p3n": "مؤسسات",
       "pricing.p3d": "لسلاسل المتاجر والفرق الكبيرة",
@@ -812,6 +844,13 @@
       "pricing.p3f2": "أرقام واتساب متعددة",
       "pricing.p3f3": "مدير حساب مخصص",
       "pricing.p3f4": "تكاملات مخصصة عند الطلب",
+      "pricing.cpTitle": "عندك سلسلة متاجر أو حجم طلبات كبير؟",
+      "pricing.cpDesc": "نبني لك باقة مخصصة حسب حجم نشاطك — بدون حدود جاهزة، وبشروط تتفاوض عليها معنا مباشرة.",
+      "pricing.cpf1": "طلبات وأرقام واتساب بلا حدود",
+      "pricing.cpf2": "تكاملات API وربط أنظمة مخصصة",
+      "pricing.cpf3": "مدير حساب ودعم مخصص",
+      "pricing.cpf4": "اتفاقية مستوى خدمة (SLA) خاصة",
+      "pricing.cpcta": "تحدث مع المبيعات",
       "pricing.p3cta": "تواصل معنا",
       "faq.eyebrow": "الأسئلة الشائعة",
       "faq.title": "عندك سؤال؟ عندنا جواب",
@@ -947,6 +986,7 @@
       "pricing.pgf3": "Broadcast campaigns, no activation fee",
       "pricing.pgf4": "Shared team inbox",
       "pricing.pgf5": "Unified order table 🆕",
+      "pricing.pgf6": "AI WhatsApp template builder",
       "pricing.pgcta": "Start with Growth",
       "pricing.p2n": "Professional",
       "pricing.p2d": "For growing businesses",
@@ -955,6 +995,7 @@
       "pricing.p2f2": "Advanced bot personality customization",
       "pricing.p2f3": "Usage analytics and reports",
       "pricing.p2f4": "Priority support",
+      "pricing.p2f5": "Smart handoff to human staff",
       "pricing.p2cta": "Start with Pro",
       "pricing.p3n": "Enterprise",
       "pricing.p3d": "For store chains and large teams",
@@ -963,6 +1004,13 @@
       "pricing.p3f2": "Multiple WhatsApp numbers",
       "pricing.p3f3": "Dedicated account manager",
       "pricing.p3f4": "Custom integrations on request",
+      "pricing.cpTitle": "Have a store chain or high order volume?",
+      "pricing.cpDesc": "We build you a custom plan based on your business size — no fixed limits, terms negotiated directly with us.",
+      "pricing.cpf1": "Unlimited orders and WhatsApp numbers",
+      "pricing.cpf2": "Custom API integrations and system connections",
+      "pricing.cpf3": "Dedicated account manager and support",
+      "pricing.cpf4": "Custom service level agreement (SLA)",
+      "pricing.cpcta": "Talk to Sales",
       "pricing.p3cta": "Contact us",
       "faq.eyebrow": "FAQ",
       "faq.title": "Got a question? We've got answers",
