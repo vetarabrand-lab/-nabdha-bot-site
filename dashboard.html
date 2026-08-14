@@ -309,6 +309,7 @@
     <div class="tabs">
       <button class="tab-btn active" data-tab="clients">المشتركين</button>
       <button class="tab-btn" data-tab="tickets">تذاكر الدعم</button>
+      <button class="tab-btn" data-tab="topups">طلبات الرصيد</button>
     </div>
 
     <!-- ===== PANEL: CLIENTS ===== -->
@@ -379,6 +380,48 @@
         </div>
       </div>
     </div>
+
+    <!-- ===== PANEL: TOPUPS ===== -->
+    <div class="panel" id="panelTopups">
+      <div class="dash-head" style="margin-bottom:10px;">
+        <div><h1 style="font-size:18px;">طلبات الرصيد الإضافي المعلّقة</h1></div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:30px;">
+        <table>
+          <thead>
+            <tr>
+              <th>النشاط</th>
+              <th>الرصيد المطلوب</th>
+              <th>السعر</th>
+              <th>تاريخ الطلب</th>
+              <th>إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="topupRequestsTbody">
+            <tr class="empty-row"><td colspan="5">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dash-head" style="margin-bottom:10px;">
+        <div><h1 style="font-size:18px;">🔔 عملاء قاربوا على حد الرسائل الشهري (80%+)</h1></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>النشاط</th>
+              <th>الباقة</th>
+              <th>الاستهلاك</th>
+              <th>النسبة</th>
+            </tr>
+          </thead>
+          <tbody id="nearLimitTbody">
+            <tr class="empty-row"><td colspan="4">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -435,6 +478,7 @@
 
   let allClients = [];
   let plansMap = {};
+  let planLimitMap = {};
   let modalClient = null;
   let allTickets = [];
   let activeAdminTicketId = null;
@@ -565,20 +609,22 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { clients: 'panelClients', tickets: 'panelTickets' };
+      const map = { clients: 'panelClients', tickets: 'panelTickets', topups: 'panelTopups' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'tickets'){ loadTickets(); }
+      if(btn.dataset.tab === 'topups'){ loadTopupsPanel(); }
     });
   });
 
   async function loadDashboard(){
-    const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar');
+    const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar, monthly_message_limit');
     plansMap = {};
-    (plans || []).forEach(function(p){ plansMap[p.id] = p.name_ar; });
+    planLimitMap = {};
+    (plans || []).forEach(function(p){ plansMap[p.id] = p.name_ar; planLimitMap[p.id] = p.monthly_message_limit; });
 
     const { data: clients, error } = await supabaseClient
       .from('clients')
-      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at')
+      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits')
       .order('created_at', { ascending: false });
 
     if(error){
@@ -919,6 +965,143 @@
       modalConfirmBtn.textContent = 'إنشاء الحساب';
     }
   });
+
+  /* ---------- طلبات الرصيد الإضافي + العملاء القريبين من الحد ---------- */
+  function loadTopupsPanel(){
+    loadTopupRequestsTable();
+    loadNearLimitTable();
+  }
+
+  function clientLabelById(clientId){
+    const c = allClients.find(function(x){ return x.id === clientId; });
+    if(!c){ return '—'; }
+    return escapeHtml(c.business_name_ar || c.business_name || '—');
+  }
+
+  async function loadTopupRequestsTable(){
+    const tbody = document.getElementById('topupRequestsTbody');
+    const { data, error } = await supabaseClient
+      .from('message_credit_topup_requests')
+      .select('id, client_id, credits, price_sar, requested_at')
+      .eq('status', 'pending')
+      .order('requested_at', { ascending: true });
+
+    if(error){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">تعذّر تحميل الطلبات.</td></tr>';
+      return;
+    }
+
+    if(!data || data.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">ما فيه طلبات معلّقة حالياً.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = '';
+    data.forEach(function(r){
+      const dateStr = new Date(r.requested_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + clientLabelById(r.client_id) + '</td>' +
+        '<td>' + r.credits.toLocaleString('en-US') + ' رسالة</td>' +
+        '<td>' + r.price_sar + ' ريال</td>' +
+        '<td>' + dateStr + '</td>' +
+        '<td><button class="gen-btn fulfill-topup-btn" data-id="' + r.id + '" data-client="' + r.client_id + '" data-credits="' + r.credits + '">تم الدفع — إضافة الرصيد</button></td>';
+      tbody.appendChild(tr);
+    });
+
+    document.querySelectorAll('.fulfill-topup-btn').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if(!confirm('تأكيد استلام الدفع وإضافة ' + this.dataset.credits + ' رسالة لرصيد العميل؟')){ return; }
+        this.disabled = true;
+        this.textContent = 'جاري الإضافة...';
+
+        const clientId = this.dataset.client;
+        const requestId = this.dataset.id;
+        const credits = parseInt(this.dataset.credits, 10);
+
+        const { data: clientRow } = await supabaseClient
+          .from('clients')
+          .select('extra_message_credits')
+          .eq('id', clientId)
+          .single();
+
+        const newBalance = (clientRow ? clientRow.extra_message_credits : 0) + credits;
+
+        const { error: updateErr } = await supabaseClient
+          .from('clients')
+          .update({ extra_message_credits: newBalance })
+          .eq('id', clientId);
+
+        if(updateErr){
+          this.disabled = false;
+          this.textContent = 'تم الدفع — إضافة الرصيد';
+          alert('تعذّر إضافة الرصيد، حاول مرة ثانية.');
+          return;
+        }
+
+        await supabaseClient
+          .from('message_credit_topup_requests')
+          .update({ status: 'fulfilled', fulfilled_at: new Date().toISOString() })
+          .eq('id', requestId);
+
+        await loadTopupRequestsTable();
+      });
+    });
+  }
+
+  async function loadNearLimitTable(){
+    const tbody = document.getElementById('nearLimitTbody');
+
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { data: msgs, error } = await supabaseClient
+      .from('whatsapp_messages_log')
+      .select('client_id')
+      .gte('created_at', monthStart);
+
+    if(error){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="4">تعذّر تحميل بيانات الاستهلاك.</td></tr>';
+      return;
+    }
+
+    const countByClient = {};
+    (msgs || []).forEach(function(m){
+      countByClient[m.client_id] = (countByClient[m.client_id] || 0) + 1;
+    });
+
+    const nearLimit = [];
+    allClients.forEach(function(c){
+      if(c.subscription_status !== 'active' && c.subscription_status !== 'trial'){ return; }
+      const limit = planLimitMap[c.plan_id];
+      if(!limit){ return; }
+      const totalAllowance = limit + (c.extra_message_credits || 0);
+      const used = countByClient[c.id] || 0;
+      const pct = Math.round((used / totalAllowance) * 100);
+      if(pct >= 80){
+        nearLimit.push({ client: c, used: used, total: totalAllowance, pct: pct });
+      }
+    });
+
+    if(nearLimit.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="4">ما فيه عملاء قاربوا على الحد حالياً.</td></tr>';
+      return;
+    }
+
+    nearLimit.sort(function(a,b){ return b.pct - a.pct; });
+
+    tbody.innerHTML = '';
+    nearLimit.forEach(function(item){
+      const tr = document.createElement('tr');
+      const badgeClass = item.pct >= 100 ? 'expired' : 'trialdays';
+      tr.innerHTML =
+        '<td>' + clientLabelById(item.client.id) + '</td>' +
+        '<td>' + escapeHtml(plansMap[item.client.plan_id] || '—') + '</td>' +
+        '<td>' + item.used.toLocaleString('en-US') + ' / ' + item.total.toLocaleString('en-US') + '</td>' +
+        '<td><span class="badge ' + badgeClass + '">' + item.pct + '%</span></td>';
+      tbody.appendChild(tr);
+    });
+  }
 </script>
 
 </body>

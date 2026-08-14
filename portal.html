@@ -297,6 +297,8 @@
       <div class="stat-card"><div class="n" id="statConvs">–</div><div class="l">عدد المحادثات</div></div>
     </div>
 
+    <div class="cost-note" id="usageWarningBanner" style="display:none;"></div>
+
     <div class="tabs">
       <button class="tab-btn active" data-tab="inbox">المحادثات</button>
       <button class="tab-btn" data-tab="analytics">التحليلات</button>
@@ -461,6 +463,17 @@
         <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;">ربط مع سلة</button>
         <div class="helper-text" id="sallaHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;">اربط زد أو سلة (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
+      </div>
+
+      <div class="settings-card" id="topupCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>رصيد رسائل إضافي</label>
+        </div>
+        <div id="topupCurrentBalance" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
+        <div id="topupPendingNotice"></div>
+        <div id="topupPackages"></div>
+        <div class="helper-text" id="topupHelperNonOwner" style="display:none; margin-top:10px;">شراء رصيد إضافي متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;">الرصيد الإضافي يُستهلك تلقائياً بعد نفاد حد رسائل باقتك الشهري، ولا ينتهي بنهاية الشهر. حالياً نعالج الطلبات يدوياً — بعد ما تطلب رصيد، فريق نبضة يتواصل معك لتأكيد الدفع خلال ساعات.</div>
       </div>
     </div>
   </div>
@@ -821,7 +834,7 @@
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits')
       .eq('user_id', user.id)
       .maybeSingle();
 
@@ -838,7 +851,7 @@
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -923,8 +936,8 @@
       }
     });
 
-    document.getElementById('statUsage').textContent = monthCount;
     document.getElementById('statConvs').textContent = Object.keys(conversations).length;
+    renderUsageStat(monthCount);
 
     renderConvList();
     loadTickets();
@@ -933,6 +946,33 @@
     loadZidStatus();
     loadSallaStatus();
     loadTemplates();
+    loadTopupInfo();
+  }
+
+  /* ---------- استهلاك الرسائل + تنبيه الاقتراب من الحد ---------- */
+  function renderUsageStat(monthCount){
+    const limit = (myPlan && myPlan.monthly_message_limit) || null;
+    const extraCredits = (myClient && myClient.extra_message_credits) || 0;
+    const totalAllowance = limit ? (limit + extraCredits) : null;
+
+    document.getElementById('statUsage').textContent = totalAllowance ? (monthCount + ' / ' + totalAllowance) : monthCount;
+
+    const banner = document.getElementById('usageWarningBanner');
+    if(!totalAllowance){ banner.style.display = 'none'; return; }
+
+    const pct = Math.round((monthCount / totalAllowance) * 100);
+
+    if(pct >= 100){
+      banner.className = 'alert-box error';
+      banner.style.display = 'block';
+      banner.textContent = '🚫 وصلت لحد رسائلك هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). البوت ممكن يتوقف عن الرد حتى تضيف رصيد إضافي أو تنتهي الدورة الشهرية. افتح تبويب "إعدادات البوت" لطلب رصيد إضافي.';
+    } else if(pct >= 80){
+      banner.className = 'cost-note';
+      banner.style.display = 'block';
+      banner.textContent = '⚠️ استهلكت ' + pct + '% من رسائل هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). فكّر بإضافة رصيد إضافي من تبويب "إعدادات البوت" قبل ما تنتهي رسائلك.';
+    } else {
+      banner.style.display = 'none';
+    }
   }
 
   /* ---------- ربط متجر زد ---------- */
@@ -1967,6 +2007,84 @@
       errBox.style.display = 'block';
     }
   });
+
+  /* ---------- رصيد الرسائل الإضافي (Top-up) ---------- */
+  async function loadTopupInfo(){
+    const nonOwnerHint = document.getElementById('topupHelperNonOwner');
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+
+    const balance = myClient.extra_message_credits || 0;
+    document.getElementById('topupCurrentBalance').textContent = 'رصيدك الإضافي الحالي: ' + balance + ' رسالة.';
+
+    const { data: pending } = await supabaseClient
+      .from('message_credit_topup_requests')
+      .select('credits, price_sar, status, requested_at')
+      .eq('client_id', myClient.id)
+      .eq('status', 'pending')
+      .order('requested_at', { ascending: false });
+
+    const pendingBox = document.getElementById('topupPendingNotice');
+    if(pending && pending.length > 0){
+      pendingBox.innerHTML = pending.map(function(r){
+        return '<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + r.price_sar + ' ريال — بانتظار تأكيد الدفع من فريق نبضة.</div>';
+      }).join('');
+    } else {
+      pendingBox.innerHTML = '';
+    }
+
+    if(!isOwner){
+      document.getElementById('topupPackages').innerHTML = '';
+      return;
+    }
+
+    const { data: packages } = await supabaseClient
+      .from('message_topup_packages')
+      .select('id, credits, price_sar')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
+
+    const box = document.getElementById('topupPackages');
+    if(!packages || packages.length === 0){
+      box.innerHTML = '';
+      return;
+    }
+    box.innerHTML = '';
+    packages.forEach(function(p){
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 0; border-bottom:1px solid var(--border);';
+      row.innerHTML =
+        '<span>' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
+        '<button class="modal-cancel topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">اطلب هذا الرصيد</button>';
+      box.appendChild(row);
+    });
+
+    document.querySelectorAll('.topup-request-btn').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        if(!myClient || !isOwner){ return; }
+        this.disabled = true;
+        const originalText = this.textContent;
+        this.textContent = 'جاري الإرسال...';
+
+        const { error } = await supabaseClient.from('message_credit_topup_requests').insert({
+          client_id: myClient.id,
+          package_id: this.dataset.id,
+          credits: parseInt(this.dataset.credits, 10),
+          price_sar: parseFloat(this.dataset.price)
+        });
+
+        if(error){
+          this.disabled = false;
+          this.textContent = originalText;
+          alert('تعذّر إرسال الطلب، حاول مرة ثانية.');
+          return;
+        }
+
+        alert('تم إرسال طلبك. فريق نبضة بيتواصل معك لتأكيد الدفع خلال ساعات.');
+        await loadTopupInfo();
+      });
+    });
+  }
 </script>
 
 </body>
