@@ -195,6 +195,19 @@
 
       <div class="form-section-title" data-i18n="form.s3">تعليمات البوت</div>
       <div class="field">
+        <label data-i18n="form.bizType">نوع نشاطك (اختياري)</label>
+        <select id="bizType">
+          <option value="" data-i18n="form.bizTypeChoose">اختر نوع نشاطك لنعبّي لك تعليمات مبدئية قابلة للتعديل...</option>
+          <option value="matbakh" data-i18n="form.bizTypeMatbakh">مطعم / كافيه</option>
+          <option value="malabis" data-i18n="form.bizTypeMalabis">أزياء وملابس</option>
+          <option value="itr" data-i18n="form.bizTypeItr">عطور وتجميل</option>
+          <option value="khadamat" data-i18n="form.bizTypeKhadamat">خدمات وحجوزات (صالونات / عيادات)</option>
+          <option value="elec" data-i18n="form.bizTypeElec">إلكترونيات وتقنية</option>
+          <option value="other" data-i18n="form.bizTypeOther">نشاط آخر</option>
+        </select>
+        <div class="hint" data-i18n="form.bizTypeHint">هذا بس لتسريع تعبئة الحقل اللي تحت — تقدر تعدّل النص كامل بعدها.</div>
+      </div>
+      <div class="field">
         <label data-i18n="form.prompt">عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *</label>
         <textarea id="systemPrompt" required data-i18n-placeholder="form.promptPh" placeholder="مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال..."></textarea>
         <div class="hint" data-i18n="form.promptHint">هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.</div>
@@ -263,6 +276,15 @@
       "form.waNumber": "رقم واتساب النشاط الذي تريد ربطه بالبوت",
       "form.waNumberHint": "إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.",
       "form.s3": "تعليمات البوت",
+      "form.bizType": "نوع نشاطك (اختياري)",
+      "form.bizTypeChoose": "اختر نوع نشاطك لنعبّي لك تعليمات مبدئية قابلة للتعديل...",
+      "form.bizTypeMatbakh": "مطعم / كافيه",
+      "form.bizTypeMalabis": "أزياء وملابس",
+      "form.bizTypeItr": "عطور وتجميل",
+      "form.bizTypeKhadamat": "خدمات وحجوزات (صالونات / عيادات)",
+      "form.bizTypeElec": "إلكترونيات وتقنية",
+      "form.bizTypeOther": "نشاط آخر",
+      "form.bizTypeHint": "هذا بس لتسريع تعبئة الحقل اللي تحت — تقدر تعدّل النص كامل بعدها.",
       "form.prompt": "عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *",
       "form.promptPh": "مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال...",
       "form.promptHint": "هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.",
@@ -308,6 +330,15 @@
       "form.waNumber": "The business WhatsApp number you want to connect",
       "form.waNumberHint": "If you do not have a number ready yet, leave this blank, our team will help you set one up.",
       "form.s3": "Bot Instructions",
+      "form.bizType": "Your business type (optional)",
+      "form.bizTypeChoose": "Choose your business type to pre-fill a starting template you can edit...",
+      "form.bizTypeMatbakh": "Restaurant / Cafe",
+      "form.bizTypeMalabis": "Fashion & Clothing",
+      "form.bizTypeItr": "Perfumes & Cosmetics",
+      "form.bizTypeKhadamat": "Services & Bookings (salons / clinics)",
+      "form.bizTypeElec": "Electronics & Tech",
+      "form.bizTypeOther": "Other",
+      "form.bizTypeHint": "This just speeds up filling the field below, you can edit the full text afterward.",
       "form.prompt": "Tell us about your business (what you sell, shipping policy, common questions...) *",
       "form.promptPh": "e.g. We sell authentic spices and herbs through our online store on Zid. Shipping within Saudi Arabia takes 3-5 business days, free over 200 SAR...",
       "form.promptHint": "This is the text the bot relies on to reply to your customers, the clearer it is, the more accurate the replies.",
@@ -369,6 +400,91 @@
 
   var savedLang = localStorage.getItem('nabda_lang');
   if(savedLang === 'en'){ applyLanguage('en'); }
+
+  /* ---------- قوالب بداية جاهزة حسب نوع النشاط ---------- */
+  var starterTemplates = {
+    matbakh: {
+      ar: {
+        prompt: "نحن [اسم المطعم/الكافيه]، نقدّم [نوع المأكولات — مثال: مأكولات سعودية وخليجية]. أوقات الدوام من [الساعة] إلى [الساعة] يومياً. نوصّل لجميع أحياء [المدينة] خلال [المدة]، والحد الأدنى للطلب [المبلغ إن وجد]. أبرز الأصناف عندنا: [اذكر 3-5 أصناف مميزة وأسعارها]. لو سأل العميل عن حجز طاولة أو طلبات مناسبات، أخبره إن هذا متاح وحوّله لفريق الدعم لتفاصيل الحجز.",
+        welcome: "أهلاً بك في [اسم المطعم] 🍽️ وش تحب تطلب اليوم؟"
+      },
+      en: {
+        prompt: "We are [restaurant/cafe name], serving [cuisine type — e.g. Saudi and Gulf cuisine]. Open daily from [time] to [time]. We deliver across [city] within [duration], minimum order [amount if any]. Our top items: [list 3-5 signature items and prices]. If asked about table bookings or event orders, confirm it's available and hand off to support for booking details.",
+        welcome: "Welcome to [restaurant name] 🍽️ What would you like to order today?"
+      }
+    },
+    malabis: {
+      ar: {
+        prompt: "نحن [اسم المتجر]، متجر متخصص في [نوع الملابس — رجالي/نسائي/أطفال]. نوفر مقاسات من [الأصغر] إلى [الأكبر]. سياسة الاستبدال والإرجاع: خلال [عدد] يوم من الاستلام بشرط عدم الاستخدام. الشحن يستغرق [المدة] وتكلفته [المبلغ]، ومجاني فوق [مبلغ معين]. لو سأل العميل عن توفر مقاس أو لون معين، أخبره إننا بنتأكد من المخزون ونرد عليه بسرعة.",
+        welcome: "أهلاً بك في [اسم المتجر] 👗 كيف أقدر أساعدك تلقى القطعة المناسبة؟"
+      },
+      en: {
+        prompt: "We are [store name], specializing in [clothing type — men's/women's/kids]. We offer sizes from [smallest] to [largest]. Exchange/return policy: within [X] days of delivery, unused. Shipping takes [duration] and costs [amount], free above [amount]. If asked about a specific size/color availability, say we'll check stock and reply quickly.",
+        welcome: "Welcome to [store name] 👗 Let's find the perfect piece for you!"
+      }
+    },
+    itr: {
+      ar: {
+        prompt: "نحن [اسم المتجر]، متخصصون في [عطور / مستحضرات تجميل / عناية بالبشرة]. منتجاتنا [أصلية 100% / تركيبات خاصة بنا]. نوفر عينات تجريبية عند الطلب لبعض المنتجات. الشحن لكل مناطق المملكة خلال [المدة]. لو سأل العميل عن مكونات منتج أو مدى مناسبته لبشرة/نوع معين، أعطه معلومة عامة واقترح عليه التواصل مع فريق الدعم للتفاصيل الدقيقة قبل الشراء.",
+        welcome: "أهلاً بك في [اسم المتجر] ✨ تبي نساعدك تختار عطرك أو منتجك المفضل؟"
+      },
+      en: {
+        prompt: "We are [store name], specializing in [perfumes / cosmetics / skincare]. Our products are [100% authentic / our own formulations]. Trial samples available on request for select products. We ship nationwide within [duration]. If asked about ingredients or suitability for a skin type, give general info and suggest contacting support for precise details before purchase.",
+        welcome: "Welcome to [store name] ✨ Want help picking your favorite scent or product?"
+      }
+    },
+    khadamat: {
+      ar: {
+        prompt: "نحن [اسم النشاط]، نقدّم خدمات [الحلاقة / التجميل / العلاج الطبيعي / العيادة]. أوقات الدوام من [الساعة] إلى [الساعة]، ويوم إجازتنا [اليوم]. الحجز يكون [عبر رابط الحجز / اتصال / واتساب مباشرة]. أسعار أهم الخدمات: [اذكر 2-4 خدمات وأسعارها]. لو العميل يبي يلغي أو يعدّل موعد، وضّح له إن التعديل يكون قبل [مدة] من الموعد.",
+        welcome: "أهلاً بك في [اسم النشاط] 💈 تحب تحجز موعد أو تسأل عن خدمة معينة؟"
+      },
+      en: {
+        prompt: "We are [business name], offering [barbering / beauty / physiotherapy / clinic] services. Open from [time] to [time], closed on [day]. Booking is via [booking link / phone / WhatsApp directly]. Key service prices: [list 2-4 services and prices]. If a customer wants to cancel/reschedule, note it must be done [X time] before the appointment.",
+        welcome: "Welcome to [business name] 💈 Want to book an appointment or ask about a service?"
+      }
+    },
+    elec: {
+      ar: {
+        prompt: "نحن [اسم المتجر]، متخصصون في بيع [الأجهزة الإلكترونية / إكسسوارات الجوالات / أجهزة الكمبيوتر]. كل منتجاتنا أصلية وتأتي بضمان [المدة]. نوفر خدمة الصيانة والدعم الفني بعد البيع. الشحن خلال [المدة]. لو سأل العميل عن مواصفات جهاز معين أو مقارنة بين منتجين، أعطه المعلومات المتوفرة عندك ووجّهه لصفحة المنتج للتفاصيل الكاملة.",
+        welcome: "أهلاً بك في [اسم المتجر] 📱 تبحث عن جهاز أو إكسسوار معين؟"
+      },
+      en: {
+        prompt: "We are [store name], specializing in [electronics / phone accessories / computers]. All our products are genuine and come with a [duration] warranty. We offer after-sales maintenance and support. Shipping within [duration]. If asked about specs or a comparison between two products, share what info you have and point to the product page for full details.",
+        welcome: "Welcome to [store name] 📱 Looking for a specific device or accessory?"
+      }
+    },
+    other: {
+      ar: {
+        prompt: "نحن [اسم النشاط]، نعمل في مجال [وصف مختصر لنشاطك]. أهم اللي يميزنا: [اذكر 2-3 نقاط]. طريقة التواصل أو الطلب: [وضّح كيف يطلب العميل أو يحجز]. لو سأل العميل عن شي ما تعرف إجابته أو يحتاج تفاصيل دقيقة، أخبره إنك بتحوّله لفريق الدعم البشري.",
+        welcome: "أهلاً بك في [اسم النشاط] 👋 كيف أقدر أساعدك اليوم؟"
+      },
+      en: {
+        prompt: "We are [business name], working in [brief description of your business]. What sets us apart: [list 2-3 points]. How customers order or book: [explain the process]. If a customer asks something you don't have an answer for or needs precise details, say you'll hand them off to human support.",
+        welcome: "Welcome to [business name] 👋 How can I help you today?"
+      }
+    }
+  };
+
+  document.getElementById('bizType').addEventListener('change', function(){
+    var key = this.value;
+    if(!key || !starterTemplates[key]){ return; }
+    var tpl = starterTemplates[key][currentLang] || starterTemplates[key].ar;
+    var promptField = document.getElementById('systemPrompt');
+    var welcomeField = document.getElementById('welcomeMessage');
+
+    var promptHasContent = promptField.value.trim().length > 0;
+    var welcomeHasContent = welcomeField.value.trim().length > 0;
+
+    if(promptHasContent || welcomeHasContent){
+      var confirmMsg = currentLang === 'en'
+        ? 'This will replace the text you already wrote in the bot instructions fields. Continue?'
+        : 'هذا بيستبدل النص اللي كتبته بالفعل في حقول تعليمات البوت. تكمل؟';
+      if(!confirm(confirmMsg)){ this.value = ''; return; }
+    }
+
+    promptField.value = tpl.prompt;
+    welcomeField.value = tpl.welcome;
+  });
 
   const plansContainer = document.getElementById('plansContainer');
   const selectedPlanIdInput = document.getElementById('selectedPlanId');
