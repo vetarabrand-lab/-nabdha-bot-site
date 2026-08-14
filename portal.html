@@ -314,6 +314,7 @@
       <button class="tab-btn" data-tab="analytics">التحليلات</button>
       <button class="tab-btn" data-tab="broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="templates">قوالب الرسائل</button>
+      <button class="tab-btn" data-tab="orders">الطلبات</button>
       <button class="tab-btn" data-tab="support">الدعم الفني</button>
       <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
     </div>
@@ -398,6 +399,13 @@
       </div>
       <div class="campaign-list" id="templateList">
         <div class="conv-empty">جاري تحميل القوالب...</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panelOrders">
+      <div class="cost-note">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
+      <div id="ordersContent">
+        <div class="conv-empty">جاري تحميل الطلبات...</div>
       </div>
     </div>
 
@@ -831,8 +839,9 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates' };
+      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
+      if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
     });
   });
 
@@ -886,7 +895,7 @@
 
     let planLabel = '—';
     if(clientRow.plan_id){
-      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar').eq('id', clientRow.plan_id).single();
+      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included').eq('id', clientRow.plan_id).single();
       if(plan){ planLabel = plan.name_ar; myPlan = plan; }
     }
     document.getElementById('statPlan').textContent = planLabel;
@@ -993,6 +1002,80 @@
       + 'فعّله مقابل ' + price + ' ريال/شهر إضافية، أو رقّي لباقة نمو وما فوق ليكون مجانياً.'
       + '</div>'
       + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">تواصل مع الدعم للتفعيل</button>';
+  }
+
+  /* ---------- لوحة الطلبات الموحّدة ---------- */
+  let ordersLoaded = false;
+
+  async function loadOrdersTab(){
+    if(ordersLoaded){ return; }
+    const container = document.getElementById('ordersContent');
+    if(!myPlan){ return; }
+
+    if(!myPlan.order_table_included){
+      container.innerHTML = '<div class="alert-box error" style="display:block;">'
+        + 'لوحة الطلبات الموحّدة متاحة من باقة نمو وما فوق. باقتك الحالية: ' + escapeHtml(myPlan.name_ar || 'الأساسية') + '. '
+        + 'رقّ باقتك أو تواصل مع الدعم للتفعيل.'
+        + '</div>'
+        + '<button class="modal-cancel" id="ordersUpgradeBtn" style="margin-top:8px;">تواصل مع الدعم</button>';
+      const upgradeBtn = document.getElementById('ordersUpgradeBtn');
+      if(upgradeBtn){
+        upgradeBtn.addEventListener('click', function(){
+          document.querySelector('.tab-btn[data-tab="support"]').click();
+        });
+      }
+      return;
+    }
+
+    ordersLoaded = true;
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/list-store-orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ client_id: myClient.id })
+      });
+      const json = await res.json();
+
+      if(!res.ok || json.error){
+        ordersLoaded = false;
+        container.innerHTML = '<div class="conv-empty">' + escapeHtml(json.message || 'تعذّر تحميل الطلبات، حاول مرة ثانية.') + '</div>';
+        return;
+      }
+
+      const orders = json.orders || [];
+      if(orders.length === 0){
+        container.innerHTML = '<div class="conv-empty">لا توجد طلبات بعد.</div>';
+        return;
+      }
+
+      let tableHtml = '<div class="table-wrap"><table style="width:100%; border-collapse:collapse;">'
+        + '<thead><tr style="text-align:right; border-bottom:1.5px solid var(--border);">'
+        + '<th style="padding:10px 8px;">رقم الطلب</th>'
+        + '<th style="padding:10px 8px;">العميل</th>'
+        + '<th style="padding:10px 8px;">الحالة</th>'
+        + '<th style="padding:10px 8px;">القيمة</th>'
+        + '<th style="padding:10px 8px;">التاريخ</th>'
+        + '</tr></thead><tbody>';
+
+      orders.forEach(function(o){
+        tableHtml += '<tr style="border-bottom:1px solid var(--border);">'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.order_code || '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.customer_name || '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.status || '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.total || '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString('ar-SA') : '—') + '</td>'
+          + '</tr>';
+      });
+
+      tableHtml += '</tbody></table></div>';
+      container.innerHTML = tableHtml;
+    } catch(e){
+      ordersLoaded = false;
+      container.innerHTML = '<div class="conv-empty">تعذّر تحميل الطلبات، حاول مرة ثانية.</div>';
+    }
   }
 
   function bindStoreAddonSupportBtn(suffix){
