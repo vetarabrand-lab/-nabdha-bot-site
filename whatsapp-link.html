@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>منشئ روابط واتساب المجاني | بوت نبضة</title>
+<meta name="description" content="أنشئ رابط واتساب مباشر (wa.me) لنشاطك التجاري مجاناً وبدون تسجيل — أضف رسالة جاهزة وشاركه في أي مكان.">
+<link rel="canonical" href="https://nabdh.online/whatsapp-link.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --danger:#D14343;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+    --radius: 18px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Tajawal','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.7;}
+  a{text-decoration:none; color:inherit;}
+  .container{max-width:720px; margin:0 auto; padding:0 24px;}
+
+  header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; gap:14px;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); display:flex; align-items:center; justify-content:center;}
+  .back-link{font-weight:700; font-size:14px; color:var(--wa-teal-dark);}
+
+  .hero-strip{background:linear-gradient(150deg, var(--wa-teal-dark), var(--wa-teal) 55%, var(--wa-green)); color:#fff; padding:48px 0 40px; text-align:center;}
+  .hero-strip .eyebrow{display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,.16); font-weight:700; font-size:13px; padding:6px 14px; border-radius:100px; margin-bottom:14px;}
+  .hero-strip h1{font-size:clamp(24px,4vw,32px); font-weight:900; margin-bottom:8px;}
+  .hero-strip p{color:rgba(255,255,255,.88); max-width:480px; margin:0 auto; font-size:15px;}
+
+  .tool-wrap{margin:-30px auto 60px; position:relative; z-index:2;}
+  .tool-card{background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); padding:32px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block; font-weight:700; font-size:14px; margin-bottom:6px;}
+  .field input, .field textarea{width:100%; border:1.5px solid var(--border); border-radius:12px; padding:12px 14px; font-family:inherit; font-size:15px; color:var(--ink); background:#FCFEFD;}
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--wa-teal);}
+  .field .hint{color:var(--muted); font-size:12.5px; margin-top:5px;}
+  .field textarea{resize:vertical; min-height:70px;}
+
+  .gen-btn{width:100%; padding:15px; border:none; border-radius:100px; background:var(--wa-green); color:#04210F; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 12px 24px -8px rgba(37,211,102,.55);}
+  .gen-btn:hover{background:var(--wa-green-dark);}
+
+  .result-box{display:none; margin-top:22px; background:#F6FAF8; border:1px solid var(--border); border-radius:14px; padding:18px;}
+  .result-box.show{display:block;}
+  .result-box label{display:block; font-weight:700; font-size:13px; margin-bottom:6px; color:var(--wa-teal-dark);}
+  .result-row{display:flex; gap:8px; align-items:center;}
+  .result-row input{flex:1; border:1.5px solid var(--border); border-radius:10px; padding:10px 12px; font-family:inherit; font-size:14px; background:#fff;}
+  .copy-btn{white-space:nowrap; padding:10px 16px; border-radius:10px; border:1.5px solid var(--wa-teal-dark); background:#fff; color:var(--wa-teal-dark); font-weight:700; font-size:13.5px; cursor:pointer;}
+  .copy-btn:hover{background:var(--wa-teal-dark); color:#fff;}
+  .open-link{display:inline-block; margin-top:12px; font-weight:800; font-size:14px; color:var(--wa-green-dark);}
+
+  .cta-box{margin-top:30px; text-align:center; background:linear-gradient(150deg, var(--wa-teal-dark), var(--wa-teal)); border-radius:18px; padding:26px 22px; color:#fff;}
+  .cta-box p{font-size:15px; font-weight:700; margin-bottom:14px;}
+  .cta-box a{display:inline-block; background:var(--wa-green); color:#04210F; font-weight:800; padding:12px 28px; border-radius:100px; font-size:14.5px;}
+
+  footer{text-align:center; padding:24px 0 40px; color:var(--muted); font-size:13px;}
+  @media (max-width:640px){ .tool-card{padding:22px 18px;} }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+    </div>
+    <a class="back-link" href="index.html">→ الرجوع للرئيسية</a>
+  </nav>
+</header>
+
+<section class="hero-strip">
+  <div class="container">
+    <div class="eyebrow">🔗 أداة مجانية</div>
+    <h1>منشئ روابط واتساب</h1>
+    <p>أنشئ رابط واتساب مباشر لنشاطك مع رسالة جاهزة، وشاركه في أي مكان — بدون تسجيل وبدون تكلفة.</p>
+  </div>
+</section>
+
+<div class="tool-wrap container">
+  <div class="tool-card">
+    <div class="field">
+      <label>رقم الواتساب (مع رمز الدولة، بدون + أو 00)</label>
+      <input type="tel" id="phoneInput" placeholder="9665xxxxxxxx">
+      <div class="hint">مثال: للسعودية 9665xxxxxxxx، للإمارات 9715xxxxxxxx</div>
+    </div>
+    <div class="field">
+      <label>رسالة جاهزة (اختياري)</label>
+      <textarea id="msgInput" placeholder="مرحباً، أبي أستفسر عن..."></textarea>
+    </div>
+    <button class="gen-btn" id="genBtn">إنشاء الرابط</button>
+
+    <div class="result-box" id="resultBox">
+      <label>رابطك جاهز 👇</label>
+      <div class="result-row">
+        <input type="text" id="resultLink" readonly>
+        <button class="copy-btn" id="copyBtn">نسخ</button>
+      </div>
+      <a class="open-link" id="openLink" target="_blank" rel="noopener noreferrer">↗ افتح الرابط للتجربة</a>
+    </div>
+  </div>
+
+  <div class="cta-box">
+    <p>تبي بوت ذكاء اصطناعي يرد على عملائك تلقائياً على هذا الرقم على مدار الساعة؟</p>
+    <a href="signup.html">جرّب بوت نبضة مجاناً</a>
+  </div>
+</div>
+
+<footer>© 2026 بوت نبضة. جميع الحقوق محفوظة.</footer>
+
+<script>
+  function digitsOnly(v){ return v.replace(/[^0-9]/g, ''); }
+
+  document.getElementById('genBtn').addEventListener('click', function(){
+    const phone = digitsOnly(document.getElementById('phoneInput').value.trim());
+    const msg = document.getElementById('msgInput').value.trim();
+    const box = document.getElementById('resultBox');
+
+    if(!phone || phone.length < 8){
+      alert('الرجاء إدخال رقم واتساب صحيح مع رمز الدولة.');
+      return;
+    }
+
+    let link = 'https://wa.me/' + phone;
+    if(msg){ link += '?text=' + encodeURIComponent(msg); }
+
+    document.getElementById('resultLink').value = link;
+    document.getElementById('openLink').href = link;
+    box.classList.add('show');
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    const input = document.getElementById('resultLink');
+    input.select();
+    input.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(input.value).then(function(){
+      const btn = document.getElementById('copyBtn');
+      const original = btn.textContent;
+      btn.textContent = '✓ تم النسخ';
+      setTimeout(function(){ btn.textContent = original; }, 1500);
+    });
+  });
+</script>
+
+</body>
+</html>

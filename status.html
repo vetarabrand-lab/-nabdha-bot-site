@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حالة النظام | بوت نبضة</title>
+<meta name="description" content="حالة أنظمة بوت نبضة اللحظية — الموقع، قاعدة البيانات، وخدمة الأتمتة.">
+<link rel="canonical" href="https://nabdh.online/status.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --wa-green:#25D366;
+    --wa-green-dark:#1DA851;
+    --wa-teal-dark:#075E54;
+    --wa-teal:#128C7E;
+    --ink:#0B1A17;
+    --muted:#5B6B67;
+    --bg:#F6FAF8;
+    --card:#FFFFFF;
+    --border:#E4ECE9;
+    --danger:#D14343;
+    --warn:#B8860B;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Tajawal','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.7;}
+  a{text-decoration:none; color:inherit;}
+  .container{max-width:680px; margin:0 auto; padding:0 24px;}
+
+  header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto; gap:14px;}
+  .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
+  .logo-badge{width:38px; height:38px; border-radius:12px; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); display:flex; align-items:center; justify-content:center;}
+  .back-link{font-weight:700; font-size:14px; color:var(--wa-teal-dark);}
+
+  .page-head{padding:44px 0 10px; text-align:center;}
+  .page-head h1{font-size:26px; font-weight:900; margin-bottom:6px;}
+  .page-head p{color:var(--muted); font-size:14px;}
+
+  .overall-banner{margin:26px 0; padding:20px 24px; border-radius:16px; display:flex; align-items:center; gap:14px; font-weight:800; font-size:16px;}
+  .overall-banner.ok{background:rgba(37,211,102,.12); color:var(--wa-green-dark); border:1px solid rgba(37,211,102,.3);}
+  .overall-banner.warn{background:rgba(184,134,11,.1); color:var(--warn); border:1px solid rgba(184,134,11,.3);}
+  .overall-banner.down{background:rgba(209,67,67,.1); color:var(--danger); border:1px solid rgba(209,67,67,.3);}
+  .dot{width:12px; height:12px; border-radius:50%; flex-shrink:0;}
+  .overall-banner.ok .dot{background:var(--wa-green-dark);}
+  .overall-banner.warn .dot{background:var(--warn);}
+  .overall-banner.down .dot{background:var(--danger);}
+
+  .components{background:var(--card); border:1px solid var(--border); border-radius:18px; box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px;}
+  .comp-row{display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid var(--border);}
+  .comp-row:last-child{border-bottom:none;}
+  .comp-name{font-weight:700; font-size:14.5px;}
+  .comp-status{display:flex; align-items:center; gap:8px; font-weight:800; font-size:13.5px;}
+  .comp-status .dot{width:9px; height:9px;}
+  .comp-status.ok{color:var(--wa-green-dark);}
+  .comp-status.down{color:var(--danger);}
+  .comp-status.checking{color:var(--muted);}
+  .comp-status.ok .dot{background:var(--wa-green-dark);}
+  .comp-status.down .dot{background:var(--danger);}
+  .comp-status.checking .dot{background:var(--muted);}
+
+  .note-box{background:#fff; border:1px solid var(--border); border-radius:14px; padding:16px 20px; font-size:13.5px; color:var(--muted); margin-bottom:24px;}
+
+  .last-updated{text-align:center; font-size:12.5px; color:var(--muted); margin-bottom:40px;}
+
+  footer{text-align:center; padding:24px 0 40px; color:var(--muted); font-size:13px;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">
+      <div class="logo-badge">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
+      </div>
+      <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
+    </div>
+    <a class="back-link" href="index.html">→ الرجوع للرئيسية</a>
+  </nav>
+</header>
+
+<div class="container">
+  <div class="page-head">
+    <h1>حالة النظام</h1>
+    <p>نراقب مكونات منصة نبضة باستمرار — هذه الصفحة تتحدث لحظياً عند فتحها.</p>
+  </div>
+
+  <div class="overall-banner checking" id="overallBanner">
+    <span class="dot"></span>
+    <span id="overallText">جاري فحص الأنظمة...</span>
+  </div>
+
+  <div class="components">
+    <div class="comp-row">
+      <div class="comp-name">🌐 الموقع الإلكتروني</div>
+      <div class="comp-status ok"><span class="dot"></span> يعمل</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-name">🗄️ قاعدة البيانات</div>
+      <div class="comp-status checking" id="dbStatus"><span class="dot"></span> جاري الفحص...</div>
+    </div>
+    <div class="comp-row">
+      <div class="comp-name">⚙️ خدمة الأتمتة (Edge Functions)</div>
+      <div class="comp-status checking" id="fnStatus"><span class="dot"></span> جاري الفحص...</div>
+    </div>
+  </div>
+
+  <div class="note-box">
+    ملاحظة: اتصال واتساب لكل حساب عميل يُراقب بشكل منفصل وتلقائي من داخل لوحة التحكم الخاصة بأصحاب الأنشطة، ويصلهم تنبيه فوري لو انقطع.
+  </div>
+
+  <div class="last-updated" id="lastUpdated"></div>
+</div>
+
+<footer>© 2026 بوت نبضة. جميع الحقوق محفوظة.</footer>
+
+<script>
+  const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function setStatus(elId, ok){
+    const el = document.getElementById(elId);
+    el.className = 'comp-status ' + (ok ? 'ok' : 'down');
+    el.innerHTML = '<span class="dot"></span> ' + (ok ? 'يعمل' : 'متوقف');
+    return ok;
+  }
+
+  async function checkDb(){
+    try{
+      const { error } = await supabaseClient.from('subscription_plans').select('id').limit(1);
+      return setStatus('dbStatus', !error);
+    }catch(e){
+      return setStatus('dbStatus', false);
+    }
+  }
+
+  async function checkFunctions(){
+    try{
+      const res = await fetch(SUPABASE_URL + '/functions/v1/health');
+      return setStatus('fnStatus', res.ok);
+    }catch(e){
+      return setStatus('fnStatus', false);
+    }
+  }
+
+  async function runChecks(){
+    const [dbOk, fnOk] = await Promise.all([checkDb(), checkFunctions()]);
+    const banner = document.getElementById('overallBanner');
+    const text = document.getElementById('overallText');
+
+    if(dbOk && fnOk){
+      banner.className = 'overall-banner ok';
+      text.textContent = '🟢 جميع الأنظمة تعمل بشكل طبيعي';
+    } else if(dbOk || fnOk){
+      banner.className = 'overall-banner warn';
+      text.textContent = '🟡 بعض المكونات تواجه اضطراباً جزئياً';
+    } else {
+      banner.className = 'overall-banner down';
+      text.textContent = '🔴 هناك انقطاع في الخدمة حالياً';
+    }
+
+    document.getElementById('lastUpdated').textContent = 'آخر فحص: ' + new Date().toLocaleString('ar-SA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short', year:'numeric' });
+  }
+
+  runChecks();
+</script>
+
+</body>
+</html>
