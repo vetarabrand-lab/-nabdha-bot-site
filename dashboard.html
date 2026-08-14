@@ -146,6 +146,9 @@
   .badge.open{background:rgba(184,134,11,.13); color:var(--warn);}
   .badge.in_progress{background:rgba(18,140,126,.13); color:var(--wa-teal);}
   .badge.closed{background:#EEE; color:var(--muted);}
+  .badge.wa-connected{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .badge.wa-disconnected{background:rgba(209,67,67,.12); color:var(--danger);}
+  .badge.wa-unknown{background:#EEE; color:var(--muted);}
   .status-select{
     border:1.5px solid var(--border); border-radius:10px; padding:6px 10px; font-family:inherit;
     font-size:13px; background:#fff; cursor:pointer;
@@ -340,6 +343,7 @@
               <th>النشاط</th>
               <th>التواصل</th>
               <th>الباقة</th>
+              <th>اتصال واتساب</th>
               <th>الحالة</th>
               <th>الأيام المتبقية</th>
               <th>حساب لوحة العميل</th>
@@ -347,7 +351,7 @@
             </tr>
           </thead>
           <tbody id="clientsTbody">
-            <tr class="empty-row"><td colspan="7">جاري تحميل البيانات...</td></tr>
+            <tr class="empty-row"><td colspan="8">جاري تحميل البيانات...</td></tr>
           </tbody>
         </table>
       </div>
@@ -624,11 +628,11 @@
 
     const { data: clients, error } = await supabaseClient
       .from('clients')
-      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits')
+      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error')
       .order('created_at', { ascending: false });
 
     if(error){
-      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="7">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
+      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="8">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
       return;
     }
     allClients = clients || [];
@@ -645,6 +649,22 @@
     document.getElementById('statMsgsToday').textContent = (msgsToday || 0);
 
     renderTable();
+  }
+
+  // يبني badge لحالة اتصال رقم واتساب بالعميل (يتحدث تلقائياً كل 3 ساعات عبر فحص دوري)
+  function renderWaHealth(c){
+    const status = c.whatsapp_connection_status || 'unknown';
+    const checkedAt = c.whatsapp_connection_checked_at
+      ? new Date(c.whatsapp_connection_checked_at).toLocaleString('ar-SA', { hour:'2-digit', minute:'2-digit', day:'numeric', month:'short' })
+      : '';
+    if(status === 'connected'){
+      return '<span class="badge wa-connected" title="آخر فحص: ' + checkedAt + '">🟢 متصل</span>';
+    }
+    if(status === 'disconnected'){
+      const errSafe = escapeHtml(c.whatsapp_connection_error || 'خطأ غير معروف');
+      return '<span class="badge wa-disconnected" title="' + errSafe + ' — آخر فحص: ' + checkedAt + '">🔴 منقطع</span>';
+    }
+    return '<span class="badge wa-unknown" title="ما فيه رقم مربوط أو ما تفحّص بعد">⚪ غير معروف</span>';
   }
 
   // يبني badge توضيحي لعدد الأيام المتبقية من التجربة المجانية (7 أيام) لكل عميل
@@ -679,7 +699,7 @@
     });
 
     if(rows.length === 0){
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">ما فيه نتائج مطابقة</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="8">ما فيه نتائج مطابقة</td></tr>';
       return;
     }
 
@@ -698,14 +718,15 @@
           (c.business_name && c.business_name !== c.business_name_ar ? '<div class="biz-sub">' + bizNameEnSafe + '</div>' : '') + '</td>' +
         '<td><div>' + emailSafe + '</div><div class="biz-sub">' + phoneSafe + '</div></td>' +
         '<td>' + planName + '</td>' +
+        '<td>' + renderWaHealth(c) + '</td>' +
         '<td></td>' +
         '<td></td>' +
         '<td></td>' +
         '<td>' + dateStr + '</td>';
 
-      const statusTd = tr.children[3];
-      const daysTd = tr.children[4];
-      const linkTd = tr.children[5];
+      const statusTd = tr.children[4];
+      const daysTd = tr.children[5];
+      const linkTd = tr.children[6];
 
       const select = document.createElement('select');
       select.className = 'status-select';
