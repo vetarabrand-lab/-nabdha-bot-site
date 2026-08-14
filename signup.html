@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <style>
   :root{
     --wa-green:#25D366;
@@ -96,6 +97,8 @@
   .plans-loading{color:var(--muted); font-size:14px; padding:12px 0;}
 
   .honeypot{position:absolute; left:-9999px; opacity:0; height:0;}
+
+  .recaptcha-wrap{display:flex; justify-content:center; margin:6px 0 18px; max-width:100%; overflow-x:auto;}
 
   .submit-btn{
     width:100%; padding:16px; border:none; border-radius:100px; background:var(--wa-green);
@@ -228,6 +231,10 @@
         <input type="text" id="websiteHp" tabindex="-1" autocomplete="off">
       </div>
 
+      <div class="recaptcha-wrap">
+        <div class="g-recaptcha" id="recaptchaWidget" data-sitekey="6Ldq8YUtAAAAACieM0xQ17KAtx6iU373CwGNOpbg"></div>
+      </div>
+
       <button type="submit" class="submit-btn" id="submitBtn" data-i18n="form.submit">إرسال طلب التسجيل</button>
       <p class="form-note" data-i18n="form.note">بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.</p>
     </form>
@@ -253,6 +260,7 @@
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
+  const FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   var translations = {
@@ -296,6 +304,7 @@
       "form.note": "بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.",
       "form.errorRequired": "الرجاء تعبئة كل الحقول المطلوبة (المعلّمة بـ *).",
       "form.errorSubmit": "حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.",
+      "form.errorRecaptcha": "الرجاء تأكيد أنك لست روبوتاً قبل الإرسال.",
       "form.submitting": "جاري الإرسال...",
       "form.plansError": "تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.",
       "form.perMonth": "ريال/شهر",
@@ -350,6 +359,7 @@
       "form.note": "By submitting, our team will reach out to complete setup and payment, no upfront commitment.",
       "form.errorRequired": "Please fill in all required fields (marked with *).",
       "form.errorSubmit": "Something went wrong while submitting your request. Please try again or contact us directly.",
+      "form.errorRecaptcha": "Please confirm you are not a robot before submitting.",
       "form.submitting": "Submitting...",
       "form.plansError": "Could not load plans. Refresh the page or contact us directly.",
       "form.perMonth": "SAR/month",
@@ -544,9 +554,7 @@
     e.preventDefault();
     errorAlert.style.display = 'none';
 
-    if(document.getElementById('websiteHp').value.trim() !== ''){
-      return;
-    }
+    const websiteHp = document.getElementById('websiteHp').value.trim();
 
     const t = translations[currentLang];
     const businessNameAr = document.getElementById('businessNameAr').value.trim();
@@ -564,27 +572,47 @@
       return;
     }
 
+    const recaptchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
+    if(!recaptchaToken){
+      errorAlert.textContent = t['form.errorRecaptcha'];
+      errorAlert.style.display = 'block';
+      return;
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = t['form.submitting'];
 
-    const { error } = await supabaseClient.from('clients').insert({
-      business_name: businessName,
-      business_name_ar: businessNameAr,
-      owner_email: ownerEmail,
-      owner_phone: ownerPhone,
-      whatsapp_display_number: whatsappDisplayNumber,
-      system_prompt: systemPrompt,
-      welcome_message: welcomeMessage,
-      plan_id: planId,
-      subscription_status: 'trial'
-    });
+    let ok = false;
+    try {
+      const res = await fetch(FUNCTIONS_BASE + '/submit-signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY },
+        body: JSON.stringify({
+          business_name: businessName,
+          business_name_ar: businessNameAr,
+          owner_email: ownerEmail,
+          owner_phone: ownerPhone,
+          whatsapp_display_number: whatsappDisplayNumber,
+          system_prompt: systemPrompt,
+          welcome_message: welcomeMessage,
+          plan_id: planId,
+          recaptcha_token: recaptchaToken,
+          website_hp: websiteHp
+        })
+      });
+      const body = await res.json();
+      ok = res.ok && body && body.success;
+    } catch(err){
+      console.error(err);
+      ok = false;
+    }
 
-    if(error){
+    if(!ok){
       submitBtn.disabled = false;
       submitBtn.textContent = t['form.submit'];
       errorAlert.textContent = t['form.errorSubmit'];
       errorAlert.style.display = 'block';
-      console.error(error);
+      if(typeof grecaptcha !== 'undefined'){ grecaptcha.reset(); }
       return;
     }
 
