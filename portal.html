@@ -166,6 +166,11 @@
   .status-badge.sending{background:rgba(184,134,11,.13); color:var(--warn);}
   .status-badge.completed{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
   .status-badge.failed{background:rgba(209,67,67,.12); color:var(--danger);}
+  .status-badge.draft{background:#EEE; color:var(--muted);}
+  .status-badge.pending{background:rgba(184,134,11,.13); color:var(--warn);}
+  .status-badge.approved{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.rejected{background:rgba(209,67,67,.12); color:var(--danger);}
+  .status-badge.paused{background:#EEE; color:var(--muted);}
   .helper-text{color:var(--muted); font-size:12px; margin-top:5px; line-height:1.5;}
   .radio-row{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
   .radio-row label{display:flex; align-items:center; gap:8px; font-weight:600; font-size:13.5px; cursor:pointer;}
@@ -296,6 +301,7 @@
       <button class="tab-btn active" data-tab="inbox">المحادثات</button>
       <button class="tab-btn" data-tab="analytics">التحليلات</button>
       <button class="tab-btn" data-tab="broadcast">الرسائل الجماعية</button>
+      <button class="tab-btn" data-tab="templates">قوالب الرسائل</button>
       <button class="tab-btn" data-tab="support">الدعم الفني</button>
       <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
     </div>
@@ -370,6 +376,16 @@
       </div>
       <div class="campaign-list" id="campaignList">
         <div class="conv-empty">جاري تحميل الحملات...</div>
+      </div>
+    </div>
+
+    <div class="panel" id="panelTemplates">
+      <div class="cost-note">💡 اكتب فكرة رسالتك بالعامية، والذكاء الاصطناعي بيصيغها كقالب واتساب صحيح ويرسلها لميتا للمراجعة تلقائياً. المراجعة عادة تاخذ من دقائق لساعات.</div>
+      <div class="support-top">
+        <button class="new-ticket-btn" id="newTemplateBtn" style="display:none;">+ قالب جديد</button>
+      </div>
+      <div class="campaign-list" id="templateList">
+        <div class="conv-empty">جاري تحميل القوالب...</div>
       </div>
     </div>
 
@@ -506,6 +522,53 @@
   </div>
 </div>
 
+<!-- MODAL: new AI message template -->
+<div class="modal-overlay" id="newTemplateModal">
+  <div class="modal-card">
+    <h3>قالب رسالة جديد بالذكاء الاصطناعي</h3>
+    <div class="alert-box error" id="newTemplateError"></div>
+
+    <div id="tplStep1">
+      <div class="field">
+        <label>وش الرسالة اللي تبي ترسلها؟</label>
+        <textarea id="tplRequestText" style="min-height:100px;" placeholder="مثال: أبي أذكّر العملاء إن عندنا خصم 20% على كل المنتجات لين نهاية الأسبوع"></textarea>
+        <div class="helper-text">اكتبها بالعامية كأنك تشرح لموظف، والذكاء الاصطناعي بيصيغها بصيغة قالب واتساب رسمية.</div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="newTemplateCancelBtn">إلغاء</button>
+        <button class="modal-confirm" id="tplGenerateBtn">توليد بالذكاء الاصطناعي</button>
+      </div>
+    </div>
+
+    <div id="tplStep2" style="display:none;">
+      <div class="field">
+        <label>اسم القالب (بالإنجليزي، يُستخدم داخلياً فقط)</label>
+        <input type="text" id="tplName">
+      </div>
+      <div class="field">
+        <label>نوع القالب</label>
+        <select id="tplCategory">
+          <option value="MARKETING">تسويقي (Marketing)</option>
+          <option value="UTILITY">تنبيهي / خدمي (Utility)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>نص الرسالة</label>
+        <textarea id="tplBodyText" style="min-height:110px;"></textarea>
+        <div class="helper-text">إذا فيه جزء متغيّر (مثل اسم العميل أو نسبة الخصم)، خله مكتوب {{1}} داخل النص.</div>
+      </div>
+      <div class="field" id="tplVariableField" style="display:none;">
+        <label>مثال على المتغيّر {{1}} (مطلوب من ميتا للمراجعة)</label>
+        <input type="text" id="tplVariableExample">
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="tplBackBtn">رجوع</button>
+        <button class="modal-confirm" id="tplSubmitBtn">إرسال للمراجعة في واتساب</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: invite staff -->
 <div class="modal-overlay" id="newStaffModal">
   <div class="modal-card">
@@ -551,6 +614,14 @@
     failed: 'فشلت'
   };
 
+  const templateStatusLabels = {
+    draft: 'مسودة',
+    pending: 'قيد المراجعة من واتساب',
+    approved: 'معتمد ✅',
+    rejected: 'مرفوض',
+    paused: 'موقوف'
+  };
+
   let myClient = null;
   let myUserId = null;
   let isOwner = false;
@@ -559,6 +630,8 @@
   let myTickets = [];
   let activeTicketId = null;
   let myCampaigns = [];
+  let myTemplates = [];
+  let currentDraftTemplateId = null;
   let allMessages = [];
   let staffList = [];
   let staffMap = {};
@@ -858,6 +931,7 @@
     renderAnalytics();
     loadZidStatus();
     loadSallaStatus();
+    loadTemplates();
   }
 
   /* ---------- ربط متجر زد ---------- */
@@ -1668,6 +1742,196 @@
       alert('تم إرسال الحملة: ' + json.sent + ' نجح، ' + json.failed + ' فشل، من أصل ' + json.total + '.');
     } catch(e){
       btn.disabled = false; btn.textContent = 'إرسال الحملة';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
+    }
+  });
+
+  /* ---------- قوالب الرسائل بالذكاء الاصطناعي ---------- */
+  async function loadTemplates(){
+    if(!myClient){ return; }
+    document.getElementById('newTemplateBtn').style.display = isOwner ? 'inline-block' : 'none';
+
+    const { data, error } = await supabaseClient
+      .from('whatsapp_message_templates')
+      .select('id, name, category, body_text, status, rejected_reason, created_at')
+      .eq('client_id', myClient.id)
+      .order('created_at', { ascending: false });
+
+    if(error){
+      document.getElementById('templateList').innerHTML = '<div class="conv-empty">تعذّر تحميل القوالب، حدّث الصفحة.</div>';
+      return;
+    }
+    myTemplates = data || [];
+    renderTemplateList();
+  }
+
+  const templateCategoryLabels = { MARKETING: 'تسويقي', UTILITY: 'تنبيهي' };
+
+  function renderTemplateList(){
+    const list = document.getElementById('templateList');
+    if(myTemplates.length === 0){
+      list.innerHTML = '<div class="conv-empty">ما فيه قوالب بعد. اضغط "+ قالب جديد" لإنشاء أول قالب بمساعدة الذكاء الاصطناعي.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    myTemplates.forEach(function(t){
+      const dateStr = new Date(t.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const div = document.createElement('div');
+      div.className = 'campaign-card';
+      div.innerHTML =
+        '<div class="ctop"><span class="cname">' + escapeHtml(t.name) + '</span><span class="status-badge ' + t.status + '">' + templateStatusLabels[t.status] + '</span></div>' +
+        '<div class="cmeta">' +
+          '<span>🏷️ ' + (templateCategoryLabels[t.category] || t.category) + '</span>' +
+          '<span>📅 ' + dateStr + '</span>' +
+        '</div>' +
+        '<div class="helper-text" style="margin-top:8px; white-space:pre-wrap;">' + escapeHtml(t.body_text) + '</div>' +
+        (t.status === 'rejected' && t.rejected_reason ? '<div class="helper-text" style="margin-top:6px; color:var(--danger);">سبب الرفض من واتساب: ' + escapeHtml(t.rejected_reason) + '</div>' : '');
+      list.appendChild(div);
+    });
+  }
+
+  const newTemplateModal = document.getElementById('newTemplateModal');
+
+  document.getElementById('newTemplateBtn').addEventListener('click', function(){
+    document.getElementById('tplRequestText').value = '';
+    document.getElementById('newTemplateError').style.display = 'none';
+    document.getElementById('tplStep1').style.display = 'block';
+    document.getElementById('tplStep2').style.display = 'none';
+    document.getElementById('tplGenerateBtn').disabled = false;
+    document.getElementById('tplGenerateBtn').textContent = 'توليد بالذكاء الاصطناعي';
+    currentDraftTemplateId = null;
+    newTemplateModal.classList.add('show');
+  });
+
+  document.getElementById('newTemplateCancelBtn').addEventListener('click', function(){
+    newTemplateModal.classList.remove('show');
+  });
+
+  newTemplateModal.addEventListener('click', function(e){
+    if(e.target === newTemplateModal){ newTemplateModal.classList.remove('show'); }
+  });
+
+  document.getElementById('tplBackBtn').addEventListener('click', function(){
+    document.getElementById('tplStep1').style.display = 'block';
+    document.getElementById('tplStep2').style.display = 'none';
+  });
+
+  document.getElementById('tplGenerateBtn').addEventListener('click', async function(){
+    const requestText = document.getElementById('tplRequestText').value.trim();
+    const errBox = document.getElementById('newTemplateError');
+    errBox.style.display = 'none';
+
+    if(!requestText){
+      errBox.textContent = 'الرجاء كتابة وصف للرسالة اللي تبيها.';
+      errBox.style.display = 'block';
+      return;
+    }
+    if(!myClient){ return; }
+
+    const btn = this;
+    btn.disabled = true; btn.textContent = 'جاري التوليد...';
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/generate-whatsapp-template', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({ client_id: myClient.id, request_text: requestText })
+      });
+      const json = await res.json();
+
+      btn.disabled = false; btn.textContent = 'توليد بالذكاء الاصطناعي';
+
+      if(!res.ok){
+        errBox.textContent = json.error || 'تعذّر توليد القالب، حاول صياغة الطلب بشكل مختلف.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      const tpl = json.template;
+      currentDraftTemplateId = tpl.id;
+      document.getElementById('tplName').value = tpl.name;
+      document.getElementById('tplCategory').value = tpl.category;
+      document.getElementById('tplBodyText').value = tpl.body_text;
+      const hasVar = Array.isArray(tpl.variable_examples) && tpl.variable_examples.length > 0;
+      document.getElementById('tplVariableExample').value = hasVar ? tpl.variable_examples[0] : '';
+      document.getElementById('tplVariableField').style.display = hasVar ? 'block' : 'none';
+
+      document.getElementById('tplStep1').style.display = 'none';
+      document.getElementById('tplStep2').style.display = 'block';
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'توليد بالذكاء الاصطناعي';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
+    }
+  });
+
+  document.getElementById('tplSubmitBtn').addEventListener('click', async function(){
+    const errBox = document.getElementById('newTemplateError');
+    errBox.style.display = 'none';
+
+    if(!currentDraftTemplateId || !myClient){ return; }
+
+    const name = document.getElementById('tplName').value.trim();
+    const category = document.getElementById('tplCategory').value;
+    const bodyText = document.getElementById('tplBodyText').value.trim();
+    const variableExample = document.getElementById('tplVariableExample').value.trim();
+
+    if(!name || !bodyText){
+      errBox.textContent = 'الرجاء تعبئة اسم القالب ونص الرسالة.';
+      errBox.style.display = 'block';
+      return;
+    }
+    if(bodyText.indexOf('{{1}}') !== -1 && !variableExample){
+      errBox.textContent = 'الرسالة فيها {{1}} — لازم تكتب مثال على القيمة اللي بتحل محله (مطلوب من واتساب للمراجعة).';
+      errBox.style.display = 'block';
+      return;
+    }
+
+    const btn = this;
+    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/submit-whatsapp-template', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          client_id: myClient.id,
+          template_id: currentDraftTemplateId,
+          name: name,
+          category: category,
+          body_text: bodyText,
+          variable_example: variableExample || null,
+          language: 'ar'
+        })
+      });
+      const json = await res.json();
+
+      btn.disabled = false; btn.textContent = 'إرسال للمراجعة في واتساب';
+
+      if(!res.ok){
+        errBox.textContent = json.error || 'تعذّر إرسال القالب لواتساب.';
+        errBox.style.display = 'block';
+        return;
+      }
+
+      newTemplateModal.classList.remove('show');
+      await loadTemplates();
+      alert('تم إرسال القالب لمراجعة واتساب. راح تشوف حالته تتحدث تلقائياً هنا بمجرد ما ميتا يراجعه.');
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'إرسال للمراجعة في واتساب';
       errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
       errBox.style.display = 'block';
     }
