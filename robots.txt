@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /portal.html
+Disallow: /dashboard.html
+Disallow: /zid-connected.html
+
+Sitemap: https://nabdh.online/sitemap.xml
