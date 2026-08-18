@@ -928,7 +928,7 @@
       const phone = row.customer_phone;
             if(!conversations[phone]){
         conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, category: null };
-      }
+     
       }
       if(row.customer_name){ conversations[phone].name = row.customer_name; }
       if(row.inbound_message){
@@ -937,10 +937,9 @@
             if(row.outbound_message){
         conversations[phone].messages.push({ dir: 'out', text: row.outbound_message, at: row.created_at });
       }
-      if(row.category){ conversations[phone].category = row.category; }
+           if(row.category){ conversations[phone].category = row.category; }
       conversations[phone].lastAt = row.created_at;
-      }
-      conversations[phone].lastAt = row.created_at;
+ 
 
       const rowDate = new Date(row.created_at);
       if(rowDate.getMonth() === now.getMonth() && rowDate.getFullYear() === now.getFullYear()){
