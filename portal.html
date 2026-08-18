@@ -375,10 +375,25 @@
           <h3>📈 حجم الرسائل — آخر 7 أيام</h3>
           <div class="bar-chart" id="analyticsBarChart"></div>
         </div>
-        <div class="analytics-card">
+          <div class="analytics-card">
           <h3>🔥 أكثر الأسئلة تكراراً</h3>
           <div class="qa-list" id="analyticsTopQuestions">
             <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>🏷️ تصنيف المحادثات</h3>
+          <div class="qa-list" id="analyticsCategoryBreakdown">
+            <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
+          </div>
+        </div>
+        <div class="analytics-card">
+          <h3>🛒 أداء المتجر المرتبط</h3>
+          <div id="analyticsStoreWrap">
+            <div class="conv-empty">لا يوجد متجر مربوط بعد.</div>
           </div>
         </div>
       </div>
@@ -915,7 +930,7 @@
 
     const { data: msgs } = await supabaseClient
       .from('whatsapp_messages_log')
-      .select('customer_phone, customer_name, inbound_message, outbound_message, created_at, category')
+      .select('customer_phone, customer_name, inbound_message, outbound_message, created_at, received_at, category')
       .eq('client_id', clientRow.id)
       .order('created_at', { ascending: true });
 
@@ -967,6 +982,7 @@
     loadTickets();
     loadCampaigns();
     renderAnalytics();
+    loadStoreAnalytics();
     loadZidStatus();
     loadSallaStatus();
     loadTemplates();
@@ -1621,7 +1637,7 @@
     if(sorted.length === 0){
       qList.innerHTML = '<div class="conv-empty">لا توجد بيانات كافية بعد.</div>';
     } else {
-      qList.innerHTML = '';
+            qList.innerHTML = '';
       sorted.forEach(function(q){
         const div = document.createElement('div');
         div.className = 'qa-item';
@@ -1629,6 +1645,51 @@
         qList.appendChild(div);
       });
     }
+
+    const catCounts = {};
+    allMessages.forEach(function(m){
+      if(m.category){ catCounts[m.category] = (catCounts[m.category] || 0) + 1; }
+    });
+    const catWrap = document.getElementById('analyticsCategoryBreakdown');
+    const catKeys = Object.keys(catCounts).sort(function(a,b){ return catCounts[b] - catCounts[a]; });
+    if(catKeys.length === 0){
+      catWrap.innerHTML = '<div class="conv-empty">لا توجد بيانات كافية بعد.</div>';
+    } else {
+      catWrap.innerHTML = '';
+      catKeys.forEach(function(key){
+        const info = CATEGORY_LABELS[key] || CATEGORY_LABELS.other;
+        const div = document.createElement('div');
+        div.className = 'qa-item';
+        div.innerHTML = '<span class="qtext">' + info.label + '</span><span class="qcount" style="background:' + info.color + ';">' + catCounts[key] + '</span>';
+        catWrap.appendChild(div);
+      });
+    }
+  }
+
+  async function loadStoreAnalytics(){
+    const wrap = document.getElementById('analyticsStoreWrap');
+    const { data: events, error } = await supabaseClient
+      .from('store_order_events')
+      .select('event_type, status')
+      .eq('client_id', myClient.id);
+
+    if(error || !events || events.length === 0){
+      wrap.innerHTML = '<div class="conv-empty">لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.</div>';
+      return;
+    }
+
+    const ordersConfirmed = events.filter(function(e){ return e.event_type === 'order_create' && (e.status === 'confirmation_sent' || e.status === 'confirmed'); }).length;
+    const cartsDetected = events.filter(function(e){ return e.event_type === 'abandoned_cart'; }).length;
+    const cartsRecovered = events.filter(function(e){ return e.event_type === 'abandoned_cart' && e.status === 'recovered'; }).length;
+    const recoveryRate = cartsDetected > 0 ? Math.round((cartsRecovered / cartsDetected) * 100) : 0;
+
+    wrap.innerHTML =
+      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + ordersConfirmed + '</div><div class="helper-text">طلبات تم تأكيدها تلقائياً</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + cartsDetected + '</div><div class="helper-text">سلة متروكة تم رصدها</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + cartsRecovered + '</div><div class="helper-text">سلة تم استردادها</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + recoveryRate + '%</div><div class="helper-text">نسبة استرداد السلال</div></div>' +
+      '</div>';
   }
 
   /* ---------- support tickets (client side) ---------- */
