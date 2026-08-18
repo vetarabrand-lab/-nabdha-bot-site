@@ -914,7 +914,7 @@
 
     const { data: msgs } = await supabaseClient
       .from('whatsapp_messages_log')
-      .select('customer_phone, customer_name, inbound_message, outbound_message, received_at, created_at')
+      .select('customer_phone, customer_name, inbound_message, outbound_message, created_at, category')
       .eq('client_id', clientRow.id)
       .order('created_at', { ascending: true });
 
@@ -925,15 +925,19 @@
 
     allMessages.forEach(function(row){
       const phone = row.customer_phone;
-      if(!conversations[phone]){
-        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, botPaused: false, assignedTo: null };
+            if(!conversations[phone]){
+        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, category: null };
+      }
       }
       if(row.customer_name){ conversations[phone].name = row.customer_name; }
       if(row.inbound_message){
         conversations[phone].messages.push({ dir: 'in', text: row.inbound_message, at: row.created_at });
       }
-      if(row.outbound_message){
+            if(row.outbound_message){
         conversations[phone].messages.push({ dir: 'out', text: row.outbound_message, at: row.created_at });
+      }
+      if(row.category){ conversations[phone].category = row.category; }
+      conversations[phone].lastAt = row.created_at;
       }
       conversations[phone].lastAt = row.created_at;
 
@@ -1253,7 +1257,20 @@
       });
     }
   }
-
+  const CATEGORY_LABELS = {
+    general_inquiry: { label: 'استفسار عام', color: '#5B6B67', bg: '#EEF2F1' },
+    product_inquiry: { label: 'استفسار منتج', color: '#075E54', bg: 'rgba(37,211,102,.12)' },
+    order_tracking:  { label: 'متابعة طلب', color: '#0B6E99', bg: '#E7F3FA' },
+    complaint:       { label: 'شكوى', color: '#D14343', bg: '#FDEDEC' },
+    return_refund:   { label: 'استرجاع', color: '#B8860B', bg: '#FCF3DC' },
+    purchase_intent: { label: 'نية شراء', color: '#1DA851', bg: 'rgba(37,211,102,.18)' },
+    other:           { label: 'أخرى', color: '#5B6B67', bg: '#EEF2F1' }
+  };
+  function categoryBadgeHtml(category){
+    const info = CATEGORY_LABELS[category];
+    if(!info){ return ''; }
+    return '<span class="cat-badge" style="background:' + info.bg + '; color:' + info.color + ';">' + info.label + '</span>';
+  }
   function renderConvList(){
     const list = document.getElementById('convList');
     let phones = Object.keys(conversations).sort(function(a,b){
@@ -1278,10 +1295,10 @@
       const assigneeBadge = assigneeName ? '<span class="assignee-badge">🏷️ ' + escapeHtml(assigneeName) + '</span>' : '';
       const div = document.createElement('div');
       div.className = 'conv-item' + (phone === activePhone ? ' active' : '');
-      div.innerHTML =
-        '<div class="cname">' + escapeHtml(conv.name) + humanBadge + assigneeBadge + '</div>' +
-        '<div class="cphone">' + escapeHtml(phone) + '</div>' +
-        '<div class="cpreview">' + (lastMsg ? escapeHtml(lastMsg.text) : '') + '</div>';
+           div.innerHTML =
+        '<div class="cname">' + conv.name + categoryBadgeHtml(conv.category) + '</div>' +
+        '<div class="cphone">' + phone + '</div>' +
+        '<div class="cpreview">' + (lastMsg ? lastMsg.text : '') + '</div>';
       div.addEventListener('click', function(){
         activePhone = phone;
         renderConvList();
