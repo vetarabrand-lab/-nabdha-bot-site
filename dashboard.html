@@ -120,7 +120,7 @@
   .toolbar input:focus, .toolbar select:focus{outline:none; border-color:var(--wa-teal);}
 
   .table-wrap{background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; overflow-x:auto;}
-  table{width:100%; border-collapse:collapse; min-width:1040px;}
+  table{width:100%; border-collapse:collapse; min-width:1140px;}
   thead th{
     text-align:right; font-size:13px; font-weight:800; color:var(--muted);
     padding:14px 16px; background:#F6FAF8; border-bottom:1px solid var(--border); white-space:nowrap;
@@ -158,6 +158,8 @@
     padding:7px 14px; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap;
   }
   .link-btn:hover{background:var(--wa-teal);}
+  .link-btn.active-addon{background:var(--wa-green-dark);}
+  .link-btn.active-addon:hover{background:var(--wa-green-dark);}
   .empty-row td{text-align:center; color:var(--muted); padding:40px 16px;}
   .save-hint{font-size:11.5px; color:var(--wa-green-dark); margin-right:6px; opacity:0; transition:opacity .3s ease;}
   .save-hint.show{opacity:1;}
@@ -347,11 +349,12 @@
               <th>الحالة</th>
               <th>الأيام المتبقية</th>
               <th>حساب لوحة العميل</th>
+              <th>كوبونات السلة</th>
               <th>تاريخ التسجيل</th>
             </tr>
           </thead>
           <tbody id="clientsTbody">
-            <tr class="empty-row"><td colspan="8">جاري تحميل البيانات...</td></tr>
+            <tr class="empty-row"><td colspan="9">جاري تحميل البيانات...</td></tr>
           </tbody>
         </table>
       </div>
@@ -628,11 +631,11 @@
 
     const { data: clients, error } = await supabaseClient
       .from('clients')
-      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error')
+      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error, cart_coupon_addon_enabled')
       .order('created_at', { ascending: false });
 
     if(error){
-      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="8">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
+      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="9">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
       return;
     }
     allClients = clients || [];
@@ -699,7 +702,7 @@
     });
 
     if(rows.length === 0){
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="8">ما فيه نتائج مطابقة</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="9">ما فيه نتائج مطابقة</td></tr>';
       return;
     }
 
@@ -722,11 +725,13 @@
         '<td></td>' +
         '<td></td>' +
         '<td></td>' +
+        '<td></td>' +
         '<td>' + dateStr + '</td>';
 
       const statusTd = tr.children[4];
       const daysTd = tr.children[5];
       const linkTd = tr.children[6];
+      const couponTd = tr.children[7];
 
       const select = document.createElement('select');
       select.className = 'status-select';
@@ -778,6 +783,36 @@
         btn.addEventListener('click', function(){ openLinkModal(c); });
         linkTd.appendChild(btn);
       }
+
+      // زر تفعيل/إيقاف إضافة "كوبونات السلة المتروكة" (خدمة إضافية مدفوعة شهرياً) لكل عميل
+      const couponBtn = document.createElement('button');
+      couponBtn.className = 'link-btn';
+      function renderCouponBtn(){
+        if(c.cart_coupon_addon_enabled){
+          couponBtn.textContent = '✓ مفعّلة';
+          couponBtn.classList.add('active-addon');
+        } else {
+          couponBtn.textContent = 'تفعيل';
+          couponBtn.classList.remove('active-addon');
+        }
+      }
+      renderCouponBtn();
+      couponBtn.addEventListener('click', async function(){
+        const newVal = !c.cart_coupon_addon_enabled;
+        couponBtn.disabled = true;
+        const { error: couponErr } = await supabaseClient
+          .from('clients')
+          .update({ cart_coupon_addon_enabled: newVal })
+          .eq('id', c.id);
+        couponBtn.disabled = false;
+        if(!couponErr){
+          c.cart_coupon_addon_enabled = newVal;
+          renderCouponBtn();
+        } else {
+          alert('تعذّر تحديث الإضافة، حاول مرة ثانية.');
+        }
+      });
+      couponTd.appendChild(couponBtn);
 
       tbody.appendChild(tr);
     });
