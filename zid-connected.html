@@ -98,5 +98,65 @@
   }
 </script>
 
+<div class="nabda-wa-chat" id="nabdaWaChat">
+  <div class="nabda-wa-panel" id="nabdaWaPanel">
+    <div class="nabda-wa-head">
+      <div class="nabda-wa-avatar">🌿</div>
+      <div class="nabda-wa-head-text">
+        <b>بوت نبضة</b>
+        <span>عادةً نرد خلال دقائق</span>
+      </div>
+      <button type="button" class="nabda-wa-close" id="nabdaWaClose" aria-label="إغلاق">✕</button>
+    </div>
+    <div class="nabda-wa-body">
+      <div class="nabda-wa-bubble">مرحباً 👋<br>كيف أقدر أساعدك اليوم؟ اضغط الزر تحت وابدأ المحادثة معنا مباشرة.</div>
+    </div>
+    <a href="https://wa.me/966510745353?text=مرحباً، أبي أعرف أكثر عن بوت نبضة 🌿" target="_blank" rel="noopener" class="nabda-wa-start">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#04210F"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#fff"/></svg>
+      ابدأ المحادثة على واتساب
+    </a>
+  </div>
+  <button type="button" class="nabda-wa-float" id="nabdaWaToggle" aria-label="تواصل معنا عبر واتساب">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#25D366"/></svg>
+  </button>
+</div>
+<style>
+  .nabda-wa-chat{ position:fixed; bottom:22px; right:22px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:14px; font-family:'Tajawal','Segoe UI',sans-serif; }
+  .nabda-wa-float{ width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px -6px rgba(0,0,0,.4); transition:transform .2s ease; padding:0; }
+  .nabda-wa-float:hover{ transform:scale(1.08); }
+  .nabda-wa-panel{ width:300px; max-width:calc(100vw - 40px); background:#fff; border-radius:18px; box-shadow:0 20px 50px -12px rgba(0,0,0,.35); overflow:hidden; display:none; flex-direction:column; border:1px solid #E4ECE9; }
+  .nabda-wa-panel.open{ display:flex; animation:nabdaWaPop .25s ease; }
+  @keyframes nabdaWaPop{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .nabda-wa-head{ background:#075E54; color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; }
+  .nabda-wa-avatar{ width:38px; height:38px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .nabda-wa-head-text{ flex:1; display:flex; flex-direction:column; text-align:right; }
+  .nabda-wa-head-text b{ font-size:14px; }
+  .nabda-wa-head-text span{ font-size:11.5px; color:rgba(255,255,255,.75); }
+  .nabda-wa-close{ background:none; border:none; color:#fff; font-size:16px; cursor:pointer; padding:4px; opacity:.85; line-height:1; }
+  .nabda-wa-close:hover{ opacity:1; }
+  .nabda-wa-body{ padding:16px; background:#ECE5DD; min-height:70px; }
+  .nabda-wa-bubble{ background:#fff; border-radius:10px; padding:10px 13px; font-size:13.5px; line-height:1.6; color:#111B12; max-width:92%; box-shadow:0 1px 2px rgba(0,0,0,.08); text-align:right; }
+  .nabda-wa-start{ display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:#04210F; font-weight:800; font-size:14px; padding:14px; text-decoration:none; }
+  .nabda-wa-start:hover{ background:#1DA851; }
+  @media (max-width:480px){
+    .nabda-wa-chat{ bottom:16px; right:16px; }
+    .nabda-wa-float{ width:52px; height:52px; }
+    .nabda-wa-panel{ width:280px; }
+  }
+</style>
+<script>
+  (function(){
+    var toggle = document.getElementById('nabdaWaToggle');
+    var panel = document.getElementById('nabdaWaPanel');
+    var closeBtn = document.getElementById('nabdaWaClose');
+    if(!toggle || !panel) return;
+    toggle.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.toggle('open'); });
+    if(closeBtn){ closeBtn.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.remove('open'); }); }
+    document.addEventListener('click', function(e){
+      if(!panel.contains(e.target) && !toggle.contains(e.target)){ panel.classList.remove('open'); }
+    });
+  })();
+</script>
+
 </body>
 </html>
