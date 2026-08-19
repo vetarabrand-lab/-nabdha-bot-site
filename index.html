@@ -5,6 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title id="pageTitle">بوت نبضة | منصّة بوت واتساب ذكي لأعمالك</title>
 <meta name="description" id="pageDesc" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
+<meta name="facebook-domain-verification" content="fq6v5rm4b4cgkbzke0n55p7df3zvyy" />
+<link rel="canonical" href="https://nabdh.online/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="بوت نبضة">
+<meta property="og:title" id="ogTitle" content="بوت نبضة | منصّة بوت واتساب ذكي لأعمالك">
+<meta property="og:description" id="ogDesc" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
+<meta property="og:url" content="https://nabdh.online/">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" id="twTitle" content="بوت نبضة | منصّة بوت واتساب ذكي لأعمالك">
+<meta name="twitter:description" id="twDesc" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "بوت نبضة",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "url": "https://nabdh.online/",
+  "description": "منصّة بوت واتساب ذكي بالذكاء الاصطناعي لأصحاب الأنشطة التجارية في السعودية والخليج، يرد على العملاء تلقائياً على مدار الساعة ويربط مباشرة مع متاجر زد وسلة.",
+  "offers": {
+    "@type": "Offer",
+    "price": "199",
+    "priceCurrency": "SAR"
+  },
+  "inLanguage": ["ar", "en"]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -81,7 +109,7 @@
     background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
     display:flex; align-items:center; justify-content:center;
   }
-  .nav-links{display:flex; align-items:center; gap:32px; font-weight:500; color:var(--muted);}
+  .nav-links{display:flex; align-items:center; gap:36px; font-weight:500; color:var(--muted);}
   .nav-links a:hover{color:var(--wa-teal-dark);}
   .nav-cta{display:flex; align-items:center; gap:14px;}
   .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px;}
@@ -115,7 +143,7 @@
 
   .phone-wrap{display:flex; justify-content:center;}
   .phone{
-    width:300px; background:#0B141A; border-radius:38px; padding:14px;
+    width:300px; max-width:100%; background:#0B141A; border-radius:38px; padding:14px;
     box-shadow:0 40px 70px -20px rgba(0,0,0,.55), 0 0 0 8px rgba(255,255,255,.06);
     transform:rotate(1.5deg);
   }
@@ -152,6 +180,7 @@
   .stat span{color:var(--muted); font-size:14px; font-weight:600;}
 
   .features-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+  .why-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:24px;}
   .feature-card{
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
     padding:30px; transition:transform .2s ease, box-shadow .2s ease;
@@ -180,10 +209,10 @@
   .step-arrow{position:absolute; top:38px; inset-inline-start:-30px; color:var(--border); font-size:22px;}
   .step:first-child .step-arrow{display:none;}
 
-  .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; align-items:stretch;}
+  .pricing-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; align-items:stretch;}
   .price-card{
     background:var(--card); border:1.5px solid var(--border); border-radius:24px;
-    padding:36px 30px; display:flex; flex-direction:column; position:relative;
+    padding:30px 22px; display:flex; flex-direction:column; position:relative;
   }
   .price-card.popular{
     border-color:var(--wa-green); box-shadow:0 24px 50px -18px rgba(37,211,102,.4); transform:scale(1.035);
@@ -195,6 +224,18 @@
   }
   .price-card h3{font-size:20px; margin-bottom:6px;}
   .price-card .desc{color:var(--muted); font-size:14px; margin-bottom:22px;}
+  .custom-plan-banner{
+    margin-top:22px; background:linear-gradient(120deg, var(--wa-teal-dark), var(--wa-teal));
+    border-radius:20px; padding:34px 32px; color:#fff;
+    display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap;
+  }
+  .custom-plan-banner .cpb-text h3{font-size:20px; font-weight:900; margin-bottom:8px;}
+  .custom-plan-banner .cpb-text p{color:rgba(255,255,255,.85); font-size:14.5px; max-width:520px; margin-bottom:14px;}
+  .custom-plan-banner .cpb-features{display:flex; flex-wrap:wrap; gap:10px 20px; list-style:none; padding:0; margin:0;}
+  .custom-plan-banner .cpb-features li{font-size:13.5px; color:rgba(255,255,255,.92); display:flex; align-items:center; gap:6px;}
+  .custom-plan-banner .cpb-cta{flex-shrink:0;}
+  .custom-plan-banner .btn-white{background:#fff; color:var(--wa-teal-dark); font-weight:800; padding:13px 28px; border-radius:100px; white-space:nowrap;}
+  @media (max-width:720px){ .custom-plan-banner{flex-direction:column; text-align:center; padding:28px 22px;} .custom-plan-banner .cpb-features{justify-content:center;} }
   .price-value{display:flex; align-items:baseline; gap:6px; margin-bottom:6px;}
   .price-value b{font-size:40px; font-weight:900;}
   .price-value span{color:var(--muted); font-size:14px;}
@@ -205,6 +246,7 @@
     width:20px; height:20px; border-radius:50%; background:rgba(37,211,102,.15); color:var(--wa-green-dark);
     display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px; font-weight:900;
   }
+  .trial-note{color:var(--wa-green-dark); font-weight:800; margin-top:10px; font-size:15px;}
 
   .faq{max-width:760px; margin:0 auto;}
   .faq-item{background:var(--card); border:1px solid var(--border); border-radius:14px; margin-bottom:14px; overflow:hidden;}
@@ -231,10 +273,23 @@
   footer h4{color:#fff; font-size:15px; margin-bottom:16px;}
   footer ul li{margin-bottom:10px; font-size:14px;}
   footer ul li a:hover{color:#fff;}
+  .footer-social{display:flex; gap:12px; margin-top:20px;}
+  .social-icon{
+    width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s ease, transform .15s ease;
+  }
+  .social-icon:hover{background:rgba(255,255,255,.18); transform:translateY(-2px);}
+  .social-icon svg{width:17px; height:17px; display:block;}
   .footer-bottom{border-top:1px solid rgba(255,255,255,.1); padding-top:24px; text-align:center; font-size:13px; color:rgba(255,255,255,.45);}
 
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease;}
   .reveal.show{opacity:1; transform:translateY(0);}
+
+  @media (max-width:1100px){
+    .pricing-grid{grid-template-columns:repeat(2,1fr);}
+    .price-card.popular{transform:none;}
+  }
 
   @media (max-width:960px){
     .hero-grid{grid-template-columns:1fr; text-align:center;}
@@ -243,6 +298,7 @@
     .phone-wrap{margin-top:20px;}
     .stats .container{grid-template-columns:repeat(2,1fr);}
     .features-grid{grid-template-columns:repeat(2,1fr);}
+    .why-grid{grid-template-columns:repeat(2,1fr);}
     .steps{grid-template-columns:repeat(2,1fr); row-gap:32px;}
     .step-arrow{display:none !important;}
     .pricing-grid{grid-template-columns:1fr; max-width:420px; margin:0 auto;}
@@ -258,10 +314,12 @@
   }
   @media (max-width:560px){
     .features-grid{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:1fr;}
     .steps{grid-template-columns:1fr;}
     .stats .container{grid-template-columns:repeat(2,1fr); gap:28px;}
     .footer-grid{grid-template-columns:1fr; text-align:center;}
     .footer-brand p{margin-inline:auto;}
+    .footer-social{justify-content:center;}
     .cta-banner{margin:0 12px; padding:48px 24px;}
   }
 </style>
@@ -286,7 +344,7 @@
     <div class="nav-cta">
       <button class="lang-btn" id="langBtn">English</button>
       <a href="portal.html" class="btn btn-outline" data-i18n="nav.login">تسجيل الدخول</a>
-      <a href="signup.html" class="btn btn-primary" data-i18n="nav.start">ابدأ الآن مجاناً</a>
+      <a href="signup.html" class="btn btn-primary" data-i18n="nav.start">جرّب 7 أيام مجاناً</a>
       <button class="burger" id="burger" aria-label="القائمة"><span></span><span></span><span></span></button>
     </div>
   </nav>
@@ -296,7 +354,7 @@
     <a href="#pricing" data-i18n="nav.pricing">الباقات</a>
     <a href="#faq" data-i18n="nav.faq">الأسئلة الشائعة</a>
     <a href="affiliate.html" data-i18n="nav.affiliate">اربح عمولة</a>
-    <a href="signup.html" class="btn btn-primary btn-block" style="margin-top:10px;" data-i18n="nav.start">ابدأ الآن مجاناً</a>
+    <a href="signup.html" class="btn btn-primary btn-block" style="margin-top:10px;" data-i18n="nav.start">جرّب 7 أيام مجاناً</a>
     <div class="mobile-lang-row"><button class="lang-btn" id="langBtnMobile">English</button></div>
   </div>
 </header>
@@ -308,10 +366,12 @@
       <h1 data-i18n="hero.title">بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت</h1>
       <p class="lead" data-i18n="hero.lead">وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.</p>
       <div class="hero-ctas">
-        <a href="signup.html" class="btn btn-primary" data-i18n="hero.ctaPrimary">ابدأ تجربتك المجانية</a>
+        <a href="signup.html" class="btn btn-primary" data-i18n="hero.ctaPrimary">جرّب البوت 7 أيام مجاناً</a>
         <a href="#how" class="btn btn-ghost-light" data-i18n="hero.ctaSecondary">شاهد كيف يعمل</a>
+        <a href="https://wa.me/966510745353?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%A8%D8%BA%D9%89%20%D8%A3%D8%AC%D8%B1%D8%A8%20%D8%A8%D9%88%D8%AA%20%D9%86%D8%A8%D8%B6%D8%A9" target="_blank" rel="noopener" class="btn btn-outline" data-i18n="hero.ctaWhatsapp">💬 جرّب المحادثة الآن على واتساب</a>
       </div>
       <ul class="hero-trust">
+        <li data-i18n="hero.trust4">🎁 جرّب 7 أيام مجاناً بدون بطاقة ائتمان</li>
         <li data-i18n="hero.trust1">✅ متوافق مع WhatsApp Cloud API الرسمي</li>
         <li data-i18n="hero.trust2">✅ عربي أولاً بالكامل</li>
         <li data-i18n="hero.trust3">✅ إعداد خلال دقائق</li>
@@ -387,6 +447,31 @@
         <h3 data-i18n="features.f6t">سجل وتحليلات كاملة</h3>
         <p data-i18n="features.f6d">راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.</p>
       </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🤝</div>
+        <h3 data-i18n="features.f7t">تحويل سلس لموظف بشري</h3>
+        <p data-i18n="features.f7d">أي محادثة تحتاج لمسة بشرية، وقف الرد الآلي وتابعها بنفسك أو مع فريقك مباشرة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📢</div>
+        <h3 data-i18n="features.f8t">حملات رسائل جماعية</h3>
+        <p data-i18n="features.f8d">أرسل عروضك وتذكيراتك لعملائك دفعة وحدة عبر قوالب واتساب معتمدة، وتابع نتيجة كل حملة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">👥</div>
+        <h3 data-i18n="features.f9t">صندوق وارد لفريقك</h3>
+        <p data-i18n="features.f9d">أضف موظفينك، وزّع المحادثات بينهم، وتابع مين يرد على مين — كل شي من نفس اللوحة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🛒</div>
+        <h3 data-i18n="features.f10t">ربط مباشر مع متجرك</h3>
+        <p data-i18n="features.f10d">اربط متجرك على زد أو سلة، والبوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات بدون تدخل بشري.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">✍️</div>
+        <h3 data-i18n="features.f11t">قوالب رسائل يصيغها الذكاء الاصطناعي</h3>
+        <p data-i18n="features.f11d">اكتب فكرتك بالعامية، والبوت يصيغها كقالب واتساب معتمد ويرسله للمراجعة تلقائياً — بدون ما تتعلم قواعد واتساب.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -426,40 +511,90 @@
   </div>
 </section>
 
+<section class="section" id="why" style="background:#fff;">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="why.eyebrow">ليش نبضة</span></div>
+      <h2 data-i18n="why.title">ليش تختار نبضة تحديداً؟</h2>
+      <p data-i18n="why.sub">مو مجرد بوت واتساب — منصة مبنية من الصفر لتاجر الخليج والسعودية.</p>
+    </div>
+    <div class="why-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">📦</div>
+        <h3 data-i18n="why.w1t">كل شي مدمج، بدون مفاجآت</h3>
+        <p data-i18n="why.w1d">عند أغلب المنافسين تدفع رسوم منفصلة على كل ميزة (الذكاء الاصطناعي، ربط المتجر، الرسائل الجماعية...). عندنا كل شي مدمج من أول باقة، ورسوم ربط المتجر في الباقة الأساسية فقط معلنة بوضوح بدون أي رسوم مخفية أخرى.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🇸🇦</div>
+        <h3 data-i18n="why.w2t">مبني للسوق العربي، مو مترجَم إليه</h3>
+        <p data-i18n="why.w2d">يفهم اللهجات الخليجية والسعودية بشكل طبيعي، وواجهة RTL كاملة من الأساس — مو تطبيق عالمي مضاف له دعم عربي لاحقاً.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🔗</div>
+        <h3 data-i18n="why.w3t">ربط رسمي ومباشر مع زد وسلة</h3>
+        <p data-i18n="why.w3d">البوت يستعلم مباشرة عن حالة الطلب وتوفر المنتجات من متجرك، بدون ما تحتاج تربط أدوات وسيطة أو تدخل بشري.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">✍️</div>
+        <h3 data-i18n="why.w4t">قوالب رسائل يصيغها الذكاء الاصطناعي ويرسلها لميتا</h3>
+        <p data-i18n="why.w4d">اكتب فكرتك بالعامية، والمنصة تصيغها كقالب واتساب معتمد وترسله للمراجعة تلقائياً — بدون ما تتعلم قواعد واتساب المعقدة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="pricing">
   <div class="container">
     <div class="section-head reveal">
       <div class="eyebrow"><span class="dot"></span> <span data-i18n="pricing.eyebrow">الباقات</span></div>
       <h2 data-i18n="pricing.title">باقة تناسب كل حجم نشاط</h2>
       <p data-i18n="pricing.sub">اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.</p>
+      <p class="trial-note" data-i18n="pricing.trialNote">🎁 كل الباقات تشمل تجربة مجانية 7 أيام — بدون بطاقة ائتمان</p>
     </div>
     <div class="pricing-grid">
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p1n">أساسي</h3>
         <p class="desc" data-i18n="pricing.p1d">للمشاريع الناشئة والحسابات الشخصية</p>
         <div class="price-value"><b>199</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
-        <div class="price-limit" data-i18n="pricing.p1limit">حتى 1,000 رسالة شهرياً</div>
+        <div class="price-limit" data-i18n="pricing.p1limit">حتى 2,000 رسالة شهرياً</div>
         <ul class="price-features">
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f1">رقم واتساب رسمي واحد</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f2">بوت ذكاء اصطناعي مخصص</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f3">ذاكرة محادثة لكل عميل</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f4">سجل محادثات أساسي</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p1f5">ربط زد أو سلة (+25 ريال/شهر)</span></li>
         </ul>
         <a href="signup.html?plan=basic" class="btn btn-outline btn-block" data-i18n="pricing.p1cta">ابدأ بالأساسي</a>
       </div>
       <div class="price-card popular reveal">
         <span class="badge-popular" data-i18n="pricing.popular">الأكثر طلباً</span>
+        <h3 data-i18n="pricing.pgn">نمو</h3>
+        <p class="desc" data-i18n="pricing.pgd">للمتاجر النشطة اللي تبي تربط متجرها مجاناً</p>
+        <div class="price-value"><b>399</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-limit" data-i18n="pricing.pglimit">حتى 4,000 رسالة شهرياً</div>
+        <ul class="price-features">
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf1">كل مزايا الباقة الأساسية</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf2">ربط زد أو سلة مجاناً</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf3">رسائل جماعية بدون رسوم تفعيل</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf4">صندوق وارد لفريق العمل</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf5">لوحة الطلبات الموحّدة 🆕</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.pgf6">منشئ قوالب رسائل بالذكاء الاصطناعي</span></li>
+        </ul>
+        <a href="signup.html?plan=growth" class="btn btn-primary btn-block" data-i18n="pricing.pgcta">ابدأ بباقة نمو</a>
+      </div>
+      <div class="price-card reveal">
         <h3 data-i18n="pricing.p2n">احترافي</h3>
         <p class="desc" data-i18n="pricing.p2d">للأنشطة التجارية المتنامية</p>
         <div class="price-value"><b>699</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
-        <div class="price-limit" data-i18n="pricing.p2limit">حتى 5,000 رسالة شهرياً</div>
+        <div class="price-limit" data-i18n="pricing.p2limit">حتى 8,000 رسالة شهرياً</div>
         <ul class="price-features">
-          <li><span class="check">✓</span> <span data-i18n="pricing.p2f1">كل مزايا الباقة الأساسية</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f1">كل مزايا باقة نمو</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f2">تخصيص متقدم لشخصية البوت</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f3">تحليلات وتقارير استخدام</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f4">دعم فني بأولوية</span></li>
+          <li><span class="check">✓</span> <span data-i18n="pricing.p2f5">تحويل ذكي للمحادثة لموظف بشري</span></li>
         </ul>
-        <a href="signup.html?plan=pro" class="btn btn-primary btn-block" data-i18n="pricing.p2cta">ابدأ بالاحترافي</a>
+        <a href="signup.html?plan=pro" class="btn btn-outline btn-block" data-i18n="pricing.p2cta">ابدأ بالاحترافي</a>
       </div>
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p3n">مؤسسات</h3>
@@ -473,6 +608,22 @@
           <li><span class="check">✓</span> <span data-i18n="pricing.p3f4">تكاملات مخصصة عند الطلب</span></li>
         </ul>
         <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block" data-i18n="pricing.p3cta">تواصل معنا</a>
+      </div>
+    </div>
+
+    <div class="custom-plan-banner reveal">
+      <div class="cpb-text">
+        <h3 data-i18n="pricing.cpTitle">عندك سلسلة متاجر أو حجم طلبات كبير؟</h3>
+        <p data-i18n="pricing.cpDesc">نبني لك باقة مخصصة حسب حجم نشاطك — بدون حدود جاهزة، وبشروط تتفاوض عليها معنا مباشرة.</p>
+        <ul class="cpb-features">
+          <li>✓ <span data-i18n="pricing.cpf1">طلبات وأرقام واتساب بلا حدود</span></li>
+          <li>✓ <span data-i18n="pricing.cpf2">تكاملات API وربط أنظمة مخصصة</span></li>
+          <li>✓ <span data-i18n="pricing.cpf3">مدير حساب ودعم مخصص</span></li>
+          <li>✓ <span data-i18n="pricing.cpf4">اتفاقية مستوى خدمة (SLA) خاصة</span></li>
+        </ul>
+      </div>
+      <div class="cpb-cta">
+        <a href="contact.html" class="btn btn-white" data-i18n="pricing.cpcta">تحدث مع المبيعات</a>
       </div>
     </div>
   </div>
@@ -499,7 +650,7 @@
       </div>
       <div class="faq-item">
         <div class="faq-q"><span data-i18n="faq.q4">هل فيه فترة تجريبية مجانية؟</span> <span class="plus">+</span></div>
-        <div class="faq-a"><p data-i18n="faq.a4">نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.</p></div>
+        <div class="faq-a"><p data-i18n="faq.a4">نعم، عندك 7 أيام تجربة مجانية كاملة على أي باقة تختارها، بدون أي التزام أو بطاقة ائتمان، قبل ما تقرر الاشتراك.</p></div>
       </div>
       <div class="faq-item">
         <div class="faq-q"><span data-i18n="faq.q5">هل أقدر ألغي اشتراكي في أي وقت؟</span> <span class="plus">+</span></div>
@@ -511,8 +662,8 @@
 
 <div class="cta-banner reveal">
   <h2 data-i18n="ctaBanner.title">جاهز تخلي واتساب نشاطك يشتغل لحاله؟</h2>
-  <p data-i18n="ctaBanner.sub">انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.</p>
-  <a href="signup.html" class="btn btn-primary" data-i18n="ctaBanner.cta">ابدأ تجربتك المجانية الآن</a>
+  <p data-i18n="ctaBanner.sub">انضم لمنصة نبضة وجرّب البوت 7 أيام مجاناً — بدون بطاقة ائتمان.</p>
+  <a href="signup.html" class="btn btn-primary" data-i18n="ctaBanner.cta">جرّب 7 أيام مجاناً الآن</a>
 </div>
 
 <div style="height:96px;"></div>
@@ -528,6 +679,17 @@
           <span data-i18n="footer.brand">بوت نبضة</span>
         </div>
         <p data-i18n="footer.desc">منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.</p>
+        <div class="footer-social">
+          <a class="social-icon" href="https://www.tiktok.com/@nabdh.b" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M16.5 2h-3.1v13.6c0 1.6-1.3 2.9-2.9 2.9s-2.9-1.3-2.9-2.9 1.3-2.9 2.9-2.9c.3 0 .6 0 .9.1V9.6c-.3 0-.6-.1-.9-.1-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V8.4c1.2.9 2.7 1.4 4.3 1.4V6.7c-2.4 0-4.3-1.9-4.3-4.3V2z" fill="#fff"/></svg>
+          </a>
+          <a class="social-icon" href="https://www.instagram.com/nabdh.b" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5" stroke="#fff" stroke-width="1.8"/><circle cx="12" cy="12" r="4.3" stroke="#fff" stroke-width="1.8"/><circle cx="17.6" cy="6.4" r="1.15" fill="#fff"/></svg>
+          </a>
+          <a class="social-icon" href="https://www.facebook.com/nabdh.b" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06C2 17.08 5.66 21.24 10.44 22v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22C18.34 21.24 22 17.08 22 12.06z" fill="#fff"/></svg>
+          </a>
+        </div>
       </div>
       <div>
         <h4 data-i18n="footer.h1">المنتج</h4>
@@ -535,6 +697,8 @@
           <li><a href="#features" data-i18n="nav.features">المزايا</a></li>
           <li><a href="#pricing" data-i18n="nav.pricing">الباقات</a></li>
           <li><a href="#how" data-i18n="nav.how">كيف يعمل</a></li>
+          <li><a href="whatsapp-link.html" data-i18n="footer.waLink">منشئ روابط واتساب</a></li>
+          <li><a href="whatsapp-qr.html" data-i18n="footer.waQr">مولد QR لواتساب</a></li>
         </ul>
       </div>
       <div>
@@ -550,8 +714,10 @@
         <h4 data-i18n="footer.h3">الدعم</h4>
         <ul>
           <li><a href="#faq" data-i18n="nav.faq">الأسئلة الشائعة</a></li>
+          <li><a href="status.html" data-i18n="footer.status">حالة النظام</a></li>
           <li><a href="privacy.html" data-i18n="footer.privacy">سياسة الخصوصية</a></li>
           <li><a href="terms.html" data-i18n="footer.terms">الشروط والأحكام</a></li>
+          <li><a href="refund.html">سياسة الاسترجاع والاسترداد</a></li>
         </ul>
       </div>
     </div>
@@ -571,15 +737,17 @@
       "nav.faq": "الأسئلة الشائعة",
       "nav.affiliate": "اربح عمولة",
       "nav.login": "تسجيل الدخول",
-      "nav.start": "ابدأ الآن مجاناً",
+      "nav.start": "جرّب 7 أيام مجاناً",
       "hero.eyebrow": "مدعوم بأحدث تقنيات الذكاء الاصطناعي",
       "hero.title": "بوت واتساب يرد على عملائك <em>على مدار الساعة</em>، بصوت نشاطك أنت",
       "hero.lead": "وصّل رقم واتساب نشاطك التجاري بمنصة نبضة، وخصّص شخصية البوت وتعليماته بدقائق. بوت ذكي يجاوب استفسارات عملائك تلقائياً بالعربية، ويحوّل لك المحادثات المهمة لفريقك.",
-      "hero.ctaPrimary": "ابدأ تجربتك المجانية",
+      "hero.ctaPrimary": "جرّب البوت 7 أيام مجاناً",
       "hero.ctaSecondary": "شاهد كيف يعمل",
+      "hero.ctaWhatsapp": "💬 جرّب المحادثة الآن على واتساب",
       "hero.trust1": "✅ متوافق مع WhatsApp Cloud API الرسمي",
       "hero.trust2": "✅ عربي أولاً بالكامل",
       "hero.trust3": "✅ إعداد خلال دقائق",
+      "hero.trust4": "🎁 جرّب 7 أيام مجاناً بدون بطاقة ائتمان",
       "phone.name": "متجر ورد",
       "phone.status": "نشط الآن • بوت نبضة",
       "phone.msg1": "مرحباً، هل التوصيل متوفر للرياض؟",
@@ -611,6 +779,27 @@
       "features.f5d": "يعمل عبر WhatsApp Business Cloud API الرسمي من Meta — بدون حظر أو مخاطرة.",
       "features.f6t": "سجل وتحليلات كاملة",
       "features.f6d": "راقب كل محادثة، وتابع استهلاكك الشهري من الرسائل بشفافية.",
+      "features.f7t": "تحويل سلس لموظف بشري",
+      "features.f7d": "أي محادثة تحتاج لمسة بشرية، وقف الرد الآلي وتابعها بنفسك أو مع فريقك مباشرة.",
+      "features.f8t": "حملات رسائل جماعية",
+      "features.f8d": "أرسل عروضك وتذكيراتك لعملائك دفعة وحدة عبر قوالب واتساب معتمدة، وتابع نتيجة كل حملة.",
+      "features.f9t": "صندوق وارد لفريقك",
+      "features.f9d": "أضف موظفينك، وزّع المحادثات بينهم، وتابع مين يرد على مين — كل شي من نفس اللوحة.",
+      "features.f10t": "ربط مباشر مع متجرك",
+      "features.f10d": "اربط متجرك على زد أو سلة، والبوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات بدون تدخل بشري.",
+      "features.f11t": "قوالب رسائل يصيغها الذكاء الاصطناعي",
+      "features.f11d": "اكتب فكرتك بالعامية، والبوت يصيغها كقالب واتساب معتمد ويرسله للمراجعة تلقائياً — بدون ما تتعلم قواعد واتساب.",
+      "why.eyebrow": "ليش نبضة",
+      "why.title": "ليش تختار نبضة تحديداً؟",
+      "why.sub": "مو مجرد بوت واتساب — منصة مبنية من الصفر لتاجر الخليج والسعودية.",
+      "why.w1t": "كل شي مدمج، بدون مفاجآت",
+      "why.w1d": "عند أغلب المنافسين تدفع رسوم منفصلة على كل ميزة (الذكاء الاصطناعي، ربط المتجر، الرسائل الجماعية...). عندنا كل شي مدمج من أول باقة، ورسوم ربط المتجر في الباقة الأساسية فقط معلنة بوضوح بدون أي رسوم مخفية أخرى.",
+      "why.w2t": "مبني للسوق العربي، مو مترجَم إليه",
+      "why.w2d": "يفهم اللهجات الخليجية والسعودية بشكل طبيعي، وواجهة RTL كاملة من الأساس — مو تطبيق عالمي مضاف له دعم عربي لاحقاً.",
+      "why.w3t": "ربط رسمي ومباشر مع زد وسلة",
+      "why.w3d": "البوت يستعلم مباشرة عن حالة الطلب وتوفر المنتجات من متجرك، بدون ما تحتاج تربط أدوات وسيطة أو تدخل بشري.",
+      "why.w4t": "قوالب رسائل يصيغها الذكاء الاصطناعي ويرسلها لميتا",
+      "why.w4d": "اكتب فكرتك بالعامية، والمنصة تصيغها كقالب واتساب معتمد وترسله للمراجعة تلقائياً — بدون ما تتعلم قواعد واتساب المعقدة.",
       "how.eyebrow": "كيف يعمل",
       "how.title": "من التسجيل إلى أول رد تلقائي، بأربع خطوات",
       "how.s1t": "سجّل نشاطك",
@@ -624,23 +813,36 @@
       "pricing.eyebrow": "الباقات",
       "pricing.title": "باقة تناسب كل حجم نشاط",
       "pricing.sub": "اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.",
+      "pricing.trialNote": "🎁 كل الباقات تشمل تجربة مجانية 7 أيام — بدون بطاقة ائتمان",
       "pricing.perMonth": "ريال / شهرياً",
       "pricing.popular": "الأكثر طلباً",
       "pricing.p1n": "أساسي",
       "pricing.p1d": "للمشاريع الناشئة والحسابات الشخصية",
-      "pricing.p1limit": "حتى 1,000 رسالة شهرياً",
+      "pricing.p1limit": "حتى 2,000 رسالة شهرياً",
       "pricing.p1f1": "رقم واتساب رسمي واحد",
       "pricing.p1f2": "بوت ذكاء اصطناعي مخصص",
       "pricing.p1f3": "ذاكرة محادثة لكل عميل",
       "pricing.p1f4": "سجل محادثات أساسي",
+      "pricing.p1f5": "ربط زد أو سلة (+25 ريال/شهر)",
       "pricing.p1cta": "ابدأ بالأساسي",
+      "pricing.pgn": "نمو",
+      "pricing.pgd": "للمتاجر النشطة اللي تبي تربط متجرها مجاناً",
+      "pricing.pglimit": "حتى 4,000 رسالة شهرياً",
+      "pricing.pgf1": "كل مزايا الباقة الأساسية",
+      "pricing.pgf2": "ربط زد أو سلة مجاناً",
+      "pricing.pgf3": "رسائل جماعية بدون رسوم تفعيل",
+      "pricing.pgf4": "صندوق وارد لفريق العمل",
+      "pricing.pgf5": "لوحة الطلبات الموحّدة 🆕",
+      "pricing.pgf6": "منشئ قوالب رسائل بالذكاء الاصطناعي",
+      "pricing.pgcta": "ابدأ بباقة نمو",
       "pricing.p2n": "احترافي",
       "pricing.p2d": "للأنشطة التجارية المتنامية",
-      "pricing.p2limit": "حتى 5,000 رسالة شهرياً",
-      "pricing.p2f1": "كل مزايا الباقة الأساسية",
+      "pricing.p2limit": "حتى 8,000 رسالة شهرياً",
+      "pricing.p2f1": "كل مزايا باقة نمو",
       "pricing.p2f2": "تخصيص متقدم لشخصية البوت",
       "pricing.p2f3": "تحليلات وتقارير استخدام",
       "pricing.p2f4": "دعم فني بأولوية",
+      "pricing.p2f5": "تحويل ذكي للمحادثة لموظف بشري",
       "pricing.p2cta": "ابدأ بالاحترافي",
       "pricing.p3n": "مؤسسات",
       "pricing.p3d": "لسلاسل المتاجر والفرق الكبيرة",
@@ -649,6 +851,13 @@
       "pricing.p3f2": "أرقام واتساب متعددة",
       "pricing.p3f3": "مدير حساب مخصص",
       "pricing.p3f4": "تكاملات مخصصة عند الطلب",
+      "pricing.cpTitle": "عندك سلسلة متاجر أو حجم طلبات كبير؟",
+      "pricing.cpDesc": "نبني لك باقة مخصصة حسب حجم نشاطك — بدون حدود جاهزة، وبشروط تتفاوض عليها معنا مباشرة.",
+      "pricing.cpf1": "طلبات وأرقام واتساب بلا حدود",
+      "pricing.cpf2": "تكاملات API وربط أنظمة مخصصة",
+      "pricing.cpf3": "مدير حساب ودعم مخصص",
+      "pricing.cpf4": "اتفاقية مستوى خدمة (SLA) خاصة",
+      "pricing.cpcta": "تحدث مع المبيعات",
       "pricing.p3cta": "تواصل معنا",
       "faq.eyebrow": "الأسئلة الشائعة",
       "faq.title": "عندك سؤال؟ عندنا جواب",
@@ -659,17 +868,20 @@
       "faq.q3": "هل يفهم البوت اللهجات الخليجية؟",
       "faq.a3": "نعم، البوت مبني على نموذج ذكاء اصطناعي متقدم ويتفاعل بشكل طبيعي مع العربية الفصحى واللهجات الخليجية الدارجة.",
       "faq.q4": "هل فيه فترة تجريبية مجانية؟",
-      "faq.a4": "نعم، تقدر تجرّب المنصة مجاناً قبل الاشتراك في أي باقة لتتأكد إنها تناسب نشاطك.",
+      "faq.a4": "نعم، عندك 7 أيام تجربة مجانية كاملة على أي باقة تختارها، بدون أي التزام أو بطاقة ائتمان، قبل ما تقرر الاشتراك.",
       "faq.q5": "هل أقدر ألغي اشتراكي في أي وقت؟",
       "faq.a5": "بالتأكيد، بدون عقود طويلة أو رسوم إلغاء — تقدر توقف اشتراكك في أي لحظة من لوحة التحكم.",
       "ctaBanner.title": "جاهز تخلي واتساب نشاطك يشتغل لحاله؟",
-      "ctaBanner.sub": "انضم لمنصة نبضة وابدأ تجربتك المجانية اليوم — بدون بطاقة ائتمان.",
-      "ctaBanner.cta": "ابدأ تجربتك المجانية الآن",
+      "ctaBanner.sub": "انضم لمنصة نبضة وجرّب البوت 7 أيام مجاناً — بدون بطاقة ائتمان.",
+      "ctaBanner.cta": "جرّب 7 أيام مجاناً الآن",
       "footer.brand": "بوت نبضة",
       "footer.desc": "منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.",
       "footer.h1": "المنتج",
+      "footer.waLink": "منشئ روابط واتساب",
+      "footer.waQr": "مولد QR لواتساب",
       "footer.h2": "الشركة",
       "footer.h3": "الدعم",
+      "footer.status": "حالة النظام",
       "footer.about": "من نحن",
       "footer.contact": "تواصل معنا",
       "footer.affiliate": "برنامج الشركاء",
@@ -688,15 +900,17 @@
       "nav.faq": "FAQ",
       "nav.affiliate": "Earn Commission",
       "nav.login": "Log In",
-      "nav.start": "Start Free",
+      "nav.start": "Try 7 Days Free",
       "hero.eyebrow": "Powered by Advanced AI",
       "hero.title": "A WhatsApp bot that replies to your customers <em>around the clock</em>, in your business's own voice",
       "hero.lead": "Connect your business WhatsApp number to Nabda, and customize your bot's personality and instructions in minutes. A smart bot that answers your customers automatically, and hands off important conversations to your team.",
-      "hero.ctaPrimary": "Start Your Free Trial",
+      "hero.ctaPrimary": "Try the Bot Free for 7 Days",
       "hero.ctaSecondary": "See how it works",
+      "hero.ctaWhatsapp": "💬 Chat with the bot now",
       "hero.trust1": "✅ Official WhatsApp Cloud API",
       "hero.trust2": "✅ Arabic-first, fully supported",
       "hero.trust3": "✅ Setup in minutes",
+      "hero.trust4": "🎁 Try free for 7 days, no credit card",
       "phone.name": "Ward Store",
       "phone.status": "Active now • Nabda Bot",
       "phone.msg1": "Hi, is delivery available to Riyadh?",
@@ -728,6 +942,27 @@
       "features.f5d": "Runs on Meta's official WhatsApp Business Cloud API, no bans, no risk.",
       "features.f6t": "Full logs and analytics",
       "features.f6d": "Track every conversation and monitor your monthly message usage transparently.",
+      "features.f7t": "Seamless handoff to a human",
+      "features.f7d": "Any conversation that needs a human touch — pause the bot and take over yourself or with your team, instantly.",
+      "features.f8t": "Bulk broadcast campaigns",
+      "features.f8d": "Send offers and reminders to all your customers at once via approved WhatsApp templates, and track every campaign's results.",
+      "features.f9t": "A shared inbox for your team",
+      "features.f9d": "Add your staff, assign conversations, and see who's replying to whom — all from one dashboard.",
+      "features.f10t": "Direct store integration",
+      "features.f10d": "Connect your Zid or Salla store, and the bot answers order status and product availability automatically — no human needed.",
+      "features.f11t": "AI-drafted message templates",
+      "features.f11d": "Describe your message idea in plain language, and the bot drafts a compliant WhatsApp template and submits it for approval automatically — no need to learn WhatsApp's rules.",
+      "why.eyebrow": "Why Nabda",
+      "why.title": "Why choose Nabda specifically?",
+      "why.sub": "Not just another WhatsApp bot — built from scratch for Saudi and Gulf merchants.",
+      "why.w1t": "Everything bundled, no surprises",
+      "why.w1d": "Most competitors charge separate fees for every feature (AI, store integration, broadcast...). With us, everything is bundled from the first plan, and the store integration fee on the Basic plan is the only add-on, clearly disclosed upfront with no other hidden fees.",
+      "why.w2t": "Built for the Arabic market, not translated into it",
+      "why.w2d": "Understands Gulf and Saudi dialects naturally, with a fully native RTL interface — not a global app with Arabic bolted on later.",
+      "why.w3t": "Official, direct integration with Zid and Salla",
+      "why.w3d": "The bot looks up order status and product availability directly from your store, no middleware tools or human intervention needed.",
+      "why.w4t": "AI-drafted message templates submitted to Meta",
+      "why.w4d": "Describe your idea in plain language, and the platform drafts a compliant WhatsApp template and submits it for review automatically — no need to learn WhatsApp's complex rules.",
       "how.eyebrow": "How it works",
       "how.title": "From sign-up to your first automated reply, in four steps",
       "how.s1t": "Sign up",
@@ -741,23 +976,36 @@
       "pricing.eyebrow": "Pricing",
       "pricing.title": "A plan for every business size",
       "pricing.sub": "Simple monthly subscription, no hidden fees, change or cancel your plan anytime.",
+      "pricing.trialNote": "🎁 Every plan includes a 7-day free trial, no credit card required",
       "pricing.perMonth": "SAR / month",
       "pricing.popular": "Most popular",
       "pricing.p1n": "Basic",
       "pricing.p1d": "For startups and personal accounts",
-      "pricing.p1limit": "Up to 1,000 messages / month",
+      "pricing.p1limit": "Up to 2,000 messages / month",
       "pricing.p1f1": "One official WhatsApp number",
       "pricing.p1f2": "Custom AI bot",
       "pricing.p1f3": "Per-customer conversation memory",
       "pricing.p1f4": "Basic conversation logs",
+      "pricing.p1f5": "Zid or Salla integration (+25 SAR/month)",
       "pricing.p1cta": "Start with Basic",
+      "pricing.pgn": "Growth",
+      "pricing.pgd": "For active stores that want free store integration",
+      "pricing.pglimit": "Up to 4,000 messages / month",
+      "pricing.pgf1": "Everything in Basic",
+      "pricing.pgf2": "Free Zid or Salla integration",
+      "pricing.pgf3": "Broadcast campaigns, no activation fee",
+      "pricing.pgf4": "Shared team inbox",
+      "pricing.pgf5": "Unified order table 🆕",
+      "pricing.pgf6": "AI WhatsApp template builder",
+      "pricing.pgcta": "Start with Growth",
       "pricing.p2n": "Professional",
       "pricing.p2d": "For growing businesses",
-      "pricing.p2limit": "Up to 5,000 messages / month",
-      "pricing.p2f1": "Everything in Basic",
+      "pricing.p2limit": "Up to 8,000 messages / month",
+      "pricing.p2f1": "Everything in Growth",
       "pricing.p2f2": "Advanced bot personality customization",
       "pricing.p2f3": "Usage analytics and reports",
       "pricing.p2f4": "Priority support",
+      "pricing.p2f5": "Smart handoff to human staff",
       "pricing.p2cta": "Start with Pro",
       "pricing.p3n": "Enterprise",
       "pricing.p3d": "For store chains and large teams",
@@ -766,6 +1014,13 @@
       "pricing.p3f2": "Multiple WhatsApp numbers",
       "pricing.p3f3": "Dedicated account manager",
       "pricing.p3f4": "Custom integrations on request",
+      "pricing.cpTitle": "Have a store chain or high order volume?",
+      "pricing.cpDesc": "We build you a custom plan based on your business size — no fixed limits, terms negotiated directly with us.",
+      "pricing.cpf1": "Unlimited orders and WhatsApp numbers",
+      "pricing.cpf2": "Custom API integrations and system connections",
+      "pricing.cpf3": "Dedicated account manager and support",
+      "pricing.cpf4": "Custom service level agreement (SLA)",
+      "pricing.cpcta": "Talk to Sales",
       "pricing.p3cta": "Contact us",
       "faq.eyebrow": "FAQ",
       "faq.title": "Got a question? We've got answers",
@@ -776,17 +1031,20 @@
       "faq.q3": "Does the bot understand Gulf Arabic dialects?",
       "faq.a3": "Yes, the bot is built on an advanced AI model and interacts naturally with both formal Arabic and everyday Gulf dialects.",
       "faq.q4": "Is there a free trial?",
-      "faq.a4": "Yes, you can try the platform for free before subscribing to any plan to make sure it fits your business.",
+      "faq.a4": "Yes, you get a full 7-day free trial on any plan you choose, no commitment or credit card required, before you decide to subscribe.",
       "faq.q5": "Can I cancel my subscription anytime?",
       "faq.a5": "Absolutely, no long contracts or cancellation fees. You can stop your subscription anytime from the dashboard.",
       "ctaBanner.title": "Ready to put your business's WhatsApp on autopilot?",
-      "ctaBanner.sub": "Join Nabda and start your free trial today, no credit card required.",
-      "ctaBanner.cta": "Start Your Free Trial Now",
+      "ctaBanner.sub": "Join Nabda and try the bot free for 7 days, no credit card required.",
+      "ctaBanner.cta": "Try 7 Days Free Now",
       "footer.brand": "Nabda Bot",
       "footer.desc": "A Saudi platform for building smart WhatsApp bots for businesses across the Gulf.",
       "footer.h1": "Product",
+      "footer.waLink": "WhatsApp Link Generator",
+      "footer.waQr": "WhatsApp QR Generator",
       "footer.h2": "Company",
       "footer.h3": "Support",
+      "footer.status": "System Status",
       "footer.about": "About Us",
       "footer.contact": "Contact Us",
       "footer.affiliate": "Affiliate Program",
