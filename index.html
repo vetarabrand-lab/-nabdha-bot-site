@@ -472,6 +472,16 @@
         <h3 data-i18n="features.f11t">قوالب رسائل يصيغها الذكاء الاصطناعي</h3>
         <p data-i18n="features.f11d">اكتب فكرتك بالعامية، والبوت يصيغها كقالب واتساب معتمد ويرسله للمراجعة تلقائياً — بدون ما تتعلم قواعد واتساب.</p>
       </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🛍️</div>
+        <h3 data-i18n="features.f12t">كتالوج منتجات تفاعلي داخل واتساب 🆕</h3>
+        <p data-i18n="features.f12d">البوت يرسل كروت منتجات حقيقية — صورة وسعر وزر "عرض المنتج" — مباشرة داخل المحادثة، مسحوبة لحظياً من متجرك على زد أو سلة.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎤</div>
+        <h3 data-i18n="features.f13t">يفهم الرسائل الصوتية 🆕</h3>
+        <p data-i18n="features.f13d">عميلك يرسل رسالة صوتية بدل ما يكتب؟ البوت يفهمها تلقائياً ويرد عليها زي أي رسالة نصية عادية.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -789,6 +799,10 @@
       "features.f10d": "اربط متجرك على زد أو سلة، والبوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات بدون تدخل بشري.",
       "features.f11t": "قوالب رسائل يصيغها الذكاء الاصطناعي",
       "features.f11d": "اكتب فكرتك بالعامية، والبوت يصيغها كقالب واتساب معتمد ويرسله للمراجعة تلقائياً — بدون ما تتعلم قواعد واتساب.",
+      "features.f12t": "كتالوج منتجات تفاعلي داخل واتساب 🆕",
+      "features.f12d": "البوت يرسل كروت منتجات حقيقية — صورة وسعر وزر \"عرض المنتج\" — مباشرة داخل المحادثة، مسحوبة لحظياً من متجرك على زد أو سلة.",
+      "features.f13t": "يفهم الرسائل الصوتية 🆕",
+      "features.f13d": "عميلك يرسل رسالة صوتية بدل ما يكتب؟ البوت يفهمها تلقائياً ويرد عليها زي أي رسالة نصية عادية.",
       "why.eyebrow": "ليش نبضة",
       "why.title": "ليش تختار نبضة تحديداً؟",
       "why.sub": "مو مجرد بوت واتساب — منصة مبنية من الصفر لتاجر الخليج والسعودية.",
@@ -952,6 +966,10 @@
       "features.f10d": "Connect your Zid or Salla store, and the bot answers order status and product availability automatically — no human needed.",
       "features.f11t": "AI-drafted message templates",
       "features.f11d": "Describe your message idea in plain language, and the bot drafts a compliant WhatsApp template and submits it for approval automatically — no need to learn WhatsApp's rules.",
+      "features.f12t": "Interactive product catalog inside WhatsApp 🆕",
+      "features.f12d": "The bot sends real product cards — image, price, and a \"View product\" button — right inside the chat, pulled live from your Zid or Salla store.",
+      "features.f13t": "Understands voice messages 🆕",
+      "features.f13d": "Customer sends a voice note instead of typing? The bot automatically transcribes it and replies just like any text message.",
       "why.eyebrow": "Why Nabda",
       "why.title": "Why choose Nabda specifically?",
       "why.sub": "Not just another WhatsApp bot — built from scratch for Saudi and Gulf merchants.",
@@ -1177,6 +1195,132 @@
     if(closeBtn){ closeBtn.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.remove('open'); }); }
     document.addEventListener('click', function(e){
       if(!panel.contains(e.target) && !toggle.contains(e.target)){ panel.classList.remove('open'); }
+    });
+  })();
+</script>
+
+<!-- ===== نموذج الاشتراك بالإيميل (Newsletter Opt-in) ===== -->
+<div class="nabda-nl-card" id="nabdaNlCard" role="dialog" aria-label="اشترك ليصلك عروض بوت نبضة">
+  <button type="button" class="nabda-nl-close" id="nabdaNlClose" aria-label="إغلاق">✕</button>
+  <div class="nabda-nl-icon">📧</div>
+  <div class="nabda-nl-title">وصلك عروض بوت نبضة أول بأول</div>
+  <div class="nabda-nl-desc">اشترك بإيميلك وخلك أول من يعرف بالعروض والتحديثات الجديدة.</div>
+  <form id="nabdaNlForm" class="nabda-nl-form">
+    <input type="email" id="nabdaNlEmail" class="nabda-nl-input" placeholder="بريدك الإلكتروني" required>
+    <input type="text" id="nabdaNlHoneypot" name="website" class="nabda-nl-honeypot" tabindex="-1" autocomplete="off">
+    <label class="nabda-nl-consent">
+      <input type="checkbox" id="nabdaNlConsent" required>
+      <span>أوافق على استلام رسائل تسويقية من بوت نبضة عبر الإيميل</span>
+    </label>
+    <button type="submit" class="nabda-nl-submit" id="nabdaNlSubmit">اشترك الآن</button>
+  </form>
+  <div class="nabda-nl-msg" id="nabdaNlMsg"></div>
+</div>
+<style>
+  .nabda-nl-card{
+    position:fixed; bottom:22px; left:22px; z-index:998; width:300px; max-width:calc(100vw - 40px);
+    background:#fff; border-radius:18px; box-shadow:0 20px 50px -12px rgba(0,0,0,.3); border:1px solid #E4ECE9;
+    padding:22px 20px 20px; font-family:'Tajawal','Segoe UI',sans-serif; text-align:right;
+    display:none; opacity:0; transform:translateY(14px); transition:opacity .35s ease, transform .35s ease;
+  }
+  .nabda-nl-card.show{ display:block; }
+  .nabda-nl-card.visible{ opacity:1; transform:translateY(0); }
+  .nabda-nl-close{ position:absolute; top:12px; left:12px; background:none; border:none; font-size:14px; color:#8A9994; cursor:pointer; padding:4px; }
+  .nabda-nl-close:hover{ color:#0B1A17; }
+  .nabda-nl-icon{ font-size:26px; margin-bottom:8px; }
+  .nabda-nl-title{ font-size:15.5px; font-weight:800; color:#0B1A17; margin-bottom:6px; line-height:1.5; }
+  .nabda-nl-desc{ font-size:12.5px; color:#5B6B67; line-height:1.7; margin-bottom:14px; }
+  .nabda-nl-form{ display:flex; flex-direction:column; gap:10px; }
+  .nabda-nl-input{
+    width:100%; padding:11px 14px; border-radius:10px; border:1.5px solid #E4ECE9; font-size:13.5px;
+    font-family:'Tajawal','Segoe UI',sans-serif; text-align:right; direction:rtl; outline:none; box-sizing:border-box;
+  }
+  .nabda-nl-input:focus{ border-color:#25D366; }
+  .nabda-nl-honeypot{ position:absolute; left:-9999px; opacity:0; height:0; width:0; }
+  .nabda-nl-consent{ display:flex; align-items:flex-start; gap:8px; font-size:11.5px; color:#5B6B67; line-height:1.6; cursor:pointer; }
+  .nabda-nl-consent input{ margin-top:2px; flex-shrink:0; }
+  .nabda-nl-submit{
+    background:#25D366; color:#04210F; border:none; border-radius:10px; padding:11px; font-weight:800;
+    font-size:14px; cursor:pointer; font-family:'Tajawal','Segoe UI',sans-serif; transition:background .2s ease;
+  }
+  .nabda-nl-submit:hover{ background:#1DA851; }
+  .nabda-nl-submit:disabled{ opacity:.6; cursor:default; }
+  .nabda-nl-msg{ font-size:12.5px; margin-top:10px; text-align:center; line-height:1.6; }
+  .nabda-nl-msg.success{ color:#1DA851; font-weight:700; }
+  .nabda-nl-msg.error{ color:#D9534F; font-weight:700; }
+  @media (max-width:480px){
+    .nabda-nl-card{ bottom:16px; left:16px; width:270px; }
+  }
+</style>
+<script>
+  (function(){
+    var STORAGE_KEY = 'nabda_nl_state'; // 'dismissed' | 'subscribed'
+    var card = document.getElementById('nabdaNlCard');
+    var closeBtn = document.getElementById('nabdaNlClose');
+    var form = document.getElementById('nabdaNlForm');
+    var emailInput = document.getElementById('nabdaNlEmail');
+    var consentInput = document.getElementById('nabdaNlConsent');
+    var honeypot = document.getElementById('nabdaNlHoneypot');
+    var submitBtn = document.getElementById('nabdaNlSubmit');
+    var msgBox = document.getElementById('nabdaNlMsg');
+
+    if(!card) return;
+
+    var state = localStorage.getItem(STORAGE_KEY);
+    if(state === 'dismissed' || state === 'subscribed'){
+      return; // ما نعيد إظهاره لو المستخدم أغلقه أو اشترك قبل
+    }
+
+    setTimeout(function(){
+      card.classList.add('show');
+      requestAnimationFrame(function(){ card.classList.add('visible'); });
+    }, 8000);
+
+    closeBtn.addEventListener('click', function(){
+      card.classList.remove('visible');
+      localStorage.setItem(STORAGE_KEY, 'dismissed');
+      setTimeout(function(){ card.classList.remove('show'); }, 300);
+    });
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = emailInput.value.trim();
+      if(!email || !consentInput.checked) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري الإرسال...';
+      msgBox.textContent = '';
+      msgBox.className = 'nabda-nl-msg';
+
+      fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/subscribe-newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, source: 'index_popup', website: honeypot.value })
+      })
+      .then(function(res){ return res.json().then(function(data){ return { ok: res.ok, data: data }; }); })
+      .then(function(result){
+        if(result.ok && result.data && result.data.success){
+          msgBox.textContent = 'تم الاشتراك بنجاح 🎉 راح توصلك عروضنا القادمة.';
+          msgBox.className = 'nabda-nl-msg success';
+          form.style.display = 'none';
+          localStorage.setItem(STORAGE_KEY, 'subscribed');
+          setTimeout(function(){
+            card.classList.remove('visible');
+            setTimeout(function(){ card.classList.remove('show'); }, 300);
+          }, 3000);
+        } else {
+          msgBox.textContent = 'صار خطأ، حاول مرة ثانية بعد شوي.';
+          msgBox.className = 'nabda-nl-msg error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'اشترك الآن';
+        }
+      })
+      .catch(function(){
+        msgBox.textContent = 'تعذر الاتصال، تأكد من الإنترنت وحاول مرة ثانية.';
+        msgBox.className = 'nabda-nl-msg error';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'اشترك الآن';
+      });
     });
   })();
 </script>
