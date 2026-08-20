@@ -140,6 +140,9 @@
   .badge.wa-unknown{background:#EEE; color:var(--muted);}
   .badge.pending{background:rgba(184,134,11,.13); color:var(--warn);}
   .badge.suspended{background:#EEE; color:var(--muted);}
+  .badge.bot{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .badge.escalated{background:rgba(184,134,11,.13); color:var(--warn);}
+  .badge.human_active{background:rgba(18,140,126,.13); color:var(--wa-teal);}
   .status-select{
     border:1.5px solid var(--border); border-radius:10px; padding:6px 10px; font-family:inherit;
     font-size:13px; background:#fff; cursor:pointer;
@@ -301,6 +304,7 @@
     <div class="tabs">
       <button class="tab-btn active" data-tab="clients">المشتركين</button>
       <button class="tab-btn" data-tab="tickets">تذاكر الدعم</button>
+      <button class="tab-btn" data-tab="sitechat">محادثة الموقع <span id="siteChatBadge" class="badge escalated" style="display:none; margin-inline-start:4px;">جديد</span></button>
       <button class="tab-btn" data-tab="topups">طلبات الرصيد</button>
       <button class="tab-btn" data-tab="affiliates">الشركاء بالعمولة</button>
     </div>
@@ -367,6 +371,34 @@
             <div class="composer">
               <textarea id="adminTicketReplyText" placeholder="اكتب ردك هنا..."></textarea>
               <button class="send-btn" id="adminTicketSendBtn">إرسال</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ===== PANEL: SITE CHAT ===== -->
+    <div class="panel" id="panelSiteChat">
+      <div class="inbox-wrap">
+        <div class="conv-list" id="adminSiteChatList">
+          <div class="conv-empty">جاري تحميل المحادثات...</div>
+        </div>
+        <div class="chat-panel">
+          <div class="thread-head" id="adminSiteChatThreadHead" style="display:none;">
+            <span>زائر الموقع</span>
+            <select class="status-select" id="adminSiteChatStatusSelect">
+              <option value="bot">بوت (تلقائي)</option>
+              <option value="escalated">محوّلة لفريقنا</option>
+              <option value="human_active">قيد الرد اليدوي</option>
+              <option value="closed">مغلقة</option>
+            </select>
+          </div>
+          <div class="chat-body" id="adminSiteChatBody">
+            <div class="chat-placeholder">اختر محادثة من القائمة لعرضها</div>
+          </div>
+          <div id="adminSiteChatComposerWrap" style="display:none;">
+            <div class="composer">
+              <textarea id="adminSiteChatReplyText" placeholder="اكتب ردك هنا..."></textarea>
+              <button class="send-btn" id="adminSiteChatSendBtn">إرسال</button>
             </div>
           </div>
         </div>
@@ -494,6 +526,9 @@
   let modalClient = null;
   let allTickets = [];
   let activeAdminTicketId = null;
+  let allSiteChatSessions = [];
+  let activeSiteChatId = null;
+  const siteChatStatusLabels = { bot: 'بوت (تلقائي)', escalated: 'محوّلة لفريقنا', human_active: 'قيد الرد اليدوي', closed: 'مغلقة' };
   // بيانات النشاط/البريد/الرسائل تجي أصلاً من نماذج عامة (تسجيل مشتركين جدد، رسائل واتساب)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في لوحة الإدارة
   function escapeHtml(str){
@@ -603,9 +638,10 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { clients: 'panelClients', tickets: 'panelTickets', topups: 'panelTopups', affiliates: 'panelAffiliates' };
+      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'tickets'){ loadTickets(); }
+      if(btn.dataset.tab === 'sitechat'){ loadSiteChatSessions(); document.getElementById('siteChatBadge').style.display = 'none'; }
       if(btn.dataset.tab === 'topups'){ loadTopupsPanel(); }
       if(btn.dataset.tab === 'affiliates'){ loadAffiliatesTab(); }
     });
@@ -931,6 +967,122 @@
       await openAdminTicketThread(activeAdminTicketId);
     }
   });
+  /* ---------- محادثة الموقع المباشرة (بوت أولاً، تحويل لفريق عند الحاجة) ---------- */
+  async function loadSiteChatSessions(){
+    const list = document.getElementById('adminSiteChatList');
+    const { data, error } = await supabaseClient
+      .from('site_chat_sessions')
+      .select('id, status, last_message_at, created_at')
+      .order('last_message_at', { ascending: false })
+      .limit(100);
+    if(error){
+      list.innerHTML = '<div class="conv-empty">تعذّر تحميل المحادثات، حدّث الصفحة.</div>';
+      return;
+    }
+    allSiteChatSessions = data || [];
+    renderSiteChatList();
+  }
+  function renderSiteChatList(){
+    const list = document.getElementById('adminSiteChatList');
+    if(allSiteChatSessions.length === 0){
+      list.innerHTML = '<div class="conv-empty">ما فيه محادثات من الموقع بعد.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    allSiteChatSessions.forEach(function(s){
+      const dateStr = new Date(s.last_message_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const div = document.createElement('div');
+      div.className = 'ticket-item' + (s.id === activeSiteChatId ? ' active' : '');
+      div.innerHTML =
+        '<div class="tsubject">زائر ' + s.id.slice(0, 8) + '</div>' +
+        '<div class="tmeta"><span class="badge ' + s.status + '">' + siteChatStatusLabels[s.status] + '</span><span class="biz-sub">' + dateStr + '</span></div>';
+      div.addEventListener('click', function(){
+        activeSiteChatId = s.id;
+        renderSiteChatList();
+        openSiteChatThread(s.id);
+      });
+      list.appendChild(div);
+    });
+  }
+  async function openSiteChatThread(sessionId){
+    const head = document.getElementById('adminSiteChatThreadHead');
+    const body = document.getElementById('adminSiteChatBody');
+    const composerWrap = document.getElementById('adminSiteChatComposerWrap');
+    const session = allSiteChatSessions.find(function(s){ return s.id === sessionId; });
+    if(!session){ return; }
+    head.style.display = 'flex';
+    document.getElementById('adminSiteChatStatusSelect').value = session.status;
+    composerWrap.style.display = 'block';
+    body.innerHTML = '<div class="chat-placeholder">جاري التحميل...</div>';
+    const { data: msgs } = await supabaseClient
+      .from('site_chat_messages')
+      .select('sender_type, message, created_at')
+      .eq('session_id', sessionId)
+      .order('created_at', { ascending: true });
+    body.innerHTML = '';
+    (msgs || []).forEach(function(m){
+      const b = document.createElement('div');
+      b.className = 'bubble ' + (m.sender_type === 'visitor' ? 'in' : 'out');
+      const time = new Date(m.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      b.innerHTML = escapeHtml(m.message) + '<span class="t">' + time + '</span>';
+      body.appendChild(b);
+    });
+    body.scrollTop = body.scrollHeight;
+  }
+  document.getElementById('adminSiteChatStatusSelect').addEventListener('change', async function(){
+    if(!activeSiteChatId){ return; }
+    const newStatus = this.value;
+    const { error } = await supabaseClient
+      .from('site_chat_sessions')
+      .update({ status: newStatus })
+      .eq('id', activeSiteChatId);
+    if(!error){
+      const s = allSiteChatSessions.find(function(x){ return x.id === activeSiteChatId; });
+      if(s){ s.status = newStatus; }
+      renderSiteChatList();
+    }
+  });
+  document.getElementById('adminSiteChatSendBtn').addEventListener('click', async function(){
+    const textarea = document.getElementById('adminSiteChatReplyText');
+    const text = textarea.value.trim();
+    if(!text || !activeSiteChatId){ return; }
+    const btn = document.getElementById('adminSiteChatSendBtn');
+    btn.disabled = true;
+    const { error } = await supabaseClient
+      .from('site_chat_messages')
+      .insert({ session_id: activeSiteChatId, sender_type: 'staff', message: text });
+    if(!error){
+      // أول رد يدوي يحوّل الحالة تلقائياً من "محوّلة" لـ "قيد الرد اليدوي" — إلا لو الموظف غيّرها يدوياً لشي ثاني
+      const s = allSiteChatSessions.find(function(x){ return x.id === activeSiteChatId; });
+      if(s && s.status === 'escalated'){
+        await supabaseClient.from('site_chat_sessions').update({ status: 'human_active' }).eq('id', activeSiteChatId);
+      }
+    }
+    btn.disabled = false;
+    if(!error){
+      textarea.value = '';
+      await loadSiteChatSessions();
+      await openSiteChatThread(activeSiteChatId);
+    }
+  });
+  // فحص دوري خفيف كل 20 ثانية لتحديث القائمة وتنبيه بوجود محادثة محوّلة جديدة تحتاج رد،
+  // حتى لو الموظف فاتح تبويب ثاني حالياً
+  setInterval(async function(){
+    if(!supabaseClient || document.getElementById('loginScreen').style.display === 'flex'){ return; }
+    const { data } = await supabaseClient
+      .from('site_chat_sessions')
+      .select('id, status, last_message_at, created_at')
+      .order('last_message_at', { ascending: false })
+      .limit(100);
+    if(!data) return;
+    const hadEscalated = data.some(function(s){ return s.status === 'escalated'; });
+    document.getElementById('siteChatBadge').style.display = hadEscalated ? 'inline-block' : 'none';
+    if(document.getElementById('panelSiteChat').classList.contains('active')){
+      allSiteChatSessions = data;
+      renderSiteChatList();
+      if(activeSiteChatId){ openSiteChatThread(activeSiteChatId); }
+    }
+  }, 20000);
   /* ---------- link account modal ---------- */
   const linkModal = document.getElementById('linkModal');
   const modalBizName = document.getElementById('modalBizName');

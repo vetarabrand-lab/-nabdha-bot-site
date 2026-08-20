@@ -1139,62 +1139,210 @@
   revealEls.forEach(function(el){ io.observe(el); });
 </script>
 
-<div class="nabda-wa-chat" id="nabdaWaChat">
-  <div class="nabda-wa-panel" id="nabdaWaPanel">
-    <div class="nabda-wa-head">
-      <div class="nabda-wa-avatar">🌿</div>
-      <div class="nabda-wa-head-text">
+<div class="nabda-chat" id="nabdaChat">
+  <div class="nabda-chat-panel" id="nabdaChatPanel">
+    <div class="nabda-chat-head">
+      <div class="nabda-chat-avatar">🌿</div>
+      <div class="nabda-chat-head-text">
         <b>بوت نبضة</b>
-        <span>عادةً نرد خلال دقائق</span>
+        <span id="nabdaChatStatusText">مساعدنا الذكي جاهز يجاوبك</span>
       </div>
-      <button type="button" class="nabda-wa-close" id="nabdaWaClose" aria-label="إغلاق">✕</button>
+      <button type="button" class="nabda-chat-close" id="nabdaChatClose" aria-label="إغلاق">✕</button>
     </div>
-    <div class="nabda-wa-body">
-      <div class="nabda-wa-bubble">مرحباً 👋<br>كيف أقدر أساعدك اليوم؟ اضغط الزر تحت وابدأ المحادثة معنا مباشرة.</div>
+    <div class="nabda-chat-body" id="nabdaChatBody">
+      <div class="nabda-chat-msg in">مرحباً 👋<br>أنا مساعد بوت نبضة الذكي. اسألني عن الأسعار أو المميزات، أو اطلب التحدث مع أحد فريقنا في أي وقت.</div>
     </div>
-    <a href="https://wa.me/966510745353?text=مرحباً، أبي أعرف أكثر عن بوت نبضة 🌿" target="_blank" rel="noopener" class="nabda-wa-start">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#04210F"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#fff"/></svg>
-      ابدأ المحادثة على واتساب
-    </a>
+    <div class="nabda-chat-composer">
+      <input type="text" id="nabdaChatInput" placeholder="اكتب رسالتك..." autocomplete="off">
+      <button type="button" id="nabdaChatSend" aria-label="إرسال">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"><path d="M3 11L21 3L13 21L11 13L3 11Z" fill="#04210F"/></svg>
+      </button>
+    </div>
   </div>
-  <button type="button" class="nabda-wa-float" id="nabdaWaToggle" aria-label="تواصل معنا عبر واتساب">
-    <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#25D366"/></svg>
+  <button type="button" class="nabda-chat-float" id="nabdaChatToggle" aria-label="تواصل معنا">
+    <svg width="27" height="27" viewBox="0 0 24 24" fill="none"><path d="M4 4H20V16H7L4 19V4Z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><circle cx="8.5" cy="10" r="1.1" fill="#fff"/><circle cx="12" cy="10" r="1.1" fill="#fff"/><circle cx="15.5" cy="10" r="1.1" fill="#fff"/></svg>
+    <span class="nabda-chat-dot" id="nabdaChatDot" style="display:none;"></span>
   </button>
 </div>
 <style>
-  .nabda-wa-chat{ position:fixed; bottom:22px; right:22px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:14px; font-family:'Tajawal','Segoe UI',sans-serif; }
-  .nabda-wa-float{ width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px -6px rgba(0,0,0,.4); transition:transform .2s ease; padding:0; }
-  .nabda-wa-float:hover{ transform:scale(1.08); }
-  .nabda-wa-panel{ width:300px; max-width:calc(100vw - 40px); background:#fff; border-radius:18px; box-shadow:0 20px 50px -12px rgba(0,0,0,.35); overflow:hidden; display:none; flex-direction:column; border:1px solid #E4ECE9; }
-  .nabda-wa-panel.open{ display:flex; animation:nabdaWaPop .25s ease; }
-  @keyframes nabdaWaPop{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
-  .nabda-wa-head{ background:#075E54; color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; }
-  .nabda-wa-avatar{ width:38px; height:38px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-  .nabda-wa-head-text{ flex:1; display:flex; flex-direction:column; text-align:right; }
-  .nabda-wa-head-text b{ font-size:14px; }
-  .nabda-wa-head-text span{ font-size:11.5px; color:rgba(255,255,255,.75); }
-  .nabda-wa-close{ background:none; border:none; color:#fff; font-size:16px; cursor:pointer; padding:4px; opacity:.85; line-height:1; }
-  .nabda-wa-close:hover{ opacity:1; }
-  .nabda-wa-body{ padding:16px; background:#ECE5DD; min-height:70px; }
-  .nabda-wa-bubble{ background:#fff; border-radius:10px; padding:10px 13px; font-size:13.5px; line-height:1.6; color:#111B12; max-width:92%; box-shadow:0 1px 2px rgba(0,0,0,.08); text-align:right; }
-  .nabda-wa-start{ display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:#04210F; font-weight:800; font-size:14px; padding:14px; text-decoration:none; }
-  .nabda-wa-start:hover{ background:#1DA851; }
+  .nabda-chat{ position:fixed; bottom:22px; right:22px; z-index:999; display:flex; flex-direction:column; align-items:flex-end; gap:14px; font-family:'Tajawal','Segoe UI',sans-serif; }
+  .nabda-chat-float{ width:58px; height:58px; border-radius:50%; border:none; cursor:pointer; background:#25D366; display:flex; align-items:center; justify-content:center; box-shadow:0 10px 26px -6px rgba(0,0,0,.4); transition:transform .2s ease; padding:0; position:relative; }
+  .nabda-chat-float:hover{ transform:scale(1.08); }
+  .nabda-chat-dot{ position:absolute; top:2px; left:2px; width:12px; height:12px; border-radius:50%; background:#D14343; border:2px solid #fff; }
+  .nabda-chat-panel{ width:320px; max-width:calc(100vw - 40px); height:430px; max-height:calc(100vh - 120px); background:#fff; border-radius:18px; box-shadow:0 20px 50px -12px rgba(0,0,0,.35); overflow:hidden; display:none; flex-direction:column; border:1px solid #E4ECE9; }
+  .nabda-chat-panel.open{ display:flex; animation:nabdaChatPop .25s ease; }
+  @keyframes nabdaChatPop{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+  .nabda-chat-head{ background:#075E54; color:#fff; padding:14px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .nabda-chat-avatar{ width:38px; height:38px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .nabda-chat-head-text{ flex:1; display:flex; flex-direction:column; text-align:right; overflow:hidden; }
+  .nabda-chat-head-text b{ font-size:14px; }
+  .nabda-chat-head-text span{ font-size:11px; color:rgba(255,255,255,.75); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .nabda-chat-close{ background:none; border:none; color:#fff; font-size:16px; cursor:pointer; padding:4px; opacity:.85; line-height:1; flex-shrink:0; }
+  .nabda-chat-close:hover{ opacity:1; }
+  .nabda-chat-body{ padding:14px; background:#ECE5DD; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; }
+  .nabda-chat-msg{ max-width:85%; border-radius:10px; padding:9px 12px; font-size:13.5px; line-height:1.55; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .nabda-chat-msg.in{ background:#fff; color:#111B12; align-self:flex-start; }
+  .nabda-chat-msg.out{ background:#DCF8C6; color:#111B12; align-self:flex-end; }
+  .nabda-chat-msg.sys{ background:transparent; color:#5B6B67; font-size:11.5px; text-align:center; align-self:center; box-shadow:none; max-width:100%; }
+  .nabda-chat-composer{ display:flex; gap:8px; padding:10px; background:#fff; border-top:1px solid #E4ECE9; flex-shrink:0; }
+  .nabda-chat-composer input{ flex:1; border:1.5px solid #E4ECE9; border-radius:100px; padding:9px 14px; font-family:inherit; font-size:13.5px; outline:none; min-width:0; }
+  .nabda-chat-composer input:focus{ border-color:#128C7E; }
+  .nabda-chat-composer button{ width:38px; height:38px; border-radius:50%; border:none; background:#25D366; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .nabda-chat-composer button:disabled{ opacity:.6; cursor:not-allowed; }
   @media (max-width:480px){
-    .nabda-wa-chat{ bottom:16px; right:16px; }
-    .nabda-wa-float{ width:52px; height:52px; }
-    .nabda-wa-panel{ width:280px; }
+    .nabda-chat{ bottom:16px; right:16px; }
+    .nabda-chat-float{ width:52px; height:52px; }
+    .nabda-chat-panel{ width:calc(100vw - 32px); height:62vh; }
   }
 </style>
 <script>
   (function(){
-    var toggle = document.getElementById('nabdaWaToggle');
-    var panel = document.getElementById('nabdaWaPanel');
-    var closeBtn = document.getElementById('nabdaWaClose');
+    var FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
+    var toggle = document.getElementById('nabdaChatToggle');
+    var panel = document.getElementById('nabdaChatPanel');
+    var closeBtn = document.getElementById('nabdaChatClose');
+    var chatBody = document.getElementById('nabdaChatBody');
+    var input = document.getElementById('nabdaChatInput');
+    var sendBtn = document.getElementById('nabdaChatSend');
+    var dot = document.getElementById('nabdaChatDot');
+    var statusText = document.getElementById('nabdaChatStatusText');
     if(!toggle || !panel) return;
-    toggle.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.toggle('open'); });
-    if(closeBtn){ closeBtn.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.remove('open'); }); }
+
+    var sessionId = null;
+    try{ sessionId = localStorage.getItem('nabda_chat_session_id'); }catch(e){}
+    var lastSeen = null;
+    var pollTimer = null;
+    var isOpen = false;
+    var sending = false;
+    var historyLoaded = false;
+
+    function addMsg(text, cls){
+      var div = document.createElement('div');
+      div.className = 'nabda-chat-msg ' + cls;
+      div.textContent = text;
+      chatBody.appendChild(div);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function applyStatus(status){
+      if(status === 'escalated' || status === 'human_active'){
+        statusText.textContent = 'تم تحويلك لفريق الدعم';
+      } else {
+        statusText.textContent = 'مساعدنا الذكي جاهز يجاوبك';
+      }
+    }
+
+    function loadHistory(){
+      if(!sessionId || historyLoaded) return;
+      historyLoaded = true;
+      fetch(FUNCTIONS_BASE + '/site-chat-poll?session_id=' + encodeURIComponent(sessionId) + '&after=1970-01-01T00:00:00Z')
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if(!data || !data.messages) return;
+          chatBody.innerHTML = '';
+          data.messages.forEach(function(m){
+            addMsg(m.message, m.sender_type === 'visitor' ? 'out' : 'in');
+            lastSeen = m.created_at;
+          });
+          applyStatus(data.status);
+        })
+        .catch(function(){});
+    }
+
+    function poll(){
+      if(!sessionId || !isOpen) return;
+      var after = lastSeen || '1970-01-01T00:00:00Z';
+      fetch(FUNCTIONS_BASE + '/site-chat-poll?session_id=' + encodeURIComponent(sessionId) + '&after=' + encodeURIComponent(after))
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          if(!data) return;
+          (data.messages || []).forEach(function(m){
+            if(m.sender_type !== 'visitor'){ addMsg(m.message, 'in'); }
+            lastSeen = m.created_at;
+          });
+          applyStatus(data.status);
+        })
+        .catch(function(){});
+    }
+
+    function startPolling(){
+      stopPolling();
+      pollTimer = setInterval(poll, 4000);
+    }
+    function stopPolling(){
+      if(pollTimer){ clearInterval(pollTimer); pollTimer = null; }
+    }
+
+    function sendMessage(){
+      var text = input.value.trim();
+      if(!text || sending) return;
+      sending = true;
+      sendBtn.disabled = true;
+      addMsg(text, 'out');
+      input.value = '';
+      fetch(FUNCTIONS_BASE + '/site-chat-send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, message: text })
+      })
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+          sending = false;
+          sendBtn.disabled = false;
+          if(!data || data.error){
+            addMsg('تعذّر إرسال رسالتك، حاول مرة ثانية.', 'sys');
+            return;
+          }
+          if(data.session_id && data.session_id !== sessionId){
+            sessionId = data.session_id;
+            historyLoaded = true;
+            try{ localStorage.setItem('nabda_chat_session_id', sessionId); }catch(e){}
+          }
+          (data.messages || []).forEach(function(m){
+            addMsg(m.message, 'in');
+            lastSeen = m.created_at;
+          });
+          if(!pollTimer && isOpen){ startPolling(); }
+        })
+        .catch(function(){
+          sending = false;
+          sendBtn.disabled = false;
+          addMsg('تعذّر الاتصال، تأكد من الإنترنت وحاول مرة ثانية.', 'sys');
+        });
+    }
+
+    toggle.addEventListener('click', function(e){
+      e.stopPropagation();
+      var opening = !panel.classList.contains('open');
+      panel.classList.toggle('open');
+      isOpen = opening;
+      dot.style.display = 'none';
+      if(opening){
+        loadHistory();
+        startPolling();
+        input.focus();
+      } else {
+        stopPolling();
+      }
+    });
+    if(closeBtn){
+      closeBtn.addEventListener('click', function(e){
+        e.stopPropagation();
+        panel.classList.remove('open');
+        isOpen = false;
+        stopPolling();
+      });
+    }
     document.addEventListener('click', function(e){
-      if(!panel.contains(e.target) && !toggle.contains(e.target)){ panel.classList.remove('open'); }
+      if(!panel.contains(e.target) && !toggle.contains(e.target) && panel.classList.contains('open')){
+        panel.classList.remove('open');
+        isOpen = false;
+        stopPolling();
+      }
+    });
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); sendMessage(); }
     });
   })();
 </script>

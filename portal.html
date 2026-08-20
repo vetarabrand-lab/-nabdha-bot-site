@@ -463,9 +463,9 @@
           <label>اشتراكك</label>
         </div>
         <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
-        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;">💳 ادفع الآن وجدّد الاشتراك</button>
+        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;">📞 تواصل معنا</button>
         <div class="helper-text" id="planHelperNonOwner" style="display:none;">تجديد الاشتراك متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">الدفع لمرة واحدة عبر Tap (مدى، فيزا/ماستركارد، Apple Pay) يضيف 30 يوم لاشتراكك من تاريخ انتهاء فترتك الحالية (أو من اليوم إذا كان اشتراكك منتهي) — بدون أي خصم تلقائي مستقبلي.</div>
+        <div class="helper-text" style="margin-top:10px;">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لتجديد اشتراكك يدوياً.</div>
       </div>
       <div class="settings-card" id="topupCard">
         <div class="field" style="margin-bottom:16px;">
@@ -475,7 +475,7 @@
         <div id="topupPendingNotice"></div>
         <div id="topupPackages"></div>
         <div class="helper-text" id="topupHelperNonOwner" style="display:none; margin-top:10px;">شراء رصيد إضافي متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">الدفع فوري وآمن عبر Tap (مدى، فيزا/ماستركارد، Apple Pay)، ويُضاف الرصيد لحسابك تلقائياً خلال ثوانٍ من إتمام الدفع.</div>
+        <div class="helper-text" style="margin-top:10px;">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لشحن رصيدك يدوياً.</div>
       </div>
     </div>
   </div>
@@ -1084,8 +1084,8 @@
     }
   }
   document.getElementById('renewPlanBtn').addEventListener('click', function(){
-    if(!myClient || !myPlan){ return; }
-    openTapCardModal('subscription', { plan_id: myPlan.id }, myPlan.monthly_price_sar, 'تجديد اشتراك: ' + (myPlan.name_ar || ''));
+    if(!myClient){ return; }
+    document.querySelector('.tab-btn[data-tab="support"]').click();
   });
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){
@@ -2139,13 +2139,13 @@
       row.className = 'topup-row';
       row.innerHTML =
         '<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
-        '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">💳 ادفع وفعّل الرصيد</button>';
+        '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 تواصل معنا</button>';
       box.appendChild(row);
     });
     document.querySelectorAll('.topup-request-btn').forEach(function(btn){
       btn.addEventListener('click', function(){
         if(!myClient || !isOwner){ return; }
-        openTapCardModal('topup', { package_id: this.dataset.id }, this.dataset.price, 'شحن رصيد: ' + this.dataset.credits + ' رسالة');
+        document.querySelector('.tab-btn[data-tab="support"]').click();
       });
     });
   }
