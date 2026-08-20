@@ -33,7 +33,6 @@
   a{text-decoration:none; color:inherit;}
   button{font-family:inherit;}
   .container{max-width:1180px; margin:0 auto; padding:0 24px;}
-
   header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
   nav{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1180px; margin:0 auto;}
   .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:20px;}
@@ -47,7 +46,6 @@
     font-weight:700; font-size:14px; padding:9px 18px; border-radius:100px; cursor:pointer;
   }
   .logout-btn:hover{border-color:var(--wa-teal);}
-
   /* ---------- LOGIN ---------- */
   .login-wrap{
     min-height:calc(100vh - 72px); display:flex; align-items:center; justify-content:center; padding:40px 20px;
@@ -73,15 +71,12 @@
   .login-btn:disabled{opacity:.6; cursor:not-allowed;}
   .login-error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3; border-radius:10px; padding:12px 14px; font-size:13.5px; margin-bottom:16px; display:none;}
   .login-success{background:rgba(37,211,102,.12); color:var(--wa-green-dark); border:1px solid rgba(37,211,102,.3); border-radius:10px; padding:12px 14px; font-size:13.5px; margin-bottom:16px; display:none;}
-
   .forgot-link{display:block; text-align:center; margin-top:14px; font-size:13.5px; color:var(--wa-teal-dark); font-weight:700; cursor:pointer;}
   .forgot-link:hover{text-decoration:underline;}
   .back-link{display:block; text-align:center; margin-top:14px; font-size:13.5px; color:var(--muted); font-weight:600; cursor:pointer;}
   .back-link:hover{color:var(--ink);}
-
   .divider{display:flex; align-items:center; gap:12px; margin:20px 0; color:var(--muted); font-size:12.5px;}
   .divider::before, .divider::after{content:''; flex:1; height:1px; background:var(--border);}
-
   .google-btn{
     width:100%; padding:12px; border:1.5px solid var(--border); border-radius:100px; background:#fff;
     color:var(--ink); font-weight:700; font-size:14.5px; cursor:pointer;
@@ -89,28 +84,23 @@
   }
   .google-btn:hover{border-color:var(--wa-teal); background:#FBFDFC;}
   .google-btn svg{flex-shrink:0;}
-
   #forgotScreen, #resetScreen{display:none;}
-
   /* ---------- DASHBOARD ---------- */
   #dashboardScreen{display:none;}
   .dash-wrap{padding:36px 0 60px;}
   .dash-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px;}
   .dash-head h1{font-size:24px; font-weight:900;}
   .dash-head p{color:var(--muted); font-size:14px;}
-
   /* tabs */
   .tabs{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
   .tab-btn{background:#fff; border:1.5px solid var(--border); border-radius:100px; padding:9px 18px; font-weight:700; font-size:13.5px; cursor:pointer; color:var(--muted);}
   .tab-btn.active{background:var(--wa-teal-dark); color:#fff; border-color:var(--wa-teal-dark);}
   .panel{display:none;}
   .panel.active{display:block;}
-
   .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px;}
   .stat-card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:20px;}
   .stat-card .n{font-size:28px; font-weight:900; color:var(--wa-teal-dark);}
   .stat-card .l{color:var(--muted); font-size:13.5px; font-weight:600; margin-top:4px;}
-
   .toolbar{display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap;}
   .toolbar input, .toolbar select{
     border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit;
@@ -118,7 +108,6 @@
   }
   .toolbar input{flex:1; min-width:220px;}
   .toolbar input:focus, .toolbar select:focus{outline:none; border-color:var(--wa-teal);}
-
   .table-wrap{background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; overflow-x:auto;}
   table{width:100%; border-collapse:collapse; min-width:1140px;}
   thead th{
@@ -166,7 +155,11 @@
   .save-hint{font-size:11.5px; color:var(--wa-green-dark); margin-right:6px; opacity:0; transition:opacity .3s ease;}
   .save-hint.show{opacity:1;}
   .ref-code{background:#F6FAF8; padding:4px 9px; border-radius:6px; font-size:12.5px; font-family:monospace; direction:ltr; display:inline-block;}
-
+  .report-phone-input{
+    width:120px; border:1.5px solid var(--border); border-radius:10px; padding:6px 10px;
+    font-family:inherit; font-size:13px; margin-left:6px;
+  }
+  .report-phone-input:focus{outline:none; border-color:var(--wa-teal);}
   /* ---------- TICKETS (inbox-style layout) ---------- */
   .inbox-wrap{display:grid; grid-template-columns:300px 1fr; gap:16px; height:600px;}
   .conv-list{background:var(--card); border:1px solid var(--border); border-radius:16px; overflow-y:auto;}
@@ -176,7 +169,6 @@
   .ticket-item.active{background:rgba(37,211,102,.09);}
   .ticket-item .tsubject{font-weight:800; font-size:14px; margin-bottom:4px;}
   .ticket-item .tmeta{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px;}
-
   .chat-panel{background:var(--card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; overflow:hidden;}
   .thread-head{padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px; font-weight:800; font-size:14.5px;}
   .chat-body{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; background:#F6FAF8;}
@@ -190,7 +182,6 @@
   .composer textarea:focus{outline:none; border-color:var(--wa-teal);}
   .send-btn{background:var(--wa-green); color:#04210F; border:none; border-radius:14px; padding:0 22px; font-weight:800; cursor:pointer;}
   .send-btn:disabled{opacity:.5; cursor:not-allowed;}
-
   /* ---------- MODAL ---------- */
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(11,26,23,.5);
@@ -221,7 +212,6 @@
   .modal-cancel{background:#F1F1EF; color:var(--ink);}
   .modal-error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3; border-radius:10px; padding:10px 12px; font-size:13px; margin-bottom:14px; display:none;}
   .modal-success{background:rgba(37,211,102,.12); color:var(--wa-green-dark); border:1px solid rgba(37,211,102,.3); border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px; display:none;}
-
   @media (max-width:860px){
     .stats-grid{grid-template-columns:repeat(2,1fr);}
     .inbox-wrap{grid-template-columns:1fr; height:auto;}
@@ -231,7 +221,6 @@
 </style>
 </head>
 <body>
-
 <header>
   <nav>
     <div class="logo">
@@ -243,7 +232,6 @@
     <button class="logout-btn" id="logoutBtn" style="display:none;">تسجيل الخروج</button>
   </nav>
 </header>
-
 <!-- LOGIN SCREEN -->
 <div class="login-wrap" id="loginScreen">
   <div class="login-card">
@@ -269,7 +257,6 @@
     </button>
   </div>
 </div>
-
 <!-- FORGOT PASSWORD SCREEN -->
 <div class="login-wrap" id="forgotScreen">
   <div class="login-card">
@@ -287,7 +274,6 @@
     <span class="back-link" id="backToLoginBtn">→ الرجوع لتسجيل الدخول</span>
   </div>
 </div>
-
 <!-- SET NEW PASSWORD SCREEN (after clicking email link) -->
 <div class="login-wrap" id="resetScreen">
   <div class="login-card">
@@ -303,7 +289,6 @@
     </form>
   </div>
 </div>
-
 <!-- DASHBOARD SCREEN -->
 <div id="dashboardScreen">
   <div class="container dash-wrap">
@@ -313,14 +298,12 @@
         <p>متابعة المشتركين، حالة الاشتراكات، وتذاكر الدعم</p>
       </div>
     </div>
-
     <div class="tabs">
       <button class="tab-btn active" data-tab="clients">المشتركين</button>
       <button class="tab-btn" data-tab="tickets">تذاكر الدعم</button>
       <button class="tab-btn" data-tab="topups">طلبات الرصيد</button>
       <button class="tab-btn" data-tab="affiliates">الشركاء بالعمولة</button>
     </div>
-
     <!-- ===== PANEL: CLIENTS ===== -->
     <div class="panel active" id="panelClients">
       <div class="stats-grid">
@@ -329,7 +312,6 @@
         <div class="stat-card"><div class="n" id="statActive">–</div><div class="l">نشط</div></div>
         <div class="stat-card"><div class="n" id="statMsgsToday">–</div><div class="l">رسائل اليوم</div></div>
       </div>
-
       <div class="toolbar">
         <input type="text" id="searchInput" placeholder="ابحث بالاسم أو البريد أو رقم الجوال...">
         <select id="statusFilter">
@@ -341,7 +323,6 @@
           <option value="canceled">ملغى</option>
         </select>
       </div>
-
       <div class="table-wrap">
         <table>
           <thead>
@@ -354,16 +335,16 @@
               <th>الأيام المتبقية</th>
               <th>حساب لوحة العميل</th>
               <th>كوبونات السلة</th>
+              <th>التقرير الأسبوعي</th>
               <th>تاريخ التسجيل</th>
             </tr>
           </thead>
           <tbody id="clientsTbody">
-            <tr class="empty-row"><td colspan="9">جاري تحميل البيانات...</td></tr>
+            <tr class="empty-row"><td colspan="10">جاري تحميل البيانات...</td></tr>
           </tbody>
         </table>
       </div>
     </div>
-
     <!-- ===== PANEL: TICKETS ===== -->
     <div class="panel" id="panelTickets">
       <div class="inbox-wrap">
@@ -391,7 +372,6 @@
         </div>
       </div>
     </div>
-
     <!-- ===== PANEL: TOPUPS ===== -->
     <div class="panel" id="panelTopups">
       <div class="dash-head" style="margin-bottom:10px;">
@@ -413,7 +393,6 @@
           </tbody>
         </table>
       </div>
-
       <div class="dash-head" style="margin-bottom:10px;">
         <div><h1 style="font-size:18px;">🔔 عملاء قاربوا على حد الرسائل الشهري (80%+)</h1></div>
       </div>
@@ -433,7 +412,6 @@
         </table>
       </div>
     </div>
-
     <!-- ===== PANEL: AFFILIATES ===== -->
     <div class="panel" id="panelAffiliates">
       <div class="dash-head" style="margin-bottom:10px;">
@@ -459,7 +437,6 @@
     </div>
   </div>
 </div>
-
 <!-- MODAL: create client login -->
 <div class="modal-overlay" id="linkModal">
   <div class="modal-card">
@@ -484,19 +461,16 @@
     </div>
   </div>
 </div>
-
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
   const FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
   const loginScreen = document.getElementById('loginScreen');
   const forgotScreen = document.getElementById('forgotScreen');
   const resetScreen = document.getElementById('resetScreen');
   const dashboardScreen = document.getElementById('dashboardScreen');
   const logoutBtn = document.getElementById('logoutBtn');
-
   const statusLabels = {
     trial: 'تجريبي',
     active: 'نشط',
@@ -504,26 +478,22 @@
     past_due: 'متأخر بالدفع',
     canceled: 'ملغى'
   };
-
   const ticketStatusLabels = {
     open: 'مفتوحة',
     in_progress: 'قيد المعالجة',
     closed: 'تم الحل'
   };
-
   const affiliateStatusLabels = {
     pending: 'قيد المراجعة',
     active: 'مفعّل',
     suspended: 'موقوف'
   };
-
   let allClients = [];
   let plansMap = {};
   let planLimitMap = {};
   let modalClient = null;
   let allTickets = [];
   let activeAdminTicketId = null;
-
   // بيانات النشاط/البريد/الرسائل تجي أصلاً من نماذج عامة (تسجيل مشتركين جدد، رسائل واتساب)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في لوحة الإدارة
   function escapeHtml(str){
@@ -534,14 +504,12 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
-
   function showScreen(name){
     loginScreen.style.display = 'none';
     forgotScreen.style.display = 'none';
     resetScreen.style.display = 'none';
     dashboardScreen.style.display = 'none';
     logoutBtn.style.display = 'none';
-
     if(name === 'login'){ loginScreen.style.display = 'flex'; }
     else if(name === 'forgot'){ forgotScreen.style.display = 'flex'; }
     else if(name === 'reset'){ resetScreen.style.display = 'flex'; }
@@ -551,32 +519,27 @@
       loadDashboard();
     }
   }
-
   // يتعامل مع حالة "استعادة كلمة المرور" لما المستخدم يضغط الرابط اللي وصله بالإيميل
   supabaseClient.auth.onAuthStateChange(function(event, session){
     if(event === 'PASSWORD_RECOVERY'){
       showScreen('reset');
     }
   });
-
   supabaseClient.auth.getSession().then(function(res){
     // لو الرابط فيه type=recovery بيتكفل onAuthStateChange بعرض شاشة التعيين، وإلا نكمل عادي
     const isRecovery = window.location.hash.includes('type=recovery');
     if(isRecovery){ return; }
     if(res.data.session){ showScreen('dashboard'); } else { showScreen('login'); }
   });
-
   document.getElementById('loginForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const errBox = document.getElementById('loginError');
     errBox.style.display = 'none';
     const btn = document.getElementById('loginBtn');
     btn.disabled = true; btn.textContent = 'جاري الدخول...';
-
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
     btn.disabled = false; btn.textContent = 'تسجيل الدخول';
     if(error){
       errBox.textContent = 'بيانات الدخول غير صحيحة.';
@@ -585,17 +548,14 @@
     }
     showScreen('dashboard');
   });
-
   document.getElementById('googleLoginBtn').addEventListener('click', async function(){
     await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin + window.location.pathname }
     });
   });
-
   document.getElementById('showForgotBtn').addEventListener('click', function(){ showScreen('forgot'); });
   document.getElementById('backToLoginBtn').addEventListener('click', function(){ showScreen('login'); });
-
   document.getElementById('forgotForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const errBox = document.getElementById('forgotError');
@@ -604,12 +564,10 @@
     okBox.style.display = 'none';
     const btn = document.getElementById('forgotBtn');
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-
     const email = document.getElementById('forgotEmail').value.trim();
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + window.location.pathname
     });
-
     btn.disabled = false; btn.textContent = 'إرسال رابط الاستعادة';
     if(error){
       errBox.textContent = 'تعذّر إرسال الرابط، حاول مرة ثانية.';
@@ -619,17 +577,14 @@
     okBox.textContent = '✓ تم إرسال رابط الاستعادة، افتح بريدك الإلكتروني.';
     okBox.style.display = 'block';
   });
-
   document.getElementById('resetForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const errBox = document.getElementById('resetError');
     errBox.style.display = 'none';
     const btn = document.getElementById('resetBtn');
     btn.disabled = true; btn.textContent = 'جاري الحفظ...';
-
     const newPassword = document.getElementById('resetPassword').value;
     const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
-
     btn.disabled = false; btn.textContent = 'حفظ كلمة المرور';
     if(error){
       errBox.textContent = 'تعذّر حفظ كلمة المرور، حاول مرة ثانية.';
@@ -638,12 +593,10 @@
     }
     showScreen('dashboard');
   });
-
   logoutBtn.addEventListener('click', async function(){
     await supabaseClient.auth.signOut();
     showScreen('login');
   });
-
   /* ---------- tabs ---------- */
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -657,38 +610,31 @@
       if(btn.dataset.tab === 'affiliates'){ loadAffiliatesTab(); }
     });
   });
-
   async function loadDashboard(){
     const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar, monthly_message_limit');
     plansMap = {};
     planLimitMap = {};
     (plans || []).forEach(function(p){ plansMap[p.id] = p.name_ar; planLimitMap[p.id] = p.monthly_message_limit; });
-
     const { data: clients, error } = await supabaseClient
       .from('clients')
       .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error, cart_coupon_addon_enabled')
       .order('created_at', { ascending: false });
-
     if(error){
-      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="9">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
+      document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="10">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
       return;
     }
     allClients = clients || [];
-
     const todayStr = new Date().toISOString().slice(0,10);
     const { count: msgsToday } = await supabaseClient
       .from('whatsapp_messages_log')
       .select('id', { count: 'exact', head: true })
       .gte('created_at', todayStr + 'T00:00:00Z');
-
     document.getElementById('statTotal').textContent = allClients.length;
     document.getElementById('statTrial').textContent = allClients.filter(function(c){ return c.subscription_status === 'trial'; }).length;
     document.getElementById('statActive').textContent = allClients.filter(function(c){ return c.subscription_status === 'active'; }).length;
     document.getElementById('statMsgsToday').textContent = (msgsToday || 0);
-
     renderTable();
   }
-
   // يبني badge لحالة اتصال رقم واتساب بالعميل (يتحدث تلقائياً كل 3 ساعات عبر فحص دوري)
   function renderWaHealth(c){
     const status = c.whatsapp_connection_status || 'unknown';
@@ -704,7 +650,6 @@
     }
     return '<span class="badge wa-unknown" title="ما فيه رقم مربوط أو ما تفحّص بعد">⚪ غير معروف</span>';
   }
-
   // يبني badge توضيحي لعدد الأيام المتبقية من التجربة المجانية (7 أيام) لكل عميل
   function renderDaysRemaining(c){
     if(c.subscription_status === 'active' && c.is_paid){
@@ -723,24 +668,20 @@
     }
     return '<span class="biz-sub">—</span>';
   }
-
   function renderTable(){
     const search = document.getElementById('searchInput').value.trim().toLowerCase();
     const statusF = document.getElementById('statusFilter').value;
     const tbody = document.getElementById('clientsTbody');
-
     let rows = allClients.filter(function(c){
       const hay = [c.business_name_ar, c.business_name, c.owner_email, c.owner_phone].join(' ').toLowerCase();
       const matchesSearch = !search || hay.includes(search);
       const matchesStatus = !statusF || c.subscription_status === statusF;
       return matchesSearch && matchesStatus;
     });
-
     if(rows.length === 0){
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="9">ما فيه نتائج مطابقة</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="10">ما فيه نتائج مطابقة</td></tr>';
       return;
     }
-
     tbody.innerHTML = '';
     rows.forEach(function(c){
       const tr = document.createElement('tr');
@@ -750,7 +691,6 @@
       const bizNameEnSafe = escapeHtml(c.business_name || '');
       const emailSafe = escapeHtml(c.owner_email || '—');
       const phoneSafe = escapeHtml(c.owner_phone || '—');
-
       tr.innerHTML =
         '<td><div class="biz-name">' + bizNameSafe + '</div>' +
           (c.business_name && c.business_name !== c.business_name_ar ? '<div class="biz-sub">' + bizNameEnSafe + '</div>' : '') + '</td>' +
@@ -761,13 +701,13 @@
         '<td></td>' +
         '<td></td>' +
         '<td></td>' +
+        '<td></td>' +
         '<td>' + dateStr + '</td>';
-
       const statusTd = tr.children[4];
       const daysTd = tr.children[5];
       const linkTd = tr.children[6];
       const couponTd = tr.children[7];
-
+      const reportTd = tr.children[8];
       const select = document.createElement('select');
       select.className = 'status-select';
       ['trial','active','expired','past_due','canceled'].forEach(function(s){
@@ -780,7 +720,6 @@
       const hint = document.createElement('span');
       hint.className = 'save-hint';
       hint.textContent = '✓ تم الحفظ';
-
       select.addEventListener('change', async function(){
         const newStatus = select.value;
         const { data: updated, error } = await supabaseClient
@@ -800,12 +739,9 @@
           document.getElementById('statActive').textContent = allClients.filter(function(x){ return x.subscription_status === 'active'; }).length;
         }
       });
-
       statusTd.appendChild(select);
       statusTd.appendChild(hint);
-
       daysTd.innerHTML = renderDaysRemaining(c);
-
       if(c.user_id){
         const badge = document.createElement('span');
         badge.className = 'badge linked';
@@ -818,7 +754,6 @@
         btn.addEventListener('click', function(){ openLinkModal(c); });
         linkTd.appendChild(btn);
       }
-
       // زر تفعيل/إيقاف إضافة "كوبونات السلة المتروكة" (خدمة إضافية مدفوعة شهرياً) لكل عميل
       const couponBtn = document.createElement('button');
       couponBtn.className = 'link-btn';
@@ -848,14 +783,60 @@
         }
       });
       couponTd.appendChild(couponBtn);
-
+      // خانة "التقرير الأسبوعي" — الميزة تعتمد فقط على وجود owner_phone؛ لو موجود التقرير يوصل تلقائياً كل أحد،
+      // فهذي الخانة تعرض حالة الجاهزية وتتيح إضافة/تعديل رقم صاحب النشاط مباشرة من نفس اللوحة.
+      function renderReportCell(){
+        reportTd.innerHTML = '';
+        const hasPhone = !!(c.owner_phone && c.owner_phone.trim());
+        const badge = document.createElement('span');
+        badge.className = 'badge ' + (hasPhone ? 'active' : 'trial');
+        badge.textContent = hasPhone ? '✓ مفعّل' : 'بحاجة رقم';
+        reportTd.appendChild(badge);
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'link-btn';
+        editBtn.style.marginRight = '6px';
+        editBtn.textContent = hasPhone ? 'تعديل' : 'إضافة رقم';
+        editBtn.addEventListener('click', function(){ openReportPhoneEditor(); });
+        reportTd.appendChild(editBtn);
+      }
+      function openReportPhoneEditor(){
+        reportTd.innerHTML = '';
+        const input = document.createElement('input');
+        input.type = 'tel';
+        input.className = 'report-phone-input';
+        input.placeholder = '05xxxxxxxx';
+        input.value = c.owner_phone || '';
+        const saveBtn = document.createElement('button');
+        saveBtn.type = 'button';
+        saveBtn.className = 'link-btn';
+        saveBtn.textContent = 'حفظ';
+        saveBtn.addEventListener('click', async function(){
+          saveBtn.disabled = true;
+          saveBtn.textContent = '...';
+          const newPhone = input.value.trim();
+          const { error: phoneErr } = await supabaseClient
+            .from('clients')
+            .update({ owner_phone: newPhone || null })
+            .eq('id', c.id);
+          if(!phoneErr){
+            c.owner_phone = newPhone || null;
+            renderReportCell();
+          } else {
+            alert('تعذّر حفظ الرقم، حاول مرة ثانية.');
+            saveBtn.disabled = false;
+            saveBtn.textContent = 'حفظ';
+          }
+        });
+        reportTd.appendChild(input);
+        reportTd.appendChild(saveBtn);
+      }
+      renderReportCell();
       tbody.appendChild(tr);
     });
   }
-
   document.getElementById('searchInput').addEventListener('input', renderTable);
   document.getElementById('statusFilter').addEventListener('change', renderTable);
-
   /* ---------- support tickets (admin side) ---------- */
   async function loadTickets(){
     const list = document.getElementById('adminTicketList');
@@ -863,7 +844,6 @@
       .from('support_tickets')
       .select('id, subject, status, created_at, updated_at, client_id, clients(business_name_ar, business_name)')
       .order('updated_at', { ascending: false });
-
     if(error){
       list.innerHTML = '<div class="conv-empty">تعذّر تحميل التذاكر، حدّث الصفحة.</div>';
       return;
@@ -871,7 +851,6 @@
     allTickets = data || [];
     renderTicketList();
   }
-
   function renderTicketList(){
     const list = document.getElementById('adminTicketList');
     if(allTickets.length === 0){
@@ -897,26 +876,22 @@
       list.appendChild(div);
     });
   }
-
   async function openAdminTicketThread(ticketId){
     const head = document.getElementById('adminTicketThreadHead');
     const body = document.getElementById('adminTicketBody');
     const composerWrap = document.getElementById('adminTicketComposerWrap');
     const ticket = allTickets.find(function(t){ return t.id === ticketId; });
     if(!ticket){ return; }
-
     head.style.display = 'flex';
     document.getElementById('adminTicketSubject').textContent = ticket.subject;
     document.getElementById('adminTicketStatusSelect').value = ticket.status;
     composerWrap.style.display = 'block';
     body.innerHTML = '<div class="chat-placeholder">جاري التحميل...</div>';
-
     const { data: msgs } = await supabaseClient
       .from('support_ticket_messages')
       .select('sender_type, message, created_at')
       .eq('ticket_id', ticketId)
       .order('created_at', { ascending: true });
-
     body.innerHTML = '';
     (msgs || []).forEach(function(m){
       const b = document.createElement('div');
@@ -927,7 +902,6 @@
     });
     body.scrollTop = body.scrollHeight;
   }
-
   document.getElementById('adminTicketStatusSelect').addEventListener('change', async function(){
     if(!activeAdminTicketId){ return; }
     const newStatus = this.value;
@@ -941,19 +915,15 @@
       renderTicketList();
     }
   });
-
   document.getElementById('adminTicketSendBtn').addEventListener('click', async function(){
     const textarea = document.getElementById('adminTicketReplyText');
     const text = textarea.value.trim();
     if(!text || !activeAdminTicketId){ return; }
-
     const btn = document.getElementById('adminTicketSendBtn');
     btn.disabled = true;
-
     const { error } = await supabaseClient
       .from('support_ticket_messages')
       .insert({ ticket_id: activeAdminTicketId, sender_type: 'admin', message: text });
-
     btn.disabled = false;
     if(!error){
       textarea.value = '';
@@ -961,7 +931,6 @@
       await openAdminTicketThread(activeAdminTicketId);
     }
   });
-
   /* ---------- link account modal ---------- */
   const linkModal = document.getElementById('linkModal');
   const modalBizName = document.getElementById('modalBizName');
@@ -970,7 +939,6 @@
   const modalError = document.getElementById('modalError');
   const modalSuccess = document.getElementById('modalSuccess');
   const modalConfirmBtn = document.getElementById('modalConfirmBtn');
-
   function openLinkModal(client){
     modalClient = client;
     modalBizName.textContent = client.business_name_ar || client.business_name || '';
@@ -986,25 +954,20 @@
     linkModal.classList.remove('show');
     modalClient = null;
   }
-
   document.getElementById('modalCancelBtn').addEventListener('click', closeLinkModal);
   linkModal.addEventListener('click', function(e){ if(e.target === linkModal){ closeLinkModal(); } });
-
   document.getElementById('genPasswordBtn').addEventListener('click', function(){
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
     let pass = '';
     for(let i = 0; i < 12; i++){ pass += chars[Math.floor(Math.random() * chars.length)]; }
     modalPassword.value = pass;
   });
-
   modalConfirmBtn.addEventListener('click', async function(){
     if(!modalClient){ return; }
     modalError.style.display = 'none';
     modalSuccess.style.display = 'none';
-
     const email = modalEmail.value.trim();
     const password = modalPassword.value;
-
     if(!email || !password){
       modalError.textContent = 'الرجاء تعبئة البريد الإلكتروني وكلمة المرور.';
       modalError.style.display = 'block';
@@ -1015,13 +978,10 @@
       modalError.style.display = 'block';
       return;
     }
-
     modalConfirmBtn.disabled = true;
     modalConfirmBtn.textContent = 'جاري الإنشاء...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/admin-create-client-login', {
         method: 'POST',
@@ -1032,7 +992,6 @@
         body: JSON.stringify({ client_id: modalClient.id, email: email, password: password })
       });
       const json = await res.json();
-
       if(!res.ok){
         modalError.textContent = json.error || 'تعذّر إنشاء الحساب.';
         modalError.style.display = 'block';
@@ -1040,14 +999,11 @@
         modalConfirmBtn.textContent = 'إنشاء الحساب';
         return;
       }
-
       modalClient.user_id = json.user_id;
       modalSuccess.textContent = '✓ تم الإنشاء بنجاح. أرسل للعميل: ' + email + ' / ' + password;
       modalSuccess.style.display = 'block';
       modalConfirmBtn.textContent = 'تم';
-
       renderTable();
-
       setTimeout(function(){ closeLinkModal(); }, 3500);
     } catch(e){
       modalError.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
@@ -1056,19 +1012,16 @@
       modalConfirmBtn.textContent = 'إنشاء الحساب';
     }
   });
-
   /* ---------- طلبات الرصيد الإضافي + العملاء القريبين من الحد ---------- */
   function loadTopupsPanel(){
     loadTopupRequestsTable();
     loadNearLimitTable();
   }
-
   function clientLabelById(clientId){
     const c = allClients.find(function(x){ return x.id === clientId; });
     if(!c){ return '—'; }
     return escapeHtml(c.business_name_ar || c.business_name || '—');
   }
-
   async function loadTopupRequestsTable(){
     const tbody = document.getElementById('topupRequestsTbody');
     const { data, error } = await supabaseClient
@@ -1076,17 +1029,14 @@
       .select('id, client_id, credits, price_sar, requested_at')
       .eq('status', 'pending')
       .order('requested_at', { ascending: true });
-
     if(error){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="5">تعذّر تحميل الطلبات.</td></tr>';
       return;
     }
-
     if(!data || data.length === 0){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="5">ما فيه طلبات معلّقة حالياً.</td></tr>';
       return;
     }
-
     tbody.innerHTML = '';
     data.forEach(function(r){
       const dateStr = new Date(r.requested_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
@@ -1099,68 +1049,54 @@
         '<td><button class="gen-btn fulfill-topup-btn" data-id="' + r.id + '" data-client="' + r.client_id + '" data-credits="' + r.credits + '">تم الدفع — إضافة الرصيد</button></td>';
       tbody.appendChild(tr);
     });
-
     document.querySelectorAll('.fulfill-topup-btn').forEach(function(btn){
       btn.addEventListener('click', async function(){
         if(!confirm('تأكيد استلام الدفع وإضافة ' + this.dataset.credits + ' رسالة لرصيد العميل؟')){ return; }
         this.disabled = true;
         this.textContent = 'جاري الإضافة...';
-
         const clientId = this.dataset.client;
         const requestId = this.dataset.id;
         const credits = parseInt(this.dataset.credits, 10);
-
         const { data: clientRow } = await supabaseClient
           .from('clients')
           .select('extra_message_credits')
           .eq('id', clientId)
           .single();
-
         const newBalance = (clientRow ? clientRow.extra_message_credits : 0) + credits;
-
         const { error: updateErr } = await supabaseClient
           .from('clients')
           .update({ extra_message_credits: newBalance })
           .eq('id', clientId);
-
         if(updateErr){
           this.disabled = false;
           this.textContent = 'تم الدفع — إضافة الرصيد';
           alert('تعذّر إضافة الرصيد، حاول مرة ثانية.');
           return;
         }
-
         await supabaseClient
           .from('message_credit_topup_requests')
           .update({ status: 'fulfilled', fulfilled_at: new Date().toISOString() })
           .eq('id', requestId);
-
         await loadTopupRequestsTable();
       });
     });
   }
-
   async function loadNearLimitTable(){
     const tbody = document.getElementById('nearLimitTbody');
-
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-
     const { data: msgs, error } = await supabaseClient
       .from('whatsapp_messages_log')
       .select('client_id')
       .gte('created_at', monthStart);
-
     if(error){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="4">تعذّر تحميل بيانات الاستهلاك.</td></tr>';
       return;
     }
-
     const countByClient = {};
     (msgs || []).forEach(function(m){
       countByClient[m.client_id] = (countByClient[m.client_id] || 0) + 1;
     });
-
     const nearLimit = [];
     allClients.forEach(function(c){
       if(c.subscription_status !== 'active' && c.subscription_status !== 'trial'){ return; }
@@ -1173,14 +1109,11 @@
         nearLimit.push({ client: c, used: used, total: totalAllowance, pct: pct });
       }
     });
-
     if(nearLimit.length === 0){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="4">ما فيه عملاء قاربوا على الحد حالياً.</td></tr>';
       return;
     }
-
     nearLimit.sort(function(a,b){ return b.pct - a.pct; });
-
     tbody.innerHTML = '';
     nearLimit.forEach(function(item){
       const tr = document.createElement('tr');
@@ -1193,7 +1126,6 @@
       tbody.appendChild(tr);
     });
   }
-
   /* ---------- الشركاء بالعمولة ---------- */
   async function loadAffiliatesTab(){
     const tbody = document.getElementById('affiliatesTbody');
@@ -1201,7 +1133,6 @@
       .from('affiliates')
       .select('id, full_name, email, phone, referral_code, commission_rate, status, created_at')
       .order('created_at', { ascending: false });
-
     if(error){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="6">تعذّر تحميل البيانات.</td></tr>';
       return;
@@ -1210,17 +1141,14 @@
       tbody.innerHTML = '<tr class="empty-row"><td colspan="6">ما فيه طلبات شراكة بعد.</td></tr>';
       return;
     }
-
     // نحسب العمولة الشهرية التقديرية بشكل حي: 10% (أو نسبة كل شريك) من قيمة باقة كل عميل نشط ومدفوع أحاله هذا الشريك
     const { data: plans } = await supabaseClient.from('subscription_plans').select('id, monthly_price_sar');
     const priceMap = {};
     (plans || []).forEach(function(p){ priceMap[p.id] = p.monthly_price_sar; });
-
     const { data: referredClients } = await supabaseClient
       .from('clients')
       .select('id, affiliate_id, plan_id, is_paid, subscription_status')
       .not('affiliate_id', 'is', null);
-
     tbody.innerHTML = '';
     affiliates.forEach(function(a){
       const mine = (referredClients || []).filter(function(c){ return c.affiliate_id === a.id; });
@@ -1229,7 +1157,6 @@
         const price = priceMap[c.plan_id] || 0;
         return sum + (price * (a.commission_rate / 100));
       }, 0);
-
       const tr = document.createElement('tr');
       const dateStr = new Date(a.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
       tr.innerHTML =
@@ -1239,7 +1166,6 @@
         '<td>' + mine.length + ' (' + activePaid.length + ' نشط ومدفوع)</td>' +
         '<td>' + monthlyCommission.toLocaleString('ar-SA') + ' ريال/شهر</td>' +
         '<td>' + dateStr + '</td>';
-
       const statusTd = tr.children[2];
       const select = document.createElement('select');
       select.className = 'status-select';
@@ -1256,11 +1182,9 @@
         if(!updErr){ a.status = newStatus; }
       });
       statusTd.appendChild(select);
-
       tbody.appendChild(tr);
     });
   }
 </script>
-
 </body>
 </html>
