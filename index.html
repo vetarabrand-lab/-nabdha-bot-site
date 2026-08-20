@@ -409,6 +409,114 @@
   </div>
 </section>
 
+<section class="section calc-section" id="calc">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="calc.eyebrow">احسب خسارتك</span></div>
+      <h2 data-i18n="calc.title">كم تخسر شهرياً بسبب الردود المتأخرة؟</h2>
+      <p data-i18n="calc.sub">أدخل رقمين بس، وشوف تقدير خسارتك الشهرية من السلات المتروكة والردود البطيئة — وقد نبضة ترجّعه لك.</p>
+    </div>
+    <div class="calc-card reveal">
+      <div class="calc-inputs">
+        <div class="calc-field">
+          <label for="calcOrders" data-i18n="calc.ordersLabel">عدد طلباتك الشهرية</label>
+          <input type="number" id="calcOrders" inputmode="numeric" min="0" max="1000000" step="1" value="100" placeholder="مثال: 100">
+        </div>
+        <div class="calc-field">
+          <label for="calcAov" data-i18n="calc.aovLabel">متوسط قيمة الطلب (ريال)</label>
+          <input type="number" id="calcAov" inputmode="numeric" min="0" max="1000000" step="1" value="150" placeholder="مثال: 150">
+        </div>
+      </div>
+      <div class="calc-result">
+        <p class="calc-sentence" id="calcSentence"></p>
+        <p class="calc-disclaimer" data-i18n="calc.disclaimer">* تقدير تقريبي مبني على متوسط نسب السلات المتروكة والردود المتأخرة في متاجر التجارة الاجتماعية، وقد يختلف الرقم الفعلي حسب نشاطك.</p>
+        <a href="signup.html" class="btn btn-primary calc-cta" data-i18n="calc.cta">جرّب نبضة 7 أيام مجاناً</a>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .calc-section{background:#fff; border-top:1px solid var(--border); border-bottom:1px solid var(--border);}
+  .calc-card{
+    max-width:900px; margin:0 auto; background:var(--bg); border:1.5px solid var(--border); border-radius:var(--radius);
+    padding:36px; display:grid; grid-template-columns:1fr 1.15fr; gap:32px; align-items:center;
+  }
+  .calc-inputs{display:flex; flex-direction:column; gap:20px;}
+  .calc-field label{display:block; font-weight:700; font-size:14.5px; margin-bottom:8px; color:var(--ink);}
+  .calc-field input{
+    width:100%; padding:13px 16px; border-radius:12px; border:1.5px solid var(--border); background:#fff;
+    font-family:'Tajawal','Segoe UI',sans-serif; font-size:16px; font-weight:700; color:var(--ink); outline:none;
+    box-sizing:border-box; transition:border-color .2s ease;
+  }
+  .calc-field input:focus{border-color:var(--wa-green);}
+  .calc-result{
+    background:linear-gradient(120deg, var(--wa-teal-dark), var(--wa-teal));
+    border-radius:18px; padding:26px 24px; color:#fff; text-align:center;
+  }
+  .calc-sentence{font-size:17px; font-weight:700; line-height:1.75; min-height:60px;}
+  .calc-sentence b{font-weight:900; color:#fff; text-decoration:underline; text-decoration-color:rgba(255,255,255,.4); text-underline-offset:3px;}
+  .calc-disclaimer{font-size:11.5px; color:rgba(255,255,255,.7); margin-top:10px; line-height:1.6;}
+  .calc-cta{display:inline-block; margin-top:16px; padding:12px 26px; font-size:14.5px;}
+  @media (max-width:760px){
+    .calc-card{grid-template-columns:1fr; padding:26px 20px;}
+  }
+</style>
+<script>
+(function(){
+  var ordersEl = document.getElementById('calcOrders');
+  var aovEl = document.getElementById('calcAov');
+  var sentenceEl = document.getElementById('calcSentence');
+  if(!ordersEl || !aovEl || !sentenceEl) return;
+
+  var LOSS_RATE = 0.28;      // نسبة الإيراد المقدّرة كخسارة شهرية من السلات المتروكة والردود المتأخرة
+  var RECOVERY_RATE = 0.69;  // نسبة الخسارة اللي نبضة تقدر ترجّعها بردودها الفورية
+
+  function fmt(n){
+    n = Math.max(0, Math.round(n));
+    return n.toLocaleString('en-US');
+  }
+
+  function currentLang(){
+    var root = document.getElementById('htmlRoot');
+    return (root && root.getAttribute('lang') === 'en') ? 'en' : 'ar';
+  }
+
+  function render(){
+    var orders = parseFloat(ordersEl.value);
+    var aov = parseFloat(aovEl.value);
+    if(!isFinite(orders) || orders < 0) orders = 0;
+    if(!isFinite(aov) || aov < 0) aov = 0;
+    orders = Math.min(orders, 1000000);
+    aov = Math.min(aov, 1000000);
+
+    var revenue = orders * aov;
+    var loss = revenue * LOSS_RATE;
+    var recoverable = loss * RECOVERY_RATE;
+
+    var lossStr = fmt(loss);
+    var recoverStr = fmt(recoverable);
+
+    if(currentLang() === 'en'){
+      sentenceEl.innerHTML = 'Your store loses roughly <b>' + lossStr + ' SAR</b> every month from abandoned carts and slow replies — Nabdha can recover about <b>' + recoverStr + ' SAR</b> of that.';
+    } else {
+      sentenceEl.innerHTML = 'متجرك يخسر تقريباً <b>' + lossStr + ' ريال</b> شهرياً من السلات المتروكة والردود المتأخرة — نبضة ترجّع منها <b>~' + recoverStr + ' ريال</b>.';
+    }
+  }
+
+  ['input', 'change'].forEach(function(evt){
+    ordersEl.addEventListener(evt, render);
+    aovEl.addEventListener(evt, render);
+  });
+
+  var langBtn = document.getElementById('langBtn');
+  var langBtnMobile = document.getElementById('langBtnMobile');
+  if(langBtn) langBtn.addEventListener('click', function(){ setTimeout(render, 0); });
+  if(langBtnMobile) langBtnMobile.addEventListener('click', function(){ setTimeout(render, 0); });
+
+  render();
+})();
+</script>
+
 <section class="section" id="features">
   <div class="container">
     <div class="section-head reveal">
@@ -774,6 +882,13 @@
       "stats.l3": "تخصيص حسب نشاطك",
       "stats.aiValue": "ذكاء اصطناعي",
       "stats.l4": "محرك ذكاء اصطناعي متقدم",
+      "calc.eyebrow": "احسب خسارتك",
+      "calc.title": "كم تخسر شهرياً بسبب الردود المتأخرة؟",
+      "calc.sub": "أدخل رقمين بس، وشوف تقدير خسارتك الشهرية من السلات المتروكة والردود البطيئة — وقد نبضة ترجّعه لك.",
+      "calc.ordersLabel": "عدد طلباتك الشهرية",
+      "calc.aovLabel": "متوسط قيمة الطلب (ريال)",
+      "calc.disclaimer": "* تقدير تقريبي مبني على متوسط نسب السلات المتروكة والردود المتأخرة في متاجر التجارة الاجتماعية، وقد يختلف الرقم الفعلي حسب نشاطك.",
+      "calc.cta": "جرّب نبضة 7 أيام مجاناً",
       "features.eyebrow": "المزايا",
       "features.title": "كل ما يحتاجه نشاطك في بوت واحد",
       "features.sub": "منصة متكاملة تربط ذكاء اصطناعي متقدم برقم واتساب نشاطك الرسمي.",
@@ -941,6 +1056,13 @@
       "stats.l3": "Customized to your business",
       "stats.aiValue": "Advanced AI",
       "stats.l4": "Advanced AI engine",
+      "calc.eyebrow": "Calculate your loss",
+      "calc.title": "How much are you losing to slow replies each month?",
+      "calc.sub": "Enter two numbers and see an estimate of your monthly loss from abandoned carts and slow replies — and how much Nabdha can win back.",
+      "calc.ordersLabel": "Your monthly orders",
+      "calc.aovLabel": "Average order value (SAR)",
+      "calc.disclaimer": "* A rough estimate based on average abandoned-cart and slow-reply rates for social commerce stores. Your actual number may vary.",
+      "calc.cta": "Try Nabdha free for 7 days",
       "features.eyebrow": "Features",
       "features.title": "Everything your business needs in one bot",
       "features.sub": "A complete platform connecting advanced AI to your business's official WhatsApp number.",
