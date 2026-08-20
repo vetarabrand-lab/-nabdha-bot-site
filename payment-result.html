@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نتيجة الدفع | بوت نبضة</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wa-green:#25D366; --wa-green-dark:#1DA851; --wa-teal-dark:#075E54; --wa-teal:#128C7E;
+    --wa-bubble:#DCF8C6; --ink:#0B1A17; --muted:#5B6B67; --bg:#F6FAF8; --card:#FFFFFF;
+    --border:#E4ECE9; --danger:#D14343; --warn:#B8860B;
+    --shadow: 0 10px 30px -12px rgba(7,94,84,.18);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Tajawal','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px;}
+  a{text-decoration:none; color:inherit;}
+  .result-card{background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); padding:44px 36px; width:100%; max-width:440px; text-align:center;}
+  .logo{display:flex; align-items:center; justify-content:center; gap:10px; font-weight:900; font-size:17px; margin-bottom:28px; color:var(--wa-teal-dark);}
+  .logo-badge{width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); display:flex; align-items:center; justify-content:center; font-size:16px;}
+  .icon-circle{width:76px; height:76px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:38px;}
+  .icon-circle.ok{background:rgba(37,211,102,.14);}
+  .icon-circle.fail{background:rgba(209,67,67,.12);}
+  .icon-circle.pending{background:rgba(184,134,11,.12);}
+  h1{font-size:20px; font-weight:900; margin-bottom:10px;}
+  p.desc{color:var(--muted); font-size:14.5px; margin-bottom:26px;}
+  .details-box{background:#F6FAF8; border:1px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:26px; font-size:13.5px; color:var(--muted); text-align:right;}
+  .details-box b{color:var(--ink);}
+  .btn{display:inline-block; width:100%; padding:13px; border:none; border-radius:100px; font-weight:800; font-size:15px; cursor:pointer;}
+  .btn-primary{background:var(--wa-green); color:#04210F; box-shadow:0 12px 24px -8px rgba(37,211,102,.55); margin-bottom:12px;}
+  .btn-secondary{background:#fff; border:1.5px solid var(--border); color:var(--wa-teal-dark);}
+  .spinner{width:44px; height:44px; border:4px solid var(--border); border-top-color:var(--wa-teal-dark); border-radius:50%; margin:0 auto 20px; animation:spin 0.9s linear infinite;}
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="result-card">
+  <div class="logo">
+    <div class="logo-badge">💬</div>
+    بوت نبضة
+  </div>
+
+  <div id="loadingState">
+    <div class="spinner"></div>
+    <h1>جاري تأكيد عملية الدفع...</h1>
+    <p class="desc">لحظات ونعرض لك النتيجة، لا تغلق الصفحة.</p>
+  </div>
+
+  <div id="successState" style="display:none;">
+    <div class="icon-circle ok">✅</div>
+    <h1 id="successTitle">تم الدفع بنجاح</h1>
+    <p class="desc" id="successDesc">شكراً لك، تم تأكيد عمليتك بنجاح.</p>
+    <div class="details-box" id="successDetails" style="display:none;"></div>
+    <a href="portal.html" class="btn btn-primary">الرجوع للوحة النشاط</a>
+  </div>
+
+  <div id="failState" style="display:none;">
+    <div class="icon-circle fail">✕</div>
+    <h1>لم تكتمل عملية الدفع</h1>
+    <p class="desc" id="failDesc">لم يتم تأكيد الدفع أو تم إلغاؤه. لا داعي للقلق، لم يُخصم منك أي مبلغ إن لم تكتمل العملية.</p>
+    <a href="portal.html" class="btn btn-primary">حاول مرة أخرى من اللوحة</a>
+  </div>
+
+  <div id="unknownState" style="display:none;">
+    <div class="icon-circle pending">⏳</div>
+    <h1>تعذّر تأكيد الحالة الآن</h1>
+    <p class="desc">حصل خطأ بسيط أثناء التحقق من عملية الدفع. إذا خُصم المبلغ، بيتم تفعيل اشتراكك أو رصيدك تلقائياً خلال دقائق. تقدر ترجع للوحة النشاط وتتأكد من هناك.</p>
+    <a href="portal.html" class="btn btn-secondary">الرجوع للوحة النشاط</a>
+  </div>
+</div>
+
+<script>
+  const FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
+
+  function qs(name){
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  function show(id){
+    ['loadingState','successState','failState','unknownState'].forEach(function(s){
+      document.getElementById(s).style.display = (s === id) ? 'block' : 'none';
+    });
+  }
+
+  async function confirmPayment(){
+    // Tap يرجّع الـ id في tap_id أو id حسب الإعداد — نتحقق من الاثنين
+    const tapId = qs('tap_id') || qs('id');
+    if(!tapId){
+      show('unknownState');
+      return;
+    }
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/tap-webhook?tap_id=' + encodeURIComponent(tapId));
+      const json = await res.json().catch(function(){ return {}; });
+
+      if(!res.ok){
+        show('unknownState');
+        return;
+      }
+
+      const status = (json.status || '').toUpperCase();
+      const purpose = json.purpose || null;
+
+      if(status === 'CAPTURED'){
+        const title = document.getElementById('successTitle');
+        const desc = document.getElementById('successDesc');
+        const details = document.getElementById('successDetails');
+        if(purpose === 'subscription'){
+          title.textContent = 'تم تجديد اشتراكك بنجاح 🎉';
+          desc.textContent = 'تم تفعيل اشتراكك وتمديد دورتك الشهرية تلقائياً.';
+        } else if(purpose === 'topup'){
+          title.textContent = 'تم تفعيل رصيدك بنجاح 🎉';
+          desc.textContent = 'تمت إضافة الرصيد الإضافي لحسابك تلقائياً.';
+        } else {
+          title.textContent = 'تم الدفع بنجاح';
+          desc.textContent = 'شكراً لك، تم تأكيد عمليتك بنجاح.';
+        }
+        if(json.amount){
+          details.style.display = 'block';
+          details.innerHTML = 'المبلغ المدفوع: <b>' + json.amount + ' ' + (json.currency || 'SAR') + '</b>';
+        }
+        show('successState');
+      } else if(status === 'FAILED' || status === 'DECLINED' || status === 'CANCELLED' || status === 'CANCELED'){
+        show('failState');
+      } else {
+        // pending / initiated / أي حالة انتقالية — نعطي المستخدم رسالة مطمئنة بدل الخطأ
+        show('unknownState');
+      }
+    } catch(e){
+      show('unknownState');
+    }
+  }
+
+  confirmPayment();
+</script>
+
+</body>
+</html>
