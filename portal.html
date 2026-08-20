@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://tap-sdks.b-cdn.net/card/1.0.2/index.js"></script>
 <style>
   :root{
     --wa-green:#25D366; --wa-green-dark:#1DA851; --wa-teal-dark:#075E54; --wa-teal:#128C7E;
@@ -21,7 +22,6 @@
   a{text-decoration:none; color:inherit;}
   button{font-family:inherit;}
   .container{max-width:1180px; margin:0 auto; padding:0 24px;}
-
   header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
   nav{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; max-width:1180px; margin:0 auto;}
   .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:19px;}
@@ -29,7 +29,6 @@
   .header-right{display:flex; align-items:center; gap:14px;}
   .biz-tag{font-size:13.5px; color:var(--muted); font-weight:700;}
   .logout-btn{background:#fff; border:1.5px solid var(--border); color:var(--wa-teal-dark); font-weight:700; font-size:13.5px; padding:8px 16px; border-radius:100px; cursor:pointer;}
-
   /* login */
   .login-wrap{min-height:calc(100vh - 66px); display:flex; align-items:center; justify-content:center; padding:40px 20px;}
   .login-card{background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); padding:40px; width:100%; max-width:400px;}
@@ -44,15 +43,12 @@
   .alert-box{border-radius:10px; padding:11px 14px; font-size:13px; margin-bottom:14px; display:none;}
   .alert-box.error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3;}
   .alert-box.ok{background:rgba(37,211,102,.12); color:var(--wa-green-dark); border:1px solid rgba(37,211,102,.3);}
-
   .forgot-link{display:block; text-align:center; margin-top:14px; font-size:13.5px; color:var(--wa-teal-dark); font-weight:700; cursor:pointer;}
   .forgot-link:hover{text-decoration:underline;}
   .back-link2{display:block; text-align:center; margin-top:14px; font-size:13.5px; color:var(--muted); font-weight:600; cursor:pointer;}
   .back-link2:hover{color:var(--ink);}
-
   .divider{display:flex; align-items:center; gap:12px; margin:20px 0; color:var(--muted); font-size:12.5px;}
   .divider::before, .divider::after{content:''; flex:1; height:1px; background:var(--border);}
-
   .google-btn{
     width:100%; padding:12px; border:1.5px solid var(--border); border-radius:100px; background:#fff;
     color:var(--ink); font-weight:700; font-size:14.5px; cursor:pointer;
@@ -60,9 +56,7 @@
   }
   .google-btn:hover{border-color:var(--wa-teal); background:#FBFDFC;}
   .google-btn svg{flex-shrink:0;}
-
   #forgotScreen, #resetScreen{display:none;}
-
   /* app */
   #appScreen{display:none;}
   .top-stats{padding:22px 0 0;}
@@ -70,14 +64,11 @@
   .stat-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 18px;}
   .stat-card .n{font-size:22px; font-weight:900; color:var(--wa-teal-dark);}
   .stat-card .l{color:var(--muted); font-size:12.5px; font-weight:600; margin-top:2px;}
-
   .tabs{display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap;}
   .tab-btn{background:#fff; border:1.5px solid var(--border); border-radius:100px; padding:9px 18px; font-weight:700; font-size:13.5px; cursor:pointer; color:var(--muted);}
   .tab-btn.active{background:var(--wa-teal-dark); color:#fff; border-color:var(--wa-teal-dark);}
-
   .panel{display:none;}
   .panel.active{display:block;}
-
   /* inbox */
   .inbox-wrap{display:grid; grid-template-columns:300px 1fr; gap:16px; height:600px; margin-bottom:40px;}
   .conv-list{background:var(--card); border:1px solid var(--border); border-radius:16px; overflow-y:auto;}
@@ -89,15 +80,14 @@
   .conv-item .cphone{color:var(--muted); font-size:12px; margin-top:2px;}
   .conv-item .cpreview{color:var(--muted); font-size:12.5px; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .conv-empty{padding:30px 16px; color:var(--muted); font-size:13.5px; text-align:center;}
+    .cat-badge{display:inline-block; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:100px; margin-left:6px; vertical-align:middle;}
 
   .human-badge{display:inline-flex; align-items:center; gap:4px; background:rgba(209,67,67,.12); color:var(--danger); font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:100px; margin-inline-start:7px;}
   .assignee-badge{display:inline-flex; align-items:center; gap:4px; background:rgba(18,140,126,.13); color:var(--wa-teal-dark); font-size:10.5px; font-weight:800; padding:2px 9px; border-radius:100px; margin-inline-start:7px;}
-
   .chat-panel{background:var(--card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; overflow:hidden;}
   .chat-head{padding:14px 18px; border-bottom:1px solid var(--border); font-weight:800; font-size:14.5px;}
   .thread-head{padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .thread-head .tsubject{font-weight:800; font-size:14.5px;}
-
   .takeover-bar{display:none; align-items:center; justify-content:space-between; gap:10px; padding:10px 18px; border-bottom:1px solid var(--border); background:#F6FAF8; font-size:12.5px; color:var(--muted); font-weight:700; flex-wrap:wrap;}
   .takeover-bar.paused{background:#FDF4F1; color:var(--danger);}
   .takeover-btn{border:none; border-radius:100px; padding:7px 16px; font-weight:800; font-size:12px; cursor:pointer; white-space:nowrap;}
@@ -105,7 +95,6 @@
   .takeover-btn.to-resume{background:var(--wa-green); color:#04210F;}
   .assign-row{display:flex; align-items:center; gap:8px;}
   .assign-row select{border:1.5px solid var(--border); border-radius:100px; padding:5px 10px; font-size:12px; font-family:inherit; background:#fff;}
-
   .chat-body{flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px; background:#F6FAF8;}
   .bubble{max-width:70%; padding:10px 13px; border-radius:12px; font-size:13.5px; line-height:1.55;}
   .bubble.in{align-self:flex-start; background:#fff; border:1px solid var(--border); border-top-right-radius:2px;}
@@ -118,13 +107,11 @@
   .send-btn{background:var(--wa-green); color:#04210F; border:none; border-radius:14px; padding:0 22px; font-weight:800; cursor:pointer;}
   .send-btn:disabled{opacity:.5; cursor:not-allowed;}
   .send-hint{font-size:12px; color:var(--muted); padding:0 14px 12px;}
-
   /* settings */
   .settings-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; max-width:640px; margin-bottom:24px;}
   .settings-card .field textarea{min-height:110px; resize:vertical;}
   .save-status{font-size:13px; color:var(--wa-green-dark); margin-top:10px; opacity:0; transition:opacity .3s ease;}
   .save-status.show{opacity:1;}
-
   /* team */
   .staff-item{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:#F6FAF8; border-radius:12px; margin-bottom:10px;}
   .staff-item .sname{font-weight:800; font-size:13.5px;}
@@ -132,30 +119,25 @@
   .staff-remove-btn{background:none; border:none; color:var(--danger); font-size:12.5px; font-weight:700; cursor:pointer;}
   .add-staff-btn{background:var(--wa-teal-dark); color:#fff; border:none; border-radius:100px; padding:9px 18px; font-weight:700; font-size:13px; cursor:pointer; margin-top:6px;}
   .add-staff-btn:hover{background:var(--wa-teal);}
-
   /* zid / salla integration */
   .status-badge.zid-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
   .status-badge.zid-disconnected{background:#EEE; color:var(--muted);}
   .status-badge.salla-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
   .status-badge.salla-disconnected{background:#EEE; color:var(--muted);}
-
   /* support tickets */
   .status-badge{display:inline-flex; align-items:center; padding:4px 11px; border-radius:100px; font-size:11.5px; font-weight:800; white-space:nowrap;}
   .status-badge.open{background:rgba(184,134,11,.13); color:var(--warn);}
   .status-badge.in_progress{background:rgba(18,140,126,.13); color:var(--wa-teal-dark);}
   .status-badge.closed{background:#EEE; color:var(--muted);}
-
   .ticket-item{padding:14px 16px; border-bottom:1px solid var(--border); cursor:pointer;}
   .ticket-item:hover{background:#FBFDFC;}
   .ticket-item.active{background:rgba(37,211,102,.09);}
   .ticket-item .tsubject{font-weight:800; font-size:14px; margin-bottom:6px;}
   .ticket-item .tmeta{display:flex; align-items:center; justify-content:space-between; gap:8px;}
   .ticket-item .tdate{color:var(--muted); font-size:11.5px;}
-
   .support-top{display:flex; align-items:center; justify-content:flex-end; margin-bottom:16px;}
   .new-ticket-btn{background:var(--wa-teal-dark); color:#fff; border:none; border-radius:100px; padding:10px 20px; font-weight:700; font-size:13.5px; cursor:pointer;}
   .new-ticket-btn:hover{background:var(--wa-teal);}
-
   /* broadcast */
   .campaign-list{display:flex; flex-direction:column; gap:12px;}
   .campaign-card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px;}
@@ -175,7 +157,6 @@
   .radio-row{display:flex; flex-direction:column; gap:8px; margin-bottom:6px;}
   .radio-row label{display:flex; align-items:center; gap:8px; font-weight:600; font-size:13.5px; cursor:pointer;}
   .cost-note{background:#FFF8EC; border:1px solid #F0DCA6; color:#7A5A00; border-radius:10px; padding:10px 13px; font-size:12.5px; margin-bottom:16px; line-height:1.6;}
-
   /* analytics */
   .analytics-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px;}
   .analytics-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px;}
@@ -189,7 +170,6 @@
   .bar-col .bar{width:100%; max-width:32px; background:linear-gradient(180deg, var(--wa-green), var(--wa-teal-dark)); border-radius:6px 6px 2px 2px; min-height:3px;}
   .bar-col .blabel{font-size:10.5px; color:var(--muted); font-weight:700;}
   .bar-col .bcount{font-size:10.5px; color:var(--ink); font-weight:800;}
-
   /* modal */
   .modal-overlay{display:none; position:fixed; inset:0; background:rgba(11,26,23,.5); align-items:center; justify-content:center; z-index:200; padding:20px;}
   .modal-overlay.show{display:flex;}
@@ -210,7 +190,6 @@
   .topup-row{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding:14px 0; border-bottom:1px solid var(--border);}
   .topup-row:last-child{border-bottom:none;}
   .topup-row .topup-info b{color:var(--wa-teal-dark);}
-
   @media (max-width:820px){
     .inbox-wrap{grid-template-columns:1fr; height:auto;}
     .conv-list{max-height:220px;}
@@ -221,7 +200,6 @@
 </style>
 </head>
 <body>
-
 <header>
   <nav>
     <div class="logo">
@@ -236,7 +214,6 @@
     </div>
   </nav>
 </header>
-
 <!-- LOGIN -->
 <div class="login-wrap" id="loginScreen">
   <div class="login-card">
@@ -263,7 +240,6 @@
     <p class="sub" style="margin-top:16px; font-size:12px;">ملاحظة: تسجيل الدخول بجوجل يشتغل فقط إذا كان بريدك مطابق للبريد اللي سجّله فريق نبضة لنشاطك.</p>
   </div>
 </div>
-
 <!-- FORGOT PASSWORD -->
 <div class="login-wrap" id="forgotScreen">
   <div class="login-card">
@@ -281,7 +257,6 @@
     <span class="back-link2" id="backToLoginBtn">→ الرجوع لتسجيل الدخول</span>
   </div>
 </div>
-
 <!-- SET NEW PASSWORD -->
 <div class="login-wrap" id="resetScreen">
   <div class="login-card">
@@ -297,7 +272,6 @@
     </form>
   </div>
 </div>
-
 <!-- APP -->
 <div id="appScreen">
   <div class="container top-stats">
@@ -306,9 +280,8 @@
       <div class="stat-card"><div class="n" id="statUsage">–</div><div class="l">رسائل هذا الشهر</div></div>
       <div class="stat-card"><div class="n" id="statConvs">–</div><div class="l">عدد المحادثات</div></div>
     </div>
-
     <div class="cost-note" id="usageWarningBanner" style="display:none;"></div>
-
+    <div class="cost-note" id="subscriptionBanner" style="display:none;"></div>
     <div class="tabs">
       <button class="tab-btn active" data-tab="inbox">المحادثات</button>
       <button class="tab-btn" data-tab="analytics">التحليلات</button>
@@ -318,7 +291,6 @@
       <button class="tab-btn" data-tab="support">الدعم الفني</button>
       <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
     </div>
-
     <div class="panel active" id="panelInbox">
       <div class="inbox-wrap">
         <div style="display:flex; flex-direction:column;">
@@ -353,7 +325,6 @@
         </div>
       </div>
     </div>
-
     <div class="panel" id="panelAnalytics">
       <div class="analytics-grid">
         <div class="analytics-card">
@@ -367,21 +338,33 @@
           <div class="helper-text">مجموع كل الرسائل الواردة والصادرة منذ ربط البوت.</div>
         </div>
       </div>
-
       <div class="analytics-grid">
         <div class="analytics-card">
           <h3>📈 حجم الرسائل — آخر 7 أيام</h3>
           <div class="bar-chart" id="analyticsBarChart"></div>
         </div>
-        <div class="analytics-card">
+          <div class="analytics-card">
           <h3>🔥 أكثر الأسئلة تكراراً</h3>
           <div class="qa-list" id="analyticsTopQuestions">
             <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
           </div>
         </div>
       </div>
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>🏷️ تصنيف المحادثات</h3>
+          <div class="qa-list" id="analyticsCategoryBreakdown">
+            <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
+          </div>
+        </div>
+        <div class="analytics-card">
+          <h3>🛒 أداء المتجر المرتبط</h3>
+          <div id="analyticsStoreWrap">
+            <div class="conv-empty">لا يوجد متجر مربوط بعد.</div>
+          </div>
+        </div>
+      </div>
     </div>
-
     <div class="panel" id="panelBroadcast">
       <div class="cost-note">⚠️ الرسائل الجماعية تُرسل كقوالب معتمدة من واتساب، وتُحتسب برسوم إضافية حسب نوع القالب بعد الحد المجاني الشهري لباقتك. تأكد أن القالب معتمد (Approved) في Meta Business Manager قبل الإرسال.</div>
       <div class="support-top">
@@ -391,7 +374,6 @@
         <div class="conv-empty">جاري تحميل الحملات...</div>
       </div>
     </div>
-
     <div class="panel" id="panelTemplates">
       <div class="cost-note">💡 اكتب فكرة رسالتك بالعامية، والذكاء الاصطناعي بيصيغها كقالب واتساب صحيح ويرسلها لميتا للمراجعة تلقائياً. المراجعة عادة تاخذ من دقائق لساعات.</div>
       <div class="support-top">
@@ -401,14 +383,12 @@
         <div class="conv-empty">جاري تحميل القوالب...</div>
       </div>
     </div>
-
     <div class="panel" id="panelOrders">
       <div class="cost-note">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
       <div id="ordersContent">
         <div class="conv-empty">جاري تحميل الطلبات...</div>
       </div>
     </div>
-
     <div class="panel" id="panelSupport">
       <div class="support-top">
         <button class="new-ticket-btn" id="newTicketBtn">+ فتح تذكرة جديدة</button>
@@ -435,7 +415,6 @@
         </div>
       </div>
     </div>
-
     <div class="panel" id="panelSettings">
       <div class="settings-card">
         <div class="field">
@@ -453,7 +432,6 @@
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
       </div>
-
       <div class="settings-card" id="teamCard">
         <div class="field" style="margin-bottom:16px;">
           <label>فريق العمل</label>
@@ -462,7 +440,6 @@
         <button class="add-staff-btn" id="addStaffBtn" style="display:none;">+ إضافة موظف</button>
         <div class="helper-text" id="teamHelperNonOwner" style="display:none;">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
       </div>
-
       <div class="settings-card" id="zidCard">
         <div class="field" style="margin-bottom:16px;">
           <label>ربط متجر زد (Zid)</label>
@@ -472,7 +449,6 @@
         <div class="helper-text" id="zidHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div>
       </div>
-
       <div class="settings-card" id="sallaCard">
         <div class="field" style="margin-bottom:16px;">
           <label>ربط متجر سلة (Salla)</label>
@@ -482,7 +458,15 @@
         <div class="helper-text" id="sallaHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;">اربط زد أو سلة (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
       </div>
-
+      <div class="settings-card" id="planCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>اشتراكك</label>
+        </div>
+        <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
+        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;">💳 ادفع الآن وجدّد الاشتراك</button>
+        <div class="helper-text" id="planHelperNonOwner" style="display:none;">تجديد الاشتراك متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;">الدفع لمرة واحدة عبر Tap (مدى، فيزا/ماستركارد، Apple Pay) يضيف 30 يوم لاشتراكك من تاريخ انتهاء فترتك الحالية (أو من اليوم إذا كان اشتراكك منتهي) — بدون أي خصم تلقائي مستقبلي.</div>
+      </div>
       <div class="settings-card" id="topupCard">
         <div class="field" style="margin-bottom:16px;">
           <label>رصيد رسائل إضافي</label>
@@ -491,12 +475,25 @@
         <div id="topupPendingNotice"></div>
         <div id="topupPackages"></div>
         <div class="helper-text" id="topupHelperNonOwner" style="display:none; margin-top:10px;">شراء رصيد إضافي متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">الرصيد الإضافي يُستهلك تلقائياً بعد نفاد حد رسائل باقتك الشهري، ولا ينتهي بنهاية الشهر. حالياً نعالج الطلبات يدوياً — بعد ما تطلب رصيد، فريق نبضة يتواصل معك لتأكيد الدفع خلال ساعات.</div>
+        <div class="helper-text" style="margin-top:10px;">الدفع فوري وآمن عبر Tap (مدى، فيزا/ماستركارد، Apple Pay)، ويُضاف الرصيد لحسابك تلقائياً خلال ثوانٍ من إتمام الدفع.</div>
       </div>
     </div>
   </div>
 </div>
-
+<!-- MODAL: Tap card payment -->
+<div class="modal-overlay" id="tapCardModal">
+  <div class="modal-card">
+    <h3 id="tapModalTitle">إتمام الدفع</h3>
+    <div class="helper-text" id="tapModalAmount" style="font-weight:800; font-size:16px; color:var(--wa-teal-dark); margin-bottom:14px;"></div>
+    <div class="alert-box error" id="tapModalError"></div>
+    <div id="tap-card-container" style="min-height:220px;"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="tapModalCancelBtn">إلغاء</button>
+      <button class="modal-confirm" id="tapPayBtn" disabled>💳 ادفع الآن</button>
+    </div>
+    <div class="helper-text" style="margin-top:12px; text-align:center;">🔒 الدفع مشفّر بالكامل عبر Tap، بياناتك ما توصلنا أبداً.</div>
+  </div>
+</div>
 <!-- MODAL: new support ticket -->
 <div class="modal-overlay" id="newTicketModal">
   <div class="modal-card">
@@ -516,7 +513,6 @@
     </div>
   </div>
 </div>
-
 <!-- MODAL: new broadcast campaign -->
 <div class="modal-overlay" id="newBroadcastModal">
   <div class="modal-card">
@@ -552,13 +548,11 @@
     </div>
   </div>
 </div>
-
 <!-- MODAL: new AI message template -->
 <div class="modal-overlay" id="newTemplateModal">
   <div class="modal-card">
     <h3>قالب رسالة جديد بالذكاء الاصطناعي</h3>
     <div class="alert-box error" id="newTemplateError"></div>
-
     <div id="tplStep1">
       <div class="field">
         <label>وش الرسالة اللي تبي ترسلها؟</label>
@@ -570,7 +564,6 @@
         <button class="modal-confirm" id="tplGenerateBtn">توليد بالذكاء الاصطناعي</button>
       </div>
     </div>
-
     <div id="tplStep2" style="display:none;">
       <div class="field">
         <label>اسم القالب (بالإنجليزي، يُستخدم داخلياً فقط)</label>
@@ -599,7 +592,6 @@
     </div>
   </div>
 </div>
-
 <!-- MODAL: invite staff -->
 <div class="modal-overlay" id="newStaffModal">
   <div class="modal-card">
@@ -620,31 +612,27 @@
     </div>
   </div>
 </div>
-
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
   const FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
+  const TAP_PUBLIC_KEY = 'pk_test_5fCzisvP0WVeATnbUM4umFtL';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
   const loginScreen = document.getElementById('loginScreen');
   const forgotScreen = document.getElementById('forgotScreen');
   const resetScreen = document.getElementById('resetScreen');
   const appScreen = document.getElementById('appScreen');
   const logoutBtn = document.getElementById('logoutBtn');
-
   const ticketStatusLabels = {
     open: 'مفتوحة',
     in_progress: 'قيد المعالجة',
     closed: 'تم الحل'
   };
-
   const campaignStatusLabels = {
     sending: 'جاري الإرسال',
     completed: 'مكتملة',
     failed: 'فشلت'
   };
-
   const templateStatusLabels = {
     draft: 'مسودة',
     pending: 'قيد المراجعة من واتساب',
@@ -652,7 +640,6 @@
     rejected: 'مرفوض',
     paused: 'موقوف'
   };
-
   let myClient = null;
   let myPlan = null;
   let myUserId = null;
@@ -668,7 +655,6 @@
   let staffList = [];
   let staffMap = {};
   let filterMineOnly = false;
-
   // اسم العميل النهائي ونص رسائل واتساب تجي من WhatsApp API (يتحكم فيها الطرف الآخر بالمحادثة)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في بوابة صاحب النشاط
   function escapeHtml(str){
@@ -679,14 +665,12 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
-
   function showScreen(name){
     loginScreen.style.display = 'none';
     forgotScreen.style.display = 'none';
     resetScreen.style.display = 'none';
     appScreen.style.display = 'none';
     logoutBtn.style.display = 'none';
-
     if(name === 'login'){ loginScreen.style.display = 'flex'; }
     else if(name === 'forgot'){ forgotScreen.style.display = 'flex'; }
     else if(name === 'reset'){ resetScreen.style.display = 'flex'; }
@@ -696,19 +680,16 @@
       afterLoginSetup();
     }
   }
-
   supabaseClient.auth.onAuthStateChange(function(event, session){
     if(event === 'PASSWORD_RECOVERY'){
       showScreen('reset');
     }
   });
-
   // رجوع من صفحة ربط زد أو سلة (نجاح أو فشل) — نعرض رسالة مرة واحدة وننضّف الرابط من المعاملات
   (function handleStoreOAuthRedirect(){
     const params = new URLSearchParams(window.location.search);
     const zidState = params.get('zid');
     const sallaState = params.get('salla');
-
     if(zidState === 'connected'){
       window.addEventListener('load', function(){
         setTimeout(function(){ alert('✅ تم ربط متجر زد بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.'); }, 400);
@@ -719,7 +700,6 @@
         setTimeout(function(){ alert('⚠️ تعذّر ربط متجر زد' + (msg ? ': ' + decodeURIComponent(msg) : '') + '. حاول مرة ثانية أو تواصل مع الدعم.'); }, 400);
       });
     }
-
     if(sallaState === 'connected'){
       window.addEventListener('load', function(){
         setTimeout(function(){ alert('✅ تم ربط متجر سلة بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.'); }, 400);
@@ -730,7 +710,6 @@
         setTimeout(function(){ alert('⚠️ تعذّر ربط متجر سلة' + (msg ? ': ' + decodeURIComponent(msg) : '') + '. حاول مرة ثانية أو تواصل مع الدعم.'); }, 400);
       });
     }
-
     if(zidState || sallaState){
       params.delete('zid'); params.delete('salla'); params.delete('msg');
       const qs = params.toString();
@@ -738,7 +717,6 @@
       window.history.replaceState({}, '', newUrl);
     }
   })();
-
   supabaseClient.auth.getSession().then(function(res){
     const hash = window.location.hash;
     const isRecovery = hash.includes('type=recovery');
@@ -749,18 +727,15 @@
     }
     if(res.data.session){ showScreen('app'); } else { showScreen('login'); }
   });
-
   document.getElementById('loginForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const errBox = document.getElementById('loginError');
     errBox.style.display = 'none';
     const btn = document.getElementById('loginBtn');
     btn.disabled = true; btn.textContent = 'جاري الدخول...';
-
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
     btn.disabled = false; btn.textContent = 'تسجيل الدخول';
     if(error){
       errBox.textContent = 'بيانات الدخول غير صحيحة.';
@@ -769,17 +744,14 @@
     }
     showScreen('app');
   });
-
   document.getElementById('googleLoginBtn').addEventListener('click', async function(){
     await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: window.location.origin + window.location.pathname }
     });
   });
-
   document.getElementById('showForgotBtn').addEventListener('click', function(){ showScreen('forgot'); });
   document.getElementById('backToLoginBtn').addEventListener('click', function(){ showScreen('login'); });
-
   document.getElementById('forgotForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const errBox = document.getElementById('forgotError');
@@ -788,12 +760,10 @@
     okBox.style.display = 'none';
     const btn = document.getElementById('forgotBtn');
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-
     const email = document.getElementById('forgotEmail').value.trim();
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + window.location.pathname
     });
-
     btn.disabled = false; btn.textContent = 'إرسال رابط الاستعادة';
     if(error){
       errBox.textContent = 'تعذّر إرسال الرابط، حاول مرة ثانية.';
@@ -803,17 +773,14 @@
     okBox.textContent = '✓ تم إرسال رابط الاستعادة، افتح بريدك الإلكتروني.';
     okBox.style.display = 'block';
   });
-
   document.getElementById('resetForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const errBox = document.getElementById('resetError');
     errBox.style.display = 'none';
     const btn = document.getElementById('resetBtn');
     btn.disabled = true; btn.textContent = 'جاري الحفظ...';
-
     const newPassword = document.getElementById('resetPassword').value;
     const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
-
     btn.disabled = false; btn.textContent = 'حفظ كلمة المرور';
     if(error){
       errBox.textContent = 'تعذّر حفظ كلمة المرور، حاول مرة ثانية.';
@@ -822,18 +789,15 @@
     }
     showScreen('app');
   });
-
   logoutBtn.addEventListener('click', async function(){
     await supabaseClient.auth.signOut();
     showScreen('login');
   });
-
   // بعد أي نوع دخول (كلمة مرور أو جوجل)، نحاول نربط الحساب تلقائياً لو دخل أول مرة بجوجل
   async function afterLoginSetup(){
     await supabaseClient.functions.invoke('link-client-by-email', { method: 'POST', body: {} }).catch(function(){});
     loadEverything();
   }
-
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -844,19 +808,16 @@
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
     });
   });
-
   async function loadEverything(){
     const { data: { user } } = await supabaseClient.auth.getUser();
     myUserId = user.id;
-
     // نحاول أولاً كصاحب حساب، ولو ما لقينا نحاول كموظف مرتبط بحساب نشاط
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
       .eq('user_id', user.id)
       .maybeSingle();
-
     if(ownerRes.data){
       clientRow = ownerRes.data;
       isOwner = true;
@@ -866,18 +827,16 @@
         .select('client_id')
         .eq('user_id', user.id)
         .maybeSingle();
-
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
         isOwner = false;
       }
     }
-
     if(!clientRow){
       document.getElementById('convList').innerHTML = '<div class="conv-empty">تعذّر العثور على حساب مرتبط بهذا الدخول. تواصل مع فريق نبضة.</div>';
       return;
@@ -892,14 +851,12 @@
     document.getElementById('saveSettingsBtn').style.display = isOwner ? 'inline-block' : 'none';
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
-
     let planLabel = '—';
     if(clientRow.plan_id){
-      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included').eq('id', clientRow.plan_id).single();
+      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar').eq('id', clientRow.plan_id).single();
       if(plan){ planLabel = plan.name_ar; myPlan = plan; }
     }
     document.getElementById('statPlan').textContent = planLabel;
-
     // فريق العمل — نجيبه قبل عرض المحادثات عشان نبني قائمة "معيّن إلى"
     const { data: staffRows } = await supabaseClient
       .from('client_staff')
@@ -910,30 +867,29 @@
     staffMap[clientRow.user_id] = 'صاحب الحساب';
     staffList.forEach(function(s){ if(s.user_id){ staffMap[s.user_id] = s.full_name; } });
     renderTeam();
-
     const { data: msgs } = await supabaseClient
       .from('whatsapp_messages_log')
-      .select('customer_phone, customer_name, inbound_message, outbound_message, received_at, created_at')
+      .select('customer_phone, customer_name, inbound_message, outbound_message, created_at, received_at, category')
       .eq('client_id', clientRow.id)
       .order('created_at', { ascending: true });
-
     allMessages = msgs || [];
     conversations = {};
     const now = new Date();
     let monthCount = 0;
-
     allMessages.forEach(function(row){
       const phone = row.customer_phone;
-      if(!conversations[phone]){
-        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, botPaused: false, assignedTo: null };
+            if(!conversations[phone]){
+        conversations[phone] = { name: row.customer_name || phone, messages: [], lastAt: row.created_at, category: null };
+
       }
       if(row.customer_name){ conversations[phone].name = row.customer_name; }
       if(row.inbound_message){
         conversations[phone].messages.push({ dir: 'in', text: row.inbound_message, at: row.created_at });
       }
-      if(row.outbound_message){
+            if(row.outbound_message){
         conversations[phone].messages.push({ dir: 'out', text: row.outbound_message, at: row.created_at });
       }
+           if(row.category){ conversations[phone].category = row.category; }
       conversations[phone].lastAt = row.created_at;
 
       const rowDate = new Date(row.created_at);
@@ -941,46 +897,40 @@
         monthCount++;
       }
     });
-
     // حالة "الرد اليدوي" والتعيين لكل محادثة
     const { data: states } = await supabaseClient
       .from('whatsapp_conversation_state')
       .select('customer_phone, bot_paused, assigned_to')
       .eq('client_id', clientRow.id);
-
     (states || []).forEach(function(s){
       if(conversations[s.customer_phone]){
         conversations[s.customer_phone].botPaused = !!s.bot_paused;
         conversations[s.customer_phone].assignedTo = s.assigned_to || null;
       }
     });
-
     document.getElementById('statConvs').textContent = Object.keys(conversations).length;
     renderUsageStat(monthCount);
-
     renderConvList();
     loadTickets();
     loadCampaigns();
     renderAnalytics();
+    loadStoreAnalytics();
     loadZidStatus();
     loadSallaStatus();
     loadTemplates();
     loadTopupInfo();
+    renderSubscriptionBanner();
+    renderPlanCard();
   }
-
   /* ---------- استهلاك الرسائل + تنبيه الاقتراب من الحد ---------- */
   function renderUsageStat(monthCount){
     const limit = (myPlan && myPlan.monthly_message_limit) || null;
     const extraCredits = (myClient && myClient.extra_message_credits) || 0;
     const totalAllowance = limit ? (limit + extraCredits) : null;
-
     document.getElementById('statUsage').textContent = totalAllowance ? (monthCount + ' / ' + totalAllowance) : monthCount;
-
     const banner = document.getElementById('usageWarningBanner');
     if(!totalAllowance){ banner.style.display = 'none'; return; }
-
     const pct = Math.round((monthCount / totalAllowance) * 100);
-
     if(pct >= 100){
       banner.className = 'alert-box error';
       banner.style.display = 'block';
@@ -993,7 +943,150 @@
       banner.style.display = 'none';
     }
   }
+  /* ---------- الدفع الإلكتروني عبر Tap (اشتراك / رصيد) ---------- */
+  function formatDateAr(iso){
+    return new Date(iso).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+  /* بطاقة الدفع المدمجة (Tap Card SDK) — العميل يدخل بيانات بطاقته داخل صفحتنا مباشرة،
+     Tap تحوّلها لرمز آمن (token) داخل الآيفريم الخاص فيها (إحنا ما نشوف رقم البطاقة أبداً)،
+     وبعدين نرسل الرمز بس لسيرفرنا عشان ينشئ عملية الدفع الفعلية. */
+  let tapCardHandle = null;
+  let pendingPaymentInfo = null;
 
+  function setTapPayBtnState(disabled, text){
+    const btn = document.getElementById('tapPayBtn');
+    btn.disabled = disabled;
+    btn.textContent = text;
+  }
+  function showTapModalError(msg){
+    const box = document.getElementById('tapModalError');
+    box.textContent = msg;
+    box.style.display = 'block';
+  }
+  function openTapCardModal(purpose, extra, amount, title){
+    if(!myClient){ return; }
+    pendingPaymentInfo = { purpose: purpose, extra: extra || {} };
+    document.getElementById('tapModalError').style.display = 'none';
+    document.getElementById('tapModalTitle').textContent = title || 'إتمام الدفع';
+    document.getElementById('tapModalAmount').textContent = amount ? (amount + ' ريال سعودي') : '';
+    document.getElementById('tap-card-container').innerHTML = '';
+    setTapPayBtnState(true, 'جاري تحميل نموذج الدفع...');
+    document.getElementById('tapCardModal').classList.add('show');
+
+    const CardSDK = window.CardSDK;
+    if(!CardSDK){
+      showTapModalError('تعذّر تحميل نموذج الدفع، تأكد من اتصالك بالإنترنت وحاول تحديث الصفحة.');
+      return;
+    }
+    const { renderTapCard, Currencies, Direction, Edges, Locale, Theme } = CardSDK;
+    tapCardHandle = renderTapCard('tap-card-container', {
+      publicKey: TAP_PUBLIC_KEY,
+      transaction: { amount: Number(amount) || 1, currency: Currencies.SAR },
+      customer: (myClient && myClient.owner_email) ? { contact: { email: myClient.owner_email } } : undefined,
+      acceptance: { supportedBrands: ['VISA', 'MASTERCARD', 'MADA'], supportedCards: ['CREDIT', 'DEBIT'] },
+      fields: { cardHolder: true },
+      addons: { displayPaymentBrands: true, loader: true, saveCard: false },
+      interface: { locale: Locale.AR, theme: Theme.LIGHT, edges: Edges.CURVED, direction: Direction.RTL },
+      onReady: function(){ setTapPayBtnState(false, '💳 ادفع الآن'); },
+      onError: function(){
+        showTapModalError('تعذّر التحقق من بيانات البطاقة، تأكد منها وحاول مرة ثانية.');
+        setTapPayBtnState(false, '💳 ادفع الآن');
+      },
+      onSuccess: function(data){ submitTapToken(data.id); }
+    });
+  }
+  function closeTapCardModal(){
+    document.getElementById('tapCardModal').classList.remove('show');
+    if(tapCardHandle && tapCardHandle.unmount){ try{ tapCardHandle.unmount(); }catch(e){} }
+    tapCardHandle = null;
+    pendingPaymentInfo = null;
+    document.getElementById('tap-card-container').innerHTML = '';
+  }
+  async function submitTapToken(tokenId){
+    if(!pendingPaymentInfo){ return; }
+    setTapPayBtnState(true, 'جاري تأكيد الدفع...');
+    try{
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const authToken = sessionData.session.access_token;
+      const body = Object.assign({ purpose: pendingPaymentInfo.purpose, token: tokenId }, pendingPaymentInfo.extra || {});
+      const res = await fetch(FUNCTIONS_BASE + '/create-tap-charge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(body)
+      });
+      const resJson = await res.json();
+      if(!res.ok || !resJson.charge_id){
+        showTapModalError(resJson.error || 'تعذّر إتمام عملية الدفع، حاول مرة ثانية.');
+        setTapPayBtnState(false, '💳 ادفع الآن');
+        return;
+      }
+      if(resJson.payment_url){
+        window.location.href = resJson.payment_url;
+      } else {
+        window.location.href = 'payment-result.html?tap_id=' + encodeURIComponent(resJson.charge_id);
+      }
+    } catch(e){
+      showTapModalError('حصل خطأ بالاتصال، حاول مرة ثانية.');
+      setTapPayBtnState(false, '💳 ادفع الآن');
+    }
+  }
+  document.getElementById('tapModalCancelBtn').addEventListener('click', closeTapCardModal);
+  document.getElementById('tapPayBtn').addEventListener('click', function(){
+    if(window.CardSDK && window.CardSDK.tokenize){
+      setTapPayBtnState(true, 'جاري التحقق...');
+      window.CardSDK.tokenize();
+    }
+  });
+  function renderSubscriptionBanner(){
+    const banner = document.getElementById('subscriptionBanner');
+    if(!myClient || !isOwner){ banner.style.display = 'none'; return; }
+    const endsAt = myClient.current_period_ends_at ? new Date(myClient.current_period_ends_at) : null;
+    const now = new Date();
+    const daysLeft = endsAt ? Math.ceil((endsAt - now) / (1000 * 60 * 60 * 24)) : null;
+    if(myClient.subscription_status !== 'active' || !endsAt || daysLeft < 0){
+      banner.className = 'alert-box error';
+      banner.style.display = 'block';
+      banner.innerHTML = '🚫 اشتراكك غير فعّال حالياً. <a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">ادفع الآن لتفعيل البوت</a>';
+    } else if(daysLeft <= 5){
+      banner.className = 'cost-note';
+      banner.style.display = 'block';
+      banner.innerHTML = '⏳ اشتراكك ينتهي خلال ' + daysLeft + ' يوم. <a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">جدّده الآن</a>';
+    } else {
+      banner.style.display = 'none';
+      return;
+    }
+    const link = document.getElementById('bannerRenewLink');
+    if(link){
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        document.querySelector('.tab-btn[data-tab="settings"]').click();
+        const card = document.getElementById('planCard');
+        if(card){ card.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    }
+  }
+  function renderPlanCard(){
+    const box = document.getElementById('planInfoBox');
+    const btn = document.getElementById('renewPlanBtn');
+    const nonOwnerHint = document.getElementById('planHelperNonOwner');
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+    const planName = myPlan ? myPlan.name_ar : 'لم تُحدد بعد';
+    const price = myPlan ? myPlan.monthly_price_sar : null;
+    const endsAtLabel = myClient.current_period_ends_at ? formatDateAr(myClient.current_period_ends_at) : 'غير مفعّل بعد';
+    const statusLabel = myClient.subscription_status === 'active' ? '✅ فعّال' : (myClient.subscription_status === 'trial' ? '🕐 فترة تجريبية' : '🚫 غير فعّال');
+    box.innerHTML = 'الباقة: <b>' + escapeHtml(planName) + '</b>' + (price !== null ? ' — ' + price + ' ريال/شهر' : '') +
+      '<br>الحالة: ' + statusLabel + '<br>ينتهي بتاريخ: ' + endsAtLabel;
+    if(isOwner && myPlan){
+      btn.style.display = 'inline-block';
+    } else {
+      btn.style.display = 'none';
+    }
+  }
+  document.getElementById('renewPlanBtn').addEventListener('click', function(){
+    if(!myClient || !myPlan){ return; }
+    openTapCardModal('subscription', { plan_id: myPlan.id }, myPlan.monthly_price_sar, 'تجديد اشتراك: ' + (myPlan.name_ar || ''));
+  });
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){
     const price = (myPlan && myPlan.store_integration_addon_price_sar) || 25;
@@ -1003,15 +1096,12 @@
       + '</div>'
       + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">تواصل مع الدعم للتفعيل</button>';
   }
-
   /* ---------- لوحة الطلبات الموحّدة ---------- */
   let ordersLoaded = false;
-
   async function loadOrdersTab(){
     if(ordersLoaded){ return; }
     const container = document.getElementById('ordersContent');
     if(!myPlan){ return; }
-
     if(!myPlan.order_table_included){
       container.innerHTML = '<div class="alert-box error" style="display:block;">'
         + 'لوحة الطلبات الموحّدة متاحة من باقة نمو وما فوق. باقتك الحالية: ' + escapeHtml(myPlan.name_ar || 'الأساسية') + '. '
@@ -1026,11 +1116,9 @@
       }
       return;
     }
-
     ordersLoaded = true;
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/list-store-orders', {
         method: 'POST',
@@ -1038,19 +1126,16 @@
         body: JSON.stringify({ client_id: myClient.id })
       });
       const json = await res.json();
-
       if(!res.ok || json.error){
         ordersLoaded = false;
         container.innerHTML = '<div class="conv-empty">' + escapeHtml(json.message || 'تعذّر تحميل الطلبات، حاول مرة ثانية.') + '</div>';
         return;
       }
-
       const orders = json.orders || [];
       if(orders.length === 0){
         container.innerHTML = '<div class="conv-empty">لا توجد طلبات بعد.</div>';
         return;
       }
-
       let tableHtml = '<div class="table-wrap"><table style="width:100%; border-collapse:collapse;">'
         + '<thead><tr style="text-align:right; border-bottom:1.5px solid var(--border);">'
         + '<th style="padding:10px 8px;">رقم الطلب</th>'
@@ -1059,7 +1144,6 @@
         + '<th style="padding:10px 8px;">القيمة</th>'
         + '<th style="padding:10px 8px;">التاريخ</th>'
         + '</tr></thead><tbody>';
-
       orders.forEach(function(o){
         tableHtml += '<tr style="border-bottom:1px solid var(--border);">'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.order_code || '—') + '</td>'
@@ -1069,7 +1153,6 @@
           + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString('ar-SA') : '—') + '</td>'
           + '</tr>';
       });
-
       tableHtml += '</tbody></table></div>';
       container.innerHTML = tableHtml;
     } catch(e){
@@ -1077,7 +1160,6 @@
       container.innerHTML = '<div class="conv-empty">تعذّر تحميل الطلبات، حاول مرة ثانية.</div>';
     }
   }
-
   function bindStoreAddonSupportBtn(suffix){
     const el = document.getElementById('storeAddonSupportBtn_' + suffix);
     if(el){
@@ -1086,23 +1168,18 @@
       });
     }
   }
-
   async function loadZidStatus(){
     const statusBox = document.getElementById('zidStatus');
     const btn = document.getElementById('connectZidBtn');
     const nonOwnerHint = document.getElementById('zidHelperNonOwner');
-
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(!myClient){ return; }
-
     const { data } = await supabaseClient
       .from('client_zid_credentials')
       .select('store_name, connected_at')
       .eq('client_id', myClient.id)
       .maybeSingle();
-
     const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
-
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
@@ -1119,15 +1196,12 @@
       btn.textContent = 'ربط مع زد';
     }
   }
-
   document.getElementById('connectZidBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner){ return; }
     const btn = this;
     btn.disabled = true; btn.textContent = 'جاري التحضير...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/zid-oauth-authorize', {
         method: 'POST',
@@ -1138,7 +1212,6 @@
         body: JSON.stringify({ client_id: myClient.id })
       });
       const json = await res.json();
-
       if(!res.ok || !json.url){
         btn.disabled = false; btn.textContent = 'ربط مع زد';
         alert(json.error || 'تعذّر بدء الربط مع زد، حاول مرة ثانية.');
@@ -1150,24 +1223,19 @@
       alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
     }
   });
-
   /* ---------- ربط متجر سلة ---------- */
   async function loadSallaStatus(){
     const statusBox = document.getElementById('sallaStatus');
     const btn = document.getElementById('connectSallaBtn');
     const nonOwnerHint = document.getElementById('sallaHelperNonOwner');
-
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(!myClient){ return; }
-
     const { data } = await supabaseClient
       .from('client_salla_credentials')
       .select('store_name, connected_at')
       .eq('client_id', myClient.id)
       .maybeSingle();
-
     const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
-
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
@@ -1184,15 +1252,12 @@
       btn.textContent = 'ربط مع سلة';
     }
   }
-
   document.getElementById('connectSallaBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner){ return; }
     const btn = this;
     btn.disabled = true; btn.textContent = 'جاري التحضير...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/salla-oauth-authorize', {
         method: 'POST',
@@ -1203,7 +1268,6 @@
         body: JSON.stringify({ client_id: myClient.id })
       });
       const json = await res.json();
-
       if(!res.ok || !json.url){
         btn.disabled = false; btn.textContent = 'ربط مع سلة';
         alert(json.error || 'تعذّر بدء الربط مع سلة، حاول مرة ثانية.');
@@ -1215,15 +1279,12 @@
       alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
     }
   });
-
   function renderTeam(){
     const list = document.getElementById('staffList');
     const addBtn = document.getElementById('addStaffBtn');
     const nonOwnerHint = document.getElementById('teamHelperNonOwner');
-
     addBtn.style.display = isOwner ? 'inline-block' : 'none';
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
-
     if(staffList.length === 0){
       list.innerHTML = '<div class="conv-empty">ما فيه موظفين مضافين بعد.</div>';
       return;
@@ -1237,7 +1298,6 @@
         (isOwner ? '<button class="staff-remove-btn" data-id="' + s.id + '">إزالة</button>' : '');
       list.appendChild(div);
     });
-
     if(isOwner){
       list.querySelectorAll('.staff-remove-btn').forEach(function(btn){
         btn.addEventListener('click', async function(){
@@ -1252,22 +1312,32 @@
       });
     }
   }
-
+  const CATEGORY_LABELS = {
+    general_inquiry: { label: 'استفسار عام', color: '#5B6B67', bg: '#EEF2F1' },
+    product_inquiry: { label: 'استفسار منتج', color: '#075E54', bg: 'rgba(37,211,102,.12)' },
+    order_tracking:  { label: 'متابعة طلب', color: '#0B6E99', bg: '#E7F3FA' },
+    complaint:       { label: 'شكوى', color: '#D14343', bg: '#FDEDEC' },
+    return_refund:   { label: 'استرجاع', color: '#B8860B', bg: '#FCF3DC' },
+    purchase_intent: { label: 'نية شراء', color: '#1DA851', bg: 'rgba(37,211,102,.18)' },
+    other:           { label: 'أخرى', color: '#5B6B67', bg: '#EEF2F1' }
+  };
+  function categoryBadgeHtml(category){
+    const info = CATEGORY_LABELS[category];
+    if(!info){ return ''; }
+    return '<span class="cat-badge" style="background:' + info.bg + '; color:' + info.color + ';">' + info.label + '</span>';
+  }
   function renderConvList(){
     const list = document.getElementById('convList');
     let phones = Object.keys(conversations).sort(function(a,b){
       return new Date(conversations[b].lastAt) - new Date(conversations[a].lastAt);
     });
-
     if(filterMineOnly){
       phones = phones.filter(function(p){ return conversations[p].assignedTo === myUserId; });
     }
-
     if(phones.length === 0){
       list.innerHTML = '<div class="conv-empty">' + (filterMineOnly ? 'ما فيه محادثات معيّنة لك حالياً.' : 'ما فيه محادثات بعد. أول ما يراسل عميل بوتك، تظهر المحادثة هنا.') + '</div>';
       return;
     }
-
     list.innerHTML = '';
     phones.forEach(function(phone){
       const conv = conversations[phone];
@@ -1277,10 +1347,10 @@
       const assigneeBadge = assigneeName ? '<span class="assignee-badge">🏷️ ' + escapeHtml(assigneeName) + '</span>' : '';
       const div = document.createElement('div');
       div.className = 'conv-item' + (phone === activePhone ? ' active' : '');
-      div.innerHTML =
-        '<div class="cname">' + escapeHtml(conv.name) + humanBadge + assigneeBadge + '</div>' +
-        '<div class="cphone">' + escapeHtml(phone) + '</div>' +
-        '<div class="cpreview">' + (lastMsg ? escapeHtml(lastMsg.text) : '') + '</div>';
+           div.innerHTML =
+        '<div class="cname">' + conv.name + categoryBadgeHtml(conv.category) + '</div>' +
+        '<div class="cphone">' + phone + '</div>' +
+        '<div class="cpreview">' + (lastMsg ? lastMsg.text : '') + '</div>';
       div.addEventListener('click', function(){
         activePhone = phone;
         renderConvList();
@@ -1289,12 +1359,10 @@
       list.appendChild(div);
     });
   }
-
   document.getElementById('filterMineOnly').addEventListener('change', function(){
     filterMineOnly = this.checked;
     renderConvList();
   });
-
   function renderChat(phone){
     const conv = conversations[phone];
     const head = document.getElementById('chatHead');
@@ -1304,11 +1372,9 @@
     const status = document.getElementById('takeoverStatus');
     const btn = document.getElementById('takeoverBtn');
     const assignSelect = document.getElementById('assignSelect');
-
     head.style.display = 'block';
     head.textContent = conv.name + ' — ' + phone;
     composerWrap.style.display = 'block';
-
     bar.style.display = 'flex';
     if(conv.botPaused){
       bar.classList.add('paused');
@@ -1321,7 +1387,6 @@
       btn.textContent = 'تولّي الرد يدوياً';
       btn.className = 'takeover-btn to-pause';
     }
-
     assignSelect.innerHTML = '<option value="">غير معيّن</option>';
     Object.keys(staffMap).forEach(function(uid){
       const opt = document.createElement('option');
@@ -1331,7 +1396,6 @@
       assignSelect.appendChild(opt);
     });
     if(!conv.assignedTo){ assignSelect.value = ''; }
-
     body.innerHTML = '';
     conv.messages.forEach(function(m){
       const b = document.createElement('div');
@@ -1342,7 +1406,6 @@
     });
     body.scrollTop = body.scrollHeight;
   }
-
   document.getElementById('assignSelect').addEventListener('change', async function(){
     if(!activePhone || !myClient){ return; }
     const val = this.value || null;
@@ -1353,7 +1416,6 @@
         customer_phone: activePhone,
         assigned_to: val
       }, { onConflict: 'client_id,customer_phone' });
-
     if(error){
       alert('تعذّر تحديث التعيين، حاول مرة ثانية.');
       return;
@@ -1361,14 +1423,12 @@
     conversations[activePhone].assignedTo = val;
     renderConvList();
   });
-
   document.getElementById('takeoverBtn').addEventListener('click', async function(){
     if(!activePhone || !myClient){ return; }
     const conv = conversations[activePhone];
     const newPaused = !conv.botPaused;
     const btn = document.getElementById('takeoverBtn');
     btn.disabled = true;
-
     const payload = {
       client_id: myClient.id,
       customer_phone: activePhone,
@@ -1376,11 +1436,9 @@
       paused_at: newPaused ? new Date().toISOString() : null
     };
     if(newPaused && !conv.assignedTo){ payload.assigned_to = myUserId; }
-
     const { error } = await supabaseClient
       .from('whatsapp_conversation_state')
       .upsert(payload, { onConflict: 'client_id,customer_phone' });
-
     btn.disabled = false;
     if(error){
       alert('تعذّر تحديث حالة المحادثة، حاول مرة ثانية.');
@@ -1391,20 +1449,16 @@
     renderChat(activePhone);
     renderConvList();
   });
-
   document.getElementById('sendBtn').addEventListener('click', async function(){
     const textarea = document.getElementById('replyText');
     const text = textarea.value.trim();
     const hint = document.getElementById('sendHint');
     if(!text || !activePhone || !myClient){ return; }
-
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
     hint.textContent = '';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/send-whatsapp-reply', {
         method: 'POST',
@@ -1415,7 +1469,6 @@
         body: JSON.stringify({ client_id: myClient.id, customer_phone: activePhone, message: text })
       });
       const json = await res.json();
-
       if(!res.ok){
         hint.style.color = 'var(--danger)';
         hint.textContent = json.error || 'تعذّر إرسال الرسالة.';
@@ -1435,64 +1488,51 @@
       hint.style.color = 'var(--danger)';
       hint.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
     }
-
     btn.disabled = false;
   });
-
   document.getElementById('saveSettingsBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner){ return; }
     const prompt = document.getElementById('settingPrompt').value.trim();
     const welcome = document.getElementById('settingWelcome').value.trim();
     const status = document.getElementById('saveStatus');
-
     const { error } = await supabaseClient
       .from('clients')
       .update({ system_prompt: prompt, welcome_message: welcome })
       .eq('id', myClient.id);
-
     if(!error){
       status.classList.add('show');
       setTimeout(function(){ status.classList.remove('show'); }, 2000);
     }
   });
-
   /* ---------- team management (owner only) ---------- */
   const newStaffModal = document.getElementById('newStaffModal');
-
   document.getElementById('addStaffBtn').addEventListener('click', function(){
     document.getElementById('staffFullName').value = '';
     document.getElementById('staffEmail').value = '';
     document.getElementById('newStaffError').style.display = 'none';
     newStaffModal.classList.add('show');
   });
-
   document.getElementById('newStaffCancelBtn').addEventListener('click', function(){
     newStaffModal.classList.remove('show');
   });
-
   newStaffModal.addEventListener('click', function(e){
     if(e.target === newStaffModal){ newStaffModal.classList.remove('show'); }
   });
-
   document.getElementById('newStaffConfirmBtn').addEventListener('click', async function(){
     const fullName = document.getElementById('staffFullName').value.trim();
     const email = document.getElementById('staffEmail').value.trim();
     const errBox = document.getElementById('newStaffError');
     errBox.style.display = 'none';
-
     if(!fullName || !email){
       errBox.textContent = 'الرجاء تعبئة الاسم والبريد الإلكتروني.';
       errBox.style.display = 'block';
       return;
     }
     if(!myClient){ return; }
-
     const btn = document.getElementById('newStaffConfirmBtn');
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/invite-client-staff', {
         method: 'POST',
@@ -1503,15 +1543,12 @@
         body: JSON.stringify({ client_id: myClient.id, email: email, full_name: fullName })
       });
       const json = await res.json();
-
       btn.disabled = false; btn.textContent = 'إرسال الدعوة';
-
       if(!res.ok){
         errBox.textContent = json.error || 'تعذّر إرسال الدعوة.';
         errBox.style.display = 'block';
         return;
       }
-
       newStaffModal.classList.remove('show');
       alert('تم إرسال دعوة للموظف عبر البريد الإلكتروني.');
       const { data: staffRows } = await supabaseClient
@@ -1529,11 +1566,9 @@
       errBox.style.display = 'block';
     }
   });
-
   /* ---------- analytics (client side) ---------- */
   function renderAnalytics(){
     document.getElementById('analyticsTotalMsgs').textContent = allMessages.length;
-
     // متوسط زمن الرد — نحسبه فقط من الصفوف اللي فيها وقت استلام مسجل (received_at) ورد فعلي من البوت
     const responseTimes = [];
     allMessages.forEach(function(m){
@@ -1542,7 +1577,6 @@
         if(diffSec >= 0 && diffSec < 3600){ responseTimes.push(diffSec); }
       }
     });
-
     const avgEl = document.getElementById('analyticsAvgResponse');
     const avgHint = document.getElementById('analyticsAvgResponseHint');
     if(responseTimes.length === 0){
@@ -1559,7 +1593,6 @@
       }
       avgHint.textContent = 'بناءً على ' + responseTimes.length + ' رد آلي.';
     }
-
     // آخر 7 أيام
     const chart = document.getElementById('analyticsBarChart');
     const days = [];
@@ -1575,7 +1608,6 @@
       }).length;
     });
     const maxCount = Math.max.apply(null, counts.concat([1]));
-
     chart.innerHTML = '';
     days.forEach(function(d, i){
       const heightPct = Math.max(4, Math.round((counts[i] / maxCount) * 100));
@@ -1588,7 +1620,6 @@
         '<span class="blabel">' + label + '</span>';
       chart.appendChild(col);
     });
-
     // أكثر الأسئلة تكراراً — تجميع نصوص الرسائل الواردة المتطابقة (بعد تنضيف بسيط)
     const freq = {};
     allMessages.forEach(function(m){
@@ -1598,12 +1629,11 @@
       freq[norm] = (freq[norm] || 0) + 1;
     });
     const sorted = Object.keys(freq).sort(function(a,b){ return freq[b] - freq[a]; }).slice(0, 8);
-
     const qList = document.getElementById('analyticsTopQuestions');
     if(sorted.length === 0){
       qList.innerHTML = '<div class="conv-empty">لا توجد بيانات كافية بعد.</div>';
     } else {
-      qList.innerHTML = '';
+            qList.innerHTML = '';
       sorted.forEach(function(q){
         const div = document.createElement('div');
         div.className = 'qa-item';
@@ -1611,8 +1641,47 @@
         qList.appendChild(div);
       });
     }
+    const catCounts = {};
+    allMessages.forEach(function(m){
+      if(m.category){ catCounts[m.category] = (catCounts[m.category] || 0) + 1; }
+    });
+    const catWrap = document.getElementById('analyticsCategoryBreakdown');
+    const catKeys = Object.keys(catCounts).sort(function(a,b){ return catCounts[b] - catCounts[a]; });
+    if(catKeys.length === 0){
+      catWrap.innerHTML = '<div class="conv-empty">لا توجد بيانات كافية بعد.</div>';
+    } else {
+      catWrap.innerHTML = '';
+      catKeys.forEach(function(key){
+        const info = CATEGORY_LABELS[key] || CATEGORY_LABELS.other;
+        const div = document.createElement('div');
+        div.className = 'qa-item';
+        div.innerHTML = '<span class="qtext">' + info.label + '</span><span class="qcount" style="background:' + info.color + ';">' + catCounts[key] + '</span>';
+        catWrap.appendChild(div);
+      });
+    }
   }
-
+  async function loadStoreAnalytics(){
+    const wrap = document.getElementById('analyticsStoreWrap');
+    const { data: events, error } = await supabaseClient
+      .from('store_order_events')
+      .select('event_type, status')
+      .eq('client_id', myClient.id);
+    if(error || !events || events.length === 0){
+      wrap.innerHTML = '<div class="conv-empty">لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.</div>';
+      return;
+    }
+    const ordersConfirmed = events.filter(function(e){ return e.event_type === 'order_create' && (e.status === 'confirmation_sent' || e.status === 'confirmed'); }).length;
+    const cartsDetected = events.filter(function(e){ return e.event_type === 'abandoned_cart'; }).length;
+    const cartsRecovered = events.filter(function(e){ return e.event_type === 'abandoned_cart' && e.status === 'recovered'; }).length;
+    const recoveryRate = cartsDetected > 0 ? Math.round((cartsRecovered / cartsDetected) * 100) : 0;
+    wrap.innerHTML =
+      '<div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + ordersConfirmed + '</div><div class="helper-text">طلبات تم تأكيدها تلقائياً</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + cartsDetected + '</div><div class="helper-text">سلة متروكة تم رصدها</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + cartsRecovered + '</div><div class="helper-text">سلة تم استردادها</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + recoveryRate + '%</div><div class="helper-text">نسبة استرداد السلال</div></div>' +
+      '</div>';
+  }
   /* ---------- support tickets (client side) ---------- */
   async function loadTickets(){
     if(!myClient){ return; }
@@ -1621,7 +1690,6 @@
       .select('id, subject, status, created_at, updated_at')
       .eq('client_id', myClient.id)
       .order('updated_at', { ascending: false });
-
     if(error){
       document.getElementById('ticketList').innerHTML = '<div class="conv-empty">تعذّر تحميل التذاكر، حدّث الصفحة.</div>';
       return;
@@ -1629,7 +1697,6 @@
     myTickets = data || [];
     renderTicketList();
   }
-
   function renderTicketList(){
     const list = document.getElementById('ticketList');
     if(myTickets.length === 0){
@@ -1652,7 +1719,6 @@
       list.appendChild(div);
     });
   }
-
   async function openTicketThread(ticketId){
     const head = document.getElementById('ticketThreadHead');
     const body = document.getElementById('ticketBody');
@@ -1660,25 +1726,20 @@
     const hint = document.getElementById('ticketSendHint');
     const ticket = myTickets.find(function(t){ return t.id === ticketId; });
     if(!ticket){ return; }
-
     head.style.display = 'flex';
     document.getElementById('ticketThreadSubject').textContent = ticket.subject;
     const statusEl = document.getElementById('ticketThreadStatus');
     statusEl.className = 'status-badge ' + ticket.status;
     statusEl.textContent = ticketStatusLabels[ticket.status];
-
     composerWrap.style.display = 'block';
     hint.style.color = 'var(--muted)';
     hint.textContent = ticket.status === 'closed' ? 'ملاحظة: الرد سيعيد فتح هذي التذكرة تلقائياً.' : '';
-
     body.innerHTML = '<div class="chat-placeholder">جاري التحميل...</div>';
-
     const { data: msgs } = await supabaseClient
       .from('support_ticket_messages')
       .select('sender_type, message, created_at')
       .eq('ticket_id', ticketId)
       .order('created_at', { ascending: true });
-
     body.innerHTML = '';
     (msgs || []).forEach(function(m){
       const b = document.createElement('div');
@@ -1689,20 +1750,16 @@
     });
     body.scrollTop = body.scrollHeight;
   }
-
   document.getElementById('ticketSendBtn').addEventListener('click', async function(){
     const textarea = document.getElementById('ticketReplyText');
     const text = textarea.value.trim();
     const hint = document.getElementById('ticketSendHint');
     if(!text || !activeTicketId){ return; }
-
     const btn = document.getElementById('ticketSendBtn');
     btn.disabled = true;
-
     const { error } = await supabaseClient
       .from('support_ticket_messages')
       .insert({ ticket_id: activeTicketId, sender_type: 'client', message: text });
-
     btn.disabled = false;
     if(error){
       hint.style.color = 'var(--danger)';
@@ -1715,68 +1772,54 @@
     hint.style.color = 'var(--wa-green-dark)';
     hint.textContent = '✓ تم الإرسال';
   });
-
   const newTicketModal = document.getElementById('newTicketModal');
-
   document.getElementById('newTicketBtn').addEventListener('click', function(){
     document.getElementById('newTicketSubject').value = '';
     document.getElementById('newTicketMessage').value = '';
     document.getElementById('newTicketError').style.display = 'none';
     newTicketModal.classList.add('show');
   });
-
   document.getElementById('newTicketCancelBtn').addEventListener('click', function(){
     newTicketModal.classList.remove('show');
   });
-
   newTicketModal.addEventListener('click', function(e){
     if(e.target === newTicketModal){ newTicketModal.classList.remove('show'); }
   });
-
   document.getElementById('newTicketConfirmBtn').addEventListener('click', async function(){
     const subject = document.getElementById('newTicketSubject').value.trim();
     const message = document.getElementById('newTicketMessage').value.trim();
     const errBox = document.getElementById('newTicketError');
     errBox.style.display = 'none';
-
     if(!subject || !message){
       errBox.textContent = 'الرجاء تعبئة الموضوع وتفاصيل المشكلة.';
       errBox.style.display = 'block';
       return;
     }
     if(!myClient){ return; }
-
     const btn = document.getElementById('newTicketConfirmBtn');
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-
     const { data: ticket, error: ticketErr } = await supabaseClient
       .from('support_tickets')
       .insert({ client_id: myClient.id, subject: subject })
       .select('id')
       .single();
-
     if(ticketErr || !ticket){
       errBox.textContent = 'تعذّر إنشاء التذكرة، حاول مرة ثانية.';
       errBox.style.display = 'block';
       btn.disabled = false; btn.textContent = 'إرسال';
       return;
     }
-
     await supabaseClient.from('support_ticket_messages').insert({ ticket_id: ticket.id, sender_type: 'client', message: message });
-
     btn.disabled = false; btn.textContent = 'إرسال';
     newTicketModal.classList.remove('show');
-
     activeTicketId = ticket.id;
     await loadTickets();
     await openTicketThread(ticket.id);
-
     document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
     document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
     document.querySelector('.tab-btn[data-tab="support"]').classList.add('active');
     document.getElementById('panelSupport').classList.add('active');
   });
-
   /* ---------- broadcast campaigns (client side) ---------- */
   async function loadCampaigns(){
     if(!myClient){ return; }
@@ -1785,7 +1828,6 @@
       .select('id, template_name, template_language, status, total_recipients, sent_count, failed_count, created_at')
       .eq('client_id', myClient.id)
       .order('created_at', { ascending: false });
-
     if(error){
       document.getElementById('campaignList').innerHTML = '<div class="conv-empty">تعذّر تحميل الحملات، حدّث الصفحة.</div>';
       return;
@@ -1793,7 +1835,6 @@
     myCampaigns = data || [];
     renderCampaignList();
   }
-
   function renderCampaignList(){
     const list = document.getElementById('campaignList');
     if(myCampaigns.length === 0){
@@ -1816,9 +1857,7 @@
       list.appendChild(div);
     });
   }
-
   const newBroadcastModal = document.getElementById('newBroadcastModal');
-
   document.getElementById('newBroadcastBtn').addEventListener('click', function(){
     document.getElementById('bcTemplateName').value = '';
     document.getElementById('bcTemplateLang').value = 'ar';
@@ -1829,21 +1868,17 @@
     document.getElementById('newBroadcastError').style.display = 'none';
     newBroadcastModal.classList.add('show');
   });
-
   document.getElementById('newBroadcastCancelBtn').addEventListener('click', function(){
     newBroadcastModal.classList.remove('show');
   });
-
   newBroadcastModal.addEventListener('click', function(e){
     if(e.target === newBroadcastModal){ newBroadcastModal.classList.remove('show'); }
   });
-
   document.querySelectorAll('input[name="bcRecipients"]').forEach(function(radio){
     radio.addEventListener('change', function(){
       document.getElementById('bcCustomNumbers').style.display = (this.value === 'custom') ? 'block' : 'none';
     });
   });
-
   document.getElementById('newBroadcastConfirmBtn').addEventListener('click', async function(){
     const templateName = document.getElementById('bcTemplateName').value.trim();
     const templateLang = document.getElementById('bcTemplateLang').value.trim() || 'ar';
@@ -1851,14 +1886,12 @@
     const recipientsMode = document.querySelector('input[name="bcRecipients"]:checked').value;
     const errBox = document.getElementById('newBroadcastError');
     errBox.style.display = 'none';
-
     if(!templateName){
       errBox.textContent = 'الرجاء كتابة اسم القالب المعتمد.';
       errBox.style.display = 'block';
       return;
     }
     if(!myClient){ return; }
-
     let recipients = 'all';
     if(recipientsMode === 'custom'){
       const raw = document.getElementById('bcCustomNumbers').value.trim();
@@ -1869,13 +1902,10 @@
         return;
       }
     }
-
     const btn = document.getElementById('newBroadcastConfirmBtn');
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/send-whatsapp-broadcast', {
         method: 'POST',
@@ -1892,15 +1922,12 @@
         })
       });
       const json = await res.json();
-
       btn.disabled = false; btn.textContent = 'إرسال الحملة';
-
       if(!res.ok){
         errBox.textContent = json.error || 'تعذّر إرسال الحملة.';
         errBox.style.display = 'block';
         return;
       }
-
       newBroadcastModal.classList.remove('show');
       await loadCampaigns();
       alert('تم إرسال الحملة: ' + json.sent + ' نجح، ' + json.failed + ' فشل، من أصل ' + json.total + '.');
@@ -1910,18 +1937,15 @@
       errBox.style.display = 'block';
     }
   });
-
   /* ---------- قوالب الرسائل بالذكاء الاصطناعي ---------- */
   async function loadTemplates(){
     if(!myClient){ return; }
     document.getElementById('newTemplateBtn').style.display = isOwner ? 'inline-block' : 'none';
-
     const { data, error } = await supabaseClient
       .from('whatsapp_message_templates')
       .select('id, name, category, body_text, status, rejected_reason, created_at')
       .eq('client_id', myClient.id)
       .order('created_at', { ascending: false });
-
     if(error){
       document.getElementById('templateList').innerHTML = '<div class="conv-empty">تعذّر تحميل القوالب، حدّث الصفحة.</div>';
       return;
@@ -1929,9 +1953,7 @@
     myTemplates = data || [];
     renderTemplateList();
   }
-
   const templateCategoryLabels = { MARKETING: 'تسويقي', UTILITY: 'تنبيهي' };
-
   function renderTemplateList(){
     const list = document.getElementById('templateList');
     if(myTemplates.length === 0){
@@ -1954,9 +1976,7 @@
       list.appendChild(div);
     });
   }
-
   const newTemplateModal = document.getElementById('newTemplateModal');
-
   document.getElementById('newTemplateBtn').addEventListener('click', function(){
     document.getElementById('tplRequestText').value = '';
     document.getElementById('newTemplateError').style.display = 'none';
@@ -1967,38 +1987,30 @@
     currentDraftTemplateId = null;
     newTemplateModal.classList.add('show');
   });
-
   document.getElementById('newTemplateCancelBtn').addEventListener('click', function(){
     newTemplateModal.classList.remove('show');
   });
-
   newTemplateModal.addEventListener('click', function(e){
     if(e.target === newTemplateModal){ newTemplateModal.classList.remove('show'); }
   });
-
   document.getElementById('tplBackBtn').addEventListener('click', function(){
     document.getElementById('tplStep1').style.display = 'block';
     document.getElementById('tplStep2').style.display = 'none';
   });
-
   document.getElementById('tplGenerateBtn').addEventListener('click', async function(){
     const requestText = document.getElementById('tplRequestText').value.trim();
     const errBox = document.getElementById('newTemplateError');
     errBox.style.display = 'none';
-
     if(!requestText){
       errBox.textContent = 'الرجاء كتابة وصف للرسالة اللي تبيها.';
       errBox.style.display = 'block';
       return;
     }
     if(!myClient){ return; }
-
     const btn = this;
     btn.disabled = true; btn.textContent = 'جاري التوليد...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/generate-whatsapp-template', {
         method: 'POST',
@@ -2009,15 +2021,12 @@
         body: JSON.stringify({ client_id: myClient.id, request_text: requestText })
       });
       const json = await res.json();
-
       btn.disabled = false; btn.textContent = 'توليد بالذكاء الاصطناعي';
-
       if(!res.ok){
         errBox.textContent = json.error || 'تعذّر توليد القالب، حاول صياغة الطلب بشكل مختلف.';
         errBox.style.display = 'block';
         return;
       }
-
       const tpl = json.template;
       currentDraftTemplateId = tpl.id;
       document.getElementById('tplName').value = tpl.name;
@@ -2026,7 +2035,6 @@
       const hasVar = Array.isArray(tpl.variable_examples) && tpl.variable_examples.length > 0;
       document.getElementById('tplVariableExample').value = hasVar ? tpl.variable_examples[0] : '';
       document.getElementById('tplVariableField').style.display = hasVar ? 'block' : 'none';
-
       document.getElementById('tplStep1').style.display = 'none';
       document.getElementById('tplStep2').style.display = 'block';
     } catch(e){
@@ -2035,18 +2043,14 @@
       errBox.style.display = 'block';
     }
   });
-
   document.getElementById('tplSubmitBtn').addEventListener('click', async function(){
     const errBox = document.getElementById('newTemplateError');
     errBox.style.display = 'none';
-
     if(!currentDraftTemplateId || !myClient){ return; }
-
     const name = document.getElementById('tplName').value.trim();
     const category = document.getElementById('tplCategory').value;
     const bodyText = document.getElementById('tplBodyText').value.trim();
     const variableExample = document.getElementById('tplVariableExample').value.trim();
-
     if(!name || !bodyText){
       errBox.textContent = 'الرجاء تعبئة اسم القالب ونص الرسالة.';
       errBox.style.display = 'block';
@@ -2057,13 +2061,10 @@
       errBox.style.display = 'block';
       return;
     }
-
     const btn = this;
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
-
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
-
     try{
       const res = await fetch(FUNCTIONS_BASE + '/submit-whatsapp-template', {
         method: 'POST',
@@ -2082,15 +2083,12 @@
         })
       });
       const json = await res.json();
-
       btn.disabled = false; btn.textContent = 'إرسال للمراجعة في واتساب';
-
       if(!res.ok){
         errBox.textContent = json.error || 'تعذّر إرسال القالب لواتساب.';
         errBox.style.display = 'block';
         return;
       }
-
       newTemplateModal.classList.remove('show');
       await loadTemplates();
       alert('تم إرسال القالب لمراجعة واتساب. راح تشوف حالته تتحدث تلقائياً هنا بمجرد ما ميتا يراجعه.');
@@ -2100,43 +2098,36 @@
       errBox.style.display = 'block';
     }
   });
-
   /* ---------- رصيد الرسائل الإضافي (Top-up) ---------- */
   async function loadTopupInfo(){
     const nonOwnerHint = document.getElementById('topupHelperNonOwner');
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(!myClient){ return; }
-
     const balance = myClient.extra_message_credits || 0;
     document.getElementById('topupCurrentBalance').textContent = 'رصيدك الإضافي الحالي: ' + balance + ' رسالة.';
-
     const { data: pending } = await supabaseClient
       .from('message_credit_topup_requests')
       .select('credits, price_sar, status, requested_at')
       .eq('client_id', myClient.id)
       .eq('status', 'pending')
       .order('requested_at', { ascending: false });
-
     const pendingBox = document.getElementById('topupPendingNotice');
     if(pending && pending.length > 0){
       pendingBox.innerHTML = pending.map(function(r){
-        return '<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + r.price_sar + ' ريال — بانتظار تأكيد الدفع من فريق نبضة.</div>';
+        return '<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + r.price_sar + ' ريال — بانتظار تأكيد الدفع.</div>';
       }).join('');
     } else {
       pendingBox.innerHTML = '';
     }
-
     if(!isOwner){
       document.getElementById('topupPackages').innerHTML = '';
       return;
     }
-
     const { data: packages } = await supabaseClient
       .from('message_topup_packages')
       .select('id, credits, price_sar')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
-
     const box = document.getElementById('topupPackages');
     if(!packages || packages.length === 0){
       box.innerHTML = '';
@@ -2148,37 +2139,16 @@
       row.className = 'topup-row';
       row.innerHTML =
         '<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
-        '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">💳 اطلب هذا الرصيد</button>';
+        '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">💳 ادفع وفعّل الرصيد</button>';
       box.appendChild(row);
     });
-
     document.querySelectorAll('.topup-request-btn').forEach(function(btn){
-      btn.addEventListener('click', async function(){
+      btn.addEventListener('click', function(){
         if(!myClient || !isOwner){ return; }
-        this.disabled = true;
-        const originalText = this.textContent;
-        this.textContent = 'جاري الإرسال...';
-
-        const { error } = await supabaseClient.from('message_credit_topup_requests').insert({
-          client_id: myClient.id,
-          package_id: this.dataset.id,
-          credits: parseInt(this.dataset.credits, 10),
-          price_sar: parseFloat(this.dataset.price)
-        });
-
-        if(error){
-          this.disabled = false;
-          this.textContent = originalText;
-          alert('تعذّر إرسال الطلب، حاول مرة ثانية.');
-          return;
-        }
-
-        alert('تم إرسال طلبك. فريق نبضة بيتواصل معك لتأكيد الدفع خلال ساعات.');
-        await loadTopupInfo();
+        openTapCardModal('topup', { package_id: this.dataset.id }, this.dataset.price, 'شحن رصيد: ' + this.dataset.credits + ' رسالة');
       });
     });
   }
 </script>
-
 </body>
 </html>
