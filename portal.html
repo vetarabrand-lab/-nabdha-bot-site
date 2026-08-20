@@ -853,7 +853,7 @@
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
     let planLabel = '—';
     if(clientRow.plan_id){
-      const { data: plan } = await supabaseClient.from('subscription_plans').select('name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar').eq('id', clientRow.plan_id).single();
+      const { data: plan } = await supabaseClient.from('subscription_plans').select('id, name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar').eq('id', clientRow.plan_id).single();
       if(plan){ planLabel = plan.name_ar; myPlan = plan; }
     }
     document.getElementById('statPlan').textContent = planLabel;
