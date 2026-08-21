@@ -1391,9 +1391,14 @@
     const nearLimit = [];
     allClients.forEach(function(c){
       if(c.subscription_status !== 'active' && c.subscription_status !== 'trial'){ return; }
-      const limit = planLimitMap[c.plan_id];
-      if(!limit){ return; }
+      // خطط الدفع المسبق (ميزة 7) تخزّن حدها بـ monthly_message_limit=0 بقصد (رصيدها الحقيقي
+      // بعمود extra_message_credits) — لازم ما نتجاهلها هنا وإلا ما تظهر أبداً بتنبيه "قارب على الحد"
+      const plan = plansList.find(function(p){ return p.id === c.plan_id; });
+      if(!plan){ return; }
+      const limit = plan.monthly_message_limit || 0;
+      if(!plan.is_prepaid && !limit){ return; }
       const totalAllowance = limit + (c.extra_message_credits || 0);
+      if(totalAllowance <= 0){ return; }
       const used = countByClient[c.id] || 0;
       const pct = Math.round((used / totalAllowance) * 100);
       if(pct >= 80){

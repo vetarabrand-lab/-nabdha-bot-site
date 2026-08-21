@@ -98,11 +98,6 @@
 
   .honeypot{position:absolute; left:-9999px; opacity:0; height:0;}
 
-  .consent-block{ margin:22px 0 6px; display:flex; flex-direction:column; gap:13px; }
-  .consent-row{ display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--muted); cursor:pointer; line-height:1.7; }
-  .consent-row input{ margin-top:3px; flex-shrink:0; width:17px; height:17px; accent-color:var(--wa-green); cursor:pointer; }
-  .consent-row a{ color:var(--wa-teal-dark); font-weight:700; text-decoration:underline; }
-
   .submit-btn{
     width:100%; padding:16px; border:none; border-radius:100px; background:var(--wa-green);
     color:#04210F; font-weight:800; font-size:16px; cursor:pointer; margin-top:8px;
@@ -231,17 +226,6 @@
         <input type="text" id="websiteHp" tabindex="-1" autocomplete="off">
       </div>
 
-      <div class="consent-block">
-        <label class="consent-row">
-          <input type="checkbox" id="agreeTerms" required>
-          <span data-i18n="form.agreeTerms">أوافق على <a href="terms.html" target="_blank" rel="noopener">الشروط والأحكام</a> وسياسة الخصوصية *</span>
-        </label>
-        <label class="consent-row">
-          <input type="checkbox" id="marketingConsent">
-          <span data-i18n="form.marketingConsent">أحب أستلم عروض وتحديثات بوت نبضة عبر الإيميل (اختياري)</span>
-        </label>
-      </div>
-
       <button type="submit" class="submit-btn" id="submitBtn" data-i18n="form.submit">إرسال طلب التسجيل</button>
       <p class="form-note" data-i18n="form.note">بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.</p>
     </form>
@@ -300,12 +284,9 @@
       "form.welcomePh": "أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟",
       "form.s4": "اختر باقتك",
       "form.loadingPlans": "جاري تحميل الباقات...",
-      "form.agreeTerms": "أوافق على <a href=\"terms.html\" target=\"_blank\" rel=\"noopener\">الشروط والأحكام</a> وسياسة الخصوصية *",
-      "form.marketingConsent": "أحب أستلم عروض وتحديثات بوت نبضة عبر الإيميل (اختياري)",
       "form.submit": "إرسال طلب التسجيل",
       "form.note": "بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.",
       "form.errorRequired": "الرجاء تعبئة كل الحقول المطلوبة (المعلّمة بـ *).",
-      "form.errorTerms": "الرجاء الموافقة على الشروط والأحكام للمتابعة.",
       "form.errorSubmit": "حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.",
       "form.submitting": "جاري الإرسال...",
       "form.plansError": "تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.",
@@ -348,12 +329,9 @@
       "form.welcomePh": "Welcome to Juman Store, how can I help you?",
       "form.s4": "Choose Your Plan",
       "form.loadingPlans": "Loading plans...",
-      "form.agreeTerms": "I agree to the <a href=\"terms.html\" target=\"_blank\" rel=\"noopener\">Terms & Conditions</a> and Privacy Policy *",
-      "form.marketingConsent": "I'd like to receive Nabda Bot offers and updates via email (optional)",
       "form.submit": "Submit Sign-up Request",
       "form.note": "By submitting, our team will reach out to complete setup and payment, no upfront commitment.",
       "form.errorRequired": "Please fill in all required fields (marked with *).",
-      "form.errorTerms": "Please agree to the Terms & Conditions to continue.",
       "form.errorSubmit": "Something went wrong while submitting your request. Please try again or contact us directly.",
       "form.submitting": "Submitting...",
       "form.plansError": "Could not load plans. Refresh the page or contact us directly.",
@@ -477,17 +455,9 @@
     const systemPrompt = document.getElementById('systemPrompt').value.trim();
     const welcomeMessage = document.getElementById('welcomeMessage').value.trim() || null;
     const planId = selectedPlanIdInput.value || null;
-    const agreeTerms = document.getElementById('agreeTerms').checked;
-    const marketingConsent = document.getElementById('marketingConsent').checked;
 
     if(!businessNameAr || !ownerEmail || !ownerPhone || !systemPrompt){
       errorAlert.textContent = t['form.errorRequired'];
-      errorAlert.style.display = 'block';
-      return;
-    }
-
-    if(!agreeTerms){
-      errorAlert.textContent = t['form.errorTerms'];
       errorAlert.style.display = 'block';
       return;
     }
@@ -522,16 +492,6 @@
       errorAlert.style.display = 'block';
       console.error(error);
       return;
-    }
-
-    // لو العميل وافق على استلام العروض التسويقية، نسجّله في قائمة النشرة البريدية
-    // (طلب منفصل واختياري، ما يوقف نجاح التسجيل حتى لو فشل)
-    if(marketingConsent){
-      fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/subscribe-newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: ownerEmail, source: 'trial_signup' })
-      }).catch(function(){});
     }
 
     form.style.display = 'none';
