@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>لوحة نشاطي | بوت نبضة</title>
 <meta name="robots" content="noindex, nofollow">
+<!-- PWA: يسمح للتاجر يثبّت البوابة كأيقونة تطبيق على شاشة جواله (آيفون وأندرويد) -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#075E54">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="بوت نبضة">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -23,6 +31,22 @@
   button{font-family:inherit;}
   .container{max-width:1180px; margin:0 auto; padding:0 24px;}
   header{background:rgba(246,250,248,.9); backdrop-filter:blur(10px); border-bottom:1px solid var(--border); position:sticky; top:0; z-index:50;}
+  /* بانر تثبيت PWA */
+  .pwa-install-banner{
+    position:fixed; bottom:16px; left:16px; right:16px; z-index:300; max-width:420px; margin:0 auto;
+    background:var(--card); border:1.5px solid var(--border); border-radius:16px; box-shadow:0 16px 36px -14px rgba(7,94,84,.28);
+    padding:14px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  }
+  .pwa-install-text{display:flex; flex-direction:column; gap:2px; font-size:12.5px;}
+  .pwa-install-text b{font-size:13.5px; color:var(--ink);}
+  .pwa-install-text span{color:var(--muted);}
+  .pwa-install-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+  .pwa-install-btn{background:var(--wa-green); color:#04210F; border:none; border-radius:100px; padding:9px 18px; font-weight:800; font-size:13px; cursor:pointer; white-space:nowrap;}
+  .pwa-install-close{background:none; border:none; color:var(--muted); font-size:14px; cursor:pointer; padding:4px;}
+  @media (max-width:480px){
+    .pwa-install-banner{flex-direction:column; align-items:stretch; text-align:center;}
+    .pwa-install-actions{justify-content:center;}
+  }
   nav{display:flex; align-items:center; justify-content:space-between; padding:14px 24px; max-width:1180px; margin:0 auto;}
   .logo{display:flex; align-items:center; gap:10px; font-weight:900; font-size:19px;}
   .logo-badge{width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); display:flex; align-items:center; justify-content:center;}
@@ -112,6 +136,24 @@
   .settings-card .field textarea{min-height:110px; resize:vertical;}
   .save-status{font-size:13px; color:var(--wa-green-dark); margin-top:10px; opacity:0; transition:opacity .3s ease;}
   .save-status.show{opacity:1;}
+  /* قوالب البوت الجاهزة */
+  .template-chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .template-chip{background:#fff; border:1.5px solid var(--border); border-radius:100px; padding:8px 16px; font-weight:700; font-size:13px; cursor:pointer; color:var(--ink); font-family:inherit;}
+  .template-chip:hover{border-color:var(--wa-teal); background:#FBFDFC;}
+  /* شريط تقدّم الإعداد */
+  .setup-progress-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 20px; margin-bottom:16px;}
+  .setup-progress-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+  .setup-progress-title{font-weight:800; font-size:14.5px; color:var(--ink);}
+  .setup-progress-track{background:var(--bg); border-radius:100px; height:8px; overflow:hidden; margin-bottom:12px;}
+  .setup-progress-fill{background:linear-gradient(90deg, var(--wa-teal-dark), var(--wa-green)); height:100%; border-radius:100px; transition:width .4s ease;}
+  .setup-progress-list{display:flex; flex-wrap:wrap; gap:8px;}
+  .setup-step{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; padding:6px 12px; border-radius:100px; border:1.5px solid var(--border); color:var(--muted); background:#fff;}
+  .setup-step:not(.done){cursor:pointer;}
+  .setup-step.done{border-color:rgba(37,211,102,.4); background:rgba(37,211,102,.1); color:var(--wa-green-dark); cursor:default;}
+  .setup-step .dot{width:14px; height:14px; border-radius:50%; border:1.5px solid var(--border); display:inline-flex; align-items:center; justify-content:center; font-size:9px; flex-shrink:0; color:#04210F;}
+  .setup-step.done .dot{background:var(--wa-green); border-color:var(--wa-green);}
+  .setup-complete-banner{background:rgba(37,211,102,.1); border:1px solid rgba(37,211,102,.35); border-radius:16px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-weight:700; color:var(--wa-green-dark); font-size:13.5px;}
+  .setup-complete-banner button{background:none; border:none; color:var(--wa-green-dark); font-weight:800; cursor:pointer; font-size:14px; flex-shrink:0;}
   /* team */
   .staff-item{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:#F6FAF8; border-radius:12px; margin-bottom:10px;}
   .staff-item .sname{font-weight:800; font-size:13.5px;}
@@ -214,6 +256,17 @@
     </div>
   </nav>
 </header>
+<!-- PWA: بانر تثبيت البوابة كتطبيق على شاشة الجوال -->
+<div class="pwa-install-banner" id="pwaInstallBanner" style="display:none;">
+  <div class="pwa-install-text">
+    <b>ثبّت بوابة نبضة على جوالك 📲</b>
+    <span id="pwaInstallSub">أيقونة سريعة على شاشتك الرئيسية، بدون متصفح</span>
+  </div>
+  <div class="pwa-install-actions">
+    <button type="button" class="pwa-install-btn" id="pwaInstallBtn" style="display:none;">تثبيت</button>
+    <button type="button" class="pwa-install-close" id="pwaInstallClose" aria-label="إغلاق">✕</button>
+  </div>
+</div>
 <!-- LOGIN -->
 <div class="login-wrap" id="loginScreen">
   <div class="login-card">
@@ -282,6 +335,7 @@
     </div>
     <div class="cost-note" id="usageWarningBanner" style="display:none;"></div>
     <div class="cost-note" id="subscriptionBanner" style="display:none;"></div>
+    <div class="setup-progress-card" id="setupProgressCard" style="display:none;"></div>
     <div class="tabs">
       <button class="tab-btn active" data-tab="inbox">المحادثات</button>
       <button class="tab-btn" data-tab="analytics">التحليلات</button>
@@ -420,6 +474,12 @@
         <div class="field">
           <label>اسم النشاط</label>
           <input type="text" id="settingBizName" disabled>
+        </div>
+        <div class="field" id="templatePickerField" style="display:none;">
+          <label>⚡ قوالب بوت جاهزة حسب نوع نشاطك</label>
+          <div class="helper-text" style="margin:0 0 10px;">اختر نوع نشاطك وتتعبى تعليمات البوت ورسالة الترحيب تلقائياً بقالب جاهز — راجعه وعدّل عليه بعدين قبل الحفظ.</div>
+          <div class="template-chips" id="templateChips"></div>
+          <div class="helper-text" id="templateAppliedNote" style="display:none; color:var(--wa-green-dark); font-weight:700; margin-top:8px;">✓ تم تعبئة القالب — راجع النص وعدّل التفاصيل بين الأقواس [ ]، ثم اضغط "حفظ التعديلات" تحت.</div>
         </div>
         <div class="field">
           <label>تعليمات البوت (system prompt)</label>
@@ -665,6 +725,150 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
+  /* ---------- قوالب بوت جاهزة حسب نوع النشاط ---------- */
+  // تعبئة سريعة لخانة "تعليمات البوت" و"رسالة الترحيب" — بدل ما التاجر يواجه خانة فاضية ويعلّق،
+  // يختار نوع نشاطه فتتعبى القوالب تلقائياً، ويعدّل بعدين على التفاصيل بين الأقواس [ ].
+  var BOT_TEMPLATES = {
+    perfume: {
+      emoji: '🌸', label: 'متجر عطور',
+      prompt: 'أنت مساعد ذكي لمتجر عطور اسمه [اسم المتجر]. أسلوبك دافئ وراقي يعكس فخامة العطور. لما يسأل العميل عن عطر معيّن، اسأله عن نوع الرائحة اللي يفضلها (شرقية، فرنسية، صيفية، شتوية) لتساعده يختار. جاوب بثقة عن مكونات العطر وثباته إذا كانت المعلومة متوفرة عندك، وإذا ما كانت متوفرة وضّح للعميل إنك بتتأكد وترد عليه. وضّح سياسة الإرجاع: [اكتب هنا مدة وشروط الإرجاع الفعلية عندك]. اذكر طرق الدفع المتاحة: [اكتب طرق الدفع عندك]. لمعرفة حالة الشحن أو التوصيل استخدم بيانات الطلب المتوفرة لك. إذا العميل يبي يتكلم مع شخص حقيقي أو عنده شكوى، حوّل المحادثة فوراً لفريق الدعم.',
+      welcome: 'أهلاً بك في [اسم المتجر] 🌸 وش تحب تعرف عن عطورنا اليوم؟'
+    },
+    fashion: {
+      emoji: '👗', label: 'أزياء وملابس',
+      prompt: 'أنت مساعد ذكي لمتجر أزياء وملابس اسمه [اسم المتجر]. أسلوبك ودود وعصري. ساعد العميل يختار المقاس المناسب باسأله عن طوله ووزنه أو مقاسه المعتاد إذا احتاج، واعرض له جدول المقاسات إذا كان متوفر عندك. جاوب عن الألوان والمقاسات المتوفرة إذا كانت المعلومة عندك. وضّح سياسة الاستبدال والإرجاع: [اكتب هنا مدة وشروط الاستبدال/الإرجاع عندك]. اذكر مدة التوصيل المتوقعة: [اكتب مدة التوصيل]. إذا العميل يبي يتأكد من حالة طلبه استخدم بيانات الطلب المتوفرة لك. حوّل أي شكوى أو طلب خاص لفريق الدعم البشري.',
+      welcome: 'هلا فيك في [اسم المتجر] 👗 تحب أساعدك تلقى القطعة المناسبة؟'
+    },
+    beauty: {
+      emoji: '💄', label: 'مستحضرات تجميل',
+      prompt: 'أنت مساعد ذكي لمتجر مستحضرات تجميل وعناية بالبشرة اسمه [اسم المتجر]. أسلوبك ودود ومطمئن، واحرص إنك ما تعطي أي نصيحة طبية أو تشخيص لحالة جلدية — وجّه أي سؤال طبي لاستشارة مختص. جاوب عن مكونات المنتج ونوع البشرة المناسبة له إذا كانت المعلومة متوفرة عندك. وضّح سياسة الإرجاع: [اكتب هنا شروط الإرجاع عندك، خصوصاً للمنتجات المفتوحة]. اذكر طرق الدفع والتوصيل المتاحة: [التفاصيل]. حوّل أي استفسار طبي أو شكوى لفريق الدعم البشري فوراً.',
+      welcome: 'أهلاً بك في [اسم المتجر] 💄 كيف أقدر أساعدك تعتني ببشرتك اليوم؟'
+    },
+    electronics: {
+      emoji: '📱', label: 'إلكترونيات وجوالات',
+      prompt: 'أنت مساعد ذكي لمتجر إلكترونيات وجوالات اسمه [اسم المتجر]. أسلوبك واضح ومباشر ومتخصص. جاوب عن المواصفات التقنية للمنتجات إذا كانت متوفرة عندك (المعالج، الذاكرة، البطارية، إلخ)، ووضّح مدة الضمان: [اكتب هنا مدة الضمان]. وضّح سياسة الإرجاع والاستبدال: [اكتب هنا الشروط]. اذكر طرق الدفع المتاحة وخيارات التقسيط إذا وجدت: [التفاصيل]. إذا كان سؤال العميل تقني معقد وما عندك معلومة أكيدة عنه، وضّح إنك بتتأكد من الفريق المختص وترجع له. حوّل أي مشكلة بالمنتج بعد الاستلام لفريق الدعم الفني.',
+      welcome: 'هلا بك في [اسم المتجر] 📱 أي جهاز أو منتج تدور عليه اليوم؟'
+    },
+    food: {
+      emoji: '☕', label: 'مطاعم وكافيهات',
+      prompt: 'أنت مساعد ذكي لمطعم أو كافيه اسمه [اسم المتجر]. أسلوبك حيوي ومضياف. جاوب عن المكونات والحساسيات الغذائية بدقة إذا كانت المعلومة متوفرة عندك، وإذا ما كنت متأكد وضّح للعميل إنك بتتأكد قبل ما يطلب — خصوصاً لو ذكر حساسية أو نظام غذائي معيّن. اذكر أوقات الدوام: [اكتب هنا أوقات الدوام]. وضّح مناطق التوصيل ومدته المتوقعة: [التفاصيل]. اذكر طرق الدفع المتاحة: [التفاصيل]. إذا صار عنده شكوى عن طلب أو جودة، حوّل المحادثة فوراً لفريق الدعم البشري.',
+      welcome: 'أهلاً بك في [اسم المتجر] ☕ وش يشهيك تطلب اليوم؟'
+    },
+    jewelry: {
+      emoji: '💍', label: 'إكسسوارات ومجوهرات',
+      prompt: 'أنت مساعد ذكي لمتجر إكسسوارات ومجوهرات اسمه [اسم المتجر]. أسلوبك أنيق وراقي. جاوب عن نوع المعدن والخامة المستخدمة في القطعة إذا كانت المعلومة متوفرة عندك (فضة، ستانلس ستيل، مطلي ذهب، إلخ)، ووضّح للعميل إذا كانت القطعة مقاومة للماء أو تحتاج عناية خاصة. وضّح سياسة الإرجاع والضمان: [اكتب هنا الشروط]. اذكر مدة التوصيل وخيارات التغليف الخاص للهدايا إذا متوفرة: [التفاصيل]. حوّل أي شكوى عن جودة القطعة لفريق الدعم البشري.',
+      welcome: 'هلا فيك في [اسم المتجر] 💍 تحب تشوف تشكيلتنا الجديدة؟'
+    },
+    home: {
+      emoji: '🛋️', label: 'أثاث ومنزل',
+      prompt: 'أنت مساعد ذكي لمتجر أثاث ومستلزمات منزلية اسمه [اسم المتجر]. أسلوبك عملي ومريح. جاوب عن أبعاد ومقاسات القطع والخامات المستخدمة إذا كانت المعلومة متوفرة عندك، ووضّح للعميل تفاصيل التركيب إذا كانت القطعة تحتاج تركيب ذاتي أو خدمة تركيب من طرفكم. اذكر مدة التوصيل المتوقعة (خصوصاً للقطع الكبيرة): [اكتب هنا التفاصيل]. وضّح سياسة الإرجاع والاستبدال: [اكتب هنا الشروط]. حوّل أي استفسار عن التوصيل لمناطق بعيدة أو شكوى لفريق الدعم البشري.',
+      welcome: 'أهلاً بك في [اسم المتجر] 🛋️ تحب تجهز ركن جديد في بيتك؟'
+    },
+    general: {
+      emoji: '🏬', label: 'نشاط عام',
+      prompt: 'أنت مساعد ذكي لنشاط [اسم المتجر]. أسلوبك ودود واحترافي، ويعكس هوية نشاطك. جاوب عن أسئلة العملاء المتكررة بخصوص المنتجات أو الخدمات، مواعيد التوصيل، وطرق الدفع المتاحة: [اكتب هنا التفاصيل]. وضّح سياسة الإرجاع أو الاستبدال إذا وجدت: [اكتب هنا الشروط]. لو ما كنت متأكد من إجابة سؤال معيّن، وضّح للعميل إنك بتتأكد وترجع له بدل ما تخمّن. حوّل أي محادثة تحتاج تدخل بشري أو فيها شكوى مباشرة لفريق الدعم.',
+      welcome: 'أهلاً بك في [اسم المتجر] 👋 كيف أقدر أساعدك اليوم؟'
+    }
+  };
+  function renderTemplateChips(){
+    var wrap = document.getElementById('templateChips');
+    if(!wrap) return;
+    var html = '';
+    Object.keys(BOT_TEMPLATES).forEach(function(key){
+      var t = BOT_TEMPLATES[key];
+      html += '<button type="button" class="template-chip" data-key="' + key + '">' + t.emoji + ' ' + escapeHtml(t.label) + '</button>';
+    });
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.template-chip').forEach(function(btn){
+      btn.addEventListener('click', function(){ applyBotTemplate(btn.getAttribute('data-key')); });
+    });
+  }
+  function applyBotTemplate(key){
+    var t = BOT_TEMPLATES[key];
+    if(!t) return;
+    var promptEl = document.getElementById('settingPrompt');
+    var welcomeEl = document.getElementById('settingWelcome');
+    if(!promptEl || promptEl.disabled) return;
+    var hasExisting = (promptEl.value || '').trim().length > 0;
+    if(hasExisting){
+      var ok = window.confirm('بيستبدل هذا القالب تعليمات البوت الحالية بالكامل. متأكد تبي تكمل؟');
+      if(!ok) return;
+    }
+    var bizNameEl = document.getElementById('settingBizName');
+    var bizName = (bizNameEl && bizNameEl.value ? bizNameEl.value : 'نشاطك').trim() || 'نشاطك';
+    promptEl.value = t.prompt.split('[اسم المتجر]').join(bizName);
+    welcomeEl.value = t.welcome.split('[اسم المتجر]').join(bizName);
+    var note = document.getElementById('templateAppliedNote');
+    if(note) note.style.display = 'block';
+    promptEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    promptEl.focus();
+  }
+  /* ---------- شريط تقدّم الإعداد ---------- */
+  // التاجر اللي ما يكمل إعداد بوته ما يشوف قيمة حقيقية، واللي ما يشوف قيمة ما يجدد اشتراكه —
+  // هذا الشريط يوريه بالضبط وين وصل، وينقله بضغطة وحدة للخطوة الناقصة.
+  var SETUP_STEPS = [
+    { key: 'wa', label: 'ربط رقم واتساب', tab: null },
+    { key: 'prompt', label: 'تخصيص تعليمات البوت', tab: 'settings', focusId: 'settingPrompt' },
+    { key: 'welcome', label: 'رسالة الترحيب', tab: 'settings', focusId: 'settingWelcome' },
+    { key: 'store', label: 'ربط متجرك (اختياري)', tab: 'settings' },
+    { key: 'convo', label: 'أول محادثة حقيقية', tab: 'inbox' }
+  ];
+  function renderSetupProgress(clientRow, convCount){
+    var card = document.getElementById('setupProgressCard');
+    if(!card) return;
+    if(!isOwner){ card.style.display = 'none'; return; } // الإعداد مسؤولية صاحب الحساب فقط
+    var done = {
+      wa: !!clientRow.whatsapp_phone_number_id,
+      prompt: (clientRow.system_prompt || '').trim().length > 15,
+      welcome: (clientRow.welcome_message || '').trim().length > 3,
+      store: !!(clientRow.zid_integration_enabled || clientRow.zid_store_id || clientRow.salla_store_id),
+      convo: convCount > 0
+    };
+    var doneCount = Object.keys(done).filter(function(k){ return done[k]; }).length;
+    var dismissKey = 'nabda_setup_dismissed_' + clientRow.id;
+
+    if(doneCount >= SETUP_STEPS.length){
+      if(localStorage.getItem(dismissKey) === '1'){ card.style.display = 'none'; return; }
+      card.style.display = 'block';
+      card.innerHTML = '<div class="setup-complete-banner">🎉 اكتمل إعداد بوتك بالكامل! جاهز يشتغل بكامل طاقته.<button type="button" id="setupDismissBtn">✕</button></div>';
+      var dismissBtn = document.getElementById('setupDismissBtn');
+      if(dismissBtn){
+        dismissBtn.addEventListener('click', function(){
+          localStorage.setItem(dismissKey, '1');
+          card.style.display = 'none';
+        });
+      }
+      return;
+    }
+
+    card.style.display = 'block';
+    var pct = Math.round((doneCount / SETUP_STEPS.length) * 100);
+    card.innerHTML =
+      '<div class="setup-progress-head"><div class="setup-progress-title">بوتك جاهز ' + doneCount + '/' + SETUP_STEPS.length + '</div></div>' +
+      '<div class="setup-progress-track"><div class="setup-progress-fill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="setup-progress-list" id="setupProgressList"></div>';
+
+    var list = document.getElementById('setupProgressList');
+    SETUP_STEPS.forEach(function(step){
+      var isDone = done[step.key];
+      var el = document.createElement('span');
+      el.className = 'setup-step' + (isDone ? ' done' : '');
+      el.innerHTML = '<span class="dot">' + (isDone ? '✓' : '') + '</span>' + escapeHtml(step.label);
+      if(!isDone && step.tab){
+        el.addEventListener('click', function(){
+          var tabBtn = document.querySelector('.tab-btn[data-tab="' + step.tab + '"]');
+          if(tabBtn) tabBtn.click();
+          if(step.focusId){
+            setTimeout(function(){
+              var target = document.getElementById(step.focusId);
+              if(target){ target.scrollIntoView({ behavior: 'smooth', block: 'center' }); target.focus(); }
+            }, 50);
+          }
+        });
+      }
+      list.appendChild(el);
+    });
+  }
   function showScreen(name){
     loginScreen.style.display = 'none';
     forgotScreen.style.display = 'none';
@@ -808,6 +1012,62 @@
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
     });
   });
+  renderTemplateChips();
+  /* ---------- تثبيت البوابة كتطبيق (PWA) ---------- */
+  (function setupPwaInstall(){
+    var DISMISS_KEY = 'nabda_pwa_banner_dismissed';
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    }
+    if(localStorage.getItem(DISMISS_KEY) === '1') return;
+
+    var banner = document.getElementById('pwaInstallBanner');
+    var installBtn = document.getElementById('pwaInstallBtn');
+    var closeBtn = document.getElementById('pwaInstallClose');
+    var subText = document.getElementById('pwaInstallSub');
+    if(!banner) return;
+
+    function dismiss(){
+      localStorage.setItem(DISMISS_KEY, '1');
+      banner.style.display = 'none';
+    }
+    if(closeBtn) closeBtn.addEventListener('click', dismiss);
+
+    // إذا كانت مثبّتة أصلاً (تفتح كـ standalone)، ما نعرض شي
+    var alreadyInstalled = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    if(alreadyInstalled || window.navigator.standalone === true) return;
+
+    var ua = window.navigator.userAgent || '';
+    var isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    var isSafari = isIOS && /Safari/.test(ua) && !/CriOS|FxiOS/.test(ua);
+
+    if(isSafari){
+      // آيفون: ما فيه استدعاء برمجي للتثبيت — نوريه التعليمات فقط
+      if(subText) subText.textContent = 'اضغط زر المشاركة 🔗 بالأسفل، ثم اختر "إضافة إلى الشاشة الرئيسية"';
+      banner.style.display = 'flex';
+      return;
+    }
+
+    // أندرويد/كروم: نستخدم حدث beforeinstallprompt للتثبيت الفعلي بضغطة وحدة
+    var deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e){
+      e.preventDefault();
+      deferredPrompt = e;
+      if(installBtn) installBtn.style.display = 'inline-block';
+      banner.style.display = 'flex';
+    });
+    if(installBtn){
+      installBtn.addEventListener('click', function(){
+        if(!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.finally(function(){
+          deferredPrompt = null;
+          banner.style.display = 'none';
+        });
+      });
+    }
+    window.addEventListener('appinstalled', dismiss);
+  })();
   async function loadEverything(){
     const { data: { user } } = await supabaseClient.auth.getUser();
     myUserId = user.id;
@@ -849,6 +1109,7 @@
     document.getElementById('settingPrompt').disabled = !isOwner;
     document.getElementById('settingWelcome').disabled = !isOwner;
     document.getElementById('saveSettingsBtn').style.display = isOwner ? 'inline-block' : 'none';
+    document.getElementById('templatePickerField').style.display = isOwner ? 'block' : 'none';
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
     let planLabel = '—';
@@ -909,6 +1170,7 @@
       }
     });
     document.getElementById('statConvs').textContent = Object.keys(conversations).length;
+    renderSetupProgress(clientRow, Object.keys(conversations).length);
     renderUsageStat(monthCount);
     renderConvList();
     loadTickets();
