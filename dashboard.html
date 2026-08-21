@@ -556,6 +556,27 @@
       </div>
       <div class="addon-grid" id="addonGrid"></div>
 
+      <h2 style="font-size:16px; font-weight:900; margin-bottom:4px;">طلبات التفعيل الواردة <span class="addon-count" id="pendingRequestsCount" style="margin-right:6px;"></span></h2>
+      <p class="addon-sub">طلبات من الصفحة العامة أو من لوحة التاجر — راجعها وتواصل مع صاحب الطلب لتأكيد الدفع.</p>
+      <div class="table-wrap" style="margin-bottom:30px;">
+        <table>
+          <thead>
+            <tr>
+              <th>الإضافة</th>
+              <th>الاسم</th>
+              <th>الجوال</th>
+              <th>المصدر</th>
+              <th>التاريخ</th>
+              <th>الحالة</th>
+              <th>إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="addonRequestsTbody">
+            <tr class="empty-row"><td colspan="7">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <h2 style="font-size:16px; font-weight:900; margin-bottom:4px;">تفعيل الإضافات لكل تاجر</h2>
       <p class="addon-sub">فعّل الإضافة بعد استلام الرسوم. الإيقاف يمنع الإضافة من العمل فوراً بدون حذف بياناتها.</p>
       <div class="table-wrap">
@@ -656,6 +677,8 @@
   let allClientAddons = [];
   let addonCreditsMap = {};
   let addonModalClient = null;
+  let allAddonRequests = [];
+  const addonRequestStatusLabels = { pending: 'قيد المراجعة', contacted: 'تم التواصل', activated: 'مُفعّلة', declined: 'مرفوض' };
   // بيانات النشاط/البريد/الرسائل تجي أصلاً من نماذج عامة (تسجيل مشتركين جدد، رسائل واتساب)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في لوحة الإدارة
   function escapeHtml(str){
@@ -1415,12 +1438,15 @@
     const grid = document.getElementById('addonGrid');
     const tbody = document.getElementById('addonClientsTbody');
 
-    const [{ data: addons }, { data: activations }] = await Promise.all([
+    const [{ data: addons }, { data: activations }, { data: requests }] = await Promise.all([
       supabaseClient.from('addons').select('*').eq('is_active', true).order('sort_order'),
-      supabaseClient.from('client_addons').select('*')
+      supabaseClient.from('client_addons').select('*'),
+      supabaseClient.from('addon_requests').select('*').order('created_at', { ascending: false }).limit(200)
     ]);
     allAddons = addons || [];
     allClientAddons = activations || [];
+    allAddonRequests = requests || [];
+    renderAddonRequests();
 
     // رصيد كل تاجر — نجيبه من نفس الدالة اللي يستخدمها الخادم عشان الرقم يكون واحد بالضبط
     addonCreditsMap = {};
@@ -1490,6 +1516,89 @@
     });
   }
 
+  function renderAddonRequests(){
+    const tbody = document.getElementById('addonRequestsTbody');
+    const countBadge = document.getElementById('pendingRequestsCount');
+    const pendingCount = allAddonRequests.filter(function(r){ return r.status === 'pending'; }).length;
+    countBadge.textContent = pendingCount > 0 ? pendingCount + ' جديد' : '';
+
+    if(allAddonRequests.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">ما فيه طلبات تفعيل بعد.</td></tr>';
+      return;
+    }
+
+    const sourceLabels = { homepage: 'الصفحة الرئيسية', addons_page: 'صفحة الإضافات', portal: 'لوحة التاجر' };
+
+    tbody.innerHTML = '';
+    allAddonRequests.forEach(function(r){
+      const addon = allAddons.find(function(a){ return a.id === r.addon_id; });
+      const client = r.client_id ? allClients.find(function(c){ return c.id === r.client_id; }) : null;
+      const dateStr = new Date(r.created_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + escapeHtml(addon ? addon.name_ar : r.addon_id) + '</td>' +
+        '<td>' + escapeHtml(r.contact_name || (client ? (client.business_name_ar || client.business_name) : '') || '-') + '</td>' +
+        '<td dir="ltr" style="text-align:left;">' + escapeHtml(r.contact_phone || '-') + '</td>' +
+        '<td><span class="biz-sub">' + escapeHtml(sourceLabels[r.source] || r.source) + '</span></td>' +
+        '<td><span class="biz-sub">' + dateStr + '</span></td>' +
+        '<td><span class="badge ' + (r.status === 'pending' ? 'escalated' : (r.status === 'activated' ? 'linked' : '')) + '">' + escapeHtml(addonRequestStatusLabels[r.status] || r.status) + '</span></td>';
+
+      const actionTd = document.createElement('td');
+      if(r.status === 'pending' || r.status === 'contacted'){
+        if(r.contact_phone){
+          const waBtn = document.createElement('a');
+          const waPhone = String(r.contact_phone).replace(/[^0-9]/g, '');
+          waBtn.href = 'https://wa.me/' + waPhone;
+          waBtn.target = '_blank';
+          waBtn.rel = 'noopener';
+          waBtn.className = 'link-btn';
+          waBtn.style.marginLeft = '4px';
+          waBtn.textContent = 'واتساب';
+          actionTd.appendChild(waBtn);
+        }
+        if(client){
+          const activateBtn = document.createElement('button');
+          activateBtn.className = 'link-btn active-addon';
+          activateBtn.style.marginLeft = '4px';
+          activateBtn.textContent = 'تفعيل';
+          activateBtn.addEventListener('click', function(){ openAddonModal(client); });
+          actionTd.appendChild(activateBtn);
+        }
+        if(r.status === 'pending'){
+          const contactedBtn = document.createElement('button');
+          contactedBtn.className = 'link-btn';
+          contactedBtn.style.marginLeft = '4px';
+          contactedBtn.textContent = 'تم التواصل';
+          contactedBtn.addEventListener('click', function(){ updateAddonRequestStatus(r.id, 'contacted'); });
+          actionTd.appendChild(contactedBtn);
+        }
+        const declineBtn = document.createElement('button');
+        declineBtn.className = 'link-btn';
+        declineBtn.textContent = 'تجاهل';
+        declineBtn.addEventListener('click', function(){ updateAddonRequestStatus(r.id, 'declined'); });
+        actionTd.appendChild(declineBtn);
+      } else {
+        actionTd.innerHTML = '<span class="biz-sub">—</span>';
+      }
+      tr.appendChild(actionTd);
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function updateAddonRequestStatus(requestId, newStatus){
+    const { data: sess } = await supabaseClient.auth.getSession();
+    const adminEmail = sess && sess.session && sess.session.user ? sess.session.user.email : null;
+    const { error } = await supabaseClient.from('addon_requests')
+      .update({ status: newStatus, handled_at: new Date().toISOString(), handled_by: adminEmail })
+      .eq('id', requestId);
+    if(!error){
+      const r = allAddonRequests.find(function(x){ return x.id === requestId; });
+      if(r){ r.status = newStatus; }
+      renderAddonRequests();
+    }
+  }
+
   const addonModal = document.getElementById('addonModal');
   function openAddonModal(client){
     addonModalClient = client;
@@ -1552,6 +1661,14 @@
           errBox.textContent = 'تعذّر حفظ التغيير: ' + error.message;
           errBox.style.display = 'block';
           return;
+        }
+        // لو التفعيل صار بسبب طلب وارد لنفس التاجر ونفس الإضافة، نعلّمه "مُفعّلة" تلقائياً
+        if(!isOn){
+          await supabaseClient.from('addon_requests')
+            .update({ status: 'activated', handled_at: new Date().toISOString() })
+            .eq('client_id', addonModalClient.id)
+            .eq('addon_id', a.id)
+            .in('status', ['pending', 'contacted']);
         }
         renderAddonModalList();
         loadAddonsPanel();

@@ -133,6 +133,20 @@
   .send-hint{font-size:12px; color:var(--muted); padding:0 14px 12px;}
   /* settings */
   .settings-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; max-width:640px; margin-bottom:24px;}
+  /* ---------- ADD-ONS ---------- */
+  .addon-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:14px;}
+  .addon-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 20px; display:flex; flex-direction:column; gap:8px;}
+  .addon-card h3{font-size:15px; font-weight:900;}
+  .addon-card .addon-desc{font-size:12.5px; color:var(--muted); line-height:1.65; flex:1;}
+  .addon-card .addon-foot{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:6px; padding-top:10px; border-top:1px solid var(--border);}
+  .addon-price{font-size:17px; font-weight:900; color:var(--wa-teal-dark);}
+  .addon-price span{display:block; font-size:11px; font-weight:700; color:var(--muted);}
+  .addon-status{font-size:11.5px; font-weight:800; padding:5px 12px; border-radius:100px;}
+  .addon-status.active{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .addon-status.pending{background:rgba(184,134,11,.12); color:#B8860B;}
+  .addon-request-btn{background:var(--wa-green); color:#04210F; border:none; border-radius:100px; padding:9px 18px; font-weight:800; font-size:12.5px; cursor:pointer; white-space:nowrap;}
+  .addon-request-btn:hover{background:var(--wa-green-dark);}
+  .addon-request-btn:disabled{opacity:.6; cursor:not-allowed;}
   .settings-card .field textarea{min-height:110px; resize:vertical;}
   .save-status{font-size:13px; color:var(--wa-green-dark); margin-top:10px; opacity:0; transition:opacity .3s ease;}
   .save-status.show{opacity:1;}
@@ -342,6 +356,7 @@
       <button class="tab-btn" data-tab="broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="templates">قوالب الرسائل</button>
       <button class="tab-btn" data-tab="orders">الطلبات</button>
+      <button class="tab-btn" data-tab="addons">الإضافات</button>
       <button class="tab-btn" data-tab="support">الدعم الفني</button>
       <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
     </div>
@@ -441,6 +456,12 @@
       <div class="cost-note">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
       <div id="ordersContent">
         <div class="conv-empty">جاري تحميل الطلبات...</div>
+      </div>
+    </div>
+    <div class="panel" id="panelAddons">
+      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;">إضافات اختيارية برسوم تفعيل لمرة واحدة. اطلب أي إضافة وبنتواصل معك لتأكيد الدفع وتفعيلها.</p>
+      <div class="addon-grid" id="portalAddonGrid">
+        <div class="conv-empty">جاري التحميل...</div>
       </div>
     </div>
     <div class="panel" id="panelSupport">
@@ -1013,11 +1034,82 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders' };
+      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
+      if(btn.dataset.tab === 'addons'){ loadPortalAddonsTab(); }
     });
   });
+  /* ---------- الإضافات المدفوعة ---------- */
+  async function loadPortalAddonsTab(){
+    const grid = document.getElementById('portalAddonGrid');
+    if(!myClient){ return; }
+
+    const [{ data: addons }, { data: myAddons }, { data: myRequests }] = await Promise.all([
+      supabaseClient.from('addons').select('*').eq('is_active', true).order('sort_order'),
+      supabaseClient.from('client_addons').select('addon_id, enabled').eq('client_id', myClient.id),
+      supabaseClient.from('addon_requests').select('addon_id, status').eq('client_id', myClient.id).eq('status', 'pending')
+    ]);
+
+    if(!addons || addons.length === 0){
+      grid.innerHTML = '<div class="conv-empty">ما فيه إضافات متاحة حالياً.</div>';
+      return;
+    }
+
+    grid.innerHTML = '';
+    addons.forEach(function(a){
+      const activeRow = (myAddons || []).find(function(ca){ return ca.addon_id === a.id && ca.enabled; });
+      const pendingRow = (myRequests || []).find(function(r){ return r.addon_id === a.id; });
+
+      const card = document.createElement('div');
+      card.className = 'addon-card';
+
+      let statusHtml = '';
+      let actionHtml = '';
+      if(activeRow){
+        statusHtml = '<span class="addon-status active">✓ مفعّلة</span>';
+      } else if(pendingRow){
+        statusHtml = '<span class="addon-status pending">قيد المراجعة</span>';
+      } else {
+        actionHtml = '<button type="button" class="addon-request-btn" data-id="' + a.id + '">اطلب التفعيل</button>';
+      }
+
+      card.innerHTML =
+        '<h3>' + escapeHtml(a.name_ar) + '</h3>' +
+        '<div class="addon-desc">' + escapeHtml(a.description_ar || '') + '</div>' +
+        '<div class="addon-foot">' +
+          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>ريال دفعة وحدة</span></div>' +
+          (statusHtml || actionHtml) +
+        '</div>';
+      grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('.addon-request-btn').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        btn.disabled = true;
+        btn.textContent = 'جاري الإرسال...';
+        try{
+          const { data, error } = await supabaseClient.functions.invoke('request-addon', {
+            method: 'POST',
+            body: {
+              addon_id: btn.dataset.id,
+              contact_name: myClient.business_name_ar || myClient.business_name || '',
+              contact_phone: myClient.owner_phone || '',
+              contact_email: myClient.owner_email || '',
+              source: 'portal'
+            }
+          });
+          if(error){ throw error; }
+        } catch(e){
+          btn.disabled = false;
+          btn.textContent = 'اطلب التفعيل';
+          alert('تعذّر إرسال طلبك، حاول مرة ثانية.');
+          return;
+        }
+        await loadPortalAddonsTab();
+      });
+    });
+  }
   renderTemplateChips();
   /* ---------- تثبيت البوابة كتطبيق (PWA) ---------- */
   (function setupPwaInstall(){
