@@ -143,6 +143,21 @@
   .badge.bot{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
   .badge.escalated{background:rgba(184,134,11,.13); color:var(--warn);}
   .badge.human_active{background:rgba(18,140,126,.13); color:var(--wa-teal);}
+  .badge.lead-new{background:rgba(184,134,11,.13); color:var(--warn);}
+  .badge.lead-contacted{background:rgba(18,140,126,.13); color:var(--wa-teal);}
+  .badge.lead-converted{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .lead-add-form{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;}
+  .lead-add-form input{
+    border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit;
+    font-size:14.5px; background:#fff;
+  }
+  .lead-add-form input:focus{outline:none; border-color:var(--wa-teal);}
+  .lead-add-form input#leadName{flex:1; min-width:160px;}
+  .lead-add-form input#leadPhone{width:170px;}
+  .lead-add-form input#leadSource{width:170px;}
+  .lead-send-btn{margin-left:6px;}
+  .lead-send-btn:disabled{opacity:.5; cursor:not-allowed;}
+  .lead-hint{font-size:11.5px; color:var(--muted); display:block; margin-top:2px;}
   .status-select{
     border:1.5px solid var(--border); border-radius:10px; padding:6px 10px; font-family:inherit;
     font-size:13px; background:#fff; cursor:pointer;
@@ -307,6 +322,7 @@
       <button class="tab-btn" data-tab="sitechat">محادثة الموقع <span id="siteChatBadge" class="badge escalated" style="display:none; margin-inline-start:4px;">جديد</span></button>
       <button class="tab-btn" data-tab="topups">طلبات الرصيد</button>
       <button class="tab-btn" data-tab="affiliates">الشركاء بالعمولة</button>
+      <button class="tab-btn" data-tab="leads">العملاء المحتملون</button>
     </div>
     <!-- ===== PANEL: CLIENTS ===== -->
     <div class="panel active" id="panelClients">
@@ -462,6 +478,35 @@
             </tr>
           </thead>
           <tbody id="affiliatesTbody">
+            <tr class="empty-row"><td colspan="6">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- ===== PANEL: LEADS (عملاء محتملون لبوت نبضة نفسه) ===== -->
+    <div class="panel" id="panelLeads">
+      <div class="dash-head" style="margin-bottom:10px;">
+        <div><h1 style="font-size:18px;">📇 العملاء المحتملون</h1><p>أضف ليد ودعوته لتجربة بوت نبضة مجاناً عبر واتساب — القالبين معتمدين من ميتا، ونمنع إعادة الإرسال لنفس الليد قبل 14 يوم تلقائياً حماية للحساب من الحظر.</p></div>
+      </div>
+      <form class="lead-add-form" id="leadAddForm">
+        <input type="text" id="leadName" placeholder="اسم الليد (اختياري)">
+        <input type="tel" id="leadPhone" placeholder="رقم الجوال — مطلوب" dir="ltr" required>
+        <input type="text" id="leadSource" placeholder="المصدر (مثلاً: زيارة ميدانية)">
+        <button type="submit" class="login-btn" style="width:auto; padding:11px 22px; margin:0;">+ إضافة ليد</button>
+      </form>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>الجوال</th>
+              <th>المصدر</th>
+              <th>الحالة</th>
+              <th>آخر إرسال</th>
+              <th>إرسال دعوة</th>
+            </tr>
+          </thead>
+          <tbody id="leadsTbody">
             <tr class="empty-row"><td colspan="6">جاري التحميل...</td></tr>
           </tbody>
         </table>
@@ -639,12 +684,13 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates' };
+      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates', leads: 'panelLeads' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'tickets'){ loadTickets(); }
       if(btn.dataset.tab === 'sitechat'){ loadSiteChatSessions(); document.getElementById('siteChatBadge').style.display = 'none'; }
       if(btn.dataset.tab === 'topups'){ loadTopupsPanel(); }
       if(btn.dataset.tab === 'affiliates'){ loadAffiliatesTab(); }
+      if(btn.dataset.tab === 'leads'){ loadLeadsPanel(); }
     });
   });
   async function loadDashboard(){
@@ -1430,6 +1476,127 @@
       tbody.appendChild(tr);
     });
   }
+  /* ---------- العملاء المحتملون (ليدز بوت نبضة نفسه) ---------- */
+  const leadStatusLabels = { new: 'جديد', contacted: 'تم التواصل', converted: 'تحول لعميل' };
+  let allLeads = [];
+  async function loadLeadsPanel(){
+    const tbody = document.getElementById('leadsTbody');
+    const { data, error } = await supabaseClient
+      .from('nabda_leads')
+      .select('id, name, phone, source, status, last_sent_template, last_sent_at')
+      .order('created_at', { ascending: false });
+    if(error){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">تعذّر تحميل الليدز، حدّث الصفحة.</td></tr>';
+      return;
+    }
+    allLeads = data || [];
+    renderLeadsTable();
+  }
+  function renderLeadsTable(){
+    const tbody = document.getElementById('leadsTbody');
+    if(allLeads.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">ما فيه ليدز مضافين بعد.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    allLeads.forEach(function(lead){
+      const tr = document.createElement('tr');
+      const nameSafe = escapeHtml(lead.name || '—');
+      const phoneSafe = escapeHtml(lead.phone);
+      const sourceSafe = escapeHtml(lead.source || '—');
+      const lastSentStr = lead.last_sent_at
+        ? new Date(lead.last_sent_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' })
+        : '—';
+      tr.innerHTML =
+        '<td class="biz-name">' + nameSafe + '</td>' +
+        '<td dir="ltr">' + phoneSafe + '</td>' +
+        '<td>' + sourceSafe + '</td>' +
+        '<td></td>' +
+        '<td>' + lastSentStr + (lead.last_sent_template ? '<div class="biz-sub">' + escapeHtml(lead.last_sent_template) + '</div>' : '') + '</td>' +
+        '<td></td>';
+      const statusTd = tr.children[3];
+      const actionTd = tr.children[5];
+      const statusSelect = document.createElement('select');
+      statusSelect.className = 'status-select';
+      ['new','contacted','converted'].forEach(function(s){
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = leadStatusLabels[s];
+        if(s === lead.status){ opt.selected = true; }
+        statusSelect.appendChild(opt);
+      });
+      statusSelect.addEventListener('change', async function(){
+        const newStatus = statusSelect.value;
+        const { error: statusErr } = await supabaseClient
+          .from('nabda_leads')
+          .update({ status: newStatus })
+          .eq('id', lead.id);
+        if(!statusErr){ lead.status = newStatus; }
+      });
+      statusTd.appendChild(statusSelect);
+      // منع الإرسال قبل ما تمر 14 يوم من آخر إرسال — حماية للحساب من الحظر، ونفس القيد مطبّق بالباك إند برضه
+      const daysSinceLastSend = lead.last_sent_at ? (Date.now() - new Date(lead.last_sent_at).getTime()) / (1000 * 60 * 60 * 24) : Infinity;
+      const canSend = daysSinceLastSend >= 14;
+      [
+        { key: 'free_trial_invite', label: 'قالب التجربة المجانية' },
+        { key: 'new_business_intro', label: 'قالب التعريف بالمنصة' }
+      ].forEach(function(t){
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'link-btn lead-send-btn';
+        btn.textContent = t.label;
+        btn.disabled = !canSend;
+        btn.title = canSend ? '' : 'لازم تمر 14 يوم من آخر إرسال لنفس الليد';
+        btn.addEventListener('click', async function(){
+          btn.disabled = true;
+          btn.textContent = 'جاري الإرسال...';
+          const { data: sessionData } = await supabaseClient.auth.getSession();
+          const token = sessionData.session.access_token;
+          try{
+            const res = await fetch(FUNCTIONS_BASE + '/send-lead-outreach', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+              body: JSON.stringify({ lead_id: lead.id, template: t.key })
+            });
+            const resJson = await res.json();
+            if(!res.ok){
+              alert(resJson.error || 'تعذّر الإرسال.');
+              btn.disabled = false;
+              btn.textContent = t.label;
+              return;
+            }
+            await loadLeadsPanel();
+          } catch(e){
+            alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+            btn.disabled = false;
+            btn.textContent = t.label;
+          }
+        });
+        actionTd.appendChild(btn);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+  document.getElementById('leadAddForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+    const nameInput = document.getElementById('leadName');
+    const phoneInput = document.getElementById('leadPhone');
+    const sourceInput = document.getElementById('leadSource');
+    const phone = phoneInput.value.trim();
+    if(!phone){ return; }
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    const { error } = await supabaseClient
+      .from('nabda_leads')
+      .insert({ name: nameInput.value.trim() || null, phone: phone, source: sourceInput.value.trim() || null });
+    submitBtn.disabled = false;
+    if(error){
+      alert('تعذّر إضافة الليد، حاول مرة ثانية.');
+      return;
+    }
+    nameInput.value = ''; phoneInput.value = ''; sourceInput.value = '';
+    await loadLeadsPanel();
+  });
 </script>
 </body>
 </html>
