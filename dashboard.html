@@ -523,6 +523,7 @@
   let allClients = [];
   let plansMap = {};
   let planLimitMap = {};
+  let plansList = []; // ميزة 7: قائمة الباقات الكاملة (تشمل باقات الدفع المسبق) لمحرر "تفعيل باقة" بالجدول
   let modalClient = null;
   let allTickets = [];
   let activeAdminTicketId = null;
@@ -647,10 +648,11 @@
     });
   });
   async function loadDashboard(){
-    const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar, monthly_message_limit');
+    const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar, monthly_message_limit, monthly_price_sar, is_active, is_prepaid, prepaid_credits, prepaid_validity_months').order('sort_order');
     plansMap = {};
     planLimitMap = {};
-    (plans || []).forEach(function(p){ plansMap[p.id] = p.name_ar; planLimitMap[p.id] = p.monthly_message_limit; });
+    plansList = plans || [];
+    plansList.forEach(function(p){ plansMap[p.id] = p.name_ar; planLimitMap[p.id] = p.monthly_message_limit; });
     const { data: clients, error } = await supabaseClient
       .from('clients')
       .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error, cart_coupon_addon_enabled')
@@ -722,7 +724,6 @@
     rows.forEach(function(c){
       const tr = document.createElement('tr');
       const dateStr = new Date(c.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
-      const planName = escapeHtml(plansMap[c.plan_id] || '—');
       const bizNameSafe = escapeHtml(c.business_name_ar || c.business_name || '—');
       const bizNameEnSafe = escapeHtml(c.business_name || '');
       const emailSafe = escapeHtml(c.owner_email || '—');
@@ -731,7 +732,7 @@
         '<td><div class="biz-name">' + bizNameSafe + '</div>' +
           (c.business_name && c.business_name !== c.business_name_ar ? '<div class="biz-sub">' + bizNameEnSafe + '</div>' : '') + '</td>' +
         '<td><div>' + emailSafe + '</div><div class="biz-sub">' + phoneSafe + '</div></td>' +
-        '<td>' + planName + '</td>' +
+        '<td></td>' +
         '<td>' + renderWaHealth(c) + '</td>' +
         '<td></td>' +
         '<td></td>' +
@@ -739,6 +740,7 @@
         '<td></td>' +
         '<td></td>' +
         '<td>' + dateStr + '</td>';
+      const planTd = tr.children[2];
       const statusTd = tr.children[4];
       const daysTd = tr.children[5];
       const linkTd = tr.children[6];
@@ -868,6 +870,97 @@
         reportTd.appendChild(saveBtn);
       }
       renderReportCell();
+      // خانة "الباقة" — ميزة 7 (باقات الرسائل المسبقة الدفع): الدفع الإلكتروني معطّل مؤقتاً بالموقع،
+      // فالطريقة الحالية لتفعيل أي باقة (شهرية أو مسبقة الدفع) لعميل دفع يدوياً (تحويل بنكي، STC Pay، إلخ)
+      // هي من هنا مباشرة. "تفعيل باقة" يمدد current_period_ends_at بالمدة الصحيحة حسب نوع الباقة
+      // (30 يوم للاشتراك الشهري، أو عدد أشهر صلاحية الباقة لو كانت مسبقة الدفع)، ولو كانت مسبقة الدفع
+      // يضيف رصيد الرسائل المتفق عليه دفعة وحدة — نفس المنطق بالضبط المطبّق تلقائياً بـ tap-webhook
+      // وقت ما يشتغل الدفع الإلكتروني لاحقاً.
+      function renderPlanCell(){
+        planTd.innerHTML = '';
+        const nameSpan = document.createElement('div');
+        nameSpan.className = 'biz-name';
+        nameSpan.textContent = plansMap[c.plan_id] || '—';
+        planTd.appendChild(nameSpan);
+        const currentPlan = plansList.find(function(p){ return p.id === c.plan_id; });
+        if(currentPlan && currentPlan.is_prepaid){
+          const sub = document.createElement('div');
+          sub.className = 'biz-sub';
+          sub.textContent = 'مسبقة الدفع — تنتهي ' + (c.current_period_ends_at ? new Date(c.current_period_ends_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '—');
+          planTd.appendChild(sub);
+        }
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.className = 'link-btn';
+        editBtn.textContent = 'تفعيل باقة';
+        editBtn.addEventListener('click', function(){ openPlanEditor(); });
+        planTd.appendChild(editBtn);
+      }
+      function openPlanEditor(){
+        planTd.innerHTML = '';
+        const select = document.createElement('select');
+        select.className = 'status-select';
+        plansList.filter(function(p){ return p.is_active; }).forEach(function(p){
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = p.name_ar + ' — ' + Number(p.monthly_price_sar).toLocaleString('en') + ' ريال' + (p.is_prepaid ? ' (دفعة وحدة)' : '/شهر');
+          if(p.id === c.plan_id){ opt.selected = true; }
+          select.appendChild(opt);
+        });
+        const confirmBtn = document.createElement('button');
+        confirmBtn.type = 'button';
+        confirmBtn.className = 'link-btn';
+        confirmBtn.textContent = 'تفعيل';
+        confirmBtn.addEventListener('click', async function(){
+          const plan = plansList.find(function(p){ return p.id === select.value; });
+          if(!plan){ return; }
+          confirmBtn.disabled = true;
+          confirmBtn.textContent = '...';
+          const validityDays = plan.is_prepaid ? (Number(plan.prepaid_validity_months) || 12) * 30 : 30;
+          const now = new Date();
+          const base = (c.current_period_ends_at && new Date(c.current_period_ends_at) > now) ? new Date(c.current_period_ends_at) : now;
+          const newPeriodEnd = new Date(base.getTime() + validityDays * 24 * 60 * 60 * 1000);
+          const updatePayload = {
+            plan_id: plan.id,
+            subscription_status: 'active',
+            is_paid: true,
+            current_period_ends_at: newPeriodEnd.toISOString()
+          };
+          if(plan.is_prepaid && plan.prepaid_credits){
+            updatePayload.extra_message_credits = (c.extra_message_credits || 0) + Number(plan.prepaid_credits);
+          }
+          const { data: updated, error: planErr } = await supabaseClient
+            .from('clients')
+            .update(updatePayload)
+            .eq('id', c.id)
+            .select('plan_id, subscription_status, is_paid, current_period_ends_at, extra_message_credits')
+            .single();
+          if(!planErr && updated){
+            c.plan_id = updated.plan_id;
+            c.subscription_status = updated.subscription_status;
+            c.is_paid = updated.is_paid;
+            c.current_period_ends_at = updated.current_period_ends_at;
+            c.extra_message_credits = updated.extra_message_credits;
+            renderPlanCell();
+            daysTd.innerHTML = renderDaysRemaining(c);
+            document.getElementById('statActive').textContent = allClients.filter(function(x){ return x.subscription_status === 'active'; }).length;
+            document.getElementById('statTrial').textContent = allClients.filter(function(x){ return x.subscription_status === 'trial'; }).length;
+          } else {
+            alert('تعذّر تفعيل الباقة، حاول مرة ثانية.');
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'تفعيل';
+          }
+        });
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'link-btn';
+        cancelBtn.textContent = 'إلغاء';
+        cancelBtn.addEventListener('click', function(){ renderPlanCell(); });
+        planTd.appendChild(select);
+        planTd.appendChild(confirmBtn);
+        planTd.appendChild(cancelBtn);
+      }
+      renderPlanCell();
       tbody.appendChild(tr);
     });
   }
