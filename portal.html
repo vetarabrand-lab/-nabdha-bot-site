@@ -489,6 +489,12 @@
           <label>رسالة الترحيب الأولى</label>
           <input type="text" id="settingWelcome">
         </div>
+        <div class="field">
+          <label>📱 رقم واتساب صاحب المتجر</label>
+          <div class="helper-text" style="margin:0 0 10px;">عليه نرسل لك كل صباح ملخص واتساب يومي (عدد المحادثات، استفسارات المنتجات، والسلال المتروكة اللي رجعناها) — بدون هذا الرقم ما توصلك الرسالة.</div>
+          <input type="tel" id="settingOwnerPhone" placeholder="مثال: 0555555555 أو 966555555555" dir="ltr" style="text-align:left;">
+          <div class="helper-text" id="ownerPhoneError" style="display:none; color:var(--danger);">الرقم غير صحيح — لازم يكون رقم جوال سعودي (يبدأ بـ 05 أو 966 أو +966).</div>
+        </div>
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
       </div>
@@ -1075,7 +1081,7 @@
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -1090,7 +1096,7 @@
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -1106,8 +1112,10 @@
     document.getElementById('settingBizName').value = clientRow.business_name_ar || clientRow.business_name || '';
     document.getElementById('settingPrompt').value = clientRow.system_prompt || '';
     document.getElementById('settingWelcome').value = clientRow.welcome_message || '';
+    document.getElementById('settingOwnerPhone').value = clientRow.owner_phone || '';
     document.getElementById('settingPrompt').disabled = !isOwner;
     document.getElementById('settingWelcome').disabled = !isOwner;
+    document.getElementById('settingOwnerPhone').disabled = !isOwner;
     document.getElementById('saveSettingsBtn').style.display = isOwner ? 'inline-block' : 'none';
     document.getElementById('templatePickerField').style.display = isOwner ? 'block' : 'none';
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
@@ -1756,10 +1764,19 @@
     if(!myClient || !isOwner){ return; }
     const prompt = document.getElementById('settingPrompt').value.trim();
     const welcome = document.getElementById('settingWelcome').value.trim();
+    const ownerPhoneRaw = document.getElementById('settingOwnerPhone').value.trim();
+    const ownerPhoneError = document.getElementById('ownerPhoneError');
+    // تحقق بسيط فقط (مو حظر صارم) — رقم جوال سعودي بأي صيغة شائعة: 05xxxxxxxx / 5xxxxxxxx / 9665xxxxxxxx / +9665xxxxxxxx
+    const phoneLooksValid = ownerPhoneRaw === '' || /^(\+?966|0)?5\d{8}$/.test(ownerPhoneRaw.replace(/[\s-]/g, ''));
+    if(!phoneLooksValid){
+      ownerPhoneError.style.display = 'block';
+      return;
+    }
+    ownerPhoneError.style.display = 'none';
     const status = document.getElementById('saveStatus');
     const { error } = await supabaseClient
       .from('clients')
-      .update({ system_prompt: prompt, welcome_message: welcome })
+      .update({ system_prompt: prompt, welcome_message: welcome, owner_phone: ownerPhoneRaw || null })
       .eq('id', myClient.id);
     if(!error){
       status.classList.add('show');
