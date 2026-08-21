@@ -323,6 +323,7 @@
       <button class="tab-btn" data-tab="topups">طلبات الرصيد</button>
       <button class="tab-btn" data-tab="affiliates">الشركاء بالعمولة</button>
       <button class="tab-btn" data-tab="leads">العملاء المحتملون</button>
+      <button class="tab-btn" data-tab="conversations">محادثات واتساب</button>
     </div>
     <!-- ===== PANEL: CLIENTS ===== -->
     <div class="panel active" id="panelClients">
@@ -512,6 +513,28 @@
         </table>
       </div>
     </div>
+    <!-- ===== PANEL: WHATSAPP CONVERSATIONS ===== -->
+    <div class="panel" id="panelConversations">
+      <div class="dash-head" style="margin-bottom:10px;">
+        <div><h1 style="font-size:18px;">💬 محادثات واتساب</h1><p>محادثات العملاء مع بوت الرد الآلي — لكل حساباتك (يشمل حساب بوت نبضة نفسه).</p></div>
+        <select id="convClientFilter" class="status-select" style="min-width:220px;">
+          <option value="">كل الحسابات</option>
+        </select>
+      </div>
+      <div class="inbox-wrap">
+        <div class="conv-list" id="convList">
+          <div class="conv-empty">جاري تحميل المحادثات...</div>
+        </div>
+        <div class="chat-panel">
+          <div class="thread-head" id="convThreadHead" style="display:none;">
+            <span id="convThreadTitle"></span>
+          </div>
+          <div class="chat-body" id="convBody">
+            <div class="chat-placeholder">اختر محادثة من القائمة لعرضها</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <!-- MODAL: create client login -->
@@ -575,6 +598,9 @@
   let allSiteChatSessions = [];
   let activeSiteChatId = null;
   const siteChatStatusLabels = { bot: 'بوت (تلقائي)', escalated: 'محوّلة لفريقنا', human_active: 'قيد الرد اليدوي', closed: 'مغلقة' };
+  let allConvMsgs = [];
+  let activeConvKey = null;
+  let convFilterPopulated = false;
   // بيانات النشاط/البريد/الرسائل تجي أصلاً من نماذج عامة (تسجيل مشتركين جدد، رسائل واتساب)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في لوحة الإدارة
   function escapeHtml(str){
@@ -684,13 +710,14 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates', leads: 'panelLeads' };
+      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates', leads: 'panelLeads', conversations: 'panelConversations' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'tickets'){ loadTickets(); }
       if(btn.dataset.tab === 'sitechat'){ loadSiteChatSessions(); document.getElementById('siteChatBadge').style.display = 'none'; }
       if(btn.dataset.tab === 'topups'){ loadTopupsPanel(); }
       if(btn.dataset.tab === 'affiliates'){ loadAffiliatesTab(); }
       if(btn.dataset.tab === 'leads'){ loadLeadsPanel(); }
+      if(btn.dataset.tab === 'conversations'){ loadConversationsPanel(); }
     });
   });
   async function loadDashboard(){
@@ -1222,6 +1249,111 @@
       if(activeSiteChatId){ openSiteChatThread(activeSiteChatId); }
     }
   }, 20000);
+  /* ---------- محادثات واتساب (كل حساباتنا — بما فيها حساب بوت نبضة نفسه) ---------- */
+  function populateConvClientFilter(){
+    const sel = document.getElementById('convClientFilter');
+    if(convFilterPopulated){ return; }
+    allClients.forEach(function(c){
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.business_name_ar || c.business_name || c.id;
+      sel.appendChild(opt);
+    });
+    convFilterPopulated = true;
+  }
+  async function loadConversationsPanel(){
+    populateConvClientFilter();
+    const list = document.getElementById('convList');
+    const { data, error } = await supabaseClient
+      .from('whatsapp_messages_log')
+      .select('id, client_id, customer_phone, customer_name, inbound_message, outbound_message, created_at')
+      .order('created_at', { ascending: false })
+      .limit(500);
+    if(error){
+      list.innerHTML = '<div class="conv-empty">تعذّر تحميل المحادثات، حدّث الصفحة.</div>';
+      return;
+    }
+    allConvMsgs = data || [];
+    renderConvList();
+  }
+  function convClientName(clientId){
+    const c = allClients.find(function(x){ return x.id === clientId; });
+    return c ? (c.business_name_ar || c.business_name || '') : 'حساب محذوف';
+  }
+  function renderConvList(){
+    const list = document.getElementById('convList');
+    const filterClientId = document.getElementById('convClientFilter').value;
+    const filtered = filterClientId ? allConvMsgs.filter(function(m){ return m.client_id === filterClientId; }) : allConvMsgs;
+    // نجمع الرسائل حسب (العميل + رقم جوال الزبون) عشان نبني قائمة محادثات، مو رسائل مفردة
+    const groups = {};
+    filtered.forEach(function(m){
+      const key = m.client_id + '|' + m.customer_phone;
+      if(!groups[key] || new Date(m.created_at) > new Date(groups[key].created_at)){
+        groups[key] = m;
+      }
+    });
+    const summaries = Object.keys(groups).map(function(key){ return { key: key, msg: groups[key] }; });
+    summaries.sort(function(a, b){ return new Date(b.msg.created_at) - new Date(a.msg.created_at); });
+    if(summaries.length === 0){
+      list.innerHTML = '<div class="conv-empty">ما فيه محادثات واتساب بعد.</div>';
+      return;
+    }
+    list.innerHTML = '';
+    summaries.forEach(function(s){
+      const m = s.msg;
+      const dateStr = new Date(m.created_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const lastText = m.inbound_message || m.outbound_message || '';
+      const div = document.createElement('div');
+      div.className = 'ticket-item' + (s.key === activeConvKey ? ' active' : '');
+      div.innerHTML =
+        '<div class="tsubject">' + escapeHtml(m.customer_name || m.customer_phone) + '</div>' +
+        '<div class="biz-sub">' + escapeHtml(convClientName(m.client_id)) + '</div>' +
+        '<div class="tmeta"><span class="biz-sub">' + escapeHtml(lastText.slice(0, 40)) + '</span><span class="biz-sub">' + dateStr + '</span></div>';
+      div.addEventListener('click', function(){
+        activeConvKey = s.key;
+        renderConvList();
+        openConvThread(s.key);
+      });
+      list.appendChild(div);
+    });
+  }
+  function openConvThread(key){
+    const head = document.getElementById('convThreadHead');
+    const title = document.getElementById('convThreadTitle');
+    const body = document.getElementById('convBody');
+    const parts = key.split('|');
+    const clientId = parts[0];
+    const phone = parts[1];
+    const thread = allConvMsgs
+      .filter(function(m){ return m.client_id === clientId && m.customer_phone === phone; })
+      .sort(function(a, b){ return new Date(a.created_at) - new Date(b.created_at); });
+    if(thread.length === 0){ return; }
+    head.style.display = 'flex';
+    title.textContent = (thread[0].customer_name || phone) + ' — ' + convClientName(clientId);
+    body.innerHTML = '';
+    thread.forEach(function(m){
+      const time = new Date(m.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      if(m.inbound_message){
+        const bin = document.createElement('div');
+        bin.className = 'bubble in';
+        bin.innerHTML = escapeHtml(m.inbound_message) + '<span class="t">' + time + '</span>';
+        body.appendChild(bin);
+      }
+      if(m.outbound_message){
+        const bout = document.createElement('div');
+        bout.className = 'bubble out';
+        bout.innerHTML = escapeHtml(m.outbound_message) + '<span class="t">' + time + '</span>';
+        body.appendChild(bout);
+      }
+    });
+    body.scrollTop = body.scrollHeight;
+  }
+  document.getElementById('convClientFilter').addEventListener('change', function(){
+    activeConvKey = null;
+    document.getElementById('convThreadHead').style.display = 'none';
+    document.getElementById('convBody').innerHTML = '<div class="chat-placeholder">اختر محادثة من القائمة لعرضها</div>';
+    renderConvList();
+  });
   /* ---------- link account modal ---------- */
   const linkModal = document.getElementById('linkModal');
   const modalBizName = document.getElementById('modalBizName');
