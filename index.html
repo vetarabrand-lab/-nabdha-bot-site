@@ -242,6 +242,33 @@
   .price-limit{color:var(--wa-teal-dark); font-weight:700; font-size:14px; margin-bottom:24px;}
   .price-features{display:flex; flex-direction:column; gap:12px; margin-bottom:28px; flex:1;}
   .price-features li{display:flex; align-items:flex-start; gap:10px; font-size:14.5px; color:var(--ink);}
+
+  /* ميزة 7: باقة الرسائل المسبقة — إطار مختلف عمداً (متقطع بلون ذهبي) عشان تبرز إنها
+     نموذج دفع مختلف تماماً (دفعة وحدة، بدون اشتراك متكرر) مو مجرد باقة رابعة بالشبكة الشهرية */
+  .prepaid-card{
+    margin-top:20px; position:relative;
+    background:linear-gradient(120deg, rgba(184,134,11,.07), rgba(184,134,11,.02));
+    border:2px dashed #B8860B; border-radius:24px; padding:34px 32px;
+  }
+  .prepaid-card-inner{display:flex; align-items:center; justify-content:space-between; gap:28px; flex-wrap:wrap;}
+  .badge-prepaid{
+    position:absolute; top:-14px; right:50%; transform:translateX(50%);
+    background:#B8860B; color:#fff; font-size:12.5px; font-weight:800;
+    padding:6px 18px; border-radius:100px; white-space:nowrap;
+  }
+  .prepaid-info h3{font-size:20px; margin-bottom:8px;}
+  .prepaid-info .desc{color:var(--muted); font-size:14.5px; margin-bottom:16px; max-width:480px;}
+  .prepaid-info .price-features{flex-direction:row; flex-wrap:wrap; gap:10px 22px; margin-bottom:0;}
+  .prepaid-info .price-features li{font-size:13.5px;}
+  .prepaid-price{flex-shrink:0; text-align:center; min-width:210px;}
+  .prepaid-price .price-value{justify-content:center; margin-bottom:8px;}
+  .prepaid-price .price-value span{display:block; font-size:12.5px;}
+  .btn-prepaid{background:#B8860B; color:#fff; box-shadow:0 12px 24px -8px rgba(184,134,11,.45);}
+  .btn-prepaid:hover{background:#96700a;}
+  @media (max-width:720px){
+    .prepaid-card-inner{flex-direction:column; text-align:center;}
+    .prepaid-info .price-features{justify-content:center;}
+  }
   .check{
     width:20px; height:20px; border-radius:50%; background:rgba(37,211,102,.15); color:var(--wa-green-dark);
     display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:2px; font-weight:900;
@@ -729,6 +756,26 @@
       </div>
     </div>
 
+    <div class="prepaid-card reveal">
+      <span class="badge-prepaid" data-i18n="pricing.prepaidBadge">💳 بدون اشتراك شهري</span>
+      <div class="prepaid-card-inner">
+        <div class="prepaid-info">
+          <h3 data-i18n="pricing.prepaidTitle">تكره الاشتراكات الشهرية؟ اشتري رصيد رسائل بس</h3>
+          <p class="desc" data-i18n="pricing.prepaidDesc">ادفع مرة وحدة، واستخدم رصيدك براحتك بدون أي التزام شهري متكرر.</p>
+          <ul class="price-features">
+            <li><span class="check">✓</span> <span data-i18n="pricing.prepaidF1">5,000 رسالة</span></li>
+            <li><span class="check">✓</span> <span data-i18n="pricing.prepaidF2">صالحة 12 شهر كاملة</span></li>
+            <li><span class="check">✓</span> <span data-i18n="pricing.prepaidF3">كل مزايا البوت بدون نقصان</span></li>
+            <li><span class="check">✓</span> <span data-i18n="pricing.prepaidF4">ما تنتهي بنهاية الشهر — على راحتك</span></li>
+          </ul>
+        </div>
+        <div class="prepaid-price">
+          <div class="price-value"><b>449</b><span data-i18n="pricing.prepaidUnit">ريال دفعة وحدة</span></div>
+          <a href="signup.html?plan=prepaid_5000" class="btn btn-prepaid btn-block" data-i18n="pricing.prepaidCta">جرّب بدون اشتراك</a>
+        </div>
+      </div>
+    </div>
+
     <div class="custom-plan-banner reveal">
       <div class="cpb-text">
         <h3 data-i18n="pricing.cpTitle">عندك سلسلة متاجر أو حجم طلبات كبير؟</h3>
@@ -981,6 +1028,15 @@
       "pricing.p3f2": "أرقام واتساب متعددة",
       "pricing.p3f3": "مدير حساب مخصص",
       "pricing.p3f4": "تكاملات مخصصة عند الطلب",
+      "pricing.prepaidBadge": "💳 بدون اشتراك شهري",
+      "pricing.prepaidTitle": "تكره الاشتراكات الشهرية؟ اشتري رصيد رسائل بس",
+      "pricing.prepaidDesc": "ادفع مرة وحدة، واستخدم رصيدك براحتك بدون أي التزام شهري متكرر.",
+      "pricing.prepaidF1": "5,000 رسالة",
+      "pricing.prepaidF2": "صالحة 12 شهر كاملة",
+      "pricing.prepaidF3": "كل مزايا البوت بدون نقصان",
+      "pricing.prepaidF4": "ما تنتهي بنهاية الشهر — على راحتك",
+      "pricing.prepaidUnit": "ريال دفعة وحدة",
+      "pricing.prepaidCta": "جرّب بدون اشتراك",
       "pricing.cpTitle": "عندك سلسلة متاجر أو حجم طلبات كبير؟",
       "pricing.cpDesc": "نبني لك باقة مخصصة حسب حجم نشاطك — بدون حدود جاهزة، وبشروط تتفاوض عليها معنا مباشرة.",
       "pricing.cpf1": "طلبات وأرقام واتساب بلا حدود",
@@ -1156,6 +1212,15 @@
       "pricing.p3f2": "Multiple WhatsApp numbers",
       "pricing.p3f3": "Dedicated account manager",
       "pricing.p3f4": "Custom integrations on request",
+      "pricing.prepaidBadge": "💳 No monthly subscription",
+      "pricing.prepaidTitle": "Hate monthly subscriptions? Just buy a message credit",
+      "pricing.prepaidDesc": "Pay once, use your credit at your own pace, no recurring commitment.",
+      "pricing.prepaidF1": "5,000 messages",
+      "pricing.prepaidF2": "Valid for a full 12 months",
+      "pricing.prepaidF3": "Every bot feature, nothing missing",
+      "pricing.prepaidF4": "Never expires monthly, use it your way",
+      "pricing.prepaidUnit": "SAR one-time",
+      "pricing.prepaidCta": "Try without a subscription",
       "pricing.cpTitle": "Have a store chain or high order volume?",
       "pricing.cpDesc": "We build you a custom plan based on your business size — no fixed limits, terms negotiated directly with us.",
       "pricing.cpf1": "Unlimited orders and WhatsApp numbers",
