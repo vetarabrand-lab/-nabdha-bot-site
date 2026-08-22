@@ -146,18 +146,21 @@
   .badge.lead-new{background:rgba(184,134,11,.13); color:var(--warn);}
   .badge.lead-contacted{background:rgba(18,140,126,.13); color:var(--wa-teal);}
   .badge.lead-converted{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
-  .lead-add-form{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px;}
-  .lead-add-form input{
+  .lead-add-form{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:6px; align-items:flex-start;}
+  .lead-add-form input, .lead-add-form textarea{
     border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit;
     font-size:14.5px; background:#fff;
   }
-  .lead-add-form input:focus{outline:none; border-color:var(--wa-teal);}
+  .lead-add-form input:focus, .lead-add-form textarea:focus{outline:none; border-color:var(--wa-teal);}
   .lead-add-form input#leadName{flex:1; min-width:160px;}
-  .lead-add-form input#leadPhone{width:170px;}
+  .lead-add-form textarea#leadPhone{width:230px; min-height:44px; max-height:150px; line-height:1.5; resize:vertical;}
   .lead-add-form input#leadSource{width:170px;}
   .lead-send-btn{margin-left:6px;}
   .lead-send-btn:disabled{opacity:.5; cursor:not-allowed;}
   .lead-hint{font-size:11.5px; color:var(--muted); display:block; margin-top:2px;}
+  .lead-add-hint{font-size:12.5px; color:var(--muted); margin-bottom:18px; min-height:16px;}
+  .lead-add-hint.warn{color:var(--warn);}
+  .lead-add-hint.ok{color:var(--wa-teal-dark); font-weight:700;}
   .status-select{
     border:1.5px solid var(--border); border-radius:10px; padding:6px 10px; font-family:inherit;
     font-size:13px; background:#fff; cursor:pointer;
@@ -501,14 +504,15 @@
     <!-- ===== PANEL: LEADS (عملاء محتملون لبوت نبضة نفسه) ===== -->
     <div class="panel" id="panelLeads">
       <div class="dash-head" style="margin-bottom:10px;">
-        <div><h1 style="font-size:18px;">📇 العملاء المحتملون</h1><p>أضف ليد ودعوته لتجربة بوت نبضة مجاناً عبر واتساب — القالبين معتمدين من ميتا، ونمنع إعادة الإرسال لنفس الليد قبل 14 يوم تلقائياً حماية للحساب من الحظر.</p></div>
+        <div><h1 style="font-size:18px;">📇 العملاء المحتملون</h1><p>أضف ليد ودعوته لتجربة بوت نبضة مجاناً عبر واتساب — القالبين معتمدين من ميتا، ونمنع إعادة الإرسال لنفس الليد قبل 14 يوم تلقائياً حماية للحساب من الحظر. تقدر تضيف أكثر من رقم دفعة وحدة: كل رقم بسطر مستقل أو مفصول بفاصلة.</p></div>
       </div>
       <form class="lead-add-form" id="leadAddForm">
-        <input type="text" id="leadName" placeholder="اسم الليد (اختياري)">
-        <input type="tel" id="leadPhone" placeholder="رقم الجوال — مطلوب" dir="ltr" required>
+        <input type="text" id="leadName" placeholder="اسم الليد (اختياري — لو رقم واحد بس)">
+        <textarea id="leadPhone" placeholder="رقم أو أكثر — كل رقم بسطر، أو افصل بينها بفاصلة" dir="ltr" required rows="1"></textarea>
         <input type="text" id="leadSource" placeholder="المصدر (مثلاً: زيارة ميدانية)">
-        <button type="submit" class="login-btn" style="width:auto; padding:11px 22px; margin:0;">+ إضافة ليد</button>
+        <button type="submit" class="login-btn" id="leadAddSubmitBtn" style="width:auto; padding:11px 22px; margin:0;">+ إضافة ليد</button>
       </form>
+      <p class="lead-add-hint" id="leadAddHint"></p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -2039,25 +2043,79 @@
       tbody.appendChild(tr);
     });
   }
+  // يفكّك نص فيه أرقام متعددة (كل رقم بسطر أو مفصول بفاصلة/فاصلة منقوطة) إلى مصفوفة أرقام
+  // منظّفة (أرقام + علامة + فقط)، مع إزالة التكرار داخل نفس الدفعة
+  function parseLeadPhones(raw){
+    const parts = raw.split(/[\n,;]+/).map(function(s){ return s.trim(); }).filter(Boolean);
+    const cleaned = parts.map(function(p){ return p.replace(/[^\d+]/g, ''); }).filter(function(p){ return p.length >= 8; });
+    const seen = new Set();
+    const unique = [];
+    cleaned.forEach(function(p){ if(!seen.has(p)){ seen.add(p); unique.push(p); } });
+    return unique;
+  }
+  function updateLeadAddHint(){
+    const phoneInput = document.getElementById('leadPhone');
+    const hint = document.getElementById('leadAddHint');
+    const submitBtn = document.getElementById('leadAddSubmitBtn');
+    const phones = parseLeadPhones(phoneInput.value);
+    hint.className = 'lead-add-hint';
+    if(phones.length === 0){
+      hint.textContent = '';
+      submitBtn.textContent = '+ إضافة ليد';
+      return;
+    }
+    const existingPhones = new Set((allLeads || []).map(function(l){ return l.phone; }));
+    const alreadyExists = phones.filter(function(p){ return existingPhones.has(p); }).length;
+    if(phones.length === 1){
+      submitBtn.textContent = '+ إضافة ليد';
+      hint.textContent = alreadyExists ? 'الرقم موجود مسبقاً بالقائمة — بيتم تجاهله.' : '';
+      hint.classList.toggle('warn', alreadyExists > 0);
+    } else {
+      submitBtn.textContent = '+ إضافة ' + phones.length + ' ليدز';
+      hint.textContent = 'سيتم إضافة ' + phones.length + ' ليد' + (alreadyExists ? '، وتجاهل ' + alreadyExists + ' رقم موجود مسبقاً' : '') + '. اسم الليد يُتجاهل عند إضافة أكثر من رقم.';
+      hint.classList.add('ok');
+    }
+  }
+  document.getElementById('leadPhone').addEventListener('input', updateLeadAddHint);
   document.getElementById('leadAddForm').addEventListener('submit', async function(e){
     e.preventDefault();
     const nameInput = document.getElementById('leadName');
     const phoneInput = document.getElementById('leadPhone');
     const sourceInput = document.getElementById('leadSource');
-    const phone = phoneInput.value.trim();
-    if(!phone){ return; }
-    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const hint = document.getElementById('leadAddHint');
+    const phones = parseLeadPhones(phoneInput.value);
+    if(phones.length === 0){
+      hint.className = 'lead-add-hint warn';
+      hint.textContent = 'ما فيه أرقام صالحة — تأكد من كتابة رقم واحد على الأقل.';
+      return;
+    }
+    const existingPhones = new Set((allLeads || []).map(function(l){ return l.phone; }));
+    const newPhones = phones.filter(function(p){ return !existingPhones.has(p); });
+    const skippedDup = phones.length - newPhones.length;
+    if(newPhones.length === 0){
+      hint.className = 'lead-add-hint warn';
+      hint.textContent = 'كل الأرقام اللي كتبتها موجودة مسبقاً بالقائمة.';
+      return;
+    }
+    const source = sourceInput.value.trim() || null;
+    const name = nameInput.value.trim() || null;
+    const rows = newPhones.map(function(p, i){
+      return { name: (newPhones.length === 1 && i === 0) ? name : null, phone: p, source: source };
+    });
+    const submitBtn = document.getElementById('leadAddSubmitBtn');
     submitBtn.disabled = true;
-    const { error } = await supabaseClient
-      .from('nabda_leads')
-      .insert({ name: nameInput.value.trim() || null, phone: phone, source: sourceInput.value.trim() || null });
+    const { error } = await supabaseClient.from('nabda_leads').insert(rows);
     submitBtn.disabled = false;
     if(error){
-      alert('تعذّر إضافة الليد، حاول مرة ثانية.');
+      hint.className = 'lead-add-hint warn';
+      hint.textContent = 'تعذّر إضافة الليدز، حاول مرة ثانية.';
       return;
     }
     nameInput.value = ''; phoneInput.value = ''; sourceInput.value = '';
     await loadLeadsPanel();
+    hint.className = 'lead-add-hint ok';
+    hint.textContent = 'تمت إضافة ' + newPhones.length + ' ليد' + (skippedDup ? '، وتجاهل ' + skippedDup + ' رقم مكرر' : '') + '.';
+    submitBtn.textContent = '+ إضافة ليد';
   });
 </script>
 </body>
