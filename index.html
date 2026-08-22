@@ -313,13 +313,27 @@
   .visitor-counter{
     display:inline-flex; align-items:center; gap:10px;
     border:1.5px solid rgba(255,255,255,.18); border-radius:100px;
-    padding:9px 22px; background:rgba(255,255,255,.04);
+    padding:8px 20px 8px 22px; background:rgba(255,255,255,.04);
     font-size:13.5px; color:rgba(255,255,255,.75);
   }
   .visitor-counter .vc-icon{font-size:15px; line-height:1;}
-  .visitor-counter b{
-    font-size:15.5px; font-weight:900; color:#fff; letter-spacing:.02em;
-    font-variant-numeric:tabular-nums; min-width:2ch; display:inline-block; text-align:center;
+  .digital-display{
+    direction:ltr; display:inline-flex; gap:3px;
+    background:#03120f; border:1px solid rgba(31,224,196,.25); border-radius:8px;
+    padding:5px 7px;
+    box-shadow:inset 0 1px 6px rgba(0,0,0,.65), inset 0 0 10px rgba(0,0,0,.5), 0 0 16px rgba(31,224,196,.14);
+  }
+  .vc-digit{
+    position:relative; display:inline-block;
+    font-family:'Courier New', ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight:800; font-size:16.5px; line-height:1.3;
+    width:12px; text-align:center;
+    color:#2CEFCF; text-shadow:0 0 5px rgba(44,239,207,.85), 0 0 13px rgba(44,239,207,.45);
+    font-variant-numeric:tabular-nums;
+  }
+  .vc-digit::before{
+    content:"8"; position:absolute; inset:0;
+    color:rgba(44,239,207,.08); text-shadow:none; z-index:-1;
   }
 
   .reveal{opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease;}
@@ -989,7 +1003,9 @@
       <div class="visitor-counter" id="visitorCounter">
         <span class="vc-icon">👁️</span>
         <span data-i18n="footer.visitorLabel">عدد زيارات الموقع:</span>
-        <b id="visitorCountValue">—</b>
+        <div class="digital-display" id="visitorCountValue" role="status" aria-live="polite">
+          <span class="vc-digit">0</span><span class="vc-digit">0</span><span class="vc-digit">0</span><span class="vc-digit">0</span><span class="vc-digit">0</span><span class="vc-digit">0</span>
+        </div>
       </div>
     </div>
     <div class="footer-bottom" data-i18n="footer.copy">© 2026 بوت نبضة. جميع الحقوق محفوظة.</div>
@@ -1815,6 +1831,16 @@
     var valueEl = document.getElementById('visitorCountValue');
     if(!valueEl) return;
 
+    function renderDigits(n){
+      var str = String(Math.max(0, Math.round(n))).padStart(6, '0');
+      var html = '';
+      for(var i = 0; i < str.length; i++){
+        html += '<span class="vc-digit">' + str[i] + '</span>';
+      }
+      valueEl.innerHTML = html;
+      valueEl.setAttribute('aria-label', str.replace(/^0+(?=\d)/, ''));
+    }
+
     function animateCount(to){
       var from = 0;
       var duration = 900;
@@ -1823,7 +1849,7 @@
         if(start === null) start = ts;
         var progress = Math.min((ts - start) / duration, 1);
         var current = Math.round(from + (to - from) * (1 - Math.pow(1 - progress, 3)));
-        valueEl.textContent = current.toLocaleString('en-US');
+        renderDigits(current);
         if(progress < 1) requestAnimationFrame(step);
       }
       requestAnimationFrame(step);
@@ -1843,7 +1869,8 @@
         if(typeof count === 'number' && isFinite(count)){
           animateCount(count);
         } else {
-          valueEl.textContent = '—';
+          var wrap = document.querySelector('.visitor-counter-wrap');
+          if(wrap) wrap.style.display = 'none';
         }
       })
       .catch(function(){
