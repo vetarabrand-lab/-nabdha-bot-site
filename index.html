@@ -770,6 +770,92 @@
   </div>
 </section>
 
+<section class="section testimonials-section" id="testimonials">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="dot"></span> <span data-i18n="testi.eyebrow">آراء العملاء</span></div>
+      <h2 data-i18n="testi.title">وش يقول اللي جربونا؟</h2>
+      <p data-i18n="testi.sub">تجارب حقيقية من أصحاب أنشطة تجارية يستخدمون بوت نبضة يومياً.</p>
+    </div>
+
+    <div class="testi-frame reveal">
+      <div class="testi-frame-inner">
+        <div class="testi-grid" id="testiGrid"></div>
+        <p class="testi-empty" id="testiEmpty" data-i18n="testi.empty">كن أول من يشارك تجربته مع بوت نبضة! 👇</p>
+
+        <div class="testi-form-wrap">
+          <h3 data-i18n="testi.formTitle">شاركنا رأيك</h3>
+          <form id="testiForm" class="testi-form">
+            <div class="testi-form-row">
+              <input type="text" id="testiName" data-i18n-placeholder="testi.namePh" placeholder="اسمك" maxlength="80" required>
+              <div class="testi-stars" id="testiStars" data-rating="0">
+                <span class="testi-star" data-v="1">★</span>
+                <span class="testi-star" data-v="2">★</span>
+                <span class="testi-star" data-v="3">★</span>
+                <span class="testi-star" data-v="4">★</span>
+                <span class="testi-star" data-v="5">★</span>
+              </div>
+            </div>
+            <textarea id="testiComment" data-i18n-placeholder="testi.commentPh" placeholder="اكتب تجربتك مع بوت نبضة..." maxlength="600" rows="3" required></textarea>
+            <button type="submit" class="btn btn-primary btn-block" data-i18n="testi.submit">إرسال التقييم</button>
+            <p class="testi-msg" id="testiMsg"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .testi-frame{
+    border-radius:30px; padding:3px;
+    background:linear-gradient(135deg, var(--wa-green), var(--wa-teal) 45%, var(--wa-teal-dark));
+    box-shadow:0 25px 60px -24px rgba(7,94,84,.4), 0 0 0 1px rgba(37,211,102,.12);
+  }
+  .testi-frame-inner{ background:var(--card); border-radius:27px; padding:44px 40px; }
+  .testi-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+  .testi-grid:not(:empty){ margin-bottom:36px; }
+  .testi-card{
+    background:var(--bg); border:1px solid var(--border); border-radius:18px; padding:24px;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .testi-stars-display{ color:#F5A623; font-size:16px; letter-spacing:3px; direction:ltr; text-align:start; }
+  .testi-text{ color:var(--ink); font-size:14.5px; line-height:1.75; flex:1; }
+  .testi-who{ display:flex; align-items:center; gap:10px; }
+  .testi-avatar{
+    width:40px; height:40px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green));
+    color:#fff; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:16px;
+  }
+  .testi-who b{ font-size:14px; }
+  .testi-empty{ display:none; text-align:center; color:var(--muted); font-size:15px; margin-bottom:36px; }
+  .testi-grid:empty + .testi-empty{ display:block; }
+  .testi-form-wrap{ border-top:1px dashed var(--border); padding-top:32px; max-width:520px; margin:0 auto; text-align:center; }
+  .testi-form-wrap h3{ font-size:18px; margin-bottom:16px; }
+  .testi-form{ display:flex; flex-direction:column; gap:14px; }
+  .testi-form-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; justify-content:center; }
+  .testi-form input[type="text"]{
+    flex:1; min-width:180px; padding:13px 16px; border-radius:12px; border:1.5px solid var(--border);
+    font-family:inherit; font-size:14.5px; background:#fff; color:var(--ink);
+  }
+  .testi-form textarea{
+    padding:13px 16px; border-radius:12px; border:1.5px solid var(--border);
+    font-family:inherit; font-size:14.5px; background:#fff; color:var(--ink); resize:vertical;
+  }
+  .testi-form input:focus, .testi-form textarea:focus{ outline:none; border-color:var(--wa-teal); }
+  .testi-stars{ display:flex; gap:4px; direction:ltr; }
+  .testi-star{ font-size:26px; color:#D8E0DD; cursor:pointer; transition:color .15s ease, transform .1s ease; user-select:none; }
+  .testi-star:hover{ transform:scale(1.15); }
+  .testi-star.active{ color:#F5A623; }
+  .testi-msg{ font-size:13.5px; font-weight:700; min-height:18px; }
+  .testi-msg.ok{ color:var(--wa-green-dark); }
+  .testi-msg.err{ color:#C0392B; }
+  @media (max-width:900px){ .testi-grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:640px){
+    .testi-grid{ grid-template-columns:1fr; }
+    .testi-frame-inner{ padding:32px 20px; }
+  }
+</style>
+
 <section class="section" id="pricing">
   <div class="container">
     <div class="section-head reveal">
@@ -1198,6 +1284,14 @@
       "ctaBanner.title": "جاهز تخلي واتساب نشاطك يشتغل لحاله؟",
       "ctaBanner.sub": "انضم لمنصة نبضة وجرّب البوت 7 أيام مجاناً — بدون بطاقة ائتمان.",
       "ctaBanner.cta": "جرّب 7 أيام مجاناً الآن",
+      "testi.eyebrow": "آراء العملاء",
+      "testi.title": "وش يقول اللي جربونا؟",
+      "testi.sub": "تجارب حقيقية من أصحاب أنشطة تجارية يستخدمون بوت نبضة يومياً.",
+      "testi.empty": "كن أول من يشارك تجربته مع بوت نبضة! 👇",
+      "testi.formTitle": "شاركنا رأيك",
+      "testi.namePh": "اسمك",
+      "testi.commentPh": "اكتب تجربتك مع بوت نبضة...",
+      "testi.submit": "إرسال التقييم",
       "footer.brand": "بوت نبضة",
       "footer.desc": "منصّة سعودية لبناء بوتات واتساب ذكية لأصحاب الأنشطة التجارية في الخليج.",
       "footer.h1": "المنتج",
@@ -1400,6 +1494,14 @@
       "ctaBanner.title": "Ready to put your business's WhatsApp on autopilot?",
       "ctaBanner.sub": "Join Nabda and try the bot free for 7 days, no credit card required.",
       "ctaBanner.cta": "Try 7 Days Free Now",
+      "testi.eyebrow": "Customer Reviews",
+      "testi.title": "What our customers say",
+      "testi.sub": "Real experiences from business owners using Nabda Bot every day.",
+      "testi.empty": "Be the first to share your experience with Nabda Bot! 👇",
+      "testi.formTitle": "Share your review",
+      "testi.namePh": "Your name",
+      "testi.commentPh": "Write about your experience with Nabda Bot...",
+      "testi.submit": "Submit Review",
       "footer.brand": "Nabda Bot",
       "footer.desc": "A Saudi platform for building smart WhatsApp bots for businesses across the Gulf.",
       "footer.h1": "Product",
@@ -1431,6 +1533,11 @@
     document.querySelectorAll('[data-i18n]').forEach(function(el){
       var key = el.getAttribute('data-i18n');
       if(t[key] !== undefined){ el.innerHTML = t[key]; }
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el){
+      var key = el.getAttribute('data-i18n-placeholder');
+      if(t[key] !== undefined){ el.setAttribute('placeholder', t[key]); }
     });
 
     var btnLabel = lang === 'ar' ? 'English' : 'العربية';
@@ -1878,6 +1985,125 @@
         var wrap = document.querySelector('.visitor-counter-wrap');
         if(wrap) wrap.style.display = 'none';
       });
+  })();
+</script>
+
+<script>
+  // قسم آراء العملاء: يجيب التعليقات المعتمدة فقط من Supabase (RLS يحصر anon على
+  // status = 'approved')، ويسمح للزائر يرسل تعليق+تقييم جديد يدخل تلقائياً بحالة
+  // "قيد المراجعة" (pending) لين يوافق عليه الأدمن من لوحة التحكم.
+  (function(){
+    var SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFucHR1d2NmdmZjanF0cXFuaXJ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1Mjc2NzEsImV4cCI6MjEwMjEwMzY3MX0.Pn0ltBNfxU302bYCzTLo6wRyH8TiyKQ33qtRI98sf28';
+
+    var grid = document.getElementById('testiGrid');
+    var form = document.getElementById('testiForm');
+    var starsWrap = document.getElementById('testiStars');
+    var msgEl = document.getElementById('testiMsg');
+
+    function currentLang(){
+      var root = document.getElementById('htmlRoot');
+      return (root && root.getAttribute('lang')) || 'ar';
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      });
+    }
+
+    function renderStars(n){
+      n = Math.max(0, Math.min(5, parseInt(n, 10) || 0));
+      return '★★★★★'.slice(0, n) + '☆☆☆☆☆'.slice(0, 5 - n);
+    }
+
+    function loadTestimonials(){
+      if(!grid) return;
+      fetch(SUPABASE_URL + '/rest/v1/testimonials?select=customer_name,rating,comment&status=eq.approved&order=sort_order.asc,created_at.desc&limit=9', {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': 'Bearer ' + SUPABASE_ANON_KEY }
+      })
+        .then(function(res){ return res.ok ? res.json() : []; })
+        .then(function(rows){
+          if(!rows || !rows.length) return; // يبقى الفريم فاضي فيظهر رسالة "كن أول من يشارك" تلقائياً بالـ CSS
+          grid.innerHTML = rows.map(function(r){
+            var initial = (r.customer_name || '؟').trim().charAt(0).toUpperCase();
+            return '<div class="testi-card">' +
+                '<div class="testi-stars-display">' + renderStars(r.rating) + '</div>' +
+                '<p class="testi-text">' + escapeHtml(r.comment) + '</p>' +
+                '<div class="testi-who">' +
+                  '<div class="testi-avatar">' + escapeHtml(initial) + '</div>' +
+                  '<div><b>' + escapeHtml(r.customer_name) + '</b></div>' +
+                '</div>' +
+              '</div>';
+          }).join('');
+        })
+        .catch(function(){ /* فشل الجلب ما يكسر الصفحة — يبقى القسم بحالته الفارغة */ });
+    }
+
+    if(starsWrap){
+      var starEls = starsWrap.querySelectorAll('.testi-star');
+      starsWrap.addEventListener('click', function(e){
+        var star = e.target.closest('.testi-star');
+        if(!star) return;
+        var v = parseInt(star.getAttribute('data-v'), 10);
+        starsWrap.setAttribute('data-rating', v);
+        starEls.forEach(function(s){
+          s.classList.toggle('active', parseInt(s.getAttribute('data-v'), 10) <= v);
+        });
+      });
+    }
+
+    if(form){
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var nameEl = document.getElementById('testiName');
+        var commentEl = document.getElementById('testiComment');
+        var name = nameEl.value.trim();
+        var comment = commentEl.value.trim();
+        var rating = parseInt(starsWrap.getAttribute('data-rating'), 10) || 0;
+        var lang = currentLang();
+
+        if(!name || !comment || rating < 1){
+          msgEl.textContent = lang === 'ar' ? 'الرجاء كتابة اسمك، تقييمك بالنجوم، وتعليقك.' : 'Please add your name, a star rating, and a comment.';
+          msgEl.className = 'testi-msg err';
+          return;
+        }
+
+        var submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+
+        fetch(SUPABASE_URL + '/rest/v1/testimonials', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ customer_name: name.slice(0, 80), rating: rating, comment: comment.slice(0, 600) })
+        })
+          .then(function(res){
+            submitBtn.disabled = false;
+            if(res.ok){
+              form.reset();
+              starsWrap.setAttribute('data-rating', '0');
+              starEls.forEach(function(s){ s.classList.remove('active'); });
+              msgEl.textContent = lang === 'ar' ? '🎉 شكراً لك! تعليقك بانتظار المراجعة وبيظهر هنا قريباً.' : '🎉 Thank you! Your review is pending approval and will appear here soon.';
+              msgEl.className = 'testi-msg ok';
+            } else {
+              msgEl.textContent = lang === 'ar' ? 'صار خطأ، حاول مرة ثانية.' : 'Something went wrong, please try again.';
+              msgEl.className = 'testi-msg err';
+            }
+          })
+          .catch(function(){
+            submitBtn.disabled = false;
+            msgEl.textContent = lang === 'ar' ? 'تعذّر الاتصال، تأكد من اتصالك بالإنترنت.' : 'Connection failed, check your internet.';
+            msgEl.className = 'testi-msg err';
+          });
+      });
+    }
+
+    loadTestimonials();
   })();
 </script>
 

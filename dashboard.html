@@ -146,6 +146,10 @@
   .badge.lead-new{background:rgba(184,134,11,.13); color:var(--warn);}
   .badge.lead-contacted{background:rgba(18,140,126,.13); color:var(--wa-teal);}
   .badge.lead-converted{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .badge.approved{background:rgba(37,211,102,.15); color:var(--wa-green-dark);}
+  .badge.rejected{background:rgba(209,67,67,.12); color:var(--danger);}
+  .testi-stars-cell{color:#F5A623; letter-spacing:1px; direction:ltr; display:inline-block;}
+  .testi-comment-cell{max-width:320px; white-space:normal; line-height:1.6; font-size:13px;}
   .lead-add-form{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:6px; align-items:flex-start;}
   .lead-add-form input, .lead-add-form textarea{
     border:1.5px solid var(--border); border-radius:12px; padding:11px 14px; font-family:inherit;
@@ -341,6 +345,7 @@
       <button class="tab-btn" data-tab="leads">العملاء المحتملون</button>
       <button class="tab-btn" data-tab="conversations">محادثات واتساب</button>
       <button class="tab-btn" data-tab="addons">الإضافات المدفوعة</button>
+      <button class="tab-btn" data-tab="testimonials">آراء العملاء <span id="testiPendingBadge" class="badge escalated" style="display:none; margin-inline-start:4px;">جديد</span></button>
     </div>
     <!-- ===== PANEL: CLIENTS ===== -->
     <div class="panel active" id="panelClients">
@@ -599,6 +604,29 @@
         </table>
       </div>
     </div>
+    <!-- ===== PANEL: TESTIMONIALS ===== -->
+    <div class="panel" id="panelTestimonials">
+      <div class="dash-head" style="margin-bottom:10px;">
+        <div><h1 style="font-size:18px;">⭐ آراء العملاء</h1><p>تعليقات وتقييمات وصلت من نموذج "شاركنا رأيك" بالصفحة الرئيسية. التعليق ما يظهر للزوار إلا بعد ما تضغط "نشر".</p></div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>التقييم</th>
+              <th>التعليق</th>
+              <th>التاريخ</th>
+              <th>الحالة</th>
+              <th>إجراء</th>
+            </tr>
+          </thead>
+          <tbody id="testimonialsTbody">
+            <tr class="empty-row"><td colspan="6">جاري التحميل...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 <!-- MODAL: manage client add-ons -->
@@ -683,6 +711,8 @@
   let addonModalClient = null;
   let allAddonRequests = [];
   const addonRequestStatusLabels = { pending: 'قيد المراجعة', contacted: 'تم التواصل', activated: 'مُفعّلة', declined: 'مرفوض' };
+  let allTestimonials = [];
+  const testimonialStatusLabels = { pending: 'قيد المراجعة', approved: 'منشور', rejected: 'مرفوض' };
   // بيانات النشاط/البريد/الرسائل تجي أصلاً من نماذج عامة (تسجيل مشتركين جدد، رسائل واتساب)
   // ومو موثوقة — لازم تتنضف قبل إدراجها كـ HTML عشان نمنع ثغرات XSS في لوحة الإدارة
   function escapeHtml(str){
@@ -792,7 +822,7 @@
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates', leads: 'panelLeads', conversations: 'panelConversations', addons: 'panelAddons' };
+      const map = { clients: 'panelClients', tickets: 'panelTickets', sitechat: 'panelSiteChat', topups: 'panelTopups', affiliates: 'panelAffiliates', leads: 'panelLeads', conversations: 'panelConversations', addons: 'panelAddons', testimonials: 'panelTestimonials' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'tickets'){ loadTickets(); }
       if(btn.dataset.tab === 'sitechat'){ loadSiteChatSessions(); document.getElementById('siteChatBadge').style.display = 'none'; }
@@ -801,9 +831,11 @@
       if(btn.dataset.tab === 'leads'){ loadLeadsPanel(); }
       if(btn.dataset.tab === 'conversations'){ loadConversationsPanel(); }
       if(btn.dataset.tab === 'addons'){ loadAddonsPanel(); }
+      if(btn.dataset.tab === 'testimonials'){ loadTestimonialsPanel(); }
     });
   });
   async function loadDashboard(){
+    checkTestimonialsPending();
     const { data: plans } = await supabaseClient.from('subscription_plans').select('id, name_ar, monthly_message_limit, monthly_price_sar, is_active, is_prepaid, prepaid_credits, prepaid_validity_months').order('sort_order');
     plansMap = {};
     planLimitMap = {};
@@ -1600,6 +1632,94 @@
       const r = allAddonRequests.find(function(x){ return x.id === requestId; });
       if(r){ r.status = newStatus; }
       renderAddonRequests();
+    }
+  }
+
+  /* ---------- آراء العملاء ---------- */
+  async function checkTestimonialsPending(){
+    const { count } = await supabaseClient.from('testimonials').select('id', { count: 'exact', head: true }).eq('status', 'pending');
+    const badge = document.getElementById('testiPendingBadge');
+    if(count && count > 0){ badge.textContent = count + ' جديد'; badge.style.display = 'inline-block'; }
+    else { badge.style.display = 'none'; }
+  }
+
+  async function loadTestimonialsPanel(){
+    const tbody = document.getElementById('testimonialsTbody');
+    const { data, error } = await supabaseClient.from('testimonials').select('*').order('created_at', { ascending: false }).limit(300);
+    if(error){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
+      return;
+    }
+    allTestimonials = data || [];
+    renderTestimonials();
+    checkTestimonialsPending();
+  }
+
+  function renderTestimonials(){
+    const tbody = document.getElementById('testimonialsTbody');
+    if(allTestimonials.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="6">ما فيه تعليقات بعد.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    allTestimonials.forEach(function(t){
+      const tr = document.createElement('tr');
+      const dateStr = new Date(t.created_at).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const stars = '★★★★★'.slice(0, t.rating) + '☆☆☆☆☆'.slice(0, 5 - t.rating);
+      tr.innerHTML =
+        '<td>' + escapeHtml(t.customer_name) + '</td>' +
+        '<td><span class="testi-stars-cell">' + stars + '</span></td>' +
+        '<td><div class="testi-comment-cell">' + escapeHtml(t.comment) + '</div></td>' +
+        '<td><span class="biz-sub">' + dateStr + '</span></td>' +
+        '<td><span class="badge ' + escapeHtml(t.status) + '">' + escapeHtml(testimonialStatusLabels[t.status] || t.status) + '</span></td>';
+
+      const actionTd = document.createElement('td');
+      if(t.status !== 'approved'){
+        const approveBtn = document.createElement('button');
+        approveBtn.className = 'link-btn active-addon';
+        approveBtn.style.marginLeft = '4px';
+        approveBtn.textContent = 'نشر';
+        approveBtn.addEventListener('click', function(){ updateTestimonialStatus(t.id, 'approved'); });
+        actionTd.appendChild(approveBtn);
+      }
+      if(t.status !== 'rejected'){
+        const rejectBtn = document.createElement('button');
+        rejectBtn.className = 'link-btn';
+        rejectBtn.style.marginLeft = '4px';
+        rejectBtn.textContent = 'رفض';
+        rejectBtn.addEventListener('click', function(){ updateTestimonialStatus(t.id, 'rejected'); });
+        actionTd.appendChild(rejectBtn);
+      }
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'link-btn';
+      deleteBtn.textContent = 'حذف';
+      deleteBtn.addEventListener('click', function(){ deleteTestimonial(t.id); });
+      actionTd.appendChild(deleteBtn);
+
+      tr.appendChild(actionTd);
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function updateTestimonialStatus(id, newStatus){
+    const patch = { status: newStatus };
+    if(newStatus === 'approved'){ patch.approved_at = new Date().toISOString(); }
+    const { error } = await supabaseClient.from('testimonials').update(patch).eq('id', id);
+    if(!error){
+      const t = allTestimonials.find(function(x){ return x.id === id; });
+      if(t){ t.status = newStatus; }
+      renderTestimonials();
+      checkTestimonialsPending();
+    }
+  }
+
+  async function deleteTestimonial(id){
+    if(!confirm('حذف هذا التعليق نهائياً؟')) return;
+    const { error } = await supabaseClient.from('testimonials').delete().eq('id', id);
+    if(!error){
+      allTestimonials = allTestimonials.filter(function(x){ return x.id !== id; });
+      renderTestimonials();
+      checkTestimonialsPending();
     }
   }
 
