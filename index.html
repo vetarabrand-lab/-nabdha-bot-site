@@ -438,6 +438,60 @@
   </div>
 </section>
 
+<section class="trust-frame-section">
+  <div class="container">
+    <div class="trust-frame">
+      <div class="trust-frame-item">
+        <div class="trust-frame-icon">🇸🇦</div>
+        <div>
+          <h3 data-i18n="trustFrame.t1">سيرفرات مستضافة داخل السعودية</h3>
+          <p data-i18n="trustFrame.d1">بياناتك ومحادثات عملائك تُعالَج على خادم سعودي محلي (UltaHost)، لسرعة اتصال أعلى وقرب أكبر من عملائك.</p>
+        </div>
+      </div>
+      <div class="trust-frame-item">
+        <div class="trust-frame-icon">✅</div>
+        <div>
+          <h3 data-i18n="trustFrame.t2">واجهة واتساب بيزنس الرسمية</h3>
+          <p data-i18n="trustFrame.d2">نعمل حصرياً عبر WhatsApp Business Cloud API الرسمية المعتمدة من ميتا — بدون أي طرق غير رسمية أو مخاطرة بحظر رقمك.</p>
+        </div>
+      </div>
+      <div class="trust-frame-item">
+        <div class="trust-frame-icon">🔗</div>
+        <div>
+          <h3 data-i18n="trustFrame.t3">متكامل مع زد وسلة</h3>
+          <p data-i18n="trustFrame.d3">ربط مباشر عبر واجهات زد وسلة الرسمية، يسحب حالة الطلبات والمنتجات لحظياً داخل محادثة واتساب.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<style>
+  .trust-frame-section{background:var(--bg); padding:40px 0 4px;}
+  .trust-frame{
+    border:1.5px solid var(--border); border-radius:var(--radius); background:var(--card);
+    box-shadow:var(--shadow);
+    display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    overflow:hidden;
+  }
+  .trust-frame-item{
+    display:flex; align-items:flex-start; gap:14px; padding:28px 26px;
+    border-inline-start:1px solid var(--border);
+  }
+  .trust-frame-item:first-child{border-inline-start:none;}
+  .trust-frame-icon{
+    width:44px; height:44px; border-radius:12px; flex-shrink:0; font-size:21px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(37,211,102,.12);
+  }
+  .trust-frame-item h3{font-size:15.5px; margin-bottom:6px;}
+  .trust-frame-item p{color:var(--muted); font-size:13.5px; line-height:1.65;}
+  @media (max-width:900px){
+    .trust-frame{grid-template-columns:1fr; margin-top:0;}
+    .trust-frame-item{border-inline-start:none; border-top:1px solid var(--border);}
+    .trust-frame-item:first-child{border-top:none;}
+  }
+</style>
+
 <section class="section calc-section" id="calc">
   <div class="container">
     <div class="section-head reveal">
@@ -963,6 +1017,12 @@
       "stats.l3": "تخصيص حسب نشاطك",
       "stats.aiValue": "ذكاء اصطناعي",
       "stats.l4": "محرك ذكاء اصطناعي متقدم",
+      "trustFrame.t1": "سيرفرات مستضافة داخل السعودية",
+      "trustFrame.d1": "بياناتك ومحادثات عملائك تُعالَج على خادم سعودي محلي (UltaHost)، لسرعة اتصال أعلى وقرب أكبر من عملائك.",
+      "trustFrame.t2": "واجهة واتساب بيزنس الرسمية",
+      "trustFrame.d2": "نعمل حصرياً عبر WhatsApp Business Cloud API الرسمية المعتمدة من ميتا — بدون أي طرق غير رسمية أو مخاطرة بحظر رقمك.",
+      "trustFrame.t3": "متكامل مع زد وسلة",
+      "trustFrame.d3": "ربط مباشر عبر واجهات زد وسلة الرسمية، يسحب حالة الطلبات والمنتجات لحظياً داخل محادثة واتساب.",
       "calc.eyebrow": "احسب خسارتك",
       "calc.title": "كم تخسر شهرياً بسبب الردود المتأخرة؟",
       "calc.sub": "أدخل رقمين بس، وشوف تقدير خسارتك الشهرية من السلات المتروكة والردود البطيئة — وقد نبضة ترجّعه لك.",
@@ -1158,6 +1218,12 @@
       "stats.l3": "Customized to your business",
       "stats.aiValue": "Advanced AI",
       "stats.l4": "Advanced AI engine",
+      "trustFrame.t1": "Hosted on servers inside Saudi Arabia",
+      "trustFrame.d1": "Your data and customer conversations are processed on a local Saudi server (UltaHost), for faster connections and lower latency to your customers.",
+      "trustFrame.t2": "Official WhatsApp Business API",
+      "trustFrame.d2": "We work exclusively through the official WhatsApp Business Cloud API approved by Meta — no unofficial methods, no risk of your number getting banned.",
+      "trustFrame.t3": "Integrated with Zid and Salla",
+      "trustFrame.d3": "Direct integration via Zid and Salla's official APIs, pulling live order status and product data straight into the WhatsApp conversation.",
       "calc.eyebrow": "Calculate your loss",
       "calc.title": "How much are you losing to slow replies each month?",
       "calc.sub": "Enter two numbers and see an estimate of your monthly loss from abandoned carts and slow replies — and how much Nabdha can win back.",
