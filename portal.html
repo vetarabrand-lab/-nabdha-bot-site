@@ -1399,6 +1399,37 @@
       window.CardSDK.tokenize();
     }
   });
+
+  /* ---------- الدفع الإلكتروني عبر Network International (N-Genius) ----------
+     صفحة دفع مستضافة (Hosted Payment Page) — بخلاف Tap ما فيه نموذج بطاقة مدمج بالصفحة،
+     ننشئ عملية الدفع عبر create-ngenius-order ونحوّل العميل مباشرة لرابط N-Genius.
+     لو نظام الدفع لسه ما تفعّل (الأسرار ما انضافت بعد بمشروع Supabase)، الدالة ترجع
+     payment_not_configured فنرجع نفس السلوك الحالي بالضبط: نوجّه العميل لتبويب الدعم. */
+  async function startNgeniusCheckout(purpose, extra, title){
+    if(!myClient){ return; }
+    try{
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const authToken = sessionData.session.access_token;
+      const res = await fetch(FUNCTIONS_BASE + '/create-ngenius-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(Object.assign({ purpose: purpose }, extra || {}))
+      });
+      const resJson = await res.json().catch(function(){ return {}; });
+
+      if(resJson.error === 'payment_not_configured'){
+        document.querySelector('.tab-btn[data-tab="support"]').click();
+        return;
+      }
+      if(!res.ok || !resJson.payment_url){
+        alert(resJson.error || 'تعذّر إتمام عملية الدفع، حاول مرة ثانية أو تواصل مع الدعم.');
+        return;
+      }
+      window.location.href = resJson.payment_url;
+    } catch(e){
+      document.querySelector('.tab-btn[data-tab="support"]').click();
+    }
+  }
   function renderSubscriptionBanner(){
     const banner = document.getElementById('subscriptionBanner');
     if(!myClient || !isOwner){ banner.style.display = 'none'; return; }
@@ -1450,8 +1481,8 @@
     }
   }
   document.getElementById('renewPlanBtn').addEventListener('click', function(){
-    if(!myClient){ return; }
-    document.querySelector('.tab-btn[data-tab="support"]').click();
+    if(!myClient || !myPlan){ return; }
+    startNgeniusCheckout('subscription', { plan_id: myPlan.id }, 'تجديد الاشتراك');
   });
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){

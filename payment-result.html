@@ -87,14 +87,25 @@
   }
 
   async function confirmPayment(){
-    // Tap يرجّع الـ id في tap_id أو id حسب الإعداد — نتحقق من الاثنين
+    // نحدد مزود الدفع من رابط الرجوع: N-Genius يرجّع provider=ngenius + mor (مرجعنا الخاص)،
+    // Tap (القديم) يرجّع tap_id أو id مباشرة.
+    const provider = qs('provider');
+    const mor = qs('mor');
     const tapId = qs('tap_id') || qs('id');
-    if(!tapId){
+
+    let endpoint = null;
+    if(provider === 'ngenius' && mor){
+      endpoint = FUNCTIONS_BASE + '/ngenius-webhook?mor=' + encodeURIComponent(mor);
+    } else if(tapId){
+      endpoint = FUNCTIONS_BASE + '/tap-webhook?tap_id=' + encodeURIComponent(tapId);
+    }
+
+    if(!endpoint){
       show('unknownState');
       return;
     }
     try{
-      const res = await fetch(FUNCTIONS_BASE + '/tap-webhook?tap_id=' + encodeURIComponent(tapId));
+      const res = await fetch(endpoint);
       const json = await res.json().catch(function(){ return {}; });
 
       if(!res.ok){
