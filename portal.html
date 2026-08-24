@@ -17,7 +17,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://tap-sdks.b-cdn.net/card/1.0.2/index.js"></script>
 <style>
   :root{
     --wa-green:#25D366; --wa-green-dark:#1DA851; --wa-teal-dark:#075E54; --wa-teal:#128C7E;
@@ -567,20 +566,6 @@
     </div>
   </div>
 </div>
-<!-- MODAL: Tap card payment -->
-<div class="modal-overlay" id="tapCardModal">
-  <div class="modal-card">
-    <h3 id="tapModalTitle">إتمام الدفع</h3>
-    <div class="helper-text" id="tapModalAmount" style="font-weight:800; font-size:16px; color:var(--wa-teal-dark); margin-bottom:14px;"></div>
-    <div class="alert-box error" id="tapModalError"></div>
-    <div id="tap-card-container" style="min-height:220px;"></div>
-    <div class="modal-actions">
-      <button class="modal-cancel" id="tapModalCancelBtn">إلغاء</button>
-      <button class="modal-confirm" id="tapPayBtn" disabled>💳 ادفع الآن</button>
-    </div>
-    <div class="helper-text" style="margin-top:12px; text-align:center;">🔒 الدفع مشفّر بالكامل عبر Tap، بياناتك ما توصلنا أبداً.</div>
-  </div>
-</div>
 <!-- MODAL: new support ticket -->
 <div class="modal-overlay" id="newTicketModal">
   <div class="modal-card">
@@ -703,7 +688,6 @@
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
   const FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
-  const TAP_PUBLIC_KEY = 'pk_test_5fCzisvP0WVeATnbUM4umFtL';
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const loginScreen = document.getElementById('loginScreen');
   const forgotScreen = document.getElementById('forgotScreen');
@@ -1173,7 +1157,7 @@
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -1188,7 +1172,7 @@
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -1228,11 +1212,15 @@
     staffMap[clientRow.user_id] = 'صاحب الحساب';
     staffList.forEach(function(s){ if(s.user_id){ staffMap[s.user_id] = s.full_name; } });
     renderTeam();
-    const { data: msgs } = await supabaseClient
+    const { data: msgsDesc } = await supabaseClient
       .from('whatsapp_messages_log')
       .select('customer_phone, customer_name, inbound_message, outbound_message, created_at, received_at, category')
       .eq('client_id', clientRow.id)
-      .order('created_at', { ascending: true });
+      .order('created_at', { ascending: false })
+      .limit(1500);
+    // نجلب الأحدث أولاً (بحد صريح) حتى لا يقصّها الخادم من طرف الأقدم عند تجاوز السقف الافتراضي،
+    // ثم نعيد ترتيبها تصاعدياً محلياً لأن بقية الكود (المحادثات، التحليلات) يتوقع هذا الترتيب
+    const msgs = (msgsDesc || []).slice().reverse();
     allMessages = msgs || [];
     conversations = {};
     const now = new Date();
@@ -1305,100 +1293,9 @@
       banner.style.display = 'none';
     }
   }
-  /* ---------- الدفع الإلكتروني عبر Tap (اشتراك / رصيد) ---------- */
   function formatDateAr(iso){
     return new Date(iso).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
   }
-  /* بطاقة الدفع المدمجة (Tap Card SDK) — العميل يدخل بيانات بطاقته داخل صفحتنا مباشرة،
-     Tap تحوّلها لرمز آمن (token) داخل الآيفريم الخاص فيها (إحنا ما نشوف رقم البطاقة أبداً)،
-     وبعدين نرسل الرمز بس لسيرفرنا عشان ينشئ عملية الدفع الفعلية. */
-  let tapCardHandle = null;
-  let pendingPaymentInfo = null;
-
-  function setTapPayBtnState(disabled, text){
-    const btn = document.getElementById('tapPayBtn');
-    btn.disabled = disabled;
-    btn.textContent = text;
-  }
-  function showTapModalError(msg){
-    const box = document.getElementById('tapModalError');
-    box.textContent = msg;
-    box.style.display = 'block';
-  }
-  function openTapCardModal(purpose, extra, amount, title){
-    if(!myClient){ return; }
-    pendingPaymentInfo = { purpose: purpose, extra: extra || {} };
-    document.getElementById('tapModalError').style.display = 'none';
-    document.getElementById('tapModalTitle').textContent = title || 'إتمام الدفع';
-    document.getElementById('tapModalAmount').textContent = amount ? (amount + ' ريال سعودي') : '';
-    document.getElementById('tap-card-container').innerHTML = '';
-    setTapPayBtnState(true, 'جاري تحميل نموذج الدفع...');
-    document.getElementById('tapCardModal').classList.add('show');
-
-    const CardSDK = window.CardSDK;
-    if(!CardSDK){
-      showTapModalError('تعذّر تحميل نموذج الدفع، تأكد من اتصالك بالإنترنت وحاول تحديث الصفحة.');
-      return;
-    }
-    const { renderTapCard, Currencies, Direction, Edges, Locale, Theme } = CardSDK;
-    tapCardHandle = renderTapCard('tap-card-container', {
-      publicKey: TAP_PUBLIC_KEY,
-      transaction: { amount: Number(amount) || 1, currency: Currencies.SAR },
-      customer: (myClient && myClient.owner_email) ? { contact: { email: myClient.owner_email } } : undefined,
-      acceptance: { supportedBrands: ['VISA', 'MASTERCARD', 'MADA'], supportedCards: ['CREDIT', 'DEBIT'] },
-      fields: { cardHolder: true },
-      addons: { displayPaymentBrands: true, loader: true, saveCard: false },
-      interface: { locale: Locale.AR, theme: Theme.LIGHT, edges: Edges.CURVED, direction: Direction.RTL },
-      onReady: function(){ setTapPayBtnState(false, '💳 ادفع الآن'); },
-      onError: function(){
-        showTapModalError('تعذّر التحقق من بيانات البطاقة، تأكد منها وحاول مرة ثانية.');
-        setTapPayBtnState(false, '💳 ادفع الآن');
-      },
-      onSuccess: function(data){ submitTapToken(data.id); }
-    });
-  }
-  function closeTapCardModal(){
-    document.getElementById('tapCardModal').classList.remove('show');
-    if(tapCardHandle && tapCardHandle.unmount){ try{ tapCardHandle.unmount(); }catch(e){} }
-    tapCardHandle = null;
-    pendingPaymentInfo = null;
-    document.getElementById('tap-card-container').innerHTML = '';
-  }
-  async function submitTapToken(tokenId){
-    if(!pendingPaymentInfo){ return; }
-    setTapPayBtnState(true, 'جاري تأكيد الدفع...');
-    try{
-      const { data: sessionData } = await supabaseClient.auth.getSession();
-      const authToken = sessionData.session.access_token;
-      const body = Object.assign({ purpose: pendingPaymentInfo.purpose, token: tokenId }, pendingPaymentInfo.extra || {});
-      const res = await fetch(FUNCTIONS_BASE + '/create-tap-charge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify(body)
-      });
-      const resJson = await res.json();
-      if(!res.ok || !resJson.charge_id){
-        showTapModalError(resJson.error || 'تعذّر إتمام عملية الدفع، حاول مرة ثانية.');
-        setTapPayBtnState(false, '💳 ادفع الآن');
-        return;
-      }
-      if(resJson.payment_url){
-        window.location.href = resJson.payment_url;
-      } else {
-        window.location.href = 'payment-result.html?tap_id=' + encodeURIComponent(resJson.charge_id);
-      }
-    } catch(e){
-      showTapModalError('حصل خطأ بالاتصال، حاول مرة ثانية.');
-      setTapPayBtnState(false, '💳 ادفع الآن');
-    }
-  }
-  document.getElementById('tapModalCancelBtn').addEventListener('click', closeTapCardModal);
-  document.getElementById('tapPayBtn').addEventListener('click', function(){
-    if(window.CardSDK && window.CardSDK.tokenize){
-      setTapPayBtnState(true, 'جاري التحقق...');
-      window.CardSDK.tokenize();
-    }
-  });
 
   /* ---------- الدفع الإلكتروني عبر Network International (N-Genius) ----------
      صفحة دفع مستضافة (Hosted Payment Page) — بخلاف Tap ما فيه نموذج بطاقة مدمج بالصفحة،
@@ -1745,9 +1642,9 @@
       const div = document.createElement('div');
       div.className = 'conv-item' + (phone === activePhone ? ' active' : '');
            div.innerHTML =
-        '<div class="cname">' + conv.name + categoryBadgeHtml(conv.category) + '</div>' +
+        '<div class="cname">' + escapeHtml(conv.name) + categoryBadgeHtml(conv.category) + '</div>' +
         '<div class="cphone">' + phone + '</div>' +
-        '<div class="cpreview">' + (lastMsg ? lastMsg.text : '') + '</div>';
+        '<div class="cpreview">' + escapeHtml(lastMsg ? lastMsg.text : '') + '</div>';
       div.addEventListener('click', function(){
         activePhone = phone;
         renderConvList();
