@@ -2751,6 +2751,83 @@
   /* ——— بطاقات ولوحات عامة ——— */
   .login-card, .conv-list, .conv-list-top, .stat-card{border-color:rgba(228,236,233,.95);}
 
+  /* ═══════════════════════════════════════════════════════════
+     الأقسام كشريط جانبي على اليمين بدل تبويبات أفقية فوق
+     ───────────────────────────────────────────────────────────
+     بدون أي تعديل على HTML: العناصر (stats-row / البانرات / tabs /
+     panel) كلها أشقّاء مباشرون داخل .top-stats. نجعل الحاوية flex
+     مع wrap: الصفوف العلوية بعرض 100% فتنزل كل واحدة بسطرها،
+     ثم يتقاسم الشريط الجانبي واللوحة النشطة السطر التالي.
+     اللوحات غير النشطة display:none فلا تُحتسب أصلاً كعناصر flex.
+     ═══════════════════════════════════════════════════════════ */
+  @media (min-width:1000px){
+    .container.top-stats{
+      display:flex; flex-wrap:wrap; align-items:flex-start;
+      column-gap:22px; row-gap:0;
+    }
+    .top-stats > .stats-row,
+    .top-stats > .cost-note,
+    .top-stats > .setup-progress-card{ flex:0 0 100%; }
+
+    /* الشريط الجانبي */
+    .top-stats > .tabs{
+      flex:0 0 240px; width:240px;
+      flex-direction:column; align-items:stretch; flex-wrap:nowrap;
+      gap:3px; margin-bottom:40px; padding:10px;
+      background:var(--card); border:1px solid var(--border); border-radius:16px;
+      box-shadow:0 16px 34px -26px rgba(7,94,84,.55);
+      position:sticky; top:84px;
+    }
+    .top-stats > .tabs::before{
+      content:'الأقسام';
+      font-size:11.5px; font-weight:800; color:var(--muted);
+      letter-spacing:.04em; padding:6px 13px 9px;
+      border-bottom:1px solid var(--border); margin-bottom:5px;
+    }
+    /* لا نلمس خاصية display إطلاقاً — الكود يبدّلها لإخفاء
+       "الرسائل الجماعية" عن غير المالك (inline-block / none)،
+       وعنصر flex أصلاً يتحوّل لـ block تلقائياً. */
+    .top-stats > .tabs .tab-btn{
+      width:100%; text-align:start;
+      border:1px solid transparent; background:transparent;
+      border-radius:11px; padding:11px 13px; font-size:14px;
+      color:var(--muted); box-shadow:none;
+    }
+    .top-stats > .tabs .tab-btn:hover:not(.active){
+      background:rgba(37,211,102,.09); border-color:transparent; color:var(--wa-teal-dark);
+    }
+    .top-stats > .tabs .tab-btn.active{
+      background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-teal));
+      color:#fff; border-color:transparent;
+      box-shadow:0 10px 20px -12px rgba(7,94,84,.85);
+    }
+
+    /* عمود المحتوى */
+    .top-stats > .panel{ flex:1 1 0; min-width:0; }
+  }
+
+  /* أيقونة لكل قسم — بدون تعديل على HTML */
+  .tabs .tab-btn::before{ margin-inline-end:8px; font-size:14.5px; }
+  .tabs .tab-btn[data-tab="inbox"]::before{ content:'💬'; }
+  .tabs .tab-btn[data-tab="analytics"]::before{ content:'📊'; }
+  .tabs .tab-btn[data-tab="broadcast"]::before{ content:'📣'; }
+  .tabs .tab-btn[data-tab="templates"]::before{ content:'📝'; }
+  .tabs .tab-btn[data-tab="orders"]::before{ content:'📦'; }
+  .tabs .tab-btn[data-tab="addons"]::before{ content:'🧩'; }
+  .tabs .tab-btn[data-tab="support"]::before{ content:'🛟'; }
+  .tabs .tab-btn[data-tab="settings"]::before{ content:'⚙️'; }
+
+  /* على الشاشات الأصغر: شريط أفقي يُمرَّر بدل ثلاثة صفوف متكدّسة */
+  @media (max-width:999px){
+    .tabs{
+      flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden;
+      padding-bottom:4px; scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;
+    }
+    .tabs::-webkit-scrollbar{ display:none; }
+    .tabs .tab-btn{ flex-shrink:0; }
+  }
+
   /* ——— التنبيهات ——— */
   .alert-box:empty{display:none !important;}
   .alert-box{border-radius:12px; line-height:1.7;}
