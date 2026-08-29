@@ -179,6 +179,13 @@
   .status-badge.zid-disconnected{background:#EEE; color:var(--muted);}
   .status-badge.salla-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
   .status-badge.salla-disconnected{background:#EEE; color:var(--muted);}
+  .status-badge.woo-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.woo-disconnected{background:#EEE; color:var(--muted);}
+  .status-badge.shopify-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.shopify-disconnected{background:#EEE; color:var(--muted);}
+  .store-connect-form{margin-top:12px; display:flex; flex-direction:column; gap:10px; max-width:420px;}
+  .store-connect-form input{width:100%;}
+  .store-connect-form .field-label{font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; display:block;}
   /* support tickets */
   .status-badge{display:inline-flex; align-items:center; padding:4px 11px; border-radius:100px; font-size:11.5px; font-weight:800; white-space:nowrap;}
   .status-badge.open{background:rgba(184,134,11,.13); color:var(--warn);}
@@ -542,7 +549,51 @@
         <div id="sallaStatus"><div class="conv-empty">جاري التحميل...</div></div>
         <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;">ربط مع سلة</button>
         <div class="helper-text" id="sallaHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">اربط زد أو سلة (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
+        <div class="helper-text" style="margin-top:10px;">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
+      </div>
+      <div class="settings-card" id="wooCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>ربط متجر ووكومرس (ووردبريس)</label>
+        </div>
+        <div id="wooStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div class="store-connect-form" id="wooConnectForm" style="display:none;">
+          <div class="field" style="margin-bottom:0;">
+            <label>رابط المتجر</label>
+            <input type="text" id="wooStoreUrl" placeholder="https://mystore.com" dir="ltr">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Consumer Key</label>
+            <input type="text" id="wooConsumerKey" placeholder="ck_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Consumer Secret</label>
+            <input type="text" id="wooConsumerSecret" placeholder="cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
+          </div>
+          <div class="alert-box error" id="wooConnectError" style="display:none;"></div>
+          <button class="primary-btn" id="connectWooBtn" style="width:auto; padding:12px 30px;">ربط مع ووكومرس</button>
+        </div>
+        <div class="helper-text" id="wooHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;">تسوي المفاتيح من لوحة ووردبريس: WooCommerce ← Settings ← Advanced ← REST API ← Add key، وتختار صلاحية "Read/Write". انسخ المفتاحين وألصقهم هنا.</div>
+      </div>
+      <div class="settings-card" id="shopifyCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>ربط متجر شوبيفاي (Shopify)</label>
+        </div>
+        <div id="shopifyStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div class="store-connect-form" id="shopifyConnectForm" style="display:none;">
+          <div class="field" style="margin-bottom:0;">
+            <label>نطاق المتجر</label>
+            <input type="text" id="shopifyDomain" placeholder="mystore.myshopify.com" dir="ltr">
+          </div>
+          <div class="field" style="margin-bottom:0;">
+            <label>Admin API Access Token</label>
+            <input type="text" id="shopifyAccessToken" placeholder="shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
+          </div>
+          <div class="alert-box error" id="shopifyConnectError" style="display:none;"></div>
+          <button class="primary-btn" id="connectShopifyBtn" style="width:auto; padding:12px 30px;">ربط مع شوبيفاي</button>
+        </div>
+        <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
       </div>
       <div class="settings-card" id="planCard">
         <div class="field" style="margin-bottom:16px;">
@@ -1267,6 +1318,8 @@
     loadStoreAnalytics();
     loadZidStatus();
     loadSallaStatus();
+    loadWooCommerceStatus();
+    loadShopifyStatus();
     loadTemplates();
     loadTopupInfo();
     renderSubscriptionBanner();
@@ -1571,6 +1624,133 @@
     } catch(e){
       btn.disabled = false; btn.textContent = 'ربط مع سلة';
       alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+    }
+  });
+  /* ---------- ربط متجر ووكومرس (ووردبريس) ---------- */
+  async function loadWooCommerceStatus(){
+    const statusBox = document.getElementById('wooStatus');
+    const form = document.getElementById('wooConnectForm');
+    const nonOwnerHint = document.getElementById('wooHelperNonOwner');
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+    const { data } = await supabaseClient
+      .from('client_woocommerce_credentials')
+      .select('store_url, created_at')
+      .eq('client_id', myClient.id)
+      .maybeSingle();
+    const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
+    if(data){
+      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      statusBox.innerHTML =
+        '<span class="status-badge woo-connected">✅ متصل' + (data.store_url ? ' — ' + escapeHtml(data.store_url) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+      form.style.display = 'none';
+    } else if(addonLocked){
+      statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('woo') : '');
+      form.style.display = 'none';
+      bindStoreAddonSupportBtn('woo');
+    } else {
+      statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ غير متصل بعد</span>';
+      form.style.display = isOwner ? 'flex' : 'none';
+    }
+  }
+  document.getElementById('connectWooBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner){ return; }
+    const btn = this;
+    const errBox = document.getElementById('wooConnectError');
+    errBox.style.display = 'none';
+    const storeUrl = document.getElementById('wooStoreUrl').value.trim();
+    const consumerKey = document.getElementById('wooConsumerKey').value.trim();
+    const consumerSecret = document.getElementById('wooConsumerSecret').value.trim();
+    if(!storeUrl || !consumerKey || !consumerSecret){
+      errBox.textContent = 'عبّي رابط المتجر ومفتاحي الـ API كاملة.';
+      errBox.style.display = 'block';
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'جاري الربط...';
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/connect-woocommerce-store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ client_id: myClient.id, store_url: storeUrl, consumer_key: consumerKey, consumer_secret: consumerSecret })
+      });
+      const json = await res.json();
+      if(!res.ok || json.error){
+        btn.disabled = false; btn.textContent = 'ربط مع ووكومرس';
+        errBox.textContent = json.message || 'تعذّر الربط، تأكد من صحة البيانات.';
+        errBox.style.display = 'block';
+        return;
+      }
+      await loadWooCommerceStatus();
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'ربط مع ووكومرس';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
+    }
+  });
+  /* ---------- ربط متجر شوبيفاي ---------- */
+  async function loadShopifyStatus(){
+    const statusBox = document.getElementById('shopifyStatus');
+    const form = document.getElementById('shopifyConnectForm');
+    const nonOwnerHint = document.getElementById('shopifyHelperNonOwner');
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+    const { data } = await supabaseClient
+      .from('client_shopify_credentials')
+      .select('shop_domain, created_at')
+      .eq('client_id', myClient.id)
+      .maybeSingle();
+    const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
+    if(data){
+      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      statusBox.innerHTML =
+        '<span class="status-badge shopify-connected">✅ متصل' + (data.shop_domain ? ' — ' + escapeHtml(data.shop_domain) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+      form.style.display = 'none';
+    } else if(addonLocked){
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('shopify') : '');
+      form.style.display = 'none';
+      bindStoreAddonSupportBtn('shopify');
+    } else {
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ غير متصل بعد</span>';
+      form.style.display = isOwner ? 'flex' : 'none';
+    }
+  }
+  document.getElementById('connectShopifyBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner){ return; }
+    const btn = this;
+    const errBox = document.getElementById('shopifyConnectError');
+    errBox.style.display = 'none';
+    const shopDomain = document.getElementById('shopifyDomain').value.trim();
+    const accessToken = document.getElementById('shopifyAccessToken').value.trim();
+    if(!shopDomain || !accessToken){
+      errBox.textContent = 'عبّي نطاق المتجر والتوكن كاملة.';
+      errBox.style.display = 'block';
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'جاري الربط...';
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/connect-shopify-store', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ client_id: myClient.id, shop_domain: shopDomain, access_token: accessToken })
+      });
+      const json = await res.json();
+      if(!res.ok || json.error){
+        btn.disabled = false; btn.textContent = 'ربط مع شوبيفاي';
+        errBox.textContent = json.message || 'تعذّر الربط، تأكد من صحة البيانات.';
+        errBox.style.display = 'block';
+        return;
+      }
+      await loadShopifyStatus();
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'ربط مع شوبيفاي';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
     }
   });
   function renderTeam(){
