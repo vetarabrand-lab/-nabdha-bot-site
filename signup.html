@@ -113,7 +113,11 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .plan-card .p-limit{font-size:12.5px; color:var(--muted); margin-top:4px;}
   .plans-loading{color:var(--muted); font-size:14px; padding:12px 0;}
 
-  .honeypot{position:absolute; left:-9999px; opacity:0; height:0;}
+  /* مصيدة السبام: مخفية عن المستخدم بدون ما تمدّ عرض الصفحة (الطريقة القديمة left:-9999px
+     كانت تضخّم scrollWidth وتجبرنا نعتمد على overflow-x:hidden لإخفاء الأثر) */
+  .honeypot{position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0;
+    overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+    opacity:0; pointer-events:none;}
 
   .consent-block{ margin:22px 0 6px; display:flex; flex-direction:column; gap:13px; }
   .consent-row{ display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--muted); cursor:pointer; line-height:1.7; }
@@ -201,11 +205,11 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="row-2">
         <div class="field">
           <label data-i18n="form.bizNameAr">اسم النشاط (بالعربي) *</label>
-          <input type="text" id="businessNameAr" required data-i18n-placeholder="form.bizNameArPh" placeholder="مثال: متجر جُمان للبهارات">
+          <input type="text" id="businessNameAr" name="organization" autocomplete="organization" required data-i18n-placeholder="form.bizNameArPh" placeholder="مثال: متجر جُمان للبهارات">
         </div>
         <div class="field">
           <label data-i18n="form.bizNameEn">اسم النشاط (بالإنجليزي)</label>
-          <input type="text" id="businessName" data-i18n-placeholder="form.bizNameEnPh" placeholder="Juman Spices">
+          <input type="text" id="businessName" name="organization-latin" autocomplete="off" data-i18n-placeholder="form.bizNameEnPh" placeholder="Juman Spices">
         </div>
       </div>
 
@@ -213,16 +217,16 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="row-2">
         <div class="field">
           <label data-i18n="form.email">البريد الإلكتروني *</label>
-          <input type="email" id="ownerEmail" required placeholder="you@example.com">
+          <input type="email" id="ownerEmail" name="email" autocomplete="email" inputmode="email" required placeholder="you@example.com">
         </div>
         <div class="field">
           <label data-i18n="form.phone">رقم جوالك (للتواصل معك) *</label>
-          <input type="tel" id="ownerPhone" required placeholder="9665xxxxxxxx">
+          <input type="tel" id="ownerPhone" name="tel" autocomplete="tel" inputmode="tel" required placeholder="9665xxxxxxxx">
         </div>
       </div>
       <div class="field">
         <label data-i18n="form.waNumber">رقم واتساب النشاط الذي تريد ربطه بالبوت</label>
-        <input type="tel" id="whatsappDisplayNumber" placeholder="9665xxxxxxxx">
+        <input type="tel" id="whatsappDisplayNumber" name="whatsapp-number" autocomplete="off" inputmode="tel" placeholder="9665xxxxxxxx">
         <div class="hint" data-i18n="form.waNumberHint">إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.</div>
       </div>
 
@@ -634,6 +638,175 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       if(!panel.contains(e.target) && !toggle.contains(e.target)){ panel.classList.remove('open'); }
     });
   })();
+</script>
+
+<!-- ═══ طبقة التلميع البصري — صفحة التسجيل ═══ -->
+<style id="nabdaPolishSignup">
+  :root{ --ring:rgba(18,140,126,.5); --ease-out:cubic-bezier(.22,1,.36,1); }
+
+  ::selection{background:rgba(37,211,102,.28); color:#04302B;}
+  :focus-visible{outline:2.5px solid var(--ring); outline-offset:3px; border-radius:10px;}
+  h1,h2,h3{text-wrap:balance;}
+
+  /* ——— الهيدر ——— */
+  header{transition:box-shadow .3s var(--ease-out), background .3s ease;}
+  header.is-stuck{background:rgba(246,250,248,.95); box-shadow:0 8px 28px -18px rgba(7,94,84,.75);}
+  .logo-badge{box-shadow:0 8px 18px -8px rgba(7,94,84,.55);}
+  .back-link{transition:gap .2s var(--ease-out), color .2s ease;}
+  .back-link:hover{gap:10px; color:var(--wa-green-dark);}
+
+  /* ——— شريط العنوان ——— */
+  .hero-strip{position:relative; overflow:hidden; isolation:isolate;}
+  .hero-strip::before{
+    content:''; position:absolute; inset:0; z-index:-1;
+    background:
+      radial-gradient(48% 62% at 82% 15%, rgba(37,211,102,.32), transparent 70%),
+      radial-gradient(42% 58% at 10% 92%, rgba(223,255,238,.18), transparent 70%);
+  }
+  .hero-strip::after{
+    content:''; position:absolute; inset:0; z-index:-1; opacity:.16;
+    background-image:radial-gradient(circle, #fff 1.4px, transparent 1.4px);
+    background-size:24px 24px;
+    -webkit-mask-image:radial-gradient(90% 90% at 60% 20%, #000, transparent 78%);
+    mask-image:radial-gradient(90% 90% at 60% 20%, #000, transparent 78%);
+  }
+  .hero-strip h1{letter-spacing:-.02em;}
+
+  /* ——— بطاقة النموذج ——— */
+  .form-card{
+    counter-reset:nbsec;
+    box-shadow:0 30px 60px -34px rgba(7,94,84,.5);
+    border-color:rgba(228,236,233,.9);
+  }
+
+  /* عناوين الأقسام كخطوات مرقّمة */
+  .form-section-title{
+    counter-increment:nbsec;
+    display:flex; align-items:center; gap:11px;
+    font-size:16px; margin:34px 0 18px; padding-bottom:12px;
+    border-bottom:1px solid var(--border);
+  }
+  .form-section-title::before{
+    content:counter(nbsec);
+    width:27px; height:27px; border-radius:50%; flex-shrink:0;
+    background:linear-gradient(140deg, var(--wa-teal-dark), var(--wa-green));
+    color:#fff; font-size:13px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 16px -8px rgba(7,94,84,.8);
+    font-variant-numeric:tabular-nums;
+  }
+  .form-section-title:first-child{margin-top:0;}
+
+  /* ——— الحقول ——— */
+  .field label{color:var(--ink); letter-spacing:-.005em;}
+  .field input, .field textarea, .field select{
+    transition:border-color .18s ease, box-shadow .22s ease, background .18s ease;
+  }
+  .field input:hover:not(:focus),
+  .field textarea:hover:not(:focus),
+  .field select:hover:not(:focus){border-color:#C9DDD6;}
+  .field input:focus, .field textarea:focus, .field select:focus{
+    border-color:var(--wa-green);
+    box-shadow:0 0 0 4px rgba(37,211,102,.16);
+    background:#fff;
+  }
+  .field input::placeholder, .field textarea::placeholder{color:#9DB0AA;}
+  .field .hint{display:flex; align-items:flex-start; gap:6px; line-height:1.6;}
+  .field .hint::before{content:'💡'; font-size:11px; line-height:1.5; flex-shrink:0;}
+  /* الحقول المطلوبة: علامة خفيفة على الحافة */
+  .field:has(input:required, textarea:required) > label{position:relative;}
+
+  /* ——— بطاقات الباقات ——— */
+  .plan-card{
+    position:relative; overflow:hidden;
+    transition:transform .25s var(--ease-out), box-shadow .25s ease, border-color .2s ease, background .2s ease;
+  }
+  .plan-card:hover{transform:translateY(-4px); box-shadow:0 18px 34px -20px rgba(7,94,84,.45);}
+  .plan-card.selected{
+    background:linear-gradient(180deg, rgba(37,211,102,.07), transparent 70%);
+    box-shadow:0 0 0 3px rgba(37,211,102,.22), 0 18px 34px -20px rgba(37,211,102,.5);
+  }
+  .plan-card.selected::after{
+    content:'✓'; position:absolute; top:9px; inset-inline-end:10px;
+    width:21px; height:21px; border-radius:50%;
+    background:var(--wa-green); color:#fff; font-size:12px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .plan-card .p-price{font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+
+  /* ——— الموافقات ——— */
+  .consent-row{
+    border:1px solid transparent; border-radius:12px; padding:9px 11px; margin-inline:-11px;
+    transition:background .2s ease, border-color .2s ease;
+  }
+  .consent-row:hover{background:rgba(37,211,102,.05); border-color:rgba(37,211,102,.18);}
+
+  /* ——— زر الإرسال ——— */
+  .submit-btn{
+    background:linear-gradient(135deg, var(--wa-green), var(--wa-green-dark));
+    box-shadow:0 16px 30px -12px rgba(37,211,102,.62);
+    transition:transform .18s var(--ease-out), box-shadow .28s ease, filter .2s ease;
+    letter-spacing:-.01em;
+  }
+  .submit-btn:hover:not(:disabled){
+    background:linear-gradient(135deg, var(--wa-green), var(--wa-green-dark));
+    filter:brightness(1.06);
+    box-shadow:0 22px 38px -12px rgba(37,211,102,.72);
+  }
+  .submit-btn:active:not(:disabled){transform:translateY(0) scale(.99);}
+  .submit-btn:disabled{box-shadow:none; filter:grayscale(.15);}
+
+  /* ——— التنبيهات ——— */
+  /* إصلاح: العنصر يحمل class="alert error" من الأساس، فكان صندوق أحمر فاضي
+     يظهر فوق النموذج عند كل فتح للصفحة قبل ما يسوي المستخدم أي شي. */
+  .alert:empty{display:none !important;}
+  .alert{border-radius:14px; line-height:1.7;}
+  .alert.error{
+    display:flex; align-items:flex-start; gap:9px;
+    box-shadow:0 10px 24px -16px rgba(209,67,67,.7);
+    animation:nbShake .4s var(--ease-out);
+  }
+  .alert.error::before{content:'⚠️'; flex-shrink:0;}
+  @keyframes nbShake{
+    0%,100%{transform:translateX(0);} 22%{transform:translateX(-5px);}
+    45%{transform:translateX(4px);} 70%{transform:translateX(-2px);}
+  }
+
+  /* ——— بطاقة النجاح ——— */
+  .success-icon{
+    box-shadow:0 0 0 0 rgba(37,211,102,.5);
+    animation:nbRing 2.4s ease-out infinite;
+  }
+  @keyframes nbRing{
+    0%{box-shadow:0 0 0 0 rgba(37,211,102,.45);}
+    70%{box-shadow:0 0 0 18px rgba(37,211,102,0);}
+    100%{box-shadow:0 0 0 0 rgba(37,211,102,0);}
+  }
+  .success-card h2{letter-spacing:-.02em;}
+  .success-steps{
+    background:linear-gradient(180deg, rgba(37,211,102,.07), rgba(246,250,248,.6));
+    border-color:rgba(37,211,102,.22);
+  }
+  .success-steps li{align-items:flex-start; line-height:1.75;}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      animation-duration:.01ms !important; animation-iteration-count:1 !important;
+      transition-duration:.01ms !important;
+    }
+  }
+</style>
+<script>
+(function(){
+  var header = document.querySelector('header');
+  if(!header) return;
+  var ticking = false;
+  function upd(){ header.classList.toggle('is-stuck', (window.scrollY||0) > 8); ticking = false; }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(upd); }
+  }, { passive:true });
+  upd();
+})();
 </script>
 
 </body>

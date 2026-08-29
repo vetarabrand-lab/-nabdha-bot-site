@@ -450,6 +450,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       </ul>
     </div>
     <div class="phone-wrap">
+      <div class="phone-badge">🛡️ <span data-i18n="phone.verified">موثّق لدى ميتا</span></div>
       <div class="phone">
         <div class="phone-screen">
           <div class="phone-topbar">
@@ -1173,6 +1174,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       "trustFrame.d2": "نعمل حصرياً عبر WhatsApp Business Cloud API الرسمية المعتمدة من ميتا — بدون أي طرق غير رسمية أو مخاطرة بحظر رقمك.",
       "trustFrame.t3": "متكامل مع زد وسلة",
       "trustFrame.d3": "ربط مباشر عبر واجهات زد وسلة الرسمية، يسحب حالة الطلبات والمنتجات لحظياً داخل محادثة واتساب.",
+      "phone.verified": "موثّق لدى ميتا",
       "trustFrame.t4": "نشاط تجاري موثّق لدى ميتا",
       "trustFrame.d4": "حساب أعمالنا اجتاز التحقق الرسمي من ميتا (Business Verification)، وهو ما يفتح الوصول الكامل لواجهة واتساب بيزنس ورفع حدود الإرسال.",
       "calc.eyebrow": "احسب خسارتك",
@@ -1385,6 +1387,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       "trustFrame.d2": "We work exclusively through the official WhatsApp Business Cloud API approved by Meta — no unofficial methods, no risk of your number getting banned.",
       "trustFrame.t3": "Integrated with Zid and Salla",
       "trustFrame.d3": "Direct integration via Zid and Salla's official APIs, pulling live order status and product data straight into the WhatsApp conversation.",
+      "phone.verified": "Meta-verified business",
       "trustFrame.t4": "Verified business with Meta",
       "trustFrame.d4": "Our business account has passed Meta's official Business Verification, unlocking full access to the WhatsApp Business API and higher messaging limits.",
       "calc.eyebrow": "Calculate your loss",
@@ -2138,6 +2141,351 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
 
     loadTestimonials();
   })();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     طبقة التلميع البصري — بوت نبضة
+     مضافة في نهاية الصفحة عمداً حتى تسبق بقية الأنماط في الأولوية.
+     لا تغيّر أي بنية أو نص أو مفتاح ترجمة — تحسينات بصرية فقط.
+     ═══════════════════════════════════════════════════════════════ -->
+<style id="nabdaPolish">
+  :root{
+    --wa-deep:#04302B;
+    --mint:#DFFFEE;
+    --ring:rgba(18,140,126,.5);
+    --glow-green:rgba(37,211,102,.32);
+    --ease-out:cubic-bezier(.22,1,.36,1);
+  }
+
+  /* ——— 1. أساسيات وتفاصيل عامة ——— */
+  ::selection{background:rgba(37,211,102,.28); color:var(--wa-deep);}
+  :focus-visible{outline:2.5px solid var(--ring); outline-offset:3px; border-radius:10px;}
+  h1,h2,h3{text-wrap:balance;}
+  .section-head p, .feature-card p, .step p{text-wrap:pretty;}
+  @supports (scrollbar-color:auto){
+    html{scrollbar-color:rgba(18,140,126,.4) transparent; scrollbar-width:thin;}
+  }
+
+  /* ——— 2. شريط تقدّم القراءة ——— */
+  .nb-progress{position:fixed; inset-inline:0; top:0; height:3px; z-index:200; pointer-events:none;}
+  .nb-progress i{
+    display:block; height:100%; width:0;
+    background:linear-gradient(90deg, var(--wa-teal), var(--wa-green));
+    box-shadow:0 0 14px var(--glow-green);
+  }
+
+  /* ——— 3. الهيدر ——— */
+  header{transition:background .3s ease, box-shadow .3s var(--ease-out);}
+  header.is-stuck{background:rgba(246,250,248,.94); box-shadow:0 8px 28px -18px rgba(7,94,84,.75);}
+  nav{transition:padding .3s var(--ease-out);}
+  header.is-stuck nav{padding-block:11px;}
+  .nav-links a{position:relative; padding-block:5px; transition:color .2s ease;}
+  .nav-links a::after{
+    content:''; position:absolute; inset-inline:0; bottom:-1px; height:2px; border-radius:2px;
+    background:linear-gradient(90deg, var(--wa-teal), var(--wa-green));
+    transform:scaleX(0); transition:transform .3s var(--ease-out);
+  }
+  .nav-links a:hover::after, .nav-links a.is-active::after{transform:scaleX(1);}
+  .nav-links a.is-active{color:var(--wa-teal-dark); font-weight:700;}
+  .logo-badge{box-shadow:0 8px 18px -8px rgba(7,94,84,.55);}
+  /* إصلاح: بالنسخة الإنجليزية الكلمات أطول، فكان اسم العلامة يلتصق بأول رابط
+     في القائمة ("Nabda BotFeatures"). فجوة ثابتة + تباعد مرن يمنعان التلاصق. */
+  nav{gap:clamp(10px, 1.5vw, 18px);}
+  @media (max-width:430px){ nav{padding-inline:16px;} }
+  .logo{flex-shrink:0;}
+  .nav-links{gap:clamp(14px, 1.8vw, 32px); flex-wrap:nowrap; white-space:nowrap; min-width:0;}
+  html[lang="en"] .nav-links{font-size:15px;}
+  html[lang="en"] .nav-cta .btn{padding:13px 21px; font-size:15px;}
+  /* ستة روابط + ثلاثة أزرار لا تسع دون 1080px (والنسخة الإنجليزية أطول)،
+     فكانت الروابط تتراكب على زر اللغة. ننتقل لقائمة البرجر أبكر —
+     وهي أصلاً تحتوي نفس الروابط وزر اللغة، فلا يضيع شيء. */
+  @media (max-width:1080px){
+    .nav-links{display:none;}
+    .burger{display:flex;}
+  }
+  .nav-cta{flex-shrink:0;}
+
+  /* ——— 4. الأزرار ——— */
+  .btn{transition:transform .18s var(--ease-out), box-shadow .28s ease, background .2s ease, border-color .2s ease;}
+  .btn:active{transform:translateY(0) scale(.985);}
+  .btn-primary:hover{box-shadow:0 18px 34px -10px rgba(37,211,102,.62);}
+  .btn-outline:hover{box-shadow:0 12px 26px -14px rgba(7,94,84,.5);}
+  .lang-btn{transition:border-color .2s ease, background .2s ease;}
+  .lang-btn:hover{background:rgba(37,211,102,.08);}
+
+  /* ——— 5. الهيرو ——— */
+  .hero{padding:96px 0 84px; isolation:isolate;}
+  .hero::before{
+    opacity:.16;
+    -webkit-mask-image:radial-gradient(125% 95% at 72% 12%, #000 28%, transparent 76%);
+    mask-image:radial-gradient(125% 95% at 72% 12%, #000 28%, transparent 76%);
+  }
+  .hero::after{
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(48% 55% at 84% 16%, rgba(37,211,102,.32), transparent 70%),
+      radial-gradient(45% 52% at 6% 90%, rgba(223,255,238,.18), transparent 70%);
+  }
+  .hero h1{letter-spacing:-.02em;}
+  .hero h1 em{text-decoration-thickness:3px;}
+  .hero-trust{gap:10px 12px; margin-top:4px;}
+  .hero-trust li{
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.24);
+    padding:8px 15px; border-radius:100px; backdrop-filter:blur(6px);
+    font-size:13.5px; color:#fff;
+    transition:background .22s ease, transform .22s var(--ease-out), border-color .22s ease;
+  }
+  .hero-trust li:hover{background:rgba(255,255,255,.2); border-color:rgba(255,255,255,.45); transform:translateY(-2px);}
+
+  /* موك أب الجوال */
+  .phone-wrap{position:relative;}
+  .phone-wrap::before{
+    content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:min(360px,92%); aspect-ratio:1; border-radius:50%; z-index:0; pointer-events:none;
+    background:radial-gradient(circle, rgba(37,211,102,.42), transparent 66%);
+    filter:blur(46px);
+  }
+  .phone{position:relative; z-index:1; animation:nbFloat 7.5s ease-in-out infinite;}
+  @keyframes nbFloat{0%,100%{transform:rotate(1.5deg) translateY(0);} 50%{transform:rotate(1.5deg) translateY(-13px);}}
+  .phone-avatar{position:relative;}
+  .phone-avatar::after{
+    content:''; position:absolute; inset-inline-end:-2px; bottom:-2px;
+    width:11px; height:11px; border-radius:50%;
+    background:var(--wa-green); border:2px solid var(--wa-teal-dark);
+    animation:nbPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes nbPulse{0%,100%{box-shadow:0 0 0 0 rgba(37,211,102,.65);} 55%{box-shadow:0 0 0 7px rgba(37,211,102,0);}}
+  .phone-badge{
+    position:absolute; z-index:3; bottom:26px; inset-inline-start:-6px;
+    display:inline-flex; align-items:center; gap:7px;
+    background:rgba(255,255,255,.97); color:var(--wa-teal-dark);
+    font-size:12.5px; font-weight:800; padding:9px 15px; border-radius:100px;
+    box-shadow:0 16px 34px -14px rgba(0,0,0,.55);
+    border:1px solid rgba(37,211,102,.3);
+    animation:nbFloat 7.5s ease-in-out infinite; animation-delay:-3.4s;
+    white-space:nowrap;
+  }
+  @media (max-width:960px){ .phone-badge{inset-inline-start:auto; inset-inline-end:-4px;} }
+  @media (max-width:400px){ .phone-badge{display:none;} }
+
+  /* ——— 6. الإحصائيات ——— */
+  .stats .stat{position:relative; padding:6px 12px; transition:transform .26s var(--ease-out);}
+  .stats .stat:hover{transform:translateY(-4px);}
+  .stats .stat + .stat::before{
+    content:''; position:absolute; inset-inline-start:0; top:14%; height:72%; width:1px;
+    background:linear-gradient(180deg, transparent, var(--border), transparent);
+  }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .stats .stat b{
+      background:linear-gradient(135deg, var(--wa-teal-dark) 10%, var(--wa-green));
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      font-variant-numeric:tabular-nums; letter-spacing:-.02em;
+    }
+  }
+  @media (max-width:560px){ .stats .stat:nth-child(odd)::before{display:none;} }
+
+  /* ——— 7. إطار الثقة ——— */
+  .trust-frame{box-shadow:0 18px 40px -26px rgba(7,94,84,.5);}
+  .trust-frame-item{transition:background .28s ease;}
+  .trust-frame-item:hover{background:linear-gradient(180deg, rgba(37,211,102,.055), transparent 75%);}
+  .trust-frame-icon{
+    background:linear-gradient(140deg, rgba(37,211,102,.2), rgba(18,140,126,.09));
+    border:1px solid rgba(37,211,102,.24);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+    transition:transform .28s var(--ease-out);
+  }
+  .trust-frame-item:hover .trust-frame-icon{transform:scale(1.09) rotate(-4deg);}
+
+  /* ——— 8. بطاقات الميزات ——— */
+  .feature-card{
+    position:relative; overflow:hidden;
+    transition:transform .3s var(--ease-out), box-shadow .3s ease, border-color .3s ease;
+  }
+  .feature-card::before{
+    content:''; position:absolute; inset-inline:0; top:0; height:3px; z-index:2;
+    background:linear-gradient(90deg, var(--wa-teal), var(--wa-green));
+    transform:scaleX(0); transition:transform .4s var(--ease-out);
+  }
+  .feature-card:hover::before{transform:scaleX(1);}
+  .feature-card:hover{
+    transform:translateY(-7px);
+    box-shadow:0 26px 50px -24px rgba(7,94,84,.4);
+    border-color:rgba(37,211,102,.4);
+  }
+  .feature-icon{
+    position:relative; overflow:hidden;
+    box-shadow:0 12px 24px -12px rgba(7,94,84,.65);
+    transition:transform .3s var(--ease-out);
+  }
+  .feature-icon::after{
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(145deg, rgba(255,255,255,.28), transparent 52%);
+  }
+  .feature-card:hover .feature-icon{transform:translateY(-2px) scale(1.05);}
+
+  @media (min-width:961px){
+    .features-grid > .feature-card:last-child:nth-child(3n+1){
+      grid-column:1 / -1;
+      display:grid; grid-template-columns:auto 1fr; column-gap:24px; row-gap:4px;
+      align-items:center; padding-block:26px;
+    }
+    .features-grid > .feature-card:last-child:nth-child(3n+1) .feature-icon{
+      grid-row:1 / span 2; align-self:center; margin-bottom:0;
+    }
+    .features-grid > .feature-card:last-child:nth-child(3n+1) h3{grid-column:2; align-self:end;}
+    .features-grid > .feature-card:last-child:nth-child(3n+1) p{grid-column:2; align-self:start; max-width:78ch;}
+  }
+
+  /* ——— 9. الخطوات: سكّة موصولة بدل الأسهم ——— */
+  .steps{position:relative;}
+  .steps::before{
+    content:''; position:absolute; top:52px; inset-inline:9%; height:2px; z-index:0;
+    background:linear-gradient(90deg, transparent, var(--border) 8%, var(--border) 92%, transparent);
+  }
+  .step{position:relative; z-index:1; transition:transform .3s var(--ease-out), box-shadow .3s ease, border-color .3s ease;}
+  .step:hover{transform:translateY(-6px); box-shadow:0 24px 46px -24px rgba(7,94,84,.42); border-color:rgba(37,211,102,.4);}
+  .step-arrow{display:none !important;}
+  .step-num{
+    background:linear-gradient(140deg, var(--wa-teal-dark), var(--wa-green));
+    box-shadow:0 12px 24px -12px rgba(7,94,84,.8);
+    font-variant-numeric:tabular-nums; font-size:17px;
+    transition:transform .3s var(--ease-out);
+  }
+  .step:hover .step-num{transform:scale(1.08);}
+  @media (max-width:960px){ .steps::before{display:none;} }
+
+  /* ——— 10. الباقات ——— */
+  .price-card{transition:transform .3s var(--ease-out), box-shadow .3s ease, border-color .3s ease;}
+  .price-card:not(.popular):hover{
+    transform:translateY(-7px);
+    box-shadow:0 26px 50px -24px rgba(7,94,84,.4);
+    border-color:rgba(37,211,102,.45);
+  }
+  .price-card.popular{
+    border-color:transparent;
+    box-shadow:
+      0 0 0 2px rgba(37,211,102,.9),
+      0 0 0 7px rgba(37,211,102,.13),
+      0 30px 58px -24px rgba(37,211,102,.55);
+  }
+  .price-value b{font-variant-numeric:tabular-nums; letter-spacing:-.025em;}
+  .badge-popular{box-shadow:0 10px 22px -8px rgba(37,211,102,.85);}
+  .check{box-shadow:inset 0 0 0 1px rgba(37,211,102,.28);}
+  .prepaid-card{box-shadow:0 18px 40px -28px rgba(184,134,11,.55);}
+  .custom-plan-banner{box-shadow:0 22px 46px -26px rgba(7,94,84,.6);}
+
+  /* ——— 11. الأسئلة الشائعة ——— */
+  .faq-item{position:relative; transition:border-color .25s ease, box-shadow .25s ease;}
+  .faq-item::before{
+    content:''; position:absolute; inset-block:0; inset-inline-start:0; width:3px; z-index:2;
+    background:linear-gradient(180deg, var(--wa-teal), var(--wa-green));
+    transform:scaleY(0); transform-origin:top; transition:transform .32s var(--ease-out);
+  }
+  .faq-item.open::before{transform:scaleY(1);}
+  .faq-item:hover{border-color:rgba(37,211,102,.42);}
+  .faq-item.open{border-color:rgba(37,211,102,.55); box-shadow:0 16px 32px -22px rgba(7,94,84,.55);}
+  .faq-q{transition:color .2s ease;}
+  .faq-item.open .faq-q{color:var(--wa-teal-dark);}
+
+  /* ——— 12. بانر الدعوة النهائي ——— */
+  .cta-banner{position:relative; overflow:hidden; isolation:isolate;}
+  .cta-banner::before{
+    content:''; position:absolute; inset:0; z-index:-1;
+    background:
+      radial-gradient(46% 62% at 14% 18%, rgba(37,211,102,.5), transparent 70%),
+      radial-gradient(42% 58% at 86% 84%, rgba(223,255,238,.28), transparent 70%);
+  }
+  .cta-banner::after{
+    content:''; position:absolute; inset:0; z-index:-1; opacity:.14;
+    background-image:radial-gradient(circle, #fff 1.4px, transparent 1.4px);
+    background-size:24px 24px;
+    -webkit-mask-image:radial-gradient(78% 82% at 50% 50%, #000, transparent 78%);
+    mask-image:radial-gradient(78% 82% at 50% 50%, #000, transparent 78%);
+  }
+
+  /* ——— 13. الفوتر ——— */
+  footer{background:linear-gradient(180deg, #08201B, #04150F); position:relative;}
+  footer::before{
+    content:''; position:absolute; inset-inline:0; top:0; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(37,211,102,.55), transparent);
+  }
+  .social-icon:hover{background:rgba(37,211,102,.26); box-shadow:0 10px 20px -10px rgba(37,211,102,.6);}
+  footer ul li a{transition:color .2s ease, padding-inline-start .2s ease;}
+  footer ul li a:hover{padding-inline-start:4px;}
+
+  /* ——— 14. ظهور تدريجي أنعم ——— */
+  .reveal{
+    transform:translateY(26px);
+    transition:opacity .75s var(--ease-out), transform .75s var(--ease-out);
+    transition-delay:var(--d, 0ms);
+  }
+
+  /* ——— 15. احترام تقليل الحركة ——— */
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+      animation-duration:.01ms !important; animation-iteration-count:1 !important;
+      transition-duration:.01ms !important; scroll-behavior:auto !important;
+    }
+    .reveal{opacity:1 !important; transform:none !important;}
+  }
+</style>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* شريط تقدّم القراءة */
+  var bar = document.createElement('div');
+  bar.className = 'nb-progress';
+  bar.innerHTML = '<i></i>';
+  document.body.appendChild(bar);
+  var fill = bar.firstChild;
+
+  /* حالة الهيدر عند التمرير */
+  var header = document.querySelector('header');
+  var ticking = false;
+  function onScroll(){
+    var y = window.scrollY || document.documentElement.scrollTop;
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    fill.style.width = (h > 0 ? Math.min(100, (y / h) * 100) : 0) + '%';
+    if(header){ header.classList.toggle('is-stuck', y > 12); }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; window.requestAnimationFrame(onScroll); }
+  }, { passive:true });
+  onScroll();
+
+  /* تمييز رابط القسم الحالي في القائمة */
+  var navLinks = Array.prototype.filter.call(
+    document.querySelectorAll('.nav-links a[href^="#"]'),
+    function(a){ return document.querySelector(a.getAttribute('href')); }
+  );
+  if(navLinks.length && 'IntersectionObserver' in window){
+    var byId = {};
+    navLinks.forEach(function(a){ byId[a.getAttribute('href').slice(1)] = a; });
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          navLinks.forEach(function(a){ a.classList.remove('is-active'); });
+          if(byId[e.target.id]) byId[e.target.id].classList.add('is-active');
+        }
+      });
+    }, { rootMargin:'-45% 0px -50% 0px' });
+    navLinks.forEach(function(a){ spy.observe(document.querySelector(a.getAttribute('href'))); });
+  }
+
+  /* تدرّج زمني لظهور العناصر المتجاورة */
+  if(!reduce){
+    var seen = new Map();
+    document.querySelectorAll('.reveal').forEach(function(el){
+      var p = el.parentElement;
+      var i = seen.get(p) || 0;
+      if(i > 0){ el.style.setProperty('--d', Math.min(i * 75, 450) + 'ms'); }
+      seen.set(p, i + 1);
+    });
+  }
+})();
 </script>
 
 </body>
