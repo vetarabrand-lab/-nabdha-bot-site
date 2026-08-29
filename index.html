@@ -505,6 +505,13 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <p data-i18n="trustFrame.d3">ربط مباشر عبر واجهات زد وسلة الرسمية، يسحب حالة الطلبات والمنتجات لحظياً داخل محادثة واتساب.</p>
         </div>
       </div>
+      <div class="trust-frame-item">
+        <div class="trust-frame-icon">🛡️</div>
+        <div>
+          <h3 data-i18n="trustFrame.t4">نشاط تجاري موثّق لدى ميتا</h3>
+          <p data-i18n="trustFrame.d4">حساب أعمالنا اجتاز التحقق الرسمي من ميتا (Business Verification)، وهو ما يفتح الوصول الكامل لواجهة واتساب بيزنس ورفع حدود الإرسال.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -513,8 +520,13 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .trust-frame{
     border:1.5px solid var(--border); border-radius:var(--radius); background:var(--card);
     box-shadow:var(--shadow);
-    display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    display:grid; grid-template-columns:repeat(4,1fr); gap:0;
     overflow:hidden;
+  }
+  @media (max-width:1100px) and (min-width:901px){
+    .trust-frame{grid-template-columns:repeat(2,1fr);}
+    .trust-frame-item:nth-child(3){border-inline-start:none;}
+    .trust-frame-item:nth-child(3), .trust-frame-item:nth-child(4){border-top:1px solid var(--border);}
   }
   .trust-frame-item{
     display:flex; align-items:flex-start; gap:14px; padding:28px 26px;
@@ -1161,6 +1173,8 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       "trustFrame.d2": "نعمل حصرياً عبر WhatsApp Business Cloud API الرسمية المعتمدة من ميتا — بدون أي طرق غير رسمية أو مخاطرة بحظر رقمك.",
       "trustFrame.t3": "متكامل مع زد وسلة",
       "trustFrame.d3": "ربط مباشر عبر واجهات زد وسلة الرسمية، يسحب حالة الطلبات والمنتجات لحظياً داخل محادثة واتساب.",
+      "trustFrame.t4": "نشاط تجاري موثّق لدى ميتا",
+      "trustFrame.d4": "حساب أعمالنا اجتاز التحقق الرسمي من ميتا (Business Verification)، وهو ما يفتح الوصول الكامل لواجهة واتساب بيزنس ورفع حدود الإرسال.",
       "calc.eyebrow": "احسب خسارتك",
       "calc.title": "كم تخسر شهرياً بسبب الردود المتأخرة؟",
       "calc.sub": "أدخل رقمين بس، وشوف تقدير خسارتك الشهرية من السلات المتروكة والردود البطيئة — وقد نبضة ترجّعه لك.",
@@ -1371,6 +1385,8 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       "trustFrame.d2": "We work exclusively through the official WhatsApp Business Cloud API approved by Meta — no unofficial methods, no risk of your number getting banned.",
       "trustFrame.t3": "Integrated with Zid and Salla",
       "trustFrame.d3": "Direct integration via Zid and Salla's official APIs, pulling live order status and product data straight into the WhatsApp conversation.",
+      "trustFrame.t4": "Verified business with Meta",
+      "trustFrame.d4": "Our business account has passed Meta's official Business Verification, unlocking full access to the WhatsApp Business API and higher messaging limits.",
       "calc.eyebrow": "Calculate your loss",
       "calc.title": "How much are you losing to slow replies each month?",
       "calc.sub": "Enter two numbers and see an estimate of your monthly loss from abandoned carts and slow replies — and how much Nabdha can win back.",
