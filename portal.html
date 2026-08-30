@@ -232,6 +232,20 @@
   .bar-col .bar{width:100%; max-width:32px; background:linear-gradient(180deg, var(--wa-green), var(--wa-teal-dark)); border-radius:6px 6px 2px 2px; min-height:3px;}
   .bar-col .blabel{font-size:10.5px; color:var(--muted); font-weight:700;}
   .bar-col .bcount{font-size:10.5px; color:var(--ink); font-weight:800;}
+  /* roi dashboard */
+  .roi-hero{display:grid; grid-template-columns:repeat(auto-fit, minmax(170px,1fr)); gap:16px; margin-bottom:24px; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); border-radius:20px; padding:26px 24px; box-shadow:0 16px 32px -12px rgba(7,94,84,.35);}
+  .roi-hero-item{color:#fff; text-align:center;}
+  .roi-hero-icon{font-size:22px; margin-bottom:6px;}
+  .roi-hero-value{font-size:32px; font-weight:900; line-height:1.15; font-variant-numeric:tabular-nums;}
+  .roi-hero-label{font-size:12.5px; font-weight:700; opacity:.94; margin-top:4px;}
+  .roi-hero-sub{font-size:11px; opacity:.78; margin-top:3px;}
+  @media (max-width:640px){ .roi-hero{grid-template-columns:1fr;} }
+  /* bot simulator */
+  .sim-wrap{border:1px solid var(--border); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; margin-top:6px;}
+  .sim-wrap .chat-body{height:320px;}
+  .sim-reset-btn{background:#F1F1EF; color:var(--ink); border:none; border-radius:100px; padding:8px 16px; font-weight:700; font-size:12.5px; cursor:pointer; margin-top:12px;}
+  .sim-reset-btn:hover{background:#E7E7E3;}
+  .sim-live-badge{display:inline-flex; align-items:center; gap:5px; background:rgba(37,211,102,.14); color:var(--wa-green-dark); font-size:11px; font-weight:800; padding:3px 10px; border-radius:100px; margin-inline-start:8px;}
   /* modal */
   .modal-overlay{display:none; position:fixed; inset:0; background:rgba(11,26,23,.5); align-items:center; justify-content:center; z-index:200; padding:20px;}
   .modal-overlay.show{display:flex;}
@@ -401,6 +415,25 @@
       </div>
     </div>
     <div class="panel" id="panelAnalytics">
+      <div class="roi-hero">
+        <div class="roi-hero-item">
+          <div class="roi-hero-icon">⏱️</div>
+          <div class="roi-hero-value" id="roiHoursSaved">–</div>
+          <div class="roi-hero-label">ساعة رد يدوي وفّرها عليك البوت</div>
+          <div class="roi-hero-sub" id="roiHoursSavedSub"></div>
+        </div>
+        <div class="roi-hero-item">
+          <div class="roi-hero-icon">💰</div>
+          <div class="roi-hero-value" id="roiSarRecovered">–</div>
+          <div class="roi-hero-label">ريال استرجعها البوت من سلات متروكة (هذا الشهر)</div>
+          <div class="roi-hero-sub" id="roiSarRecoveredSub"></div>
+        </div>
+        <div class="roi-hero-item" id="roiHotLeadsItem" style="display:none;">
+          <div class="roi-hero-icon">🎯</div>
+          <div class="roi-hero-value" id="roiHotLeads">–</div>
+          <div class="roi-hero-label">عميل جاهز للشراء نبّهك عنه البوت (هذا الشهر)</div>
+        </div>
+      </div>
       <div class="analytics-grid">
         <div class="analytics-card">
           <h3>⏱️ متوسط زمن رد البوت</h3>
@@ -524,6 +557,21 @@
         </div>
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
+      </div>
+      <div class="settings-card" id="simCard">
+        <div class="field" style="margin-bottom:6px;">
+          <label>🧪 جرّب شخصية بوتك الآن<span class="sim-live-badge">مباشر</span></label>
+          <div class="helper-text" style="margin:0 0 10px;">اكتب رسالة زي ما بيكتبها عميل حقيقي، وشوف كيف بيرد بوتك بنفس التعليمات المكتوبة فوق الآن — حتى قبل ما تضغط "حفظ التعديلات". هذي محادثة تجريبية فقط ولا ترسل ولا تُسجَّل بأي مكان.</div>
+        </div>
+        <div class="sim-wrap">
+          <div class="chat-body" id="simChatBody"></div>
+          <div class="composer">
+            <textarea id="simText" placeholder="اكتب رسالة تجريبية من عميل..."></textarea>
+            <button class="send-btn" id="simSendBtn">إرسال</button>
+          </div>
+        </div>
+        <div class="save-status" id="simStatus" style="color:var(--danger);"></div>
+        <button class="sim-reset-btn" id="simResetBtn">↺ محادثة جديدة</button>
       </div>
       <div class="settings-card" id="teamCard">
         <div class="field" style="margin-bottom:16px;">

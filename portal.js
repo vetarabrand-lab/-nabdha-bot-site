@@ -36,6 +36,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   let myTemplates = [];
   let currentDraftTemplateId = null;
   let allMessages = [];
+  let simHistory = [];
   let staffList = [];
   let staffMap = {};
   let filterMineOnly = false;
@@ -578,6 +579,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadCampaigns();
     renderAnalytics();
     loadStoreAnalytics();
+    renderRoiDashboard();
+    initSimChat();
     loadZidStatus();
     loadSallaStatus();
     loadWooCommerceStatus();
@@ -1427,6 +1430,145 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + recoveryRate + '%</div><div class="helper-text">نسبة استرداد السلال</div></div>' +
       '</div>';
   }
+  /* ---------- ROI dashboard (قيمة البوت) ---------- */
+  async function renderRoiDashboard(){
+    if(!myClient){ return; }
+    const botReplies = allMessages.filter(function(m){ return m.outbound_message; }).length;
+    const minutesSaved = botReplies * 3;
+    const hoursSaved = minutesSaved / 60;
+    const hoursEl = document.getElementById('roiHoursSaved');
+    const hoursSubEl = document.getElementById('roiHoursSavedSub');
+    if(hoursEl){
+      hoursEl.textContent = hoursSaved >= 10 ? Math.round(hoursSaved).toLocaleString('en-US') : hoursSaved.toFixed(1);
+      hoursSubEl.textContent = botReplies > 0 ? ('بناءً على ' + botReplies.toLocaleString('en-US') + ' رد آلي، بمعدّل 3 دقائق تقريباً لكل رد يدوي') : 'بتظهر تدريجياً مع أول ردود البوت';
+    }
+    const sarEl = document.getElementById('roiSarRecovered');
+    const sarSubEl = document.getElementById('roiSarRecoveredSub');
+    if(sarEl){
+      const { data: events, error } = await supabaseClient
+        .from('store_order_events')
+        .select('status, order_total, resolved_at, created_at')
+        .eq('client_id', myClient.id)
+        .eq('event_type', 'abandoned_cart')
+        .eq('status', 'recovered');
+      if(error || !events || events.length === 0){
+        sarEl.textContent = '0';
+        sarSubEl.textContent = 'لا توجد سلات مستردة بعد';
+      } else {
+        const now = new Date();
+        let monthTotal = 0, allTimeTotal = 0;
+        events.forEach(function(e){
+          const amount = parseFloat(e.order_total) || 0;
+          allTimeTotal += amount;
+          const refDate = new Date(e.resolved_at || e.created_at);
+          if(refDate.getFullYear() === now.getFullYear() && refDate.getMonth() === now.getMonth()){
+            monthTotal += amount;
+          }
+        });
+        sarEl.textContent = Math.round(monthTotal).toLocaleString('en-US');
+        sarSubEl.textContent = 'إجمالي كل الفترة: ' + Math.round(allTimeTotal).toLocaleString('en-US') + ' ريال من ' + events.length + ' سلة مستردة';
+      }
+    }
+    const hotEl = document.getElementById('roiHotLeads');
+    const hotItem = document.getElementById('roiHotLeadsItem');
+    if(hotEl){
+      const { data: leads } = await supabaseClient
+        .from('hot_lead_alerts')
+        .select('id, created_at')
+        .eq('client_id', myClient.id);
+      if(leads && leads.length > 0){
+        const now2 = new Date();
+        const thisMonthLeads = leads.filter(function(l){
+          const d = new Date(l.created_at);
+          return d.getFullYear() === now2.getFullYear() && d.getMonth() === now2.getMonth();
+        }).length;
+        if(thisMonthLeads > 0){
+          hotEl.textContent = thisMonthLeads.toLocaleString('en-US');
+          hotItem.style.display = 'block';
+        }
+      }
+    }
+  }
+  /* ---------- محاكي شخصية البوت (bot personality simulator) ---------- */
+  function simBubbleHtml(text, dir){
+    const time = new Date().toLocaleTimeString('ar-SA', { hour:'2-digit', minute:'2-digit' });
+    return '<div class="bubble ' + dir + '">' + escapeHtml(text) + '<span class="t">' + time + '</span></div>';
+  }
+  function resetSimChat(){
+    simHistory = [];
+    const body = document.getElementById('simChatBody');
+    if(!body){ return; }
+    const welcomeField = document.getElementById('settingWelcome');
+    const welcome = (welcomeField && welcomeField.value ? welcomeField.value.trim() : '') || 'أهلاً بك! كيف أقدر أساعدك؟';
+    body.innerHTML = simBubbleHtml(welcome, 'in');
+    const statusEl = document.getElementById('simStatus');
+    if(statusEl){ statusEl.textContent = ''; }
+  }
+  function initSimChat(){
+    if(!document.getElementById('simChatBody')){ return; }
+    resetSimChat();
+  }
+  async function sendSimMessage(){
+    const textEl = document.getElementById('simText');
+    const text = textEl.value.trim();
+    const statusEl = document.getElementById('simStatus');
+    statusEl.textContent = '';
+    if(!text || !myClient){ return; }
+    const body = document.getElementById('simChatBody');
+    body.insertAdjacentHTML('beforeend', simBubbleHtml(text, 'out'));
+    body.scrollTop = body.scrollHeight;
+    textEl.value = '';
+    const btn = document.getElementById('simSendBtn');
+    btn.disabled = true; btn.textContent = '...';
+    const typingId = 'simTyping_' + Date.now();
+    body.insertAdjacentHTML('beforeend', '<div class="bubble in" id="' + typingId + '" style="opacity:.6;">يكتب الآن...</div>');
+    body.scrollTop = body.scrollHeight;
+    try{
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const token = sessionData.session.access_token;
+      const res = await fetch(FUNCTIONS_BASE + '/simulate-bot-reply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          client_id: myClient.id,
+          system_prompt: document.getElementById('settingPrompt').value,
+          welcome_message: document.getElementById('settingWelcome').value,
+          history: simHistory,
+          user_message: text
+        })
+      });
+      const json = await res.json();
+      const typingEl = document.getElementById(typingId);
+      if(typingEl){ typingEl.remove(); }
+      btn.disabled = false; btn.textContent = 'إرسال';
+      if(!res.ok){
+        statusEl.textContent = json.error || 'تعذّر توليد الرد، حاول مرة ثانية.';
+        return;
+      }
+      simHistory.push({ role: 'user', text: text });
+      simHistory.push({ role: 'assistant', text: json.reply });
+      body.insertAdjacentHTML('beforeend', simBubbleHtml(json.reply, 'in'));
+      body.scrollTop = body.scrollHeight;
+    } catch(e){
+      const typingEl = document.getElementById(typingId);
+      if(typingEl){ typingEl.remove(); }
+      btn.disabled = false; btn.textContent = 'إرسال';
+      statusEl.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+    }
+  }
+  const simSendBtnEl = document.getElementById('simSendBtn');
+  if(simSendBtnEl){ simSendBtnEl.addEventListener('click', sendSimMessage); }
+  const simTextEl = document.getElementById('simText');
+  if(simTextEl){
+    simTextEl.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendSimMessage(); }
+    });
+  }
+  const simResetBtnEl = document.getElementById('simResetBtn');
+  if(simResetBtnEl){ simResetBtnEl.addEventListener('click', resetSimChat); }
   /* ---------- support tickets (client side) ---------- */
   async function loadTickets(){
     if(!myClient){ return; }
