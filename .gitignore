@@ -1,0 +1,14 @@
+# ملفات Supabase CLI الداخلية المؤقتة (تكشف معرّف المشروع)
+supabase/.temp/
+
+# بقايا مشاكل قفل Git
+.git_locks_removed/
+
+# أسرار وبيئة محلية
+.env
+.env.local
+.env*.local
+
+# ملفات نظام التشغيل
+.DS_Store
+Thumbs.db
