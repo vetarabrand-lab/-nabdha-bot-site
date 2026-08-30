@@ -250,6 +250,18 @@
   .modal-cancel{background:#F1F1EF; color:var(--ink);}
   .modal-error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3; border-radius:10px; padding:10px 12px; font-size:13px; margin-bottom:14px; display:none;}
   .modal-success{background:rgba(37,211,102,.12); color:var(--wa-green-dark); border:1px solid rgba(37,211,102,.3); border-radius:10px; padding:12px 14px; font-size:13px; margin-bottom:14px; display:none;}
+  .modal-card.wide{max-width:560px; max-height:88vh; overflow-y:auto;}
+  .modal-field textarea, .modal-field select{
+    width:100%; border:1.5px solid var(--border); border-radius:10px; padding:10px 12px;
+    font-family:inherit; font-size:14px; resize:vertical;
+  }
+  .modal-field textarea:focus, .modal-field select:focus{outline:none; border-color:var(--wa-teal);}
+  .modal-field .hint{color:var(--muted); font-size:12px; margin-top:5px;}
+  .new-client-btn{
+    background:var(--wa-green); color:#04210F; border:none; border-radius:12px;
+    padding:0 20px; font-weight:800; font-size:14px; cursor:pointer; white-space:nowrap;
+  }
+  .new-client-btn:hover{background:var(--wa-green-dark); color:#fff;}
   @media (max-width:860px){
     .stats-grid{grid-template-columns:repeat(2,1fr);}
     .inbox-wrap{grid-template-columns:1fr; height:auto;}
@@ -365,6 +377,7 @@
           <option value="past_due">متأخر بالدفع</option>
           <option value="canceled">ملغى</option>
         </select>
+        <button type="button" class="new-client-btn" id="openNewClientBtn">+ إضافة عميل جديد</button>
       </div>
       <div class="table-wrap">
         <table>
@@ -665,6 +678,69 @@
     </div>
   </div>
 </div>
+<!-- MODAL: إضافة عميل جديد كامل (بيانات النشاط + حساب الدخول دفعة وحدة) -->
+<div class="modal-overlay" id="newClientModal">
+  <div class="modal-card wide">
+    <h3>إضافة عميل جديد</h3>
+    <p class="sub">يُنشئ حساب العميل كامل — بيانات النشاط وحساب الدخول — دفعة وحدة.</p>
+    <div class="modal-error" id="newClientError"></div>
+    <div class="modal-success" id="newClientSuccess"></div>
+    <div class="modal-field">
+      <label>اسم النشاط (عربي) *</label>
+      <input type="text" id="ncBizNameAr" placeholder="مثال: بن سعيد للعطور">
+    </div>
+    <div class="modal-field">
+      <label>اسم النشاط (إنجليزي)</label>
+      <input type="text" id="ncBizNameEn" placeholder="اختياري">
+    </div>
+    <div class="modal-field">
+      <label>بريد صاحب النشاط *</label>
+      <input type="email" id="ncOwnerEmail" placeholder="owner@example.com">
+    </div>
+    <div class="modal-field">
+      <label>جوال صاحب النشاط *</label>
+      <input type="tel" id="ncOwnerPhone" placeholder="مثال: 0555555555">
+    </div>
+    <div class="modal-field">
+      <label>رقم واتساب المعروض</label>
+      <input type="text" id="ncWaDisplay" placeholder="اختياري">
+    </div>
+    <div class="modal-field">
+      <label>الباقة</label>
+      <select id="ncPlan"><option value="">بدون باقة (يُحدَّد لاحقاً)</option></select>
+    </div>
+    <div class="modal-field">
+      <label>حالة الاشتراك</label>
+      <select id="ncActivate">
+        <option value="trial">تجربة مجانية 7 أيام</option>
+        <option value="paid">نشط مدفوع فوراً (30 يوم)</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>تعليمات البوت (system prompt) *</label>
+      <textarea id="ncPrompt" rows="4" placeholder="مثال: أنت مساعد ذكي لمتجر [اسم النشاط]. جاوب عن أسئلة المنتجات والطلبات بأسلوب ودود ومختصر..."></textarea>
+    </div>
+    <div class="modal-field">
+      <label>رسالة الترحيب الأولى</label>
+      <input type="text" id="ncWelcome" placeholder="اختياري">
+    </div>
+    <div class="modal-field" style="border-top:1px solid var(--border); padding-top:14px; margin-top:6px;">
+      <label>🔑 بريد الدخول *</label>
+      <input type="email" id="ncLoginEmail" placeholder="نفس بريد صاحب النشاط عادةً">
+    </div>
+    <div class="modal-field">
+      <label>كلمة مرور الدخول (8 أحرف فأكثر) *</label>
+      <div class="row">
+        <input type="text" id="ncLoginPassword" placeholder="كلمة مرور">
+        <button type="button" class="gen-btn" id="ncGenPasswordBtn">توليد</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="newClientCancelBtn">إلغاء</button>
+      <button class="modal-confirm" id="newClientConfirmBtn">إنشاء العميل</button>
+    </div>
+  </div>
+</div>
 <script>
   const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_Wplf-GMXzJ-SXzNFvahGUQ_KHqjFTz3';
@@ -843,7 +919,7 @@
     plansList.forEach(function(p){ plansMap[p.id] = p.name_ar; planLimitMap[p.id] = p.monthly_message_limit; });
     const { data: clients, error } = await supabaseClient
       .from('clients')
-      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error, cart_coupon_addon_enabled, current_period_ends_at')
+      .select('id, business_name, business_name_ar, owner_email, owner_phone, plan_id, subscription_status, trial_ends_at, is_paid, user_id, created_at, extra_message_credits, whatsapp_connection_status, whatsapp_connection_checked_at, whatsapp_connection_error, cart_coupon_addon_enabled')
       .order('created_at', { ascending: false });
     if(error){
       document.getElementById('clientsTbody').innerHTML = '<tr class="empty-row"><td colspan="10">تعذّر تحميل البيانات، حدّث الصفحة.</td></tr>';
@@ -876,25 +952,15 @@
     }
     return '<span class="badge wa-unknown" title="ما فيه رقم مربوط أو ما تفحّص بعد">⚪ غير معروف</span>';
   }
-  // يبني badge توضيحي لعدد الأيام المتبقية — من current_period_ends_at للمشتركين المدفوعين،
-  // ومن trial_ends_at للعملاء التجريبيين (كانت الحالة السابقة تشترط subscription_status==='active'
-  // فقط، بينما التسجيل ينشئ العميل بحالة 'trial'، فكل عميل تجريبي كان يعرض "—" بدون فائدة)
+  // يبني badge توضيحي لعدد الأيام المتبقية من التجربة المجانية (7 أيام) لكل عميل
   function renderDaysRemaining(c){
+    if(c.subscription_status === 'active' && c.is_paid){
+      return '<span class="badge permanent">مدفوع دائم</span>';
+    }
     if(c.subscription_status === 'expired'){
       return '<span class="badge expired">انتهت التجربة</span>';
     }
-    if(c.is_paid && c.current_period_ends_at){
-      const msLeft = new Date(c.current_period_ends_at).getTime() - Date.now();
-      const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
-      if(daysLeft <= 0){
-        return '<span class="badge expired">انتهت الفترة</span>';
-      }
-      return '<span class="badge trialdays">' + daysLeft + ' يوم متبقي</span>';
-    }
-    if(c.is_paid){
-      return '<span class="badge permanent">مدفوع دائم</span>';
-    }
-    if((c.subscription_status === 'active' || c.subscription_status === 'trial') && c.trial_ends_at){
+    if(c.subscription_status === 'active' && c.trial_ends_at){
       const msLeft = new Date(c.trial_ends_at).getTime() - Date.now();
       const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24));
       if(daysLeft <= 0){
@@ -1892,6 +1958,101 @@
       modalError.style.display = 'block';
       modalConfirmBtn.disabled = false;
       modalConfirmBtn.textContent = 'إنشاء الحساب';
+    }
+  });
+  /* ---------- إضافة عميل جديد كامل (بيانات النشاط + حساب الدخول) ---------- */
+  const newClientModal = document.getElementById('newClientModal');
+  const ncError = document.getElementById('newClientError');
+  const ncSuccess = document.getElementById('newClientSuccess');
+  const ncConfirmBtn = document.getElementById('newClientConfirmBtn');
+  function openNewClientModal(){
+    ['ncBizNameAr','ncBizNameEn','ncOwnerEmail','ncOwnerPhone','ncWaDisplay','ncPrompt','ncWelcome','ncLoginEmail','ncLoginPassword'].forEach(function(id){
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('ncActivate').value = 'trial';
+    const planSel = document.getElementById('ncPlan');
+    planSel.innerHTML = '<option value="">بدون باقة (يُحدَّد لاحقاً)</option>';
+    (plansList || []).forEach(function(p){
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name_ar + (p.monthly_price_sar != null ? ' (' + Number(p.monthly_price_sar).toLocaleString('ar') + ' ريال/شهر)' : '');
+      planSel.appendChild(opt);
+    });
+    ncError.style.display = 'none';
+    ncSuccess.style.display = 'none';
+    ncConfirmBtn.disabled = false;
+    ncConfirmBtn.textContent = 'إنشاء العميل';
+    newClientModal.classList.add('show');
+  }
+  function closeNewClientModal(){
+    newClientModal.classList.remove('show');
+  }
+  document.getElementById('openNewClientBtn').addEventListener('click', openNewClientModal);
+  document.getElementById('newClientCancelBtn').addEventListener('click', closeNewClientModal);
+  newClientModal.addEventListener('click', function(e){ if(e.target === newClientModal){ closeNewClientModal(); } });
+  document.getElementById('ncGenPasswordBtn').addEventListener('click', function(){
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+    let pass = '';
+    for(let i = 0; i < 12; i++){ pass += chars[Math.floor(Math.random() * chars.length)]; }
+    document.getElementById('ncLoginPassword').value = pass;
+  });
+  ncConfirmBtn.addEventListener('click', async function(){
+    ncError.style.display = 'none';
+    ncSuccess.style.display = 'none';
+
+    const payload = {
+      business_name_ar: document.getElementById('ncBizNameAr').value.trim(),
+      business_name: document.getElementById('ncBizNameEn').value.trim(),
+      owner_email: document.getElementById('ncOwnerEmail').value.trim(),
+      owner_phone: document.getElementById('ncOwnerPhone').value.trim(),
+      whatsapp_display_number: document.getElementById('ncWaDisplay').value.trim(),
+      plan_id: document.getElementById('ncPlan').value || null,
+      activate_paid: document.getElementById('ncActivate').value === 'paid',
+      system_prompt: document.getElementById('ncPrompt').value.trim(),
+      welcome_message: document.getElementById('ncWelcome').value.trim(),
+      login_email: document.getElementById('ncLoginEmail').value.trim(),
+      login_password: document.getElementById('ncLoginPassword').value
+    };
+
+    if(!payload.business_name_ar || !payload.owner_email || !payload.owner_phone || !payload.system_prompt || !payload.login_email || !payload.login_password){
+      ncError.textContent = 'عبّئ كل الحقول المطلوبة (المعلّمة بـ *) أولاً.';
+      ncError.style.display = 'block';
+      return;
+    }
+    if(payload.login_password.length < 8){
+      ncError.textContent = 'كلمة مرور الدخول لازم تكون 8 أحرف فأكثر.';
+      ncError.style.display = 'block';
+      return;
+    }
+
+    ncConfirmBtn.disabled = true;
+    ncConfirmBtn.textContent = 'جاري الإنشاء...';
+    try{
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const token = sessionData.session.access_token;
+      const res = await fetch(FUNCTIONS_BASE + '/admin-create-client', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if(!res.ok || json.error){
+        ncError.textContent = json.error || 'تعذّر إنشاء العميل، حاول مرة ثانية.';
+        ncError.style.display = 'block';
+        ncConfirmBtn.disabled = false;
+        ncConfirmBtn.textContent = 'إنشاء العميل';
+        return;
+      }
+      ncSuccess.innerHTML = '✓ تم إنشاء العميل بنجاح.<br>أرسل للعميل بيانات الدخول: ' + escapeHtml(payload.login_email) + ' / ' + escapeHtml(payload.login_password);
+      ncSuccess.style.display = 'block';
+      ncConfirmBtn.textContent = 'تم';
+      await loadDashboard();
+      setTimeout(closeNewClientModal, 4000);
+    } catch(e){
+      ncError.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      ncError.style.display = 'block';
+      ncConfirmBtn.disabled = false;
+      ncConfirmBtn.textContent = 'إنشاء العميل';
     }
   });
   /* ---------- طلبات الرصيد الإضافي + العملاء القريبين من الحد ---------- */
