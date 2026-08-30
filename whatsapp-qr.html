@@ -119,28 +119,7 @@
 
 <footer>© 2026 بوت نبضة. جميع الحقوق محفوظة.</footer>
 
-<script>
-  function digitsOnly(v){ return v.replace(/[^0-9]/g, ''); }
-
-  document.getElementById('genBtn').addEventListener('click', function(){
-    const phone = digitsOnly(document.getElementById('phoneInput').value.trim());
-    const msg = document.getElementById('msgInput').value.trim();
-    const box = document.getElementById('resultBox');
-
-    if(!phone || phone.length < 8){
-      alert('الرجاء إدخال رقم واتساب صحيح مع رمز الدولة.');
-      return;
-    }
-
-    let link = 'https://wa.me/' + phone;
-    if(msg){ link += '?text=' + encodeURIComponent(msg); }
-
-    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=480x480&data=' + encodeURIComponent(link);
-    document.getElementById('qrImg').src = qrUrl;
-    document.getElementById('dlBtn').href = qrUrl;
-    box.classList.add('show');
-  });
-</script>
+<script src="whatsapp-qr.js"></script>
 
 <div class="nabda-wa-chat" id="nabdaWaChat">
   <div class="nabda-wa-panel" id="nabdaWaPanel">
@@ -188,19 +167,7 @@
     .nabda-wa-panel{ width:280px; }
   }
 </style>
-<script>
-  (function(){
-    var toggle = document.getElementById('nabdaWaToggle');
-    var panel = document.getElementById('nabdaWaPanel');
-    var closeBtn = document.getElementById('nabdaWaClose');
-    if(!toggle || !panel) return;
-    toggle.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.toggle('open'); });
-    if(closeBtn){ closeBtn.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.remove('open'); }); }
-    document.addEventListener('click', function(e){
-      if(!panel.contains(e.target) && !toggle.contains(e.target)){ panel.classList.remove('open'); }
-    });
-  })();
-</script>
+<script src="wa-widget.js"></script>
 
 </body>
 </html>
