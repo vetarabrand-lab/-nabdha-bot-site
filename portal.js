@@ -781,31 +781,25 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
   }
   async function loadZidStatus(){
+    // ربط زد الجديد متوقف مؤقتاً (قريباً) — لكن التجار المربوطين فعلاً قبل التوقف يستمر عرض اتصالهم الحقيقي.
     const statusBox = document.getElementById('zidStatus');
     const btn = document.getElementById('connectZidBtn');
     const nonOwnerHint = document.getElementById('zidHelperNonOwner');
-    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    nonOwnerHint.style.display = 'none';
+    btn.style.display = 'none';
     if(!myClient){ return; }
     const { data } = await supabaseClient
       .from('client_zid_credentials')
       .select('store_name, connected_at')
       .eq('client_id', myClient.id)
       .maybeSingle();
-    const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge zid-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
-      btn.style.display = 'none';
-    } else if(addonLocked){
-      statusBox.innerHTML = '<span class="status-badge zid-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('zid') : '');
-      btn.style.display = 'none';
-      bindStoreAddonSupportBtn('zid');
     } else {
-      statusBox.innerHTML = '<span class="status-badge zid-disconnected">⚪ غير متصل بعد</span>';
-      btn.style.display = isOwner ? 'inline-block' : 'none';
-      btn.textContent = 'ربط مع زد';
+      statusBox.innerHTML = '<span class="status-badge zid-disconnected">🔜 قريباً — ربط متاجر جديدة متوقف مؤقتاً</span>';
     }
   }
   document.getElementById('connectZidBtn').addEventListener('click', async function(){
@@ -837,31 +831,25 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   });
   /* ---------- ربط متجر سلة ---------- */
   async function loadSallaStatus(){
+    // ربط سلة الجديد متوقف مؤقتاً (قريباً) — لكن التجار المربوطين فعلاً قبل التوقف يستمر عرض اتصالهم الحقيقي.
     const statusBox = document.getElementById('sallaStatus');
     const btn = document.getElementById('connectSallaBtn');
     const nonOwnerHint = document.getElementById('sallaHelperNonOwner');
-    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    nonOwnerHint.style.display = 'none';
+    btn.style.display = 'none';
     if(!myClient){ return; }
     const { data } = await supabaseClient
       .from('client_salla_credentials')
       .select('store_name, connected_at')
       .eq('client_id', myClient.id)
       .maybeSingle();
-    const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge salla-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
-      btn.style.display = 'none';
-    } else if(addonLocked){
-      statusBox.innerHTML = '<span class="status-badge salla-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('salla') : '');
-      btn.style.display = 'none';
-      bindStoreAddonSupportBtn('salla');
     } else {
-      statusBox.innerHTML = '<span class="status-badge salla-disconnected">⚪ غير متصل بعد</span>';
-      btn.style.display = isOwner ? 'inline-block' : 'none';
-      btn.textContent = 'ربط مع سلة';
+      statusBox.innerHTML = '<span class="status-badge salla-disconnected">🔜 قريباً — ربط متاجر جديدة متوقف مؤقتاً</span>';
     }
   }
   document.getElementById('connectSallaBtn').addEventListener('click', async function(){
