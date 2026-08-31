@@ -57,17 +57,42 @@
   .hero-strip h1{font-size:clamp(26px,4vw,36px); font-weight:900; margin-bottom:10px;}
   .hero-strip p{color:rgba(255,255,255,.88); max-width:520px; margin:0 auto; font-size:16px;}
 
-  .article-wrap{margin:-40px auto 60px; position:relative; z-index:2;}
+  .article-wrap{margin:-40px auto 60px; position:relative; z-index:2; max-width:980px;}
   .article-card{
     background:var(--card); border:1px solid var(--border); border-radius:24px;
     box-shadow:var(--shadow); padding:44px; text-align:center;
   }
-  .article-card p.lead{font-size:16px; color:var(--muted); margin-bottom:28px; max-width:480px; margin-inline:auto;}
+  .article-card p.lead{font-size:16px; color:var(--muted); margin-bottom:28px; max-width:620px; margin-inline:auto;}
+
+  .contact-options{display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:start; text-align:right;}
+
+  .form-card{background:var(--bg); border:1.5px solid var(--border); border-radius:18px; padding:26px; text-align:right;}
+  .form-card h3{font-size:16px; font-weight:800; color:var(--wa-teal-dark); margin-bottom:16px;}
+  .form-card .field{margin-bottom:14px;}
+  .form-card .field label{display:block; font-size:13px; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .form-card .field input, .form-card .field textarea{
+    width:100%; border:1.5px solid var(--border); border-radius:10px; padding:10px 12px;
+    font-family:inherit; font-size:14px; outline:none; resize:vertical; background:#fff; color:var(--ink);
+  }
+  .form-card .field input:focus, .form-card .field textarea:focus{border-color:var(--wa-teal);}
+  .hp-field{position:absolute; left:-9999px; width:1px; height:1px; opacity:0;}
+  #ccSubmit{
+    width:100%; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); color:#fff;
+    border:none; border-radius:100px; padding:13px 20px; font-weight:800; font-size:14.5px; cursor:pointer; margin-top:2px;
+    font-family:inherit;
+  }
+  #ccSubmit:hover{filter:brightness(1.05);}
+  #ccSubmit:disabled{opacity:.65; cursor:not-allowed;}
+  .form-msg{font-size:13px; margin-top:10px; min-height:16px;}
+  .form-msg.success{color:var(--wa-green-dark); font-weight:700;}
+  .form-msg.error{color:#C0392B; font-weight:700;}
+
+  .or-card{display:flex; flex-direction:column; justify-content:center; gap:16px;}
 
   .contact-card{
     display:flex; align-items:center; justify-content:center; gap:14px;
     background:var(--bg); border:1.5px solid var(--border); border-radius:18px;
-    padding:24px; margin-bottom:24px;
+    padding:24px; margin-bottom:0;
   }
   .contact-card .icon{
     width:48px; height:48px; border-radius:14px; background:rgba(37,211,102,.15); color:var(--wa-green-dark);
@@ -86,6 +111,8 @@
   @media (max-width:720px){
     .article-card{padding:28px 22px;}
     .article-wrap{margin-top:-24px;}
+    .contact-options{grid-template-columns:1fr; text-align:center;}
+    .form-card{text-align:right;}
     .contact-card{flex-direction:column; text-align:center;}
     .back-link span.txt{display:none;}
   }
@@ -118,17 +145,50 @@
 
 <div class="article-wrap container">
   <div class="article-card">
-    <p class="lead" data-i18n="lead">أسهل طريقة تتواصل فيها معنا هي عبر البريد الإلكتروني، وفريق نبضة يتابع كل الرسائل بشكل يومي.</p>
+    <p class="lead" data-i18n="lead">تقدر تراسلنا مباشرة عبر النموذج، أو تكتب لنا على بريدنا الإلكتروني — اختر الطريقة الأسهل لك.</p>
 
-    <a href="mailto:info@nabdh.online" class="contact-card">
-      <div class="icon">✉️</div>
-      <div>
-        <div class="label" data-i18n="emailLabel">البريد الإلكتروني</div>
-        <div class="value">info@nabdh.online</div>
+    <div class="contact-options">
+      <form class="form-card" id="nabdaContactForm" novalidate>
+        <h3 data-i18n="form.title">أرسل لنا رسالة</h3>
+
+        <div class="field">
+          <label for="ccName" data-i18n="form.nameLabel">الاسم</label>
+          <input type="text" id="ccName" name="name" data-i18n-placeholder="form.namePh" placeholder="ادخل اسمك" required>
+        </div>
+
+        <div class="field">
+          <label for="ccEmail" data-i18n="form.emailLabel">البريد الإلكتروني</label>
+          <input type="email" id="ccEmail" name="email" data-i18n-placeholder="form.emailPh" placeholder="ادخل بريدك الإلكتروني">
+        </div>
+
+        <div class="field">
+          <label for="ccPhone" data-i18n="form.phoneLabel">رقم جوالك</label>
+          <input type="tel" id="ccPhone" name="phone" data-i18n-placeholder="form.phonePh" placeholder="ادخل رقم جوالك">
+        </div>
+
+        <div class="field">
+          <label for="ccMessage" data-i18n="form.messageLabel">استفسارك أو رسالتك</label>
+          <textarea id="ccMessage" name="message" rows="4" data-i18n-placeholder="form.messagePh" placeholder="اكتب استفسارك هنا..." required></textarea>
+        </div>
+
+        <input type="text" id="ccHoneypot" name="website" class="hp-field" tabindex="-1" autocomplete="off">
+
+        <button type="submit" id="ccSubmit" data-i18n="form.submit">إرسال الرسالة</button>
+        <p class="form-msg" id="ccMsg"></p>
+      </form>
+
+      <div class="or-card">
+        <a href="mailto:info@nabdh.online" class="contact-card">
+          <div class="icon">✉️</div>
+          <div>
+            <div class="label" data-i18n="emailLabel">البريد الإلكتروني</div>
+            <div class="value">info@nabdh.online</div>
+          </div>
+        </a>
+
+        <p class="note" data-i18n="note">نرد عادة خلال 24 ساعة عمل. للاستفسارات المتعلقة بالاشتراك أو ربط رقم واتساب نشاطك، اذكر اسم نشاطك في الرسالة عشان نساعدك أسرع.</p>
       </div>
-    </a>
-
-    <p class="note" data-i18n="note">نرد عادة خلال 24 ساعة عمل. للاستفسارات المتعلقة بالاشتراك أو ربط رقم واتساب نشاطك، اذكر اسم نشاطك في الرسالة عشان نساعدك أسرع.</p>
+    </div>
   </div>
 </div>
 
