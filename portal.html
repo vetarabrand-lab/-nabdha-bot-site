@@ -183,6 +183,8 @@
   .status-badge.woo-disconnected{background:#EEE; color:var(--muted);}
   .status-badge.shopify-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
   .status-badge.shopify-disconnected{background:#EEE; color:var(--muted);}
+  .status-badge.telegram-connected{background:rgba(37,211,102,.14); color:var(--wa-green-dark);}
+  .status-badge.telegram-disconnected{background:#EEE; color:var(--muted);}
   .coming-soon-badge{display:inline-block; margin-inline-start:8px; padding:2px 10px; border-radius:100px; font-size:11px; font-weight:800; background:#EEE; color:var(--muted); vertical-align:middle;}
   .settings-card.coming-soon{opacity:.6; filter:grayscale(1);}
   .store-connect-form{margin-top:12px; display:flex; flex-direction:column; gap:10px; max-width:420px;}
@@ -644,6 +646,23 @@
         </div>
         <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
+      </div>
+      <div class="settings-card" id="telegramCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>ربط بوت تليجرام (Telegram)</label>
+        </div>
+        <div id="telegramStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div class="store-connect-form" id="telegramConnectForm" style="display:none;">
+          <div class="field" style="margin-bottom:0;">
+            <label>توكن البوت (Bot Token)</label>
+            <input type="text" id="telegramBotToken" placeholder="123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
+          </div>
+          <div class="alert-box error" id="telegramConnectError" style="display:none;"></div>
+          <button class="primary-btn" id="connectTelegramBtn" style="width:auto; padding:12px 30px;">ربط مع تليجرام</button>
+        </div>
+        <div class="helper-text" id="telegramHelperNonOwner" style="display:none;">ربط تليجرام متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="telegramLockedHint" style="margin-top:10px; display:none;"></div>
+        <div class="helper-text" style="margin-top:10px;">خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.</div>
       </div>
       <div class="settings-card" id="planCard">
         <div class="field" style="margin-bottom:16px;">

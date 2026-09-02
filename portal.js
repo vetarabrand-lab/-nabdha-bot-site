@@ -471,7 +471,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -486,7 +486,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -585,6 +585,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadSallaStatus();
     loadWooCommerceStatus();
     loadShopifyStatus();
+    loadTelegramStatus();
     loadTemplates();
     loadTopupInfo();
     renderSubscriptionBanner();
@@ -944,6 +945,83 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       errBox.style.display = 'block';
     }
   });
+  /* ---------- ربط بوت تليجرام ---------- */
+  async function loadTelegramStatus(){
+    const statusBox = document.getElementById('telegramStatus');
+    const form = document.getElementById('telegramConnectForm');
+    const nonOwnerHint = document.getElementById('telegramHelperNonOwner');
+    const lockedHint = document.getElementById('telegramLockedHint');
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(!myClient){ return; }
+
+    if(myClient.telegram_connection_status === 'connected' && myClient.telegram_bot_username){
+      statusBox.innerHTML = '<span class="status-badge telegram-connected">✅ متصل — @' + escapeHtml(myClient.telegram_bot_username) + '</span>';
+      form.style.display = 'none';
+      lockedHint.style.display = 'none';
+      return;
+    }
+
+    const { data: addonRow } = await supabaseClient
+      .from('client_addons')
+      .select('enabled')
+      .eq('client_id', myClient.id)
+      .eq('addon_id', 'telegram_dm')
+      .maybeSingle();
+    const addonEnabled = !!(addonRow && addonRow.enabled);
+
+    statusBox.innerHTML = '<span class="status-badge telegram-disconnected">⚪ غير متصل بعد</span>';
+
+    if(!addonEnabled){
+      form.style.display = 'none';
+      if(isOwner){
+        lockedHint.style.display = 'block';
+        lockedHint.innerHTML = 'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة، بدون اشتراك شهري إضافي).';
+      } else {
+        lockedHint.style.display = 'none';
+      }
+      return;
+    }
+
+    lockedHint.style.display = 'none';
+    form.style.display = isOwner ? 'flex' : 'none';
+  }
+  document.getElementById('connectTelegramBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner){ return; }
+    const btn = this;
+    const errBox = document.getElementById('telegramConnectError');
+    errBox.style.display = 'none';
+    const botToken = document.getElementById('telegramBotToken').value.trim();
+    if(!botToken){
+      errBox.textContent = 'الرجاء لصق توكن البوت.';
+      errBox.style.display = 'block';
+      return;
+    }
+    btn.disabled = true; btn.textContent = 'جاري الربط...';
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/connect-telegram-bot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ client_id: myClient.id, bot_token: botToken })
+      });
+      const json = await res.json();
+      if(!res.ok || json.error){
+        btn.disabled = false; btn.textContent = 'ربط مع تليجرام';
+        errBox.textContent = json.message || 'تعذّر الربط، تأكد من صحة التوكن.';
+        errBox.style.display = 'block';
+        return;
+      }
+      myClient.telegram_connection_status = 'connected';
+      myClient.telegram_bot_username = json.bot_username;
+      await loadTelegramStatus();
+    } catch(e){
+      btn.disabled = false; btn.textContent = 'ربط مع تليجرام';
+      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      errBox.style.display = 'block';
+    }
+  });
+
   /* ---------- ربط متجر شوبيفاي ---------- */
   async function loadShopifyStatus(){
     const statusBox = document.getElementById('shopifyStatus');
