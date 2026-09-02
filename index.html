@@ -219,6 +219,14 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .step:first-child .step-arrow{display:none;}
 
   .pricing-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:20px; align-items:stretch;}
+  .billing-toggle{display:flex; align-items:center; justify-content:center; gap:12px; margin:-20px auto 36px; flex-wrap:wrap;}
+  .billing-toggle-label{font-size:14.5px; font-weight:700; color:var(--muted); cursor:pointer; transition:color .2s ease; user-select:none;}
+  .billing-toggle-label.is-active{color:var(--ink);}
+  .billing-toggle-switch{position:relative; width:52px; height:30px; border-radius:100px; border:none; background:var(--wa-teal-dark); cursor:pointer; flex-shrink:0; padding:0;}
+  .billing-toggle-knob{position:absolute; top:3px; inset-inline-start:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:inset-inline-start .2s ease; box-shadow:0 2px 6px rgba(0,0,0,.2);}
+  .billing-toggle-switch[aria-checked="true"] .billing-toggle-knob{inset-inline-start:25px;}
+  .billing-toggle-save{font-size:12.5px; font-weight:800; color:var(--wa-green-dark); background:rgba(37,211,102,.14); padding:4px 12px; border-radius:100px;}
+  .price-annual-note{color:var(--muted); font-size:12.5px; margin-top:-2px; margin-bottom:10px; min-height:16px;}
   .price-card{
     background:var(--card); border:1.5px solid var(--border); border-radius:24px;
     padding:30px 22px; display:flex; flex-direction:column; position:relative;
@@ -957,11 +965,20 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <p data-i18n="pricing.sub">اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.</p>
       <p class="trial-note" data-i18n="pricing.trialNote">🎁 كل الباقات تشمل تجربة مجانية 7 أيام — بدون بطاقة ائتمان</p>
     </div>
+    <div class="billing-toggle reveal">
+      <span class="billing-toggle-label is-active" id="billingLabelMonthly" data-i18n="pricing.monthlyLabel">شهري</span>
+      <button type="button" class="billing-toggle-switch" id="billingToggleBtn" role="switch" aria-checked="false" aria-label="التبديل بين الفوترة الشهرية والسنوية">
+        <span class="billing-toggle-knob"></span>
+      </button>
+      <span class="billing-toggle-label" id="billingLabelAnnual" data-i18n="pricing.annualLabel">سنوي</span>
+      <span class="billing-toggle-save" data-i18n="pricing.annualSave">وفّر 18%</span>
+    </div>
     <div class="pricing-grid">
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p1n">أساسي</h3>
         <p class="desc" data-i18n="pricing.p1d">للمشاريع الناشئة والحسابات الشخصية</p>
-        <div class="price-value"><b>199</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">199</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-annual-note" data-monthly="199" data-annual-monthly="163" data-annual-total="1958"></div>
         <div class="price-limit" data-i18n="pricing.p1limit">حتى 2,000 رسالة شهرياً</div>
         <ul class="price-features">
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f1">رقم واتساب رسمي واحد</span></li>
@@ -970,13 +987,14 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f4">سجل محادثات أساسي</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p1f5">ربط زد أو سلة (قريباً)</span></li>
         </ul>
-        <a href="signup.html?plan=basic" class="btn btn-outline btn-block" data-i18n="pricing.p1cta">ابدأ بالأساسي</a>
+        <a href="signup.html?plan=basic" class="btn btn-outline btn-block" data-plan-monthly="basic" data-plan-annual="basic_annual" data-i18n="pricing.p1cta">ابدأ بالأساسي</a>
       </div>
       <div class="price-card popular reveal">
         <span class="badge-popular" data-i18n="pricing.popular">الأكثر طلباً</span>
         <h3 data-i18n="pricing.pgn">نمو</h3>
         <p class="desc" data-i18n="pricing.pgd">للمتاجر النشطة اللي تبي تكبّر تفاعلها مع عملائها</p>
-        <div class="price-value"><b>399</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">399</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-annual-note" data-monthly="399" data-annual-monthly="327" data-annual-total="3926"></div>
         <div class="price-limit" data-i18n="pricing.pglimit">حتى 4,000 رسالة شهرياً</div>
         <ul class="price-features">
           <li><span class="check">✓</span> <span data-i18n="pricing.pgf1">كل مزايا الباقة الأساسية</span></li>
@@ -986,12 +1004,13 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <li><span class="check">✓</span> <span data-i18n="pricing.pgf5">لوحة الطلبات الموحّدة 🆕</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.pgf6">منشئ قوالب رسائل بالذكاء الاصطناعي</span></li>
         </ul>
-        <a href="signup.html?plan=growth" class="btn btn-primary btn-block" data-i18n="pricing.pgcta">ابدأ بباقة نمو</a>
+        <a href="signup.html?plan=growth" class="btn btn-primary btn-block" data-plan-monthly="growth" data-plan-annual="growth_annual" data-i18n="pricing.pgcta">ابدأ بباقة نمو</a>
       </div>
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p2n">احترافي</h3>
         <p class="desc" data-i18n="pricing.p2d">للأنشطة التجارية المتنامية</p>
-        <div class="price-value"><b>699</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">699</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-annual-note" data-monthly="699" data-annual-monthly="573" data-annual-total="6878"></div>
         <div class="price-limit" data-i18n="pricing.p2limit">حتى 8,000 رسالة شهرياً</div>
         <ul class="price-features">
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f1">كل مزايا باقة نمو</span></li>
@@ -1000,12 +1019,13 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f4">دعم فني بأولوية</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p2f5">تحويل ذكي للمحادثة لموظف بشري</span></li>
         </ul>
-        <a href="signup.html?plan=pro" class="btn btn-outline btn-block" data-i18n="pricing.p2cta">ابدأ بالاحترافي</a>
+        <a href="signup.html?plan=pro" class="btn btn-outline btn-block" data-plan-monthly="pro" data-plan-annual="pro_annual" data-i18n="pricing.p2cta">ابدأ بالاحترافي</a>
       </div>
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p3n">مؤسسات</h3>
         <p class="desc" data-i18n="pricing.p3d">لسلاسل المتاجر والفرق الكبيرة</p>
-        <div class="price-value"><b>1,999</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">1,999</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-annual-note" data-monthly="1999" data-annual-monthly="1639" data-annual-total="19670"></div>
         <div class="price-limit" data-i18n="pricing.p3limit">حتى 20,000 رسالة شهرياً</div>
         <ul class="price-features">
           <li><span class="check">✓</span> <span data-i18n="pricing.p3f1">كل مزايا الباقة الاحترافية</span></li>
@@ -1013,7 +1033,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <li><span class="check">✓</span> <span data-i18n="pricing.p3f3">مدير حساب مخصص</span></li>
           <li><span class="check">✓</span> <span data-i18n="pricing.p3f4">تكاملات مخصصة عند الطلب</span></li>
         </ul>
-        <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block" data-i18n="pricing.p3cta">تواصل معنا</a>
+        <a href="signup.html?plan=enterprise" class="btn btn-outline btn-block" data-plan-monthly="enterprise" data-plan-annual="enterprise_annual" data-i18n="pricing.p3cta">تواصل معنا</a>
       </div>
     </div>
 
@@ -1054,6 +1074,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
     </div>
   </div>
 </section>
+<script src="index-pricing-toggle.js"></script>
 
 <section class="section" id="addons-teaser">
   <div class="container">

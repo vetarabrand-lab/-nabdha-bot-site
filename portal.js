@@ -512,7 +512,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
     let planLabel = '—';
     if(clientRow.plan_id){
-      const { data: plan } = await supabaseClient.from('subscription_plans').select('id, name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar, is_prepaid, prepaid_credits, prepaid_validity_months').eq('id', clientRow.plan_id).single();
+      const { data: plan } = await supabaseClient.from('subscription_plans').select('id, name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar, is_prepaid, prepaid_credits, prepaid_validity_months, billing_cycle').eq('id', clientRow.plan_id).single();
       if(plan){ planLabel = plan.name_ar; myPlan = plan; }
     }
     document.getElementById('statPlan').textContent = planLabel;
@@ -682,9 +682,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const planName = myPlan ? myPlan.name_ar : 'لم تُحدد بعد';
     const price = myPlan ? myPlan.monthly_price_sar : null;
     const isPrepaid = !!(myPlan && myPlan.is_prepaid);
-    const priceLabel = price !== null ? (' — ' + price + (isPrepaid ? ' ريال (دفعة وحدة)' : ' ريال/شهر')) : '';
+    const isAnnual = !!(myPlan && myPlan.billing_cycle === 'annual');
+    const priceLabel = price !== null ? (' — ' + price + (isPrepaid ? ' ريال (دفعة وحدة)' : (isAnnual ? ' ريال/سنة' : ' ريال/شهر'))) : '';
     const endsAtLabel = myClient.current_period_ends_at ? formatDateAr(myClient.current_period_ends_at) : 'غير مفعّل بعد';
-    const endsAtWord = isPrepaid ? 'صلاحية الرصيد حتى: ' : 'ينتهي بتاريخ: ';
+    const endsAtWord = isPrepaid ? 'صلاحية الرصيد حتى: ' : (isAnnual ? 'ينتهي الاشتراك السنوي بتاريخ: ' : 'ينتهي بتاريخ: ');
     const statusLabel = myClient.subscription_status === 'active' ? '✅ فعّال' : (myClient.subscription_status === 'trial' ? '🕐 فترة تجريبية' : '🚫 غير فعّال');
     box.innerHTML = 'الباقة: <b>' + escapeHtml(planName) + '</b>' + priceLabel +
       (isPrepaid && myPlan.prepaid_credits ? '<br>رصيد الرسائل المسبق: ' + Number(myPlan.prepaid_credits).toLocaleString('en') + ' رسالة' : '') +

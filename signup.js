@@ -44,6 +44,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       "form.plansError": "تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.",
       "form.perMonth": "ريال/شهر",
       "form.oneTime": "ريال (دفعة وحدة)",
+      "form.perYear": "ريال/سنة",
       "form.upTo": "حتى",
       "form.msgWord": "رسالة",
       "form.validFor": "صالحة",
@@ -95,6 +96,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       "form.plansError": "Could not load plans. Refresh the page or contact us directly.",
       "form.perMonth": "SAR/month",
       "form.oneTime": "SAR (one-time)",
+      "form.perYear": "SAR/year",
       "form.upTo": "Up to",
       "form.msgWord": "messages",
       "form.validFor": "valid for",
@@ -161,7 +163,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       // ميزة 7: باقات الدفع المسبق تخزّن عدد الرسائل بعمود prepaid_credits (مو monthly_message_limit،
       // اللي يفضل 0 لها بقصد)، والسعر دفعة وحدة مو شهري — لازم نميّزها هنا وإلا تطلع "0 رسالة" غلط
       var isPrepaid = !!plan.is_prepaid;
-      var priceUnitLabel = isPrepaid ? t['form.oneTime'] : t['form.perMonth'];
+      var isAnnual = !isPrepaid && plan.billing_cycle === 'annual';
+      var priceUnitLabel = isPrepaid ? t['form.oneTime'] : (isAnnual ? t['form.perYear'] : t['form.perMonth']);
       var msgCount = isPrepaid ? (plan.prepaid_credits || 0) : (plan.monthly_message_limit || 0);
       var limitLine = t['form.upTo'] + ' ' + Number(msgCount).toLocaleString(currentLang === 'ar' ? 'ar' : 'en') + ' ' + t['form.msgWord'];
       if(isPrepaid && plan.prepaid_validity_months){
@@ -184,7 +187,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   async function loadPlans(){
     const { data, error } = await supabaseClient
       .from('subscription_plans')
-      .select('id, code, name_ar, monthly_price_sar, monthly_message_limit, is_prepaid, prepaid_credits, prepaid_validity_months')
+      .select('id, code, name_ar, monthly_price_sar, monthly_message_limit, is_prepaid, prepaid_credits, prepaid_validity_months, billing_cycle')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
