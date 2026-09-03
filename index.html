@@ -607,6 +607,47 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   </div>
 </section>
 
+<section class="channels-strip-section reveal">
+  <div class="container">
+    <div class="channels-strip-head">
+      <h2 data-i18n="channelsStrip.title">قنوات الربط — بوتك يشتغل من نفس مكان عملائك</h2>
+      <p data-i18n="channelsStrip.sub">اربط منصة التواصل أو متجرك الإلكتروني بضغطة واحدة، وخلي نبضة يرد ويتابع الطلبات تلقائياً من نفس المكان.</p>
+    </div>
+    <div class="channels-grid">
+      <div class="channel-badge">
+        <div class="channel-icon" style="background:#26A5E4;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 11L21 3L13 21L11 13L3 11Z" fill="#fff"/></svg>
+        </div>
+        <span data-i18n="channelsStrip.telegram">تيليجرام</span>
+      </div>
+      <div class="channel-badge">
+        <div class="channel-icon" style="background:#95BF47;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 9V7a5 5 0 0110 0v2" stroke="#fff" stroke-width="1.7" stroke-linecap="round"/><path d="M6 9h12l1.1 11.2a2 2 0 01-2 2.3H6.9a2 2 0 01-2-2.3L6 9z" fill="#fff"/></svg>
+        </div>
+        <span data-i18n="channelsStrip.shopify">شوبيفاي</span>
+      </div>
+      <div class="channel-badge">
+        <div class="channel-icon" style="background:#7F54B3;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><text x="12" y="16.5" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">W</text></svg>
+        </div>
+        <span data-i18n="channelsStrip.woo">ووكومرس (ووردبريس)</span>
+      </div>
+      <div class="channel-badge">
+        <div class="channel-icon" style="background:#5B3FA0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><text x="12" y="16.5" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">Z</text></svg>
+        </div>
+        <span data-i18n="channelsStrip.zid">زد <em class="channel-soon-tag">قريباً</em></span>
+      </div>
+      <div class="channel-badge">
+        <div class="channel-icon" style="background:#111827;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><text x="12" y="16.5" font-size="13" font-weight="900" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif">S</text></svg>
+        </div>
+        <span data-i18n="channelsStrip.salla">سلة <em class="channel-soon-tag">قريباً</em></span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="trust-frame-section">
   <div class="container">
     <div class="trust-frame">
@@ -642,6 +683,18 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   </div>
 </section>
 <style>
+  .channels-strip-section{background:var(--card); padding:52px 0 48px; border-bottom:1px solid var(--border);}
+  .channels-strip-head{text-align:center; max-width:600px; margin:0 auto 34px;}
+  .channels-strip-head h2{font-size:25px; margin-bottom:10px;}
+  .channels-strip-head p{color:var(--muted); font-size:14.5px; line-height:1.75;}
+  .channels-grid{display:flex; flex-wrap:wrap; justify-content:center; gap:18px;}
+  .channel-badge{display:flex; flex-direction:column; align-items:center; gap:12px; width:128px; padding:20px 10px; border:1px solid var(--border); border-radius:16px; background:var(--bg); transition:transform .22s var(--ease-out), box-shadow .22s ease, border-color .22s ease;}
+  .channel-badge:hover{transform:translateY(-4px); box-shadow:0 14px 28px -18px rgba(7,94,84,.35); border-color:rgba(37,211,102,.35);}
+  .channel-icon{width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0;}
+  .channel-badge span{font-size:13.5px; font-weight:700; color:var(--ink); text-align:center; line-height:1.5;}
+  .channel-soon-tag{display:inline-block; margin-top:4px; padding:2px 9px; border-radius:100px; font-size:10.5px; font-weight:800; background:#EEE; color:#667; font-style:normal;}
+  @media (max-width:520px){ .channel-badge{width:102px; padding:14px 8px;} .channel-icon{width:44px; height:44px;} }
+
   .trust-frame-section{background:var(--bg); padding:40px 0 4px;}
   .trust-frame{
     border:1.5px solid var(--border); border-radius:var(--radius); background:var(--card);
