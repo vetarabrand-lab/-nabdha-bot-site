@@ -168,10 +168,16 @@
   .setup-complete-banner{background:rgba(37,211,102,.1); border:1px solid rgba(37,211,102,.35); border-radius:16px; padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; font-weight:700; color:var(--wa-green-dark); font-size:13.5px;}
   .setup-complete-banner button{background:none; border:none; color:var(--wa-green-dark); font-weight:800; cursor:pointer; font-size:14px; flex-shrink:0;}
   /* team */
-  .staff-item{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; background:#F6FAF8; border-radius:12px; margin-bottom:10px;}
+  .staff-item{padding:12px 14px; background:#F6FAF8; border-radius:12px; margin-bottom:10px;}
+  .staff-item-row{display:flex; align-items:center; justify-content:space-between; gap:10px;}
   .staff-item .sname{font-weight:800; font-size:13.5px;}
   .staff-item .semail{color:var(--muted); font-size:12px;}
   .staff-remove-btn{background:none; border:none; color:var(--danger); font-size:12.5px; font-weight:700; cursor:pointer;}
+  .staff-perms, .invite-perms{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px;}
+  .staff-perm-chip{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--ink); background:#fff; border:1px solid var(--border); border-radius:100px; padding:5px 11px; cursor:pointer; user-select:none;}
+  .staff-perm-chip input[type="checkbox"]{margin:0; accent-color:var(--wa-teal-dark); cursor:pointer;}
+  .staff-perm-chip.readonly{background:rgba(37,211,102,.1); border-color:transparent; color:var(--wa-teal-dark); cursor:default;}
+  .staff-perms-readonly{margin-top:8px;}
   .add-staff-btn{background:var(--wa-teal-dark); color:#fff; border:none; border-radius:100px; padding:9px 18px; font-weight:700; font-size:13px; cursor:pointer; margin-top:6px;}
   .add-staff-btn:hover{background:var(--wa-teal);}
   /* zid / salla integration */
@@ -801,6 +807,17 @@
       <label>البريد الإلكتروني</label>
       <input type="email" id="staffEmail" placeholder="employee@example.com">
       <div class="helper-text">بيوصله بريد دعوة يقدر منه يعيّن كلمة مرور ويدخل على نفس بوابة نشاطك.</div>
+    </div>
+    <div class="field">
+      <label>الصلاحيات الإضافية</label>
+      <div class="helper-text" style="margin:0 0 10px;">افتراضياً الموظف يشوف "المحادثات" و"الطلبات" و"الدعم الفني" بس. حدد أي أقسام ثانية تبي تفتحها له:</div>
+      <div class="invite-perms">
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="analytics"> التحليلات</label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="templates"> قوالب الرسائل</label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="addons"> الإضافات</label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="channels"> قنوات الربط</label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="settings"> إعدادات البوت</label>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" id="newStaffCancelBtn">إلغاء</button>

@@ -38,6 +38,14 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   let allMessages = [];
   let simHistory = [];
   let staffList = [];
+  let myStaffPermissions = {};
+  const PERMISSION_DEFS = [
+    { key: 'analytics', label: 'التحليلات' },
+    { key: 'templates', label: 'قوالب الرسائل' },
+    { key: 'addons', label: 'الإضافات' },
+    { key: 'channels', label: 'قنوات الربط' },
+    { key: 'settings', label: 'إعدادات البوت' }
+  ];
   let staffMap = {};
   let filterMineOnly = false;
   // اسم العميل النهائي ونص رسائل واتساب تجي من WhatsApp API (يتحكم فيها الطرف الآخر بالمحادثة)
@@ -480,7 +488,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     } else {
       const { data: staffRow } = await supabaseClient
         .from('client_staff')
-        .select('client_id')
+        .select('client_id, permissions')
         .eq('user_id', user.id)
         .maybeSingle();
       if(staffRow){
@@ -491,6 +499,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           .maybeSingle();
         clientRow = cr;
         isOwner = false;
+        myStaffPermissions = staffRow.permissions || {};
       }
     }
     if(!clientRow){
@@ -510,6 +519,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('templatePickerField').style.display = isOwner ? 'block' : 'none';
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
+    // تبويبات اختيارية للموظفين — صاحب الحساب يشوفها دايماً، والموظف حسب الصلاحيات اللي منحها له صاحب الحساب
+    PERMISSION_DEFS.forEach(function(p){
+      const tabEl = document.querySelector('.tab-btn[data-tab="' + p.key + '"]');
+      if(!tabEl) return;
+      tabEl.style.display = (isOwner || !!myStaffPermissions[p.key]) ? 'inline-block' : 'none';
+    });
     let planLabel = '—';
     if(clientRow.plan_id){
       const { data: plan } = await supabaseClient.from('subscription_plans').select('id, name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar, is_prepaid, prepaid_credits, prepaid_validity_months, billing_cycle').eq('id', clientRow.plan_id).single();
@@ -519,7 +534,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     // فريق العمل — نجيبه قبل عرض المحادثات عشان نبني قائمة "معيّن إلى"
     const { data: staffRows } = await supabaseClient
       .from('client_staff')
-      .select('id, user_id, full_name, email')
+      .select('id, user_id, full_name, email, permissions')
       .eq('client_id', clientRow.id);
     staffList = staffRows || [];
     staffMap = {};
@@ -1097,11 +1112,24 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
     list.innerHTML = '';
     staffList.forEach(function(s){
+      const perms = s.permissions || {};
       const div = document.createElement('div');
       div.className = 'staff-item';
+      var permsHtml = '';
+      if(isOwner){
+        permsHtml = '<div class="staff-perms">' + PERMISSION_DEFS.map(function(p){
+          var checked = perms[p.key] ? ' checked' : '';
+          return '<label class="staff-perm-chip"><input type="checkbox" class="staff-perm-cb" data-staff="' + s.id + '" data-perm="' + p.key + '"' + checked + '> ' + escapeHtml(p.label) + '</label>';
+        }).join('') + '</div>';
+      } else if(Object.keys(perms).some(function(k){ return perms[k]; })){
+        permsHtml = '<div class="staff-perms staff-perms-readonly">' + PERMISSION_DEFS.filter(function(p){ return perms[p.key]; }).map(function(p){
+          return '<span class="staff-perm-chip readonly">' + escapeHtml(p.label) + '</span>';
+        }).join('') + '</div>';
+      }
       div.innerHTML =
-        '<div><div class="sname">' + escapeHtml(s.full_name) + '</div><div class="semail">' + escapeHtml(s.email) + '</div></div>' +
-        (isOwner ? '<button class="staff-remove-btn" data-id="' + s.id + '">إزالة</button>' : '');
+        '<div class="staff-item-row"><div><div class="sname">' + escapeHtml(s.full_name) + '</div><div class="semail">' + escapeHtml(s.email) + '</div></div>' +
+        (isOwner ? '<button class="staff-remove-btn" data-id="' + s.id + '">إزالة</button>' : '') + '</div>' +
+        permsHtml;
       list.appendChild(div);
     });
     if(isOwner){
@@ -1114,6 +1142,25 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
             staffList = staffList.filter(function(s){ return s.id !== id; });
             renderTeam();
           }
+        });
+      });
+      list.querySelectorAll('.staff-perm-cb').forEach(function(cb){
+        cb.addEventListener('change', async function(){
+          const staffId = cb.dataset.staff;
+          const permKey = cb.dataset.perm;
+          const staffRow = staffList.find(function(s){ return s.id === staffId; });
+          if(!staffRow) return;
+          const newPerms = Object.assign({}, staffRow.permissions || {});
+          newPerms[permKey] = cb.checked;
+          cb.disabled = true;
+          const { error } = await supabaseClient.from('client_staff').update({ permissions: newPerms }).eq('id', staffId);
+          cb.disabled = false;
+          if(error){
+            cb.checked = !cb.checked;
+            alert('تعذّر حفظ الصلاحية، حاول مرة ثانية.');
+            return;
+          }
+          staffRow.permissions = newPerms;
         });
       });
     }
@@ -1325,6 +1372,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('staffFullName').value = '';
     document.getElementById('staffEmail').value = '';
     document.getElementById('newStaffError').style.display = 'none';
+    document.querySelectorAll('.invite-perm-cb').forEach(function(cb){ cb.checked = false; });
     newStaffModal.classList.add('show');
   });
   document.getElementById('newStaffCancelBtn').addEventListener('click', function(){
@@ -1344,6 +1392,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       return;
     }
     if(!myClient){ return; }
+    const invitePermissions = {};
+    document.querySelectorAll('.invite-perm-cb').forEach(function(cb){ invitePermissions[cb.dataset.perm] = cb.checked; });
     const btn = document.getElementById('newStaffConfirmBtn');
     btn.disabled = true; btn.textContent = 'جاري الإرسال...';
     const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -1355,7 +1405,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ' + token
         },
-        body: JSON.stringify({ client_id: myClient.id, email: email, full_name: fullName })
+        body: JSON.stringify({ client_id: myClient.id, email: email, full_name: fullName, permissions: invitePermissions })
       });
       const json = await res.json();
       btn.disabled = false; btn.textContent = 'إرسال الدعوة';
@@ -1368,7 +1418,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       alert('تم إرسال دعوة للموظف عبر البريد الإلكتروني.');
       const { data: staffRows } = await supabaseClient
         .from('client_staff')
-        .select('id, user_id, full_name, email')
+        .select('id, user_id, full_name, email, permissions')
         .eq('client_id', myClient.id);
       staffList = staffRows || [];
       staffMap = {};
