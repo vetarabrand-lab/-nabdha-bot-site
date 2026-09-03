@@ -382,6 +382,7 @@
       <button class="tab-btn" data-tab="orders">الطلبات</button>
       <button class="tab-btn" data-tab="addons">الإضافات</button>
       <button class="tab-btn" data-tab="support">الدعم الفني</button>
+      <button class="tab-btn" data-tab="channels">قنوات الربط</button>
       <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
     </div>
     <div class="panel active" id="panelInbox">
@@ -533,58 +534,8 @@
         </div>
       </div>
     </div>
-    <div class="panel" id="panelSettings">
-      <div class="settings-card">
-        <div class="field">
-          <label>اسم النشاط</label>
-          <input type="text" id="settingBizName" disabled>
-        </div>
-        <div class="field" id="templatePickerField" style="display:none;">
-          <label>⚡ قوالب بوت جاهزة حسب نوع نشاطك</label>
-          <div class="helper-text" style="margin:0 0 10px;">اختر نوع نشاطك وتتعبى تعليمات البوت ورسالة الترحيب تلقائياً بقالب جاهز — راجعه وعدّل عليه بعدين قبل الحفظ.</div>
-          <div class="template-chips" id="templateChips"></div>
-          <div class="helper-text" id="templateAppliedNote" style="display:none; color:var(--wa-green-dark); font-weight:700; margin-top:8px;">✓ تم تعبئة القالب — راجع النص وعدّل التفاصيل بين الأقواس [ ]، ثم اضغط "حفظ التعديلات" تحت.</div>
-        </div>
-        <div class="field">
-          <label>تعليمات البوت (system prompt)</label>
-          <textarea id="settingPrompt"></textarea>
-        </div>
-        <div class="field">
-          <label>رسالة الترحيب الأولى</label>
-          <input type="text" id="settingWelcome">
-        </div>
-        <div class="field">
-          <label>📱 رقم واتساب صاحب المتجر</label>
-          <div class="helper-text" style="margin:0 0 10px;">عليه نرسل لك كل صباح ملخص واتساب يومي (عدد المحادثات، استفسارات المنتجات، والسلال المتروكة اللي رجعناها) — بدون هذا الرقم ما توصلك الرسالة.</div>
-          <input type="tel" id="settingOwnerPhone" placeholder="مثال: 0555555555 أو 966555555555" dir="ltr" style="text-align:left;">
-          <div class="helper-text" id="ownerPhoneError" style="display:none; color:var(--danger);">الرقم غير صحيح — لازم يكون رقم جوال سعودي (يبدأ بـ 05 أو 966 أو +966).</div>
-        </div>
-        <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
-        <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
-      </div>
-      <div class="settings-card" id="simCard">
-        <div class="field" style="margin-bottom:6px;">
-          <label>🧪 جرّب شخصية بوتك الآن<span class="sim-live-badge">مباشر</span></label>
-          <div class="helper-text" style="margin:0 0 10px;">اكتب رسالة زي ما بيكتبها عميل حقيقي، وشوف كيف بيرد بوتك بنفس التعليمات المكتوبة فوق الآن — حتى قبل ما تضغط "حفظ التعديلات". هذي محادثة تجريبية فقط ولا ترسل ولا تُسجَّل بأي مكان.</div>
-        </div>
-        <div class="sim-wrap">
-          <div class="chat-body" id="simChatBody"></div>
-          <div class="composer">
-            <textarea id="simText" placeholder="اكتب رسالة تجريبية من عميل..."></textarea>
-            <button class="send-btn" id="simSendBtn">إرسال</button>
-          </div>
-        </div>
-        <div class="save-status" id="simStatus" style="color:var(--danger);"></div>
-        <button class="sim-reset-btn" id="simResetBtn">↺ محادثة جديدة</button>
-      </div>
-      <div class="settings-card" id="teamCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label>فريق العمل</label>
-        </div>
-        <div id="staffList"><div class="conv-empty">جاري التحميل...</div></div>
-        <button class="add-staff-btn" id="addStaffBtn" style="display:none;">+ إضافة موظف</button>
-        <div class="helper-text" id="teamHelperNonOwner" style="display:none;">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
-      </div>
+    <div class="panel" id="panelChannels">
+      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;">اربط قنوات التواصل ومتجرك الإلكتروني ببوت نبضة — كل قناة تضيفها يقدر البوت يرد فيها تلقائياً بنفس تعليماتك.</p>
       <div class="settings-card coming-soon" id="zidCard">
         <div class="field" style="margin-bottom:16px;">
           <label>ربط متجر زد (Zid) <span class="coming-soon-badge">قريباً</span></label>
@@ -663,6 +614,59 @@
         <div class="helper-text" id="telegramHelperNonOwner" style="display:none;">ربط تليجرام متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" id="telegramLockedHint" style="margin-top:10px; display:none;"></div>
         <div class="helper-text" style="margin-top:10px;">خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.</div>
+      </div>
+    </div>
+    <div class="panel" id="panelSettings">
+      <div class="settings-card">
+        <div class="field">
+          <label>اسم النشاط</label>
+          <input type="text" id="settingBizName" disabled>
+        </div>
+        <div class="field" id="templatePickerField" style="display:none;">
+          <label>⚡ قوالب بوت جاهزة حسب نوع نشاطك</label>
+          <div class="helper-text" style="margin:0 0 10px;">اختر نوع نشاطك وتتعبى تعليمات البوت ورسالة الترحيب تلقائياً بقالب جاهز — راجعه وعدّل عليه بعدين قبل الحفظ.</div>
+          <div class="template-chips" id="templateChips"></div>
+          <div class="helper-text" id="templateAppliedNote" style="display:none; color:var(--wa-green-dark); font-weight:700; margin-top:8px;">✓ تم تعبئة القالب — راجع النص وعدّل التفاصيل بين الأقواس [ ]، ثم اضغط "حفظ التعديلات" تحت.</div>
+        </div>
+        <div class="field">
+          <label>تعليمات البوت (system prompt)</label>
+          <textarea id="settingPrompt"></textarea>
+        </div>
+        <div class="field">
+          <label>رسالة الترحيب الأولى</label>
+          <input type="text" id="settingWelcome">
+        </div>
+        <div class="field">
+          <label>📱 رقم واتساب صاحب المتجر</label>
+          <div class="helper-text" style="margin:0 0 10px;">عليه نرسل لك كل صباح ملخص واتساب يومي (عدد المحادثات، استفسارات المنتجات، والسلال المتروكة اللي رجعناها) — بدون هذا الرقم ما توصلك الرسالة.</div>
+          <input type="tel" id="settingOwnerPhone" placeholder="مثال: 0555555555 أو 966555555555" dir="ltr" style="text-align:left;">
+          <div class="helper-text" id="ownerPhoneError" style="display:none; color:var(--danger);">الرقم غير صحيح — لازم يكون رقم جوال سعودي (يبدأ بـ 05 أو 966 أو +966).</div>
+        </div>
+        <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
+        <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
+      </div>
+      <div class="settings-card" id="simCard">
+        <div class="field" style="margin-bottom:6px;">
+          <label>🧪 جرّب شخصية بوتك الآن<span class="sim-live-badge">مباشر</span></label>
+          <div class="helper-text" style="margin:0 0 10px;">اكتب رسالة زي ما بيكتبها عميل حقيقي، وشوف كيف بيرد بوتك بنفس التعليمات المكتوبة فوق الآن — حتى قبل ما تضغط "حفظ التعديلات". هذي محادثة تجريبية فقط ولا ترسل ولا تُسجَّل بأي مكان.</div>
+        </div>
+        <div class="sim-wrap">
+          <div class="chat-body" id="simChatBody"></div>
+          <div class="composer">
+            <textarea id="simText" placeholder="اكتب رسالة تجريبية من عميل..."></textarea>
+            <button class="send-btn" id="simSendBtn">إرسال</button>
+          </div>
+        </div>
+        <div class="save-status" id="simStatus" style="color:var(--danger);"></div>
+        <button class="sim-reset-btn" id="simResetBtn">↺ محادثة جديدة</button>
+      </div>
+      <div class="settings-card" id="teamCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>فريق العمل</label>
+        </div>
+        <div id="staffList"><div class="conv-empty">جاري التحميل...</div></div>
+        <button class="add-staff-btn" id="addStaffBtn" style="display:none;">+ إضافة موظف</button>
+        <div class="helper-text" id="teamHelperNonOwner" style="display:none;">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
       </div>
       <div class="settings-card" id="planCard">
         <div class="field" style="margin-bottom:16px;">
@@ -987,6 +991,7 @@
   .tabs .tab-btn[data-tab="orders"]::before{ content:'📦'; }
   .tabs .tab-btn[data-tab="addons"]::before{ content:'🧩'; }
   .tabs .tab-btn[data-tab="support"]::before{ content:'🛟'; }
+  .tabs .tab-btn[data-tab="channels"]::before{ content:'🔗'; }
   .tabs .tab-btn[data-tab="settings"]::before{ content:'⚙️'; }
 
   /* على الشاشات الأصغر: شريط أفقي يُمرَّر بدل ثلاثة صفوف متكدّسة */

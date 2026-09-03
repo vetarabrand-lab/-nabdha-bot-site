@@ -135,7 +135,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     { key: 'wa', label: 'ربط رقم واتساب', tab: null },
     { key: 'prompt', label: 'تخصيص تعليمات البوت', tab: 'settings', focusId: 'settingPrompt' },
     { key: 'welcome', label: 'رسالة الترحيب', tab: 'settings', focusId: 'settingWelcome' },
-    { key: 'store', label: 'ربط متجرك (اختياري)', tab: 'settings' },
+    { key: 'store', label: 'ربط متجرك (اختياري)', tab: 'channels' },
     { key: 'convo', label: 'أول محادثة حقيقية', tab: 'inbox' }
   ];
   function renderSetupProgress(clientRow, convCount){
@@ -332,7 +332,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons' };
+      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
       if(btn.dataset.tab === 'addons'){ loadPortalAddonsTab(); }
