@@ -1041,8 +1041,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   /* ---------- ربط تطبيق واتساب الأعمال (Coexistence) ---------- */
   // بعد إعداد "Embedded Signup" الخاص بربط تطبيق واتساب الأعمال من Meta for Developers،
   // ضع App ID و Configuration ID هنا لتفعيل زر "ابدأ الربط" فعلياً.
-  const WA_COEXIST_APP_ID = '';
-  const WA_COEXIST_CONFIG_ID = '';
+  const WA_COEXIST_APP_ID = '2188934378330642';
+  const WA_COEXIST_CONFIG_ID = '945220261304734';
   let fbSdkLoadPromise = null;
   function loadFacebookSdk(){
     if(fbSdkLoadPromise) return fbSdkLoadPromise;
