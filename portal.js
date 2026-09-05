@@ -479,7 +479,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -494,7 +494,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -601,6 +601,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadWooCommerceStatus();
     loadShopifyStatus();
     loadTelegramStatus();
+    loadWaAppStatus();
     loadTemplates();
     loadTopupInfo();
     renderSubscriptionBanner();
@@ -1035,6 +1036,114 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
       errBox.style.display = 'block';
     }
+  });
+
+  /* ---------- ربط تطبيق واتساب الأعمال (Coexistence) ---------- */
+  // بعد إعداد "Embedded Signup" الخاص بربط تطبيق واتساب الأعمال من Meta for Developers،
+  // ضع App ID و Configuration ID هنا لتفعيل زر "ابدأ الربط" فعلياً.
+  const WA_COEXIST_APP_ID = '';
+  const WA_COEXIST_CONFIG_ID = '';
+  let fbSdkLoadPromise = null;
+  function loadFacebookSdk(){
+    if(fbSdkLoadPromise) return fbSdkLoadPromise;
+    fbSdkLoadPromise = new Promise(function(resolve){
+      if(window.FB){ resolve(window.FB); return; }
+      window.fbAsyncInit = function(){
+        window.FB.init({ appId: WA_COEXIST_APP_ID, autoLogAppEvents: true, xfbml: false, version: 'v21.0' });
+        resolve(window.FB);
+      };
+      const script = document.createElement('script');
+      script.src = 'https://connect.facebook.net/ar_AR/sdk.js';
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    });
+    return fbSdkLoadPromise;
+  }
+  function renderWaAppStatus(){
+    const statusBox = document.getElementById('waAppStatus');
+    const btn = document.getElementById('connectWaAppBtn');
+    const nonOwnerHint = document.getElementById('waAppHelperNonOwner');
+    const disconnectedHint = document.getElementById('waAppDisconnectedHint');
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    disconnectedHint.style.display = 'none';
+    if(!myClient || !myClient.whatsapp_phone_number_id){
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ لازم تفعّل رقم واتساب البوت أولاً</span>';
+      btn.style.display = 'none';
+      return;
+    }
+    const status = myClient.coexistence_status || 'not_connected';
+    if(status === 'active' || status === 'pending_sync'){
+      statusBox.innerHTML = '<span class="status-badge shopify-connected">✅ ' + (status === 'active' ? 'مربوط' : 'جاري إتمام المزامنة...') + '</span>';
+      btn.style.display = isOwner ? 'inline-block' : 'none';
+      btn.textContent = 'إعادة الربط';
+    } else if(status === 'disconnected'){
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ تم فصل الربط</span>';
+      btn.style.display = isOwner ? 'inline-block' : 'none';
+      btn.textContent = 'ابدأ الربط';
+      disconnectedHint.style.display = isOwner ? 'block' : 'none';
+    } else {
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ غير مربوط بعد</span>';
+      btn.style.display = isOwner ? 'inline-block' : 'none';
+      btn.textContent = 'ابدأ الربط';
+    }
+  }
+  async function loadWaAppStatus(){
+    renderWaAppStatus();
+  }
+  window.addEventListener('message', async function(event){
+    if(!event.origin || event.origin.indexOf('facebook.com') === -1) return;
+    let data;
+    try{ data = JSON.parse(event.data); } catch(e){ return; }
+    if(!data || data.type !== 'WA_EMBEDDED_SIGNUP') return;
+    if(data.event !== 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') return;
+    if(!myClient) return;
+    const phoneNumberId = (data.data && data.data.phone_number_id) || myClient.whatsapp_phone_number_id;
+    const wabaId = (data.data && data.data.waba_id) || '';
+    const btn = document.getElementById('connectWaAppBtn');
+    if(btn){ btn.disabled = true; btn.textContent = 'جاري الربط...'; }
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+    try{
+      const res = await fetch(FUNCTIONS_BASE + '/whatsapp-coexistence-activate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ client_id: myClient.id, phone_number_id: phoneNumberId, waba_id: wabaId })
+      });
+      const json = await res.json();
+      if(btn){ btn.disabled = false; }
+      if(!res.ok || json.error){
+        alert(json.error || 'تعذّر إتمام الربط، حاول مرة أخرى.');
+        renderWaAppStatus();
+        return;
+      }
+      myClient.coexistence_status = json.status;
+      alert(json.message || 'تم الربط بنجاح.');
+      renderWaAppStatus();
+    } catch(e){
+      if(btn){ btn.disabled = false; }
+      alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+    }
+  });
+  document.getElementById('connectWaAppBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner) return;
+    if(!WA_COEXIST_APP_ID || !WA_COEXIST_CONFIG_ID){
+      alert('هذي الميزة قيد الإعداد من فريق نبضة حالياً، ترجع تقدر تستخدمها قريباً.');
+      return;
+    }
+    const FB = await loadFacebookSdk();
+    FB.login(function(response){
+      // نتيجة الربط الفعلية توصلنا عبر رسالة WA_EMBEDDED_SIGNUP أعلاه وليس من هنا مباشرة
+    }, {
+      config_id: WA_COEXIST_CONFIG_ID,
+      response_type: 'code',
+      override_default_response_type: true,
+      extras: {
+        setup: {},
+        featureType: 'whatsapp_business_app_onboarding',
+        sessionInfoVersion: '3'
+      }
+    });
   });
 
   /* ---------- ربط متجر شوبيفاي ---------- */

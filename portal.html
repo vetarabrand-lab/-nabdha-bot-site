@@ -618,6 +618,16 @@
         <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
       </div>
+      <div class="settings-card" id="waAppCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>ربط تطبيق واتساب الأعمال (مجاني)</label>
+        </div>
+        <div id="waAppStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 30px; display:none;">ابدأ الربط</button>
+        <div class="helper-text" id="waAppHelperNonOwner" style="display:none;">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
+        <div class="helper-text" style="margin-top:10px;">تقدر تستخدم تطبيق واتساب الأعمال (على جوالك) بجانب بوت نبضة على نفس رقمك — البوت يستمر يرد تلقائياً على عملائك، وتقدر تفتح التطبيق على جوالك وترد بنفسك شخصياً في أي وقت تحب. بعد الضغط على "ابدأ الربط" أكمل خطوات التأكيد من تطبيق واتساب الأعمال على جوالك، وافتح التطبيق مرة كل أسبوعين على الأقل حتى يبقى الربط شغّال.</div>
+      </div>
       <div class="settings-card" id="telegramCard">
         <div class="field" style="margin-bottom:16px;">
           <label>ربط بوت تليجرام (Telegram)</label>
