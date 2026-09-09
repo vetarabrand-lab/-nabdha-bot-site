@@ -163,7 +163,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(doneCount >= SETUP_STEPS.length){
       if(localStorage.getItem(dismissKey) === '1'){ card.style.display = 'none'; return; }
       card.style.display = 'block';
-      card.innerHTML = '<div class="setup-complete-banner">🎉 اكتمل إعداد بوتك بالكامل! جاهز يشتغل بكامل طاقته.<button type="button" id="setupDismissBtn">✕</button></div>';
+      card.innerHTML = '<div class="setup-complete-banner">' + PT('🎉 اكتمل إعداد بوتك بالكامل! جاهز يشتغل بكامل طاقته.') + '<button type="button" id="setupDismissBtn">✕</button></div>';
       var dismissBtn = document.getElementById('setupDismissBtn');
       if(dismissBtn){
         dismissBtn.addEventListener('click', function(){
@@ -373,11 +373,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       let statusHtml = '';
       let actionHtml = '';
       if(activeRow){
-        statusHtml = '<span class="addon-status active">✓ مفعّلة</span>';
+        statusHtml = '<span class="addon-status active">' + PT('✓ مفعّلة') + '</span>';
       } else if(pendingRow){
-        statusHtml = '<span class="addon-status pending">قيد المراجعة</span>';
+        statusHtml = '<span class="addon-status pending">' + PT('قيد المراجعة (إضافة)') + '</span>';
       } else {
-        actionHtml = '<button type="button" class="addon-request-btn" data-id="' + a.id + '">اطلب التفعيل</button>';
+        actionHtml = '<button type="button" class="addon-request-btn" data-id="' + a.id + '">' + PT('اطلب التفعيل') + '</button>';
       }
 
       card.innerHTML =
@@ -408,7 +408,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           if(error){ throw error; }
         } catch(e){
           btn.disabled = false;
-          btn.textContent = 'اطلب التفعيل';
+          btn.textContent = PT('اطلب التفعيل');
           alert('تعذّر إرسال طلبك، حاول مرة ثانية.');
           return;
         }
@@ -763,16 +763,16 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       }
       const orders = json.orders || [];
       if(orders.length === 0){
-        container.innerHTML = '<div class="conv-empty">لا توجد طلبات بعد.</div>';
+        container.innerHTML = '<div class="conv-empty">' + PT('لا توجد طلبات بعد.') + '</div>';
         return;
       }
       let tableHtml = '<div class="table-wrap"><table style="width:100%; border-collapse:collapse;">'
         + '<thead><tr style="text-align:right; border-bottom:1.5px solid var(--border);">'
-        + '<th style="padding:10px 8px;">رقم الطلب</th>'
-        + '<th style="padding:10px 8px;">العميل</th>'
-        + '<th style="padding:10px 8px;">الحالة</th>'
-        + '<th style="padding:10px 8px;">القيمة</th>'
-        + '<th style="padding:10px 8px;">التاريخ</th>'
+        + '<th style="padding:10px 8px;">' + PT('رقم الطلب') + '</th>'
+        + '<th style="padding:10px 8px;">' + PT('العميل') + '</th>'
+        + '<th style="padding:10px 8px;">' + PT('الحالة') + '</th>'
+        + '<th style="padding:10px 8px;">' + PT('القيمة') + '</th>'
+        + '<th style="padding:10px 8px;">' + PT('التاريخ') + '</th>'
         + '</tr></thead><tbody>';
       orders.forEach(function(o){
         tableHtml += '<tr style="border-bottom:1px solid var(--border);">'
@@ -814,10 +814,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
-        '<span class="status-badge zid-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
-        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+        '<span class="status-badge zid-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
     } else {
-      statusBox.innerHTML = '<span class="status-badge zid-disconnected">🔜 قريباً — ربط متاجر جديدة متوقف مؤقتاً</span>';
+      statusBox.innerHTML = '<span class="status-badge zid-disconnected">🔜 ' + PT('قريباً — ربط متاجر جديدة متوقف مؤقتاً') + '</span>';
     }
   }
   document.getElementById('connectZidBtn').addEventListener('click', async function(){
@@ -864,10 +864,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(data){
       const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
-        '<span class="status-badge salla-connected">✅ متصل' + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
-        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+        '<span class="status-badge salla-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
     } else {
-      statusBox.innerHTML = '<span class="status-badge salla-disconnected">🔜 قريباً — ربط متاجر جديدة متوقف مؤقتاً</span>';
+      statusBox.innerHTML = '<span class="status-badge salla-disconnected">🔜 ' + PT('قريباً — ربط متاجر جديدة متوقف مؤقتاً') + '</span>';
     }
   }
   document.getElementById('connectSallaBtn').addEventListener('click', async function(){
@@ -913,8 +913,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(data){
       const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
-        '<span class="status-badge woo-connected">✅ متصل' + (data.store_url ? ' — ' + escapeHtml(data.store_url) : '') + '</span>' +
-        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+        '<span class="status-badge woo-connected">' + PT('✅ متصل') + (data.store_url ? ' — ' + escapeHtml(data.store_url) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
       form.style.display = 'none';
     } else if(addonLocked){
       statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('woo') : '');
@@ -971,7 +971,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!myClient){ return; }
 
     if(myClient.telegram_connection_status === 'connected' && myClient.telegram_bot_username){
-      statusBox.innerHTML = '<span class="status-badge telegram-connected">✅ متصل — @' + escapeHtml(myClient.telegram_bot_username) + '</span>';
+      statusBox.innerHTML = '<span class="status-badge telegram-connected">' + PT('✅ متصل') + ' — @' + escapeHtml(myClient.telegram_bot_username) + '</span>';
       form.style.display = 'none';
       lockedHint.style.display = 'none';
       return;
@@ -1304,7 +1304,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     phones.forEach(function(phone){
       const conv = conversations[phone];
       const lastMsg = conv.messages[conv.messages.length - 1];
-      const humanBadge = conv.botPaused ? '<span class="human-badge">👤 يدوي</span>' : '';
+      const humanBadge = conv.botPaused ? '<span class="human-badge">' + PT('👤 يدوي') + '</span>' : '';
       const assigneeName = conv.assignedTo && staffMap[conv.assignedTo] ? staffMap[conv.assignedTo] : null;
       const assigneeBadge = assigneeName ? '<span class="assignee-badge">🏷️ ' + escapeHtml(assigneeName) + '</span>' : '';
       const div = document.createElement('div');
@@ -1813,7 +1813,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   function renderTicketList(){
     const list = document.getElementById('ticketList');
     if(myTickets.length === 0){
-      list.innerHTML = '<div class="conv-empty">ما فيه تذاكر دعم بعد. اضغط "فتح تذكرة جديدة" لإرسال استفسارك.</div>';
+      list.innerHTML = '<div class="conv-empty">' + PT('ما فيه تذاكر دعم بعد. اضغط "فتح تذكرة جديدة" لإرسال استفسارك.') + '</div>';
       return;
     }
     list.innerHTML = '';
@@ -1823,7 +1823,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const dateStr = new Date(t.updated_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric' });
       div.innerHTML =
         '<div class="tsubject">' + escapeHtml(t.subject) + '</div>' +
-        '<div class="tmeta"><span class="status-badge ' + t.status + '">' + ticketStatusLabels[t.status] + '</span><span class="tdate">' + dateStr + '</span></div>';
+        '<div class="tmeta"><span class="status-badge ' + t.status + '">' + PT(ticketStatusLabels[t.status]) + '</span><span class="tdate">' + dateStr + '</span></div>';
       div.addEventListener('click', function(){
         activeTicketId = t.id;
         renderTicketList();
@@ -1843,7 +1843,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('ticketThreadSubject').textContent = ticket.subject;
     const statusEl = document.getElementById('ticketThreadStatus');
     statusEl.className = 'status-badge ' + ticket.status;
-    statusEl.textContent = ticketStatusLabels[ticket.status];
+    statusEl.textContent = PT(ticketStatusLabels[ticket.status]);
     composerWrap.style.display = 'block';
     hint.style.color = 'var(--muted)';
     hint.textContent = ticket.status === 'closed' ? 'ملاحظة: الرد سيعيد فتح هذي التذكرة تلقائياً.' : '';
@@ -1951,7 +1951,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   function renderCampaignList(){
     const list = document.getElementById('campaignList');
     if(myCampaigns.length === 0){
-      list.innerHTML = '<div class="conv-empty">ما فيه حملات بعد. اضغط "+ حملة جديدة" لإرسال أول رسالة جماعية.</div>';
+      list.innerHTML = '<div class="conv-empty">' + PT('ما فيه حملات بعد. اضغط "+ حملة جديدة" لإرسال أول رسالة جماعية.') + '</div>';
       return;
     }
     list.innerHTML = '';
@@ -1960,7 +1960,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const div = document.createElement('div');
       div.className = 'campaign-card';
       div.innerHTML =
-        '<div class="ctop"><span class="cname">' + escapeHtml(c.template_name) + '</span><span class="status-badge ' + c.status + '">' + campaignStatusLabels[c.status] + '</span></div>' +
+        '<div class="ctop"><span class="cname">' + escapeHtml(c.template_name) + '</span><span class="status-badge ' + c.status + '">' + PT(campaignStatusLabels[c.status]) + '</span></div>' +
         '<div class="cmeta">' +
           '<span>📅 ' + dateStr + '</span>' +
           '<span>👥 <b>' + c.total_recipients + '</b> مستلم</span>' +
@@ -2070,7 +2070,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   function renderTemplateList(){
     const list = document.getElementById('templateList');
     if(myTemplates.length === 0){
-      list.innerHTML = '<div class="conv-empty">ما فيه قوالب بعد. اضغط "+ قالب جديد" لإنشاء أول قالب بمساعدة الذكاء الاصطناعي.</div>';
+      list.innerHTML = '<div class="conv-empty">' + PT('ما فيه قوالب بعد. اضغط "+ قالب جديد" لإنشاء أول قالب بمساعدة الذكاء الاصطناعي.') + '</div>';
       return;
     }
     list.innerHTML = '';
@@ -2079,7 +2079,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const div = document.createElement('div');
       div.className = 'campaign-card';
       div.innerHTML =
-        '<div class="ctop"><span class="cname">' + escapeHtml(t.name) + '</span><span class="status-badge ' + t.status + '">' + templateStatusLabels[t.status] + '</span></div>' +
+        '<div class="ctop"><span class="cname">' + escapeHtml(t.name) + '</span><span class="status-badge ' + t.status + '">' + PT(templateStatusLabels[t.status]) + '</span></div>' +
         '<div class="cmeta">' +
           '<span>🏷️ ' + (templateCategoryLabels[t.category] || t.category) + '</span>' +
           '<span>📅 ' + dateStr + '</span>' +

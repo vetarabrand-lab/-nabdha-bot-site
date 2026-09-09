@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة نشاطي | بوت نبضة</title>
+<title data-i18n="pageTitle">لوحة نشاطي | بوت نبضة</title>
 <meta name="robots" content="noindex, nofollow">
 <!-- PWA: يسمح للتاجر يثبّت البوابة كأيقونة تطبيق على شاشة جواله (آيفون وأندرويد) -->
 <link rel="manifest" href="/manifest.json">
@@ -52,6 +52,8 @@
   .header-right{display:flex; align-items:center; gap:14px;}
   .biz-tag{font-size:13.5px; color:var(--muted); font-weight:700;}
   .logout-btn{background:#fff; border:1.5px solid var(--border); color:var(--wa-teal-dark); font-weight:700; font-size:13.5px; padding:8px 16px; border-radius:100px; cursor:pointer;}
+  .lang-btn{background:#fff; border:1.5px solid var(--border); color:var(--wa-teal-dark); font-weight:800; font-size:12px; padding:7px 13px; border-radius:100px; cursor:pointer;}
+  .lang-btn:hover{border-color:var(--wa-teal);}
   /* login */
   .login-wrap{min-height:calc(100vh - 66px); display:flex; align-items:center; justify-content:center; padding:40px 20px;}
   .login-card{background:var(--card); border:1px solid var(--border); border-radius:24px; box-shadow:var(--shadow); padding:40px; width:100%; max-width:400px;}
@@ -292,56 +294,57 @@
       <div class="logo-badge">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.09-1.36A9.94 9.94 0 0012 22c5.52 0 10-4.48 10-10S17.52 2 12 2z" fill="#fff" fill-opacity=".95"/><path d="M8.5 8.2c.2-.44.4-.45.6-.46h.5c.17 0 .4-.06.62.48.23.55.78 1.9.85 2.04.07.14.12.3.02.48-.1.18-.15.3-.3.46-.14.16-.3.36-.43.48-.14.13-.29.28-.13.56.17.28.75 1.24 1.6 2.01 1.1 1 2.02 1.32 2.3 1.47.28.15.45.13.62-.08.17-.2.7-.82.9-1.1.2-.27.4-.23.66-.14.28.1 1.77.83 2.07.99.3.15.5.23.57.36.08.13.08.75-.18 1.47-.25.72-1.46 1.4-2.02 1.48-.5.08-1.14.12-1.83-.11a15 15 0 01-1.63-.6c-2.87-1.24-4.74-4.12-4.9-4.31-.14-.2-1.16-1.55-1.16-2.95 0-1.4.73-2.08.99-2.37z" fill="#0B7A5C"/></svg>
       </div>
-      <span>لوحة نشاطي</span>
+      <span data-i18n="topbar.title">لوحة نشاطي</span>
     </div>
     <div class="header-right">
       <span class="biz-tag" id="bizTag"></span>
-      <button class="logout-btn" id="logoutBtn" style="display:none;">تسجيل الخروج</button>
+      <button class="lang-btn" id="langBtn" type="button">English</button>
+      <button class="logout-btn" id="logoutBtn" style="display:none;" data-i18n="topbar.logout">تسجيل الخروج</button>
     </div>
   </nav>
 </header>
 <!-- PWA: بانر تثبيت البوابة كتطبيق على شاشة الجوال -->
 <div class="pwa-install-banner" id="pwaInstallBanner" style="display:none;">
   <div class="pwa-install-text">
-    <b>ثبّت بوابة نبضة على جوالك 📲</b>
-    <span id="pwaInstallSub">أيقونة سريعة على شاشتك الرئيسية، بدون متصفح</span>
+    <b data-i18n="pwa.title">ثبّت بوابة نبضة على جوالك 📲</b>
+    <span id="pwaInstallSub" data-i18n="pwa.desc">أيقونة سريعة على شاشتك الرئيسية، بدون متصفح</span>
   </div>
   <div class="pwa-install-actions">
-    <button type="button" class="pwa-install-btn" id="pwaInstallBtn" style="display:none;">تثبيت</button>
-    <button type="button" class="pwa-install-close" id="pwaInstallClose" aria-label="إغلاق">✕</button>
+    <button type="button" class="pwa-install-btn" id="pwaInstallBtn" style="display:none;" data-i18n="pwa.install">تثبيت</button>
+    <button type="button" class="pwa-install-close" id="pwaInstallClose" aria-label="إغلاق" data-i18n-aria-label="common.close">✕</button>
   </div>
 </div>
 <!-- LOGIN -->
 <div class="login-wrap" id="loginScreen">
   <div class="login-card">
-    <h1>دخول أصحاب الأنشطة</h1>
-    <p class="sub">سجّل دخولك لمتابعة محادثات بوتك والرد يدوياً عند الحاجة</p>
+    <h1 data-i18n="login.title">دخول أصحاب الأنشطة</h1>
+    <p class="sub" data-i18n="login.subtitle">سجّل دخولك لمتابعة محادثات بوتك والرد يدوياً عند الحاجة</p>
     <div class="alert-box error" id="loginError"></div>
     <form id="loginForm">
       <div class="field">
-        <label>البريد الإلكتروني</label>
+        <label data-i18n="login.email">البريد الإلكتروني</label>
         <input type="email" id="loginEmail" required autocomplete="username">
       </div>
       <div class="field">
-        <label>كلمة المرور</label>
+        <label data-i18n="login.password">كلمة المرور</label>
         <input type="password" id="loginPassword" required autocomplete="current-password">
       </div>
-      <button type="submit" class="primary-btn" id="loginBtn">تسجيل الدخول</button>
+      <button type="submit" class="primary-btn" id="loginBtn" data-i18n="login.submit">تسجيل الدخول</button>
     </form>
-    <span class="forgot-link" id="showForgotBtn">نسيت كلمة المرور؟</span>
-    <div class="divider">أو</div>
+    <span class="forgot-link" id="showForgotBtn" data-i18n="login.forgotLink">نسيت كلمة المرور؟</span>
+    <div class="divider" data-i18n="login.or">أو</div>
     <button type="button" class="google-btn" id="googleLoginBtn">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.84 2.09-1.79 2.73v2.27h2.9c1.7-1.56 2.69-3.87 2.69-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.27c-.8.54-1.83.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.34C2.47 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.95 10.69c-.18-.54-.28-1.11-.28-1.69s.1-1.15.28-1.69V4.97H.98A8.98 8.98 0 000 9c0 1.45.35 2.83.98 4.03l2.97-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0 5.48 0 2.47 2.02.98 4.97l2.97 2.34C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-      متابعة عبر جوجل
+      <span data-i18n="login.google">متابعة عبر جوجل</span>
     </button>
-    <p class="sub" style="margin-top:16px; font-size:12px;">ملاحظة: تسجيل الدخول بجوجل يشتغل فقط إذا كان بريدك مطابق للبريد اللي سجّله فريق نبضة لنشاطك.</p>
+    <p class="sub" style="margin-top:16px; font-size:12px;" data-i18n="login.googleNote">ملاحظة: تسجيل الدخول بجوجل يشتغل فقط إذا كان بريدك مطابق للبريد اللي سجّله فريق نبضة لنشاطك.</p>
   </div>
 </div>
 <!-- FORGOT PASSWORD -->
 <div class="login-wrap" id="forgotScreen">
   <div class="login-card">
-    <h1>استعادة كلمة المرور</h1>
-    <p class="sub">اكتب بريدك الإلكتروني، وبنرسل لك رابط لإعادة تعيين كلمة المرور</p>
+    <h1 data-i18n="forgot.title">استعادة كلمة المرور</h1>
+    <p class="sub" data-i18n="forgot.subtitle">اكتب بريدك الإلكتروني، وبنرسل لك رابط لإعادة تعيين كلمة المرور</p>
     <div class="alert-box error" id="forgotError"></div>
     <div class="alert-box ok" id="forgotSuccess"></div>
     <form id="forgotForm">
@@ -349,23 +352,23 @@
         <label>البريد الإلكتروني</label>
         <input type="email" id="forgotEmail" required autocomplete="username">
       </div>
-      <button type="submit" class="primary-btn" id="forgotBtn">إرسال رابط الاستعادة</button>
+      <button type="submit" class="primary-btn" id="forgotBtn" data-i18n="forgot.submit">إرسال رابط الاستعادة</button>
     </form>
-    <span class="back-link2" id="backToLoginBtn">→ الرجوع لتسجيل الدخول</span>
+    <span class="back-link2" id="backToLoginBtn" data-i18n="forgot.back">→ الرجوع لتسجيل الدخول</span>
   </div>
 </div>
 <!-- SET NEW PASSWORD -->
 <div class="login-wrap" id="resetScreen">
   <div class="login-card">
-    <h1>تعيين كلمة مرور جديدة</h1>
-    <p class="sub">اكتب كلمة المرور الجديدة لحسابك</p>
+    <h1 data-i18n="reset.title">تعيين كلمة مرور جديدة</h1>
+    <p class="sub" data-i18n="reset.subtitle">اكتب كلمة المرور الجديدة لحسابك</p>
     <div class="alert-box error" id="resetError"></div>
     <form id="resetForm">
       <div class="field">
-        <label>كلمة المرور الجديدة (8 أحرف فأكثر)</label>
+        <label data-i18n="reset.newPasswordLabel">كلمة المرور الجديدة (8 أحرف فأكثر)</label>
         <input type="password" id="resetPassword" required minlength="8" autocomplete="new-password">
       </div>
-      <button type="submit" class="primary-btn" id="resetBtn">حفظ كلمة المرور</button>
+      <button type="submit" class="primary-btn" id="resetBtn" data-i18n="reset.submit">حفظ كلمة المرور</button>
     </form>
   </div>
 </div>
@@ -373,36 +376,36 @@
 <div id="appScreen">
   <div class="container top-stats">
     <div class="stats-row">
-      <div class="stat-card"><div class="n" id="statPlan">–</div><div class="l">باقتك الحالية</div></div>
-      <div class="stat-card"><div class="n" id="statUsage">–</div><div class="l">رسائل هذا الشهر</div></div>
-      <div class="stat-card"><div class="n" id="statConvs">–</div><div class="l">عدد المحادثات</div></div>
+      <div class="stat-card"><div class="n" id="statPlan">–</div><div class="l" data-i18n="topbar.planLabel">باقتك الحالية</div></div>
+      <div class="stat-card"><div class="n" id="statUsage">–</div><div class="l" data-i18n="topbar.msgsThisMonth">رسائل هذا الشهر</div></div>
+      <div class="stat-card"><div class="n" id="statConvs">–</div><div class="l" data-i18n="topbar.convoCount">عدد المحادثات</div></div>
     </div>
     <div class="cost-note" id="usageWarningBanner" style="display:none;"></div>
     <div class="cost-note" id="subscriptionBanner" style="display:none;"></div>
     <div class="setup-progress-card" id="setupProgressCard" style="display:none;"></div>
     <div class="tabs">
-      <span class="nav-sec">التشغيل اليومي</span>
-      <button class="tab-btn active" data-tab="inbox">المحادثات</button>
-      <button class="tab-btn" data-tab="orders">الطلبات</button>
-      <button class="tab-btn" data-tab="support">الدعم الفني</button>
-      <span class="nav-sec">النمو والتحليل</span>
-      <button class="tab-btn" data-tab="analytics">التحليلات</button>
-      <button class="tab-btn" data-tab="broadcast">الرسائل الجماعية</button>
-      <button class="tab-btn" data-tab="templates">قوالب الرسائل</button>
-      <span class="nav-sec">إعدادات المنصة</span>
-      <button class="tab-btn" data-tab="channels">قنوات الربط</button>
-      <button class="tab-btn" data-tab="addons">الإضافات</button>
-      <button class="tab-btn" data-tab="settings">إعدادات البوت</button>
+      <span class="nav-sec" data-i18n="nav.groupDaily">التشغيل اليومي</span>
+      <button class="tab-btn active" data-tab="inbox" data-i18n="nav.conversations">المحادثات</button>
+      <button class="tab-btn" data-tab="orders" data-i18n="nav.orders">الطلبات</button>
+      <button class="tab-btn" data-tab="support" data-i18n="nav.support">الدعم الفني</button>
+      <span class="nav-sec" data-i18n="nav.groupGrowth">النمو والتحليل</span>
+      <button class="tab-btn" data-tab="analytics" data-i18n="nav.analytics">التحليلات</button>
+      <button class="tab-btn" data-tab="broadcast" data-i18n="nav.broadcast">الرسائل الجماعية</button>
+      <button class="tab-btn" data-tab="templates" data-i18n="nav.templates">قوالب الرسائل</button>
+      <span class="nav-sec" data-i18n="nav.groupPlatform">إعدادات المنصة</span>
+      <button class="tab-btn" data-tab="channels" data-i18n="nav.channels">قنوات الربط</button>
+      <button class="tab-btn" data-tab="addons" data-i18n="nav.addons">الإضافات</button>
+      <button class="tab-btn" data-tab="settings" data-i18n="nav.settings">إعدادات البوت</button>
       <div class="nav-foot" id="navFoot">
-        <span class="nav-foot-label">الباقة الحالية</span>
+        <span class="nav-foot-label" data-i18n="nav.currentPlanLabel">الباقة الحالية</span>
         <span class="nav-foot-plan" id="navFootPlan">–</span>
-        <a class="nav-foot-link" href="index.html#pricing">ترقية الباقة</a>
+        <a class="nav-foot-link" href="index.html#pricing" data-i18n="nav.upgradePlan">ترقية الباقة</a>
       </div>
     </div>
     <div class="page-head" id="pageHead">
       <div>
         <h1 id="pageHeadTitle">المحادثات</h1>
-        <p id="pageHeadSub">كل محادثات عملائك في مكان واحد.</p>
+        <p id="pageHeadSub" data-i18n="convo.subtitle">كل محادثات عملائك في مكان واحد.</p>
       </div>
     </div>
     <div class="panel active" id="panelInbox">
@@ -410,10 +413,10 @@
         <div style="display:flex; flex-direction:column;">
           <div class="conv-list-top">
             <input type="checkbox" id="filterMineOnly">
-            <label for="filterMineOnly">عرض المعيّن لي فقط</label>
+            <label for="filterMineOnly" data-i18n="convo.filterMine">عرض المعيّن لي فقط</label>
           </div>
           <div class="conv-list" id="convList" style="flex:1;">
-            <div class="conv-empty">جاري تحميل المحادثات...</div>
+            <div class="conv-empty" data-i18n="convo.loading">جاري تحميل المحادثات...</div>
           </div>
         </div>
         <div class="chat-panel">
@@ -421,18 +424,18 @@
           <div class="takeover-bar" id="takeoverBar">
             <span id="takeoverStatus"></span>
             <div class="assign-row">
-              <span>معيّن إلى:</span>
+              <span data-i18n="convo.assignedToLabel">معيّن إلى:</span>
               <select id="assignSelect"></select>
             </div>
             <button class="takeover-btn" id="takeoverBtn"></button>
           </div>
           <div class="chat-body" id="chatBody">
-            <div class="chat-placeholder">اختر محادثة من القائمة لعرضها</div>
+            <div class="chat-placeholder" data-i18n="convo.selectPrompt">اختر محادثة من القائمة لعرضها</div>
           </div>
           <div id="composerWrap" style="display:none;">
             <div class="composer">
-              <textarea id="replyText" placeholder="اكتب ردك هنا..."></textarea>
-              <button class="send-btn" id="sendBtn">إرسال</button>
+              <textarea id="replyText" placeholder="اكتب ردك هنا..." data-i18n-placeholder="common.replyPlaceholder"></textarea>
+              <button class="send-btn" id="sendBtn" data-i18n="common.send">إرسال</button>
             </div>
             <div class="send-hint" id="sendHint"></div>
           </div>
@@ -444,97 +447,97 @@
         <div class="roi-hero-item">
           <div class="roi-hero-icon">⏱️</div>
           <div class="roi-hero-value" id="roiHoursSaved">–</div>
-          <div class="roi-hero-label">ساعة رد يدوي وفّرها عليك البوت</div>
+          <div class="roi-hero-label" data-i18n="analytics.hoursSavedLabel">ساعة رد يدوي وفّرها عليك البوت</div>
           <div class="roi-hero-sub" id="roiHoursSavedSub"></div>
         </div>
         <div class="roi-hero-item">
           <div class="roi-hero-icon">💰</div>
           <div class="roi-hero-value" id="roiSarRecovered">–</div>
-          <div class="roi-hero-label">ريال استرجعها البوت من سلات متروكة (هذا الشهر)</div>
+          <div class="roi-hero-label" data-i18n="analytics.recoveredSarLabel">ريال استرجعها البوت من سلات متروكة (هذا الشهر)</div>
           <div class="roi-hero-sub" id="roiSarRecoveredSub"></div>
         </div>
         <div class="roi-hero-item" id="roiHotLeadsItem" style="display:none;">
           <div class="roi-hero-icon">🎯</div>
           <div class="roi-hero-value" id="roiHotLeads">–</div>
-          <div class="roi-hero-label">عميل جاهز للشراء نبّهك عنه البوت (هذا الشهر)</div>
+          <div class="roi-hero-label" data-i18n="analytics.hotLeadsLabel">عميل جاهز للشراء نبّهك عنه البوت (هذا الشهر)</div>
         </div>
       </div>
       <div class="analytics-grid">
         <div class="analytics-card">
-          <h3>متوسط زمن رد البوت</h3>
+          <h3 data-i18n="analytics.avgResponseLabel">متوسط زمن رد البوت</h3>
           <div class="n" id="analyticsAvgResponse" style="font-size:30px; font-weight:900; color:var(--wa-teal-dark);">–</div>
           <div class="helper-text" id="analyticsAvgResponseHint"></div>
         </div>
         <div class="analytics-card">
-          <h3>إجمالي الرسائل (كل الفترة)</h3>
+          <h3 data-i18n="analytics.totalMsgsLabel">إجمالي الرسائل (كل الفترة)</h3>
           <div class="n" id="analyticsTotalMsgs" style="font-size:30px; font-weight:900; color:var(--wa-teal-dark);">–</div>
-          <div class="helper-text">مجموع كل الرسائل الواردة والصادرة منذ ربط البوت.</div>
+          <div class="helper-text" data-i18n="analytics.totalMsgsDesc">مجموع كل الرسائل الواردة والصادرة منذ ربط البوت.</div>
         </div>
       </div>
       <div class="analytics-grid">
         <div class="analytics-card">
-          <h3>حجم الرسائل — آخر 7 أيام</h3>
+          <h3 data-i18n="analytics.volume7d">حجم الرسائل — آخر 7 أيام</h3>
           <div class="bar-chart" id="analyticsBarChart"></div>
         </div>
           <div class="analytics-card">
-          <h3>أكثر الأسئلة تكراراً</h3>
+          <h3 data-i18n="analytics.topQuestions">أكثر الأسئلة تكراراً</h3>
           <div class="qa-list" id="analyticsTopQuestions">
-            <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
+            <div class="conv-empty" data-i18n="common.notEnoughData">لا توجد بيانات كافية بعد.</div>
           </div>
         </div>
       </div>
       <div class="analytics-grid">
         <div class="analytics-card">
-          <h3>تصنيف المحادثات</h3>
+          <h3 data-i18n="analytics.convoBreakdown">تصنيف المحادثات</h3>
           <div class="qa-list" id="analyticsCategoryBreakdown">
             <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
           </div>
         </div>
         <div class="analytics-card">
-          <h3>أداء المتجر المرتبط</h3>
+          <h3 data-i18n="analytics.storePerf">أداء المتجر المرتبط</h3>
           <div id="analyticsStoreWrap">
-            <div class="conv-empty">لا يوجد متجر مربوط بعد.</div>
+            <div class="conv-empty" data-i18n="analytics.noStoreYet">لا يوجد متجر مربوط بعد.</div>
           </div>
         </div>
       </div>
     </div>
     <div class="panel" id="panelBroadcast">
-      <div class="cost-note">⚠️ الرسائل الجماعية تُرسل كقوالب معتمدة من واتساب، وتُحتسب برسوم إضافية حسب نوع القالب بعد الحد المجاني الشهري لباقتك. تأكد أن القالب معتمد (Approved) في Meta Business Manager قبل الإرسال.</div>
+      <div class="cost-note" data-i18n="broadcast.warning">⚠️ الرسائل الجماعية تُرسل كقوالب معتمدة من واتساب، وتُحتسب برسوم إضافية حسب نوع القالب بعد الحد المجاني الشهري لباقتك. تأكد أن القالب معتمد (Approved) في Meta Business Manager قبل الإرسال.</div>
       <div class="support-top">
-        <button class="new-ticket-btn" id="newBroadcastBtn">+ حملة جديدة</button>
+        <button class="new-ticket-btn" id="newBroadcastBtn" data-i18n="broadcast.newCampaign">+ حملة جديدة</button>
       </div>
       <div class="campaign-list" id="campaignList">
-        <div class="conv-empty">جاري تحميل الحملات...</div>
+        <div class="conv-empty" data-i18n="broadcast.loading">جاري تحميل الحملات...</div>
       </div>
     </div>
     <div class="panel" id="panelTemplates">
-      <div class="cost-note">💡 اكتب فكرة رسالتك بالعامية، والذكاء الاصطناعي بيصيغها كقالب واتساب صحيح ويرسلها لميتا للمراجعة تلقائياً. المراجعة عادة تاخذ من دقائق لساعات.</div>
+      <div class="cost-note" data-i18n="templates.aiHint">💡 اكتب فكرة رسالتك بالعامية، والذكاء الاصطناعي بيصيغها كقالب واتساب صحيح ويرسلها لميتا للمراجعة تلقائياً. المراجعة عادة تاخذ من دقائق لساعات.</div>
       <div class="support-top">
-        <button class="new-ticket-btn" id="newTemplateBtn" style="display:none;">+ قالب جديد</button>
+        <button class="new-ticket-btn" id="newTemplateBtn" style="display:none;" data-i18n="templates.newTemplate">+ قالب جديد</button>
       </div>
       <div class="campaign-list" id="templateList">
-        <div class="conv-empty">جاري تحميل القوالب...</div>
+        <div class="conv-empty" data-i18n="templates.loading">جاري تحميل القوالب...</div>
       </div>
     </div>
     <div class="panel" id="panelOrders">
-      <div class="cost-note">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
+      <div class="cost-note" data-i18n="orders.desc">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
       <div id="ordersContent">
-        <div class="conv-empty">جاري تحميل الطلبات...</div>
+        <div class="conv-empty" data-i18n="orders.loading">جاري تحميل الطلبات...</div>
       </div>
     </div>
     <div class="panel" id="panelAddons">
-      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;">إضافات اختيارية برسوم تفعيل لمرة واحدة. اطلب أي إضافة وبنتواصل معك لتأكيد الدفع وتفعيلها.</p>
+      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;" data-i18n="addons.desc">إضافات اختيارية برسوم تفعيل لمرة واحدة. اطلب أي إضافة وبنتواصل معك لتأكيد الدفع وتفعيلها.</p>
       <div class="addon-grid" id="portalAddonGrid">
-        <div class="conv-empty">جاري التحميل...</div>
+        <div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div>
       </div>
     </div>
     <div class="panel" id="panelSupport">
       <div class="support-top">
-        <button class="new-ticket-btn" id="newTicketBtn">+ فتح تذكرة جديدة</button>
+        <button class="new-ticket-btn" id="newTicketBtn" data-i18n="support.newTicket">+ فتح تذكرة جديدة</button>
       </div>
       <div class="inbox-wrap">
         <div class="conv-list" id="ticketList">
-          <div class="conv-empty">جاري تحميل التذاكر...</div>
+          <div class="conv-empty" data-i18n="support.loading">جاري تحميل التذاكر...</div>
         </div>
         <div class="chat-panel">
           <div class="thread-head" id="ticketThreadHead" style="display:none;">
@@ -542,11 +545,11 @@
             <span class="status-badge" id="ticketThreadStatus"></span>
           </div>
           <div class="chat-body" id="ticketBody">
-            <div class="chat-placeholder">اختر تذكرة من القائمة لعرضها، أو افتح تذكرة جديدة</div>
+            <div class="chat-placeholder" data-i18n="support.selectPrompt">اختر تذكرة من القائمة لعرضها، أو افتح تذكرة جديدة</div>
           </div>
           <div id="ticketComposerWrap" style="display:none;">
             <div class="composer">
-              <textarea id="ticketReplyText" placeholder="اكتب ردك هنا..."></textarea>
+              <textarea id="ticketReplyText" placeholder="اكتب ردك هنا..." data-i18n-placeholder="common.replyPlaceholder"></textarea>
               <button class="send-btn" id="ticketSendBtn">إرسال</button>
             </div>
             <div class="send-hint" id="ticketSendHint"></div>
@@ -555,33 +558,33 @@
       </div>
     </div>
     <div class="panel" id="panelChannels">
-      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;">اربط قنوات التواصل ومتجرك الإلكتروني ببوت نبضة — كل قناة تضيفها يقدر البوت يرد فيها تلقائياً بنفس تعليماتك.</p>
+      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;" data-i18n="channels.desc">اربط قنوات التواصل ومتجرك الإلكتروني ببوت نبضة — كل قناة تضيفها يقدر البوت يرد فيها تلقائياً بنفس تعليماتك.</p>
       <div class="settings-card coming-soon" id="zidCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>ربط متجر زد (Zid) <span class="coming-soon-badge">قريباً</span></label>
+          <label><span data-i18n="channels.zid.title">ربط متجر زد (Zid)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></label>
         </div>
         <div id="zidStatus"><div class="conv-empty">جاري التحميل...</div></div>
-        <button class="primary-btn" id="connectZidBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;">ربط مع زد</button>
-        <div class="helper-text" id="zidHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div>
+        <button class="primary-btn" id="connectZidBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.zid.connectBtn">ربط مع زد</button>
+        <div class="helper-text" id="zidHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.zid.desc">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div>
       </div>
       <div class="settings-card coming-soon" id="sallaCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>ربط متجر سلة (Salla) <span class="coming-soon-badge">قريباً</span></label>
+          <label><span data-i18n="channels.salla.title">ربط متجر سلة (Salla)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></label>
         </div>
         <div id="sallaStatus"><div class="conv-empty">جاري التحميل...</div></div>
-        <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;">ربط مع سلة</button>
+        <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.salla.connectBtn">ربط مع سلة</button>
         <div class="helper-text" id="sallaHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.storesIntro">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
       </div>
       <div class="settings-card" id="wooCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>ربط متجر ووكومرس (ووردبريس)</label>
+          <label data-i18n="channels.woo.title">ربط متجر ووكومرس (ووردبريس)</label>
         </div>
         <div id="wooStatus"><div class="conv-empty">جاري التحميل...</div></div>
         <div class="store-connect-form" id="wooConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
-            <label>رابط المتجر</label>
+            <label data-i18n="channels.woo.urlLabel">رابط المتجر</label>
             <input type="text" id="wooStoreUrl" placeholder="https://mystore.com" dir="ltr">
           </div>
           <div class="field" style="margin-bottom:0;">
@@ -593,19 +596,19 @@
             <input type="text" id="wooConsumerSecret" placeholder="cs_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
           </div>
           <div class="alert-box error" id="wooConnectError" style="display:none;"></div>
-          <button class="primary-btn" id="connectWooBtn" style="width:auto; padding:12px 30px;">ربط مع ووكومرس</button>
+          <button class="primary-btn" id="connectWooBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.woo.connectBtn">ربط مع ووكومرس</button>
         </div>
         <div class="helper-text" id="wooHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">تسوي المفاتيح من لوحة ووردبريس: WooCommerce ← Settings ← Advanced ← REST API ← Add key، وتختار صلاحية "Read/Write". انسخ المفتاحين وألصقهم هنا.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.woo.desc">تسوي المفاتيح من لوحة ووردبريس: WooCommerce ← Settings ← Advanced ← REST API ← Add key، وتختار صلاحية "Read/Write". انسخ المفتاحين وألصقهم هنا.</div>
       </div>
       <div class="settings-card" id="shopifyCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>ربط متجر شوبيفاي (Shopify)</label>
+          <label data-i18n="channels.shopify.title">ربط متجر شوبيفاي (Shopify)</label>
         </div>
         <div id="shopifyStatus"><div class="conv-empty">جاري التحميل...</div></div>
         <div class="store-connect-form" id="shopifyConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
-            <label>نطاق المتجر</label>
+            <label data-i18n="channels.shopify.domainLabel">نطاق المتجر</label>
             <input type="text" id="shopifyDomain" placeholder="mystore.myshopify.com" dir="ltr">
           </div>
           <div class="field" style="margin-bottom:0;">
@@ -613,109 +616,109 @@
             <input type="text" id="shopifyAccessToken" placeholder="shpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
           </div>
           <div class="alert-box error" id="shopifyConnectError" style="display:none;"></div>
-          <button class="primary-btn" id="connectShopifyBtn" style="width:auto; padding:12px 30px;">ربط مع شوبيفاي</button>
+          <button class="primary-btn" id="connectShopifyBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.shopify.connectBtn">ربط مع شوبيفاي</button>
         </div>
         <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.shopify.desc">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
       </div>
       <div class="settings-card" id="waAppCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>ربط تطبيق واتساب الأعمال (مجاني)</label>
+          <label data-i18n="channels.wa.title">ربط تطبيق واتساب الأعمال (مجاني)</label>
         </div>
         <div id="waAppStatus"><div class="conv-empty">جاري التحميل...</div></div>
-        <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 30px; display:none;">ابدأ الربط</button>
-        <div class="helper-text" id="waAppHelperNonOwner" style="display:none;">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
+        <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 30px; display:none;" data-i18n="channels.wa.startBtn">ابدأ الربط</button>
+        <div class="helper-text" id="waAppHelperNonOwner" style="display:none;" data-i18n="channels.wa.ownerOnly">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;" data-i18n="channels.wa.disconnected">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
         <div class="helper-text" style="margin-top:10px;">تقدر تستخدم تطبيق واتساب الأعمال (على جوالك) بجانب بوت نبضة على نفس رقمك — البوت يستمر يرد تلقائياً على عملائك، وتقدر تفتح التطبيق على جوالك وترد بنفسك شخصياً في أي وقت تحب. بعد الضغط على "ابدأ الربط" أكمل خطوات التأكيد من تطبيق واتساب الأعمال على جوالك، وافتح التطبيق مرة كل أسبوعين على الأقل حتى يبقى الربط شغّال.</div>
       </div>
       <div class="settings-card" id="telegramCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>ربط بوت تليجرام (Telegram)</label>
+          <label data-i18n="channels.telegram.title">ربط بوت تليجرام (Telegram)</label>
         </div>
         <div id="telegramStatus"><div class="conv-empty">جاري التحميل...</div></div>
         <div class="store-connect-form" id="telegramConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
-            <label>توكن البوت (Bot Token)</label>
+            <label data-i18n="channels.telegram.tokenLabel">توكن البوت (Bot Token)</label>
             <input type="text" id="telegramBotToken" placeholder="123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
           </div>
           <div class="alert-box error" id="telegramConnectError" style="display:none;"></div>
-          <button class="primary-btn" id="connectTelegramBtn" style="width:auto; padding:12px 30px;">ربط مع تليجرام</button>
+          <button class="primary-btn" id="connectTelegramBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.telegram.connectBtn">ربط مع تليجرام</button>
         </div>
-        <div class="helper-text" id="telegramHelperNonOwner" style="display:none;">ربط تليجرام متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="telegramHelperNonOwner" style="display:none;" data-i18n="channels.telegram.ownerOnly">ربط تليجرام متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" id="telegramLockedHint" style="margin-top:10px; display:none;"></div>
-        <div class="helper-text" style="margin-top:10px;">خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.telegram.steps">خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.</div>
       </div>
     </div>
     <div class="panel" id="panelSettings">
       <div class="settings-card">
         <div class="field">
-          <label>اسم النشاط</label>
+          <label data-i18n="settings.businessNameLabel">اسم النشاط</label>
           <input type="text" id="settingBizName" disabled>
         </div>
         <div class="field" id="templatePickerField" style="display:none;">
-          <label>⚡ قوالب بوت جاهزة حسب نوع نشاطك</label>
-          <div class="helper-text" style="margin:0 0 10px;">اختر نوع نشاطك وتتعبى تعليمات البوت ورسالة الترحيب تلقائياً بقالب جاهز — راجعه وعدّل عليه بعدين قبل الحفظ.</div>
+          <label data-i18n="settings.presetsTitle">⚡ قوالب بوت جاهزة حسب نوع نشاطك</label>
+          <div class="helper-text" style="margin:0 0 10px;" data-i18n="settings.presetsDesc">اختر نوع نشاطك وتتعبى تعليمات البوت ورسالة الترحيب تلقائياً بقالب جاهز — راجعه وعدّل عليه بعدين قبل الحفظ.</div>
           <div class="template-chips" id="templateChips"></div>
-          <div class="helper-text" id="templateAppliedNote" style="display:none; color:var(--wa-green-dark); font-weight:700; margin-top:8px;">✓ تم تعبئة القالب — راجع النص وعدّل التفاصيل بين الأقواس [ ]، ثم اضغط "حفظ التعديلات" تحت.</div>
+          <div class="helper-text" id="templateAppliedNote" style="display:none; color:var(--wa-green-dark); font-weight:700; margin-top:8px;" data-i18n="settings.presetFilled">✓ تم تعبئة القالب — راجع النص وعدّل التفاصيل بين الأقواس [ ]، ثم اضغط "حفظ التعديلات" تحت.</div>
         </div>
         <div class="field">
-          <label>تعليمات البوت (system prompt)</label>
+          <label data-i18n="settings.systemPromptLabel">تعليمات البوت (system prompt)</label>
           <textarea id="settingPrompt"></textarea>
         </div>
         <div class="field">
-          <label>رسالة الترحيب الأولى</label>
+          <label data-i18n="settings.welcomeMsgLabel">رسالة الترحيب الأولى</label>
           <input type="text" id="settingWelcome">
         </div>
         <div class="field">
-          <label>📱 رقم واتساب صاحب المتجر</label>
-          <div class="helper-text" style="margin:0 0 10px;">عليه نرسل لك كل صباح ملخص واتساب يومي (عدد المحادثات، استفسارات المنتجات، والسلال المتروكة اللي رجعناها) — بدون هذا الرقم ما توصلك الرسالة.</div>
-          <input type="tel" id="settingOwnerPhone" placeholder="مثال: 0555555555 أو 966555555555" dir="ltr" style="text-align:left;">
-          <div class="helper-text" id="ownerPhoneError" style="display:none; color:var(--danger);">الرقم غير صحيح — لازم يكون رقم جوال سعودي (يبدأ بـ 05 أو 966 أو +966).</div>
+          <label data-i18n="settings.ownerPhoneLabel">📱 رقم واتساب صاحب المتجر</label>
+          <div class="helper-text" style="margin:0 0 10px;" data-i18n="settings.ownerPhoneDesc">عليه نرسل لك كل صباح ملخص واتساب يومي (عدد المحادثات، استفسارات المنتجات، والسلال المتروكة اللي رجعناها) — بدون هذا الرقم ما توصلك الرسالة.</div>
+          <input type="tel" id="settingOwnerPhone" placeholder="مثال: 0555555555 أو 966555555555" data-i18n-placeholder="settings.ownerPhonePlaceholder" dir="ltr" style="text-align:left;">
+          <div class="helper-text" id="ownerPhoneError" style="display:none; color:var(--danger);" data-i18n="settings.ownerPhoneError">الرقم غير صحيح — لازم يكون رقم جوال سعودي (يبدأ بـ 05 أو 966 أو +966).</div>
         </div>
-        <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;">حفظ التعديلات</button>
-        <div class="save-status" id="saveStatus">✓ تم الحفظ بنجاح</div>
+        <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;" data-i18n="common.saveChanges">حفظ التعديلات</button>
+        <div class="save-status" id="saveStatus" data-i18n="common.savedSuccess">✓ تم الحفظ بنجاح</div>
       </div>
       <div class="settings-card" id="simCard">
         <div class="field" style="margin-bottom:6px;">
-          <label>🧪 جرّب شخصية بوتك الآن<span class="sim-live-badge">مباشر</span></label>
-          <div class="helper-text" style="margin:0 0 10px;">اكتب رسالة زي ما بيكتبها عميل حقيقي، وشوف كيف بيرد بوتك بنفس التعليمات المكتوبة فوق الآن — حتى قبل ما تضغط "حفظ التعديلات". هذي محادثة تجريبية فقط ولا ترسل ولا تُسجَّل بأي مكان.</div>
+          <label><span data-i18n="sim.title">🧪 جرّب شخصية بوتك الآن</span><span class="sim-live-badge" data-i18n="sim.liveTag">مباشر</span></label>
+          <div class="helper-text" style="margin:0 0 10px;" data-i18n="sim.desc">اكتب رسالة زي ما بيكتبها عميل حقيقي، وشوف كيف بيرد بوتك بنفس التعليمات المكتوبة فوق الآن — حتى قبل ما تضغط "حفظ التعديلات". هذي محادثة تجريبية فقط ولا ترسل ولا تُسجَّل بأي مكان.</div>
         </div>
         <div class="sim-wrap">
           <div class="chat-body" id="simChatBody"></div>
           <div class="composer">
-            <textarea id="simText" placeholder="اكتب رسالة تجريبية من عميل..."></textarea>
+            <textarea id="simText" placeholder="اكتب رسالة تجريبية من عميل..." data-i18n-placeholder="sim.placeholder"></textarea>
             <button class="send-btn" id="simSendBtn">إرسال</button>
           </div>
         </div>
         <div class="save-status" id="simStatus" style="color:var(--danger);"></div>
-        <button class="sim-reset-btn" id="simResetBtn">↺ محادثة جديدة</button>
+        <button class="sim-reset-btn" id="simResetBtn" data-i18n="sim.newChat">↺ محادثة جديدة</button>
       </div>
       <div class="settings-card" id="teamCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>فريق العمل</label>
+          <label data-i18n="staff.title">فريق العمل</label>
         </div>
         <div id="staffList"><div class="conv-empty">جاري التحميل...</div></div>
-        <button class="add-staff-btn" id="addStaffBtn" style="display:none;">+ إضافة موظف</button>
-        <div class="helper-text" id="teamHelperNonOwner" style="display:none;">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
+        <button class="add-staff-btn" id="addStaffBtn" style="display:none;" data-i18n="staff.addBtn">+ إضافة موظف</button>
+        <div class="helper-text" id="teamHelperNonOwner" style="display:none;" data-i18n="staff.ownerOnly">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
       </div>
       <div class="settings-card" id="planCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>اشتراكك</label>
+          <label data-i18n="billing.subTitle">اشتراكك</label>
         </div>
         <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
-        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;">📞 تواصل معنا</button>
-        <div class="helper-text" id="planHelperNonOwner" style="display:none;">تجديد الاشتراك متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لتجديد اشتراكك يدوياً.</div>
+        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;" data-i18n="common.contactUs">📞 تواصل معنا</button>
+        <div class="helper-text" id="planHelperNonOwner" style="display:none;" data-i18n="billing.renewOwnerOnly">تجديد الاشتراك متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="billing.renewNoOnlinePay">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لتجديد اشتراكك يدوياً.</div>
       </div>
       <div class="settings-card" id="topupCard">
         <div class="field" style="margin-bottom:16px;">
-          <label>رصيد رسائل إضافي</label>
+          <label data-i18n="billing.topupTitle">رصيد رسائل إضافي</label>
         </div>
         <div id="topupCurrentBalance" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
         <div id="topupPendingNotice"></div>
         <div id="topupPackages"></div>
-        <div class="helper-text" id="topupHelperNonOwner" style="display:none; margin-top:10px;">شراء رصيد إضافي متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لشحن رصيدك يدوياً.</div>
+        <div class="helper-text" id="topupHelperNonOwner" style="display:none; margin-top:10px;" data-i18n="billing.topupOwnerOnly">شراء رصيد إضافي متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="billing.topupNoOnlinePay">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لشحن رصيدك يدوياً.</div>
       </div>
     </div>
   </div>
@@ -723,18 +726,18 @@
 <!-- MODAL: new support ticket -->
 <div class="modal-overlay" id="newTicketModal">
   <div class="modal-card">
-    <h3>فتح تذكرة دعم جديدة</h3>
+    <h3 data-i18n="modal.support.title">فتح تذكرة دعم جديدة</h3>
     <div class="alert-box error" id="newTicketError"></div>
     <div class="field">
-      <label>الموضوع</label>
-      <input type="text" id="newTicketSubject" placeholder="مثال: مشكلة في ربط رقم الواتساب">
+      <label data-i18n="modal.support.subjectLabel">الموضوع</label>
+      <input type="text" id="newTicketSubject" placeholder="مثال: مشكلة في ربط رقم الواتساب" data-i18n-placeholder="modal.support.subjectPlaceholder">
     </div>
     <div class="field">
-      <label>تفاصيل المشكلة</label>
-      <textarea id="newTicketMessage" style="min-height:100px;" placeholder="اشرح المشكلة بالتفصيل..."></textarea>
+      <label data-i18n="modal.support.detailsLabel">تفاصيل المشكلة</label>
+      <textarea id="newTicketMessage" style="min-height:100px;" placeholder="اشرح المشكلة بالتفصيل..." data-i18n-placeholder="modal.support.detailsPlaceholder"></textarea>
     </div>
     <div class="modal-actions">
-      <button class="modal-cancel" id="newTicketCancelBtn">إلغاء</button>
+      <button class="modal-cancel" id="newTicketCancelBtn" data-i18n="common.cancel">إلغاء</button>
       <button class="modal-confirm" id="newTicketConfirmBtn">إرسال</button>
     </div>
   </div>
@@ -742,78 +745,78 @@
 <!-- MODAL: new broadcast campaign -->
 <div class="modal-overlay" id="newBroadcastModal">
   <div class="modal-card">
-    <h3>حملة رسائل جماعية جديدة</h3>
+    <h3 data-i18n="modal.campaign.title">حملة رسائل جماعية جديدة</h3>
     <div class="alert-box error" id="newBroadcastError"></div>
     <div class="field">
-      <label>اسم القالب المعتمد (Template Name)</label>
-      <input type="text" id="bcTemplateName" placeholder="مثال: promo_ramadan">
-      <div class="helper-text">لازم يكون القالب معتمد (Approved) مسبقاً من Meta Business Manager بنفس هذا الاسم بالضبط.</div>
+      <label data-i18n="modal.campaign.templateNameLabel">اسم القالب المعتمد (Template Name)</label>
+      <input type="text" id="bcTemplateName" placeholder="مثال: promo_ramadan" data-i18n-placeholder="modal.campaign.templateNamePlaceholder">
+      <div class="helper-text" data-i18n="modal.campaign.templateNameDesc">لازم يكون القالب معتمد (Approved) مسبقاً من Meta Business Manager بنفس هذا الاسم بالضبط.</div>
     </div>
     <div class="field">
-      <label>رمز لغة القالب</label>
+      <label data-i18n="modal.campaign.langCodeLabel">رمز لغة القالب</label>
       <input type="text" id="bcTemplateLang" placeholder="ar" value="ar">
-      <div class="helper-text">نفس رمز اللغة اللي اخترته وقت إنشاء القالب في Meta (مثال: ar أو en_US).</div>
+      <div class="helper-text" data-i18n="modal.campaign.langCodeDesc">نفس رمز اللغة اللي اخترته وقت إنشاء القالب في Meta (مثال: ar أو en_US).</div>
     </div>
     <div class="field">
-      <label>نص المتغير الأول (اختياري)</label>
-      <input type="text" id="bcVariable1" placeholder="مثال: خصم 20% لفترة محدودة">
-      <div class="helper-text">لو القالب يحتوي متغير مثل {{1}}، اكتب هنا القيمة اللي بترسل لكل المستلمين.</div>
+      <label data-i18n="modal.campaign.var1Label">نص المتغير الأول (اختياري)</label>
+      <input type="text" id="bcVariable1" placeholder="مثال: خصم 20% لفترة محدودة" data-i18n-placeholder="modal.campaign.var1Placeholder">
+      <div class="helper-text" data-i18n="modal.campaign.var1Desc">لو القالب يحتوي متغير مثل {{1}}، اكتب هنا القيمة اللي بترسل لكل المستلمين.</div>
     </div>
     <div class="field">
-      <label>المستلمون</label>
+      <label data-i18n="modal.campaign.recipientsLabel">المستلمون</label>
       <div class="radio-row">
-        <label><input type="radio" name="bcRecipients" value="all" checked> كل العملاء اللي راسلوا بوتك من قبل</label>
-        <label><input type="radio" name="bcRecipients" value="custom"> أرقام محددة</label>
+        <label><input type="radio" name="bcRecipients" value="all" checked> <span data-i18n="modal.campaign.recipientsAll">كل العملاء اللي راسلوا بوتك من قبل</span></label>
+        <label><input type="radio" name="bcRecipients" value="custom"> <span data-i18n="modal.campaign.recipientsSpecific">أرقام محددة</span></label>
       </div>
       <textarea id="bcCustomNumbers" style="display:none; min-height:90px;" placeholder="رقم واتساب بكل سطر، مثال:&#10;966501234567&#10;966559876543"></textarea>
-      <div class="helper-text">الحد الأقصى 100 رقم بكل حملة حالياً.</div>
+      <div class="helper-text" data-i18n="modal.campaign.maxNumbers">الحد الأقصى 100 رقم بكل حملة حالياً.</div>
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" id="newBroadcastCancelBtn">إلغاء</button>
-      <button class="modal-confirm" id="newBroadcastConfirmBtn">إرسال الحملة</button>
+      <button class="modal-confirm" id="newBroadcastConfirmBtn" data-i18n="modal.campaign.sendBtn">إرسال الحملة</button>
     </div>
   </div>
 </div>
 <!-- MODAL: new AI message template -->
 <div class="modal-overlay" id="newTemplateModal">
   <div class="modal-card">
-    <h3>قالب رسالة جديد بالذكاء الاصطناعي</h3>
+    <h3 data-i18n="modal.template.title">قالب رسالة جديد بالذكاء الاصطناعي</h3>
     <div class="alert-box error" id="newTemplateError"></div>
     <div id="tplStep1">
       <div class="field">
-        <label>وش الرسالة اللي تبي ترسلها؟</label>
-        <textarea id="tplRequestText" style="min-height:100px;" placeholder="مثال: أبي أذكّر العملاء إن عندنا خصم 20% على كل المنتجات لين نهاية الأسبوع"></textarea>
-        <div class="helper-text">اكتبها بالعامية كأنك تشرح لموظف، والذكاء الاصطناعي بيصيغها بصيغة قالب واتساب رسمية.</div>
+        <label data-i18n="modal.template.ideaLabel">وش الرسالة اللي تبي ترسلها؟</label>
+        <textarea id="tplRequestText" style="min-height:100px;" placeholder="مثال: أبي أذكّر العملاء إن عندنا خصم 20% على كل المنتجات لين نهاية الأسبوع" data-i18n-placeholder="modal.template.ideaPlaceholder"></textarea>
+        <div class="helper-text" data-i18n="modal.template.ideaDesc">اكتبها بالعامية كأنك تشرح لموظف، والذكاء الاصطناعي بيصيغها بصيغة قالب واتساب رسمية.</div>
       </div>
       <div class="modal-actions">
         <button class="modal-cancel" id="newTemplateCancelBtn">إلغاء</button>
-        <button class="modal-confirm" id="tplGenerateBtn">توليد بالذكاء الاصطناعي</button>
+        <button class="modal-confirm" id="tplGenerateBtn" data-i18n="modal.template.generateBtn">توليد بالذكاء الاصطناعي</button>
       </div>
     </div>
     <div id="tplStep2" style="display:none;">
       <div class="field">
-        <label>اسم القالب (بالإنجليزي، يُستخدم داخلياً فقط)</label>
+        <label data-i18n="modal.template.nameLabel">اسم القالب (بالإنجليزي، يُستخدم داخلياً فقط)</label>
         <input type="text" id="tplName">
       </div>
       <div class="field">
-        <label>نوع القالب</label>
+        <label data-i18n="modal.template.typeLabel">نوع القالب</label>
         <select id="tplCategory">
-          <option value="MARKETING">تسويقي (Marketing)</option>
-          <option value="UTILITY">تنبيهي / خدمي (Utility)</option>
+          <option value="MARKETING" data-i18n="modal.template.typeMarketing">تسويقي (Marketing)</option>
+          <option value="UTILITY" data-i18n="modal.template.typeUtility">تنبيهي / خدمي (Utility)</option>
         </select>
       </div>
       <div class="field">
-        <label>نص الرسالة</label>
+        <label data-i18n="modal.template.bodyLabel">نص الرسالة</label>
         <textarea id="tplBodyText" style="min-height:110px;"></textarea>
-        <div class="helper-text">إذا فيه جزء متغيّر (مثل اسم العميل أو نسبة الخصم)، خله مكتوب {{1}} داخل النص.</div>
+        <div class="helper-text" data-i18n="modal.template.bodyDesc">إذا فيه جزء متغيّر (مثل اسم العميل أو نسبة الخصم)، خله مكتوب {{1}} داخل النص.</div>
       </div>
       <div class="field" id="tplVariableField" style="display:none;">
-        <label>مثال على المتغيّر {{1}} (مطلوب من ميتا للمراجعة)</label>
+        <label data-i18n="modal.template.var1ExampleLabel">مثال على المتغيّر {{1}} (مطلوب من ميتا للمراجعة)</label>
         <input type="text" id="tplVariableExample">
       </div>
       <div class="modal-actions">
-        <button class="modal-cancel" id="tplBackBtn">رجوع</button>
-        <button class="modal-confirm" id="tplSubmitBtn">إرسال للمراجعة في واتساب</button>
+        <button class="modal-cancel" id="tplBackBtn" data-i18n="common.back">رجوع</button>
+        <button class="modal-confirm" id="tplSubmitBtn" data-i18n="modal.template.submitBtn">إرسال للمراجعة في واتساب</button>
       </div>
     </div>
   </div>
@@ -821,31 +824,31 @@
 <!-- MODAL: invite staff -->
 <div class="modal-overlay" id="newStaffModal">
   <div class="modal-card">
-    <h3>إضافة موظف جديد</h3>
+    <h3 data-i18n="modal.staff.title">إضافة موظف جديد</h3>
     <div class="alert-box error" id="newStaffError"></div>
     <div class="field">
-      <label>اسم الموظف</label>
-      <input type="text" id="staffFullName" placeholder="مثال: سارة أحمد">
+      <label data-i18n="modal.staff.nameLabel">اسم الموظف</label>
+      <input type="text" id="staffFullName" placeholder="مثال: سارة أحمد" data-i18n-placeholder="modal.staff.namePlaceholder">
     </div>
     <div class="field">
       <label>البريد الإلكتروني</label>
       <input type="email" id="staffEmail" placeholder="employee@example.com">
-      <div class="helper-text">بيوصله بريد دعوة يقدر منه يعيّن كلمة مرور ويدخل على نفس بوابة نشاطك.</div>
+      <div class="helper-text" data-i18n="modal.staff.emailDesc">بيوصله بريد دعوة يقدر منه يعيّن كلمة مرور ويدخل على نفس بوابة نشاطك.</div>
     </div>
     <div class="field">
-      <label>الصلاحيات الإضافية</label>
-      <div class="helper-text" style="margin:0 0 10px;">افتراضياً الموظف يشوف "المحادثات" و"الطلبات" و"الدعم الفني" بس. حدد أي أقسام ثانية تبي تفتحها له:</div>
+      <label data-i18n="modal.staff.permsLabel">الصلاحيات الإضافية</label>
+      <div class="helper-text" style="margin:0 0 10px;" data-i18n="modal.staff.permsDesc">افتراضياً الموظف يشوف "المحادثات" و"الطلبات" و"الدعم الفني" بس. حدد أي أقسام ثانية تبي تفتحها له:</div>
       <div class="invite-perms">
-        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="analytics"> التحليلات</label>
-        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="templates"> قوالب الرسائل</label>
-        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="addons"> الإضافات</label>
-        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="channels"> قنوات الربط</label>
-        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="settings"> إعدادات البوت</label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="analytics"> <span data-i18n="nav.analytics">التحليلات</span></label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="templates"> <span data-i18n="nav.templates">قوالب الرسائل</span></label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="addons"> <span data-i18n="nav.addons">الإضافات</span></label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="channels"> <span data-i18n="nav.channels">قنوات الربط</span></label>
+        <label class="staff-perm-chip"><input type="checkbox" class="invite-perm-cb" data-perm="settings"> <span data-i18n="nav.settings">إعدادات البوت</span></label>
       </div>
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" id="newStaffCancelBtn">إلغاء</button>
-      <button class="modal-confirm" id="newStaffConfirmBtn">إرسال الدعوة</button>
+      <button class="modal-confirm" id="newStaffConfirmBtn" data-i18n="modal.staff.sendBtn">إرسال الدعوة</button>
     </div>
   </div>
 </div>
@@ -1396,6 +1399,7 @@ nav{max-width:1440px; padding:13px 24px;}
 </script>
 
 <script src="header-scroll.js"></script>
+<script src="portal-i18n.js"></script>
 
 </body>
 </html>
