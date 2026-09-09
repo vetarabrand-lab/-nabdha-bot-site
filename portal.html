@@ -1371,8 +1371,8 @@ nav{max-width:1440px; padding:13px 24px;}
     var key = PANEL2TAB[panel.id];
     if(!key || key === lastKey){ return; }
     lastKey = key;
-    title.textContent = META[key][0];
-    sub.textContent   = META[key][1];
+    title.textContent = (window.PT ? window.PT(META[key][0]) : META[key][0]);
+    sub.textContent   = (window.PT ? window.PT(META[key][1]) : META[key][1]);
     if(panel.firstChild !== head){ panel.insertBefore(head, panel.firstChild); }
   }
   function syncPlan(){

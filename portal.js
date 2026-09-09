@@ -109,7 +109,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     var html = '';
     Object.keys(BOT_TEMPLATES).forEach(function(key){
       var t = BOT_TEMPLATES[key];
-      html += '<button type="button" class="template-chip" data-key="' + key + '">' + t.emoji + ' ' + escapeHtml(t.label) + '</button>';
+      html += '<button type="button" class="template-chip" data-key="' + key + '">' + t.emoji + ' ' + escapeHtml(PT(t.label)) + '</button>';
     });
     wrap.innerHTML = html;
     wrap.querySelectorAll('.template-chip').forEach(function(btn){
@@ -124,7 +124,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!promptEl || promptEl.disabled) return;
     var hasExisting = (promptEl.value || '').trim().length > 0;
     if(hasExisting){
-      var ok = window.confirm('بيستبدل هذا القالب تعليمات البوت الحالية بالكامل. متأكد تبي تكمل؟');
+      var ok = window.confirm(PT('بيستبدل هذا القالب تعليمات البوت الحالية بالكامل. متأكد تبي تكمل؟'));
       if(!ok) return;
     }
     var bizNameEl = document.getElementById('settingBizName');
@@ -177,7 +177,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     card.style.display = 'block';
     var pct = Math.round((doneCount / SETUP_STEPS.length) * 100);
     card.innerHTML =
-      '<div class="setup-progress-head"><div class="setup-progress-title">بوتك جاهز ' + doneCount + '/' + SETUP_STEPS.length + '</div></div>' +
+      '<div class="setup-progress-head"><div class="setup-progress-title">' + PT('بوتك جاهز') + ' ' + doneCount + '/' + SETUP_STEPS.length + '</div></div>' +
       '<div class="setup-progress-track"><div class="setup-progress-fill" style="width:' + pct + '%;"></div></div>' +
       '<div class="setup-progress-list" id="setupProgressList"></div>';
 
@@ -186,7 +186,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       var isDone = done[step.key];
       var el = document.createElement('span');
       el.className = 'setup-step' + (isDone ? ' done' : '');
-      el.innerHTML = '<span class="dot">' + (isDone ? '✓' : '') + '</span>' + escapeHtml(step.label);
+      el.innerHTML = '<span class="dot">' + (isDone ? '✓' : '') + '</span>' + escapeHtml(PT(step.label));
       if(!isDone && step.tab){
         el.addEventListener('click', function(){
           var tabBtn = document.querySelector('.tab-btn[data-tab="' + step.tab + '"]');
@@ -229,22 +229,22 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const sallaState = params.get('salla');
     if(zidState === 'connected'){
       window.addEventListener('load', function(){
-        setTimeout(function(){ alert('✅ تم ربط متجر زد بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.'); }, 400);
+        setTimeout(function(){ alert(PT('✅ تم ربط متجر زد بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.')); }, 400);
       });
     } else if(zidState === 'error'){
       const msg = params.get('msg') || '';
       window.addEventListener('load', function(){
-        setTimeout(function(){ alert('⚠️ تعذّر ربط متجر زد' + (msg ? ': ' + decodeURIComponent(msg) : '') + '. حاول مرة ثانية أو تواصل مع الدعم.'); }, 400);
+        setTimeout(function(){ alert((window.PORTAL_LANG === 'en' ? '⚠️ Could not connect Zid store' : '⚠️ تعذّر ربط متجر زد') + (msg ? ': ' + decodeURIComponent(msg) : '') + (window.PORTAL_LANG === 'en' ? '. Please try again or contact support.' : '. حاول مرة ثانية أو تواصل مع الدعم.')); }, 400);
       });
     }
     if(sallaState === 'connected'){
       window.addEventListener('load', function(){
-        setTimeout(function(){ alert('✅ تم ربط متجر سلة بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.'); }, 400);
+        setTimeout(function(){ alert(PT('✅ تم ربط متجر سلة بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.')); }, 400);
       });
     } else if(sallaState === 'error'){
       const msg = params.get('msg') || '';
       window.addEventListener('load', function(){
-        setTimeout(function(){ alert('⚠️ تعذّر ربط متجر سلة' + (msg ? ': ' + decodeURIComponent(msg) : '') + '. حاول مرة ثانية أو تواصل مع الدعم.'); }, 400);
+        setTimeout(function(){ alert((window.PORTAL_LANG === 'en' ? '⚠️ Could not connect Salla store' : '⚠️ تعذّر ربط متجر سلة') + (msg ? ': ' + decodeURIComponent(msg) : '') + (window.PORTAL_LANG === 'en' ? '. Please try again or contact support.' : '. حاول مرة ثانية أو تواصل مع الدعم.')); }, 400);
       });
     }
     if(zidState || sallaState){
@@ -269,13 +269,13 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const errBox = document.getElementById('loginError');
     errBox.style.display = 'none';
     const btn = document.getElementById('loginBtn');
-    btn.disabled = true; btn.textContent = 'جاري الدخول...';
+    btn.disabled = true; btn.textContent = PT('جاري الدخول...');
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
     const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-    btn.disabled = false; btn.textContent = 'تسجيل الدخول';
+    btn.disabled = false; btn.textContent = PT('تسجيل الدخول');
     if(error){
-      errBox.textContent = 'بيانات الدخول غير صحيحة.';
+      errBox.textContent = PT('بيانات الدخول غير صحيحة.');
       errBox.style.display = 'block';
       return;
     }
@@ -296,18 +296,18 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     errBox.style.display = 'none';
     okBox.style.display = 'none';
     const btn = document.getElementById('forgotBtn');
-    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+    btn.disabled = true; btn.textContent = PT('جاري الإرسال...');
     const email = document.getElementById('forgotEmail').value.trim();
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
       redirectTo: window.location.origin + window.location.pathname
     });
-    btn.disabled = false; btn.textContent = 'إرسال رابط الاستعادة';
+    btn.disabled = false; btn.textContent = PT('إرسال رابط الاستعادة');
     if(error){
-      errBox.textContent = 'تعذّر إرسال الرابط، حاول مرة ثانية.';
+      errBox.textContent = PT('تعذّر إرسال الرابط، حاول مرة ثانية.');
       errBox.style.display = 'block';
       return;
     }
-    okBox.textContent = '✓ تم إرسال رابط الاستعادة، افتح بريدك الإلكتروني.';
+    okBox.textContent = PT('✓ تم إرسال رابط الاستعادة، افتح بريدك الإلكتروني.');
     okBox.style.display = 'block';
   });
   document.getElementById('resetForm').addEventListener('submit', async function(e){
@@ -315,12 +315,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const errBox = document.getElementById('resetError');
     errBox.style.display = 'none';
     const btn = document.getElementById('resetBtn');
-    btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+    btn.disabled = true; btn.textContent = PT('جاري الحفظ...');
     const newPassword = document.getElementById('resetPassword').value;
     const { error } = await supabaseClient.auth.updateUser({ password: newPassword });
-    btn.disabled = false; btn.textContent = 'حفظ كلمة المرور';
+    btn.disabled = false; btn.textContent = PT('حفظ كلمة المرور');
     if(error){
-      errBox.textContent = 'تعذّر حفظ كلمة المرور، حاول مرة ثانية.';
+      errBox.textContent = PT('تعذّر حفظ كلمة المرور، حاول مرة ثانية.');
       errBox.style.display = 'block';
       return;
     }
@@ -358,7 +358,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     ]);
 
     if(!addons || addons.length === 0){
-      grid.innerHTML = '<div class="conv-empty">ما فيه إضافات متاحة حالياً.</div>';
+      grid.innerHTML = '<div class="conv-empty">' + PT('ما فيه إضافات متاحة حالياً.') + '</div>';
       return;
     }
 
@@ -384,7 +384,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<h3>' + escapeHtml(a.name_ar) + '</h3>' +
         '<div class="addon-desc">' + escapeHtml(a.description_ar || '') + '</div>' +
         '<div class="addon-foot">' +
-          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>ريال دفعة وحدة</span></div>' +
+          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة') + '</span></div>' +
           (statusHtml || actionHtml) +
         '</div>';
       grid.appendChild(card);
@@ -393,7 +393,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     grid.querySelectorAll('.addon-request-btn').forEach(function(btn){
       btn.addEventListener('click', async function(){
         btn.disabled = true;
-        btn.textContent = 'جاري الإرسال...';
+        btn.textContent = PT('جاري الإرسال...');
         try{
           const { data, error } = await supabaseClient.functions.invoke('request-addon', {
             method: 'POST',
@@ -409,7 +409,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         } catch(e){
           btn.disabled = false;
           btn.textContent = PT('اطلب التفعيل');
-          alert('تعذّر إرسال طلبك، حاول مرة ثانية.');
+          alert(PT('تعذّر إرسال طلبك، حاول مرة ثانية.'));
           return;
         }
         await loadPortalAddonsTab();
@@ -447,7 +447,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
 
     if(isSafari){
       // آيفون: ما فيه استدعاء برمجي للتثبيت — نوريه التعليمات فقط
-      if(subText) subText.textContent = 'اضغط زر المشاركة 🔗 بالأسفل، ثم اختر "إضافة إلى الشاشة الرئيسية"';
+      if(subText) subText.textContent = PT('اضغط زر المشاركة 🔗 بالأسفل، ثم اختر "إضافة إلى الشاشة الرئيسية"');
       banner.style.display = 'flex';
       return;
     }
@@ -503,11 +503,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       }
     }
     if(!clientRow){
-      document.getElementById('convList').innerHTML = '<div class="conv-empty">تعذّر العثور على حساب مرتبط بهذا الدخول. تواصل مع فريق نبضة.</div>';
+      document.getElementById('convList').innerHTML = '<div class="conv-empty">' + PT('تعذّر العثور على حساب مرتبط بهذا الدخول. تواصل مع فريق نبضة.') + '</div>';
       return;
     }
     myClient = clientRow;
-    document.getElementById('bizTag').textContent = (clientRow.business_name_ar || clientRow.business_name || '') + (isOwner ? '' : ' — عضو فريق');
+    document.getElementById('bizTag').textContent = (clientRow.business_name_ar || clientRow.business_name || '') + (isOwner ? '' : ' — ' + PT('عضو فريق'));
     document.getElementById('settingBizName').value = clientRow.business_name_ar || clientRow.business_name || '';
     document.getElementById('settingPrompt').value = clientRow.system_prompt || '';
     document.getElementById('settingWelcome').value = clientRow.welcome_message || '';
@@ -530,7 +530,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const { data: plan } = await supabaseClient.from('subscription_plans').select('id, name_ar, code, monthly_message_limit, store_integration_included, store_integration_addon_price_sar, order_table_included, monthly_price_sar, is_prepaid, prepaid_credits, prepaid_validity_months, billing_cycle').eq('id', clientRow.plan_id).single();
       if(plan){ planLabel = plan.name_ar; myPlan = plan; }
     }
-    document.getElementById('statPlan').textContent = planLabel;
+    document.getElementById('statPlan').textContent = PT(planLabel);
     // فريق العمل — نجيبه قبل عرض المحادثات عشان نبني قائمة "معيّن إلى"
     const { data: staffRows } = await supabaseClient
       .from('client_staff')
@@ -538,7 +538,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', clientRow.id);
     staffList = staffRows || [];
     staffMap = {};
-    staffMap[clientRow.user_id] = 'صاحب الحساب';
+    staffMap[clientRow.user_id] = PT('صاحب الحساب');
     staffList.forEach(function(s){ if(s.user_id){ staffMap[s.user_id] = s.full_name; } });
     renderTeam();
     const { data: msgsDesc } = await supabaseClient
@@ -619,11 +619,15 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(pct >= 100){
       banner.className = 'alert-box error';
       banner.style.display = 'block';
-      banner.textContent = '🚫 وصلت لحد رسائلك هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). البوت ممكن يتوقف عن الرد حتى تضيف رصيد إضافي أو تنتهي الدورة الشهرية. افتح تبويب "إعدادات البوت" لطلب رصيد إضافي.';
+      banner.textContent = (window.PORTAL_LANG === 'en')
+        ? ('🚫 You have reached your message limit this month (' + monthCount + ' / ' + totalAllowance + '). The bot may stop replying until you add extra credit or the monthly cycle renews. Open the "Bot Settings" tab to request extra credit.')
+        : ('🚫 وصلت لحد رسائلك هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). البوت ممكن يتوقف عن الرد حتى تضيف رصيد إضافي أو تنتهي الدورة الشهرية. افتح تبويب "إعدادات البوت" لطلب رصيد إضافي.');
     } else if(pct >= 80){
       banner.className = 'cost-note';
       banner.style.display = 'block';
-      banner.textContent = '⚠️ استهلكت ' + pct + '% من رسائل هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). فكّر بإضافة رصيد إضافي من تبويب "إعدادات البوت" قبل ما تنتهي رسائلك.';
+      banner.textContent = (window.PORTAL_LANG === 'en')
+        ? ('⚠️ You have used ' + pct + '% of this month\'s messages (' + monthCount + ' / ' + totalAllowance + '). Consider adding extra credit from the "Bot Settings" tab before your messages run out.')
+        : ('⚠️ استهلكت ' + pct + '% من رسائل هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). فكّر بإضافة رصيد إضافي من تبويب "إعدادات البوت" قبل ما تنتهي رسائلك.');
     } else {
       banner.style.display = 'none';
     }
@@ -654,7 +658,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         return;
       }
       if(!res.ok || !resJson.payment_url){
-        alert(resJson.error || 'تعذّر إتمام عملية الدفع، حاول مرة ثانية أو تواصل مع الدعم.');
+        alert(resJson.error || PT('تعذّر إتمام عملية الدفع، حاول مرة ثانية أو تواصل مع الدعم.'));
         return;
       }
       window.location.href = resJson.payment_url;
@@ -671,11 +675,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(myClient.subscription_status !== 'active' || !endsAt || daysLeft < 0){
       banner.className = 'alert-box error';
       banner.style.display = 'block';
-      banner.innerHTML = '🚫 اشتراكك غير فعّال حالياً. <a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">ادفع الآن لتفعيل البوت</a>';
+      banner.innerHTML = PT('🚫 اشتراكك غير فعّال حالياً. ') + '<a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">' + PT('ادفع الآن لتفعيل البوت') + '</a>';
     } else if(daysLeft <= 5){
       banner.className = 'cost-note';
       banner.style.display = 'block';
-      banner.innerHTML = '⏳ اشتراكك ينتهي خلال ' + daysLeft + ' يوم. <a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">جدّده الآن</a>';
+      banner.innerHTML = (window.PORTAL_LANG === 'en' ? ('⏳ Your subscription ends in ' + daysLeft + ' day(s). ') : ('⏳ اشتراكك ينتهي خلال ' + daysLeft + ' يوم. ')) + '<a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">' + PT('جدّده الآن') + '</a>';
     } else {
       banner.style.display = 'none';
       return;
@@ -696,17 +700,18 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const nonOwnerHint = document.getElementById('planHelperNonOwner');
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(!myClient){ return; }
-    const planName = myPlan ? myPlan.name_ar : 'لم تُحدد بعد';
+    const planName = myPlan ? PT(myPlan.name_ar) : PT('لم تُحدد بعد');
     const price = myPlan ? myPlan.monthly_price_sar : null;
     const isPrepaid = !!(myPlan && myPlan.is_prepaid);
     const isAnnual = !!(myPlan && myPlan.billing_cycle === 'annual');
-    const priceLabel = price !== null ? (' — ' + price + (isPrepaid ? ' ريال (دفعة وحدة)' : (isAnnual ? ' ريال/سنة' : ' ريال/شهر'))) : '';
-    const endsAtLabel = myClient.current_period_ends_at ? formatDateAr(myClient.current_period_ends_at) : 'غير مفعّل بعد';
-    const endsAtWord = isPrepaid ? 'صلاحية الرصيد حتى: ' : (isAnnual ? 'ينتهي الاشتراك السنوي بتاريخ: ' : 'ينتهي بتاريخ: ');
-    const statusLabel = myClient.subscription_status === 'active' ? '✅ فعّال' : (myClient.subscription_status === 'trial' ? '🕐 فترة تجريبية' : '🚫 غير فعّال');
-    box.innerHTML = 'الباقة: <b>' + escapeHtml(planName) + '</b>' + priceLabel +
-      (isPrepaid && myPlan.prepaid_credits ? '<br>رصيد الرسائل المسبق: ' + Number(myPlan.prepaid_credits).toLocaleString('en') + ' رسالة' : '') +
-      '<br>الحالة: ' + statusLabel + '<br>' + endsAtWord + endsAtLabel;
+    const LANG_EN = (window.PORTAL_LANG === 'en');
+    const priceLabel = price !== null ? (' — ' + price + (isPrepaid ? (LANG_EN ? ' SAR (one-time)' : ' ريال (دفعة وحدة)') : (isAnnual ? (LANG_EN ? ' SAR/year' : ' ريال/سنة') : (LANG_EN ? ' SAR/month' : ' ريال/شهر')))) : '';
+    const endsAtLabel = myClient.current_period_ends_at ? formatDateAr(myClient.current_period_ends_at) : (LANG_EN ? 'Not active yet' : 'غير مفعّل بعد');
+    const endsAtWord = isPrepaid ? (LANG_EN ? 'Credit valid until: ' : 'صلاحية الرصيد حتى: ') : (isAnnual ? (LANG_EN ? 'Annual subscription ends on: ' : 'ينتهي الاشتراك السنوي بتاريخ: ') : (LANG_EN ? 'Ends on: ' : 'ينتهي بتاريخ: '));
+    const statusLabel = myClient.subscription_status === 'active' ? (LANG_EN ? '✅ Active' : '✅ فعّال') : (myClient.subscription_status === 'trial' ? (LANG_EN ? '🕐 Trial period' : '🕐 فترة تجريبية') : (LANG_EN ? '🚫 Inactive' : '🚫 غير فعّال'));
+    box.innerHTML = (LANG_EN ? 'Plan: ' : 'الباقة: ') + '<b>' + escapeHtml(planName) + '</b>' + priceLabel +
+      (isPrepaid && myPlan.prepaid_credits ? '<br>' + (LANG_EN ? 'Prepaid message credit: ' : 'رصيد الرسائل المسبق: ') + Number(myPlan.prepaid_credits).toLocaleString('en') + (LANG_EN ? ' messages' : ' رسالة') : '') +
+      '<br>' + (LANG_EN ? 'Status: ' : 'الحالة: ') + statusLabel + '<br>' + endsAtWord + endsAtLabel;
     if(isOwner && myPlan){
       btn.style.display = 'inline-block';
     } else {
@@ -721,10 +726,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   function storeAddonLockedHtml(suffix){
     const price = (myPlan && myPlan.store_integration_addon_price_sar) || 25;
     return '<div class="alert-box error" style="display:block; margin-top:10px;">'
-      + 'ربط المتجر غير مفعّل في باقتك الحالية (' + escapeHtml((myPlan && myPlan.name_ar) || 'الأساسية') + '). '
-      + 'فعّله مقابل ' + price + ' ريال/شهر إضافية، أو رقّي لباقة نمو وما فوق ليكون مجانياً.'
+      + (window.PORTAL_LANG === 'en'
+        ? ('Store connection isn\'t enabled on your current plan (' + escapeHtml(PT((myPlan && myPlan.name_ar) || 'الأساسية')) + '). Enable it for an extra ' + price + ' SAR/month, or upgrade to the Growth plan or higher to get it for free.')
+        : ('ربط المتجر غير مفعّل في باقتك الحالية (' + escapeHtml((myPlan && myPlan.name_ar) || 'الأساسية') + '). فعّله مقابل ' + price + ' ريال/شهر إضافية، أو رقّي لباقة نمو وما فوق ليكون مجانياً.'))
       + '</div>'
-      + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">تواصل مع الدعم للتفعيل</button>';
+      + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">' + PT('تواصل مع الدعم للتفعيل') + '</button>';
   }
   /* ---------- لوحة الطلبات الموحّدة ---------- */
   let ordersLoaded = false;
@@ -734,10 +740,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!myPlan){ return; }
     if(!myPlan.order_table_included){
       container.innerHTML = '<div class="alert-box error" style="display:block;">'
-        + 'لوحة الطلبات الموحّدة متاحة من باقة نمو وما فوق. باقتك الحالية: ' + escapeHtml(myPlan.name_ar || 'الأساسية') + '. '
-        + 'رقّ باقتك أو تواصل مع الدعم للتفعيل.'
+        + (window.PORTAL_LANG === 'en'
+          ? ('The unified orders dashboard is available from the Growth plan and up. Your current plan: ' + escapeHtml(PT(myPlan.name_ar || 'الأساسية')) + '. Upgrade your plan or contact support to enable it.')
+          : ('لوحة الطلبات الموحّدة متاحة من باقة نمو وما فوق. باقتك الحالية: ' + escapeHtml(myPlan.name_ar || 'الأساسية') + '. رقّ باقتك أو تواصل مع الدعم للتفعيل.'))
         + '</div>'
-        + '<button class="modal-cancel" id="ordersUpgradeBtn" style="margin-top:8px;">تواصل مع الدعم</button>';
+        + '<button class="modal-cancel" id="ordersUpgradeBtn" style="margin-top:8px;">' + PT('تواصل مع الدعم') + '</button>';
       const upgradeBtn = document.getElementById('ordersUpgradeBtn');
       if(upgradeBtn){
         upgradeBtn.addEventListener('click', function(){
@@ -758,7 +765,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const json = await res.json();
       if(!res.ok || json.error){
         ordersLoaded = false;
-        container.innerHTML = '<div class="conv-empty">' + escapeHtml(json.message || 'تعذّر تحميل الطلبات، حاول مرة ثانية.') + '</div>';
+        container.innerHTML = '<div class="conv-empty">' + escapeHtml(PT(json.message) || PT('تعذّر تحميل الطلبات، حاول مرة ثانية.')) + '</div>';
         return;
       }
       const orders = json.orders || [];
@@ -787,7 +794,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       container.innerHTML = tableHtml;
     } catch(e){
       ordersLoaded = false;
-      container.innerHTML = '<div class="conv-empty">تعذّر تحميل الطلبات، حاول مرة ثانية.</div>';
+      container.innerHTML = '<div class="conv-empty">' + PT('تعذّر تحميل الطلبات، حاول مرة ثانية.') + '</div>';
     }
   }
   function bindStoreAddonSupportBtn(suffix){
@@ -823,7 +830,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   document.getElementById('connectZidBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner){ return; }
     const btn = this;
-    btn.disabled = true; btn.textContent = 'جاري التحضير...';
+    btn.disabled = true; btn.textContent = PT('جاري التحضير...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -837,14 +844,14 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
       const json = await res.json();
       if(!res.ok || !json.url){
-        btn.disabled = false; btn.textContent = 'ربط مع زد';
-        alert(json.error || 'تعذّر بدء الربط مع زد، حاول مرة ثانية.');
+        btn.disabled = false; btn.textContent = PT('ربط مع زد');
+        alert(json.error || PT('تعذّر بدء الربط مع زد، حاول مرة ثانية.'));
         return;
       }
       window.location.href = json.url;
     } catch(e){
-      btn.disabled = false; btn.textContent = 'ربط مع زد';
-      alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+      btn.disabled = false; btn.textContent = PT('ربط مع زد');
+      alert(PT('حصل خطأ بالاتصال، حاول مرة ثانية.'));
     }
   });
   /* ---------- ربط متجر سلة ---------- */
@@ -873,7 +880,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   document.getElementById('connectSallaBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner){ return; }
     const btn = this;
-    btn.disabled = true; btn.textContent = 'جاري التحضير...';
+    btn.disabled = true; btn.textContent = PT('جاري التحضير...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -887,14 +894,14 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
       const json = await res.json();
       if(!res.ok || !json.url){
-        btn.disabled = false; btn.textContent = 'ربط مع سلة';
-        alert(json.error || 'تعذّر بدء الربط مع سلة، حاول مرة ثانية.');
+        btn.disabled = false; btn.textContent = PT('ربط مع سلة');
+        alert(json.error || PT('تعذّر بدء الربط مع سلة، حاول مرة ثانية.'));
         return;
       }
       window.location.href = json.url;
     } catch(e){
-      btn.disabled = false; btn.textContent = 'ربط مع سلة';
-      alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+      btn.disabled = false; btn.textContent = PT('ربط مع سلة');
+      alert(PT('حصل خطأ بالاتصال، حاول مرة ثانية.'));
     }
   });
   /* ---------- ربط متجر ووكومرس (ووردبريس) ---------- */
@@ -917,11 +924,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
       form.style.display = 'none';
     } else if(addonLocked){
-      statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('woo') : '');
+      statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>' + (isOwner ? storeAddonLockedHtml('woo') : '');
       form.style.display = 'none';
       bindStoreAddonSupportBtn('woo');
     } else {
-      statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ غير متصل بعد</span>';
+      statusBox.innerHTML = '<span class="status-badge woo-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>';
       form.style.display = isOwner ? 'flex' : 'none';
     }
   }
@@ -934,11 +941,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const consumerKey = document.getElementById('wooConsumerKey').value.trim();
     const consumerSecret = document.getElementById('wooConsumerSecret').value.trim();
     if(!storeUrl || !consumerKey || !consumerSecret){
-      errBox.textContent = 'عبّي رابط المتجر ومفتاحي الـ API كاملة.';
+      errBox.textContent = PT('عبّي رابط المتجر ومفتاحي الـ API كاملة.');
       errBox.style.display = 'block';
       return;
     }
-    btn.disabled = true; btn.textContent = 'جاري الربط...';
+    btn.disabled = true; btn.textContent = PT('جاري الربط...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -949,15 +956,15 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
       const json = await res.json();
       if(!res.ok || json.error){
-        btn.disabled = false; btn.textContent = 'ربط مع ووكومرس';
-        errBox.textContent = json.message || 'تعذّر الربط، تأكد من صحة البيانات.';
+        btn.disabled = false; btn.textContent = PT('ربط مع ووكومرس');
+        errBox.textContent = json.message || PT('تعذّر الربط، تأكد من صحة البيانات.');
         errBox.style.display = 'block';
         return;
       }
       await loadWooCommerceStatus();
     } catch(e){
-      btn.disabled = false; btn.textContent = 'ربط مع ووكومرس';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('ربط مع ووكومرس');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -985,13 +992,13 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .maybeSingle();
     const addonEnabled = !!(addonRow && addonRow.enabled);
 
-    statusBox.innerHTML = '<span class="status-badge telegram-disconnected">⚪ غير متصل بعد</span>';
+    statusBox.innerHTML = '<span class="status-badge telegram-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>';
 
     if(!addonEnabled){
       form.style.display = 'none';
       if(isOwner){
         lockedHint.style.display = 'block';
-        lockedHint.innerHTML = 'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة، بدون اشتراك شهري إضافي).';
+        lockedHint.innerHTML = PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة، بدون اشتراك شهري إضافي).');
       } else {
         lockedHint.style.display = 'none';
       }
@@ -1008,11 +1015,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     errBox.style.display = 'none';
     const botToken = document.getElementById('telegramBotToken').value.trim();
     if(!botToken){
-      errBox.textContent = 'الرجاء لصق توكن البوت.';
+      errBox.textContent = PT('الرجاء لصق توكن البوت.');
       errBox.style.display = 'block';
       return;
     }
-    btn.disabled = true; btn.textContent = 'جاري الربط...';
+    btn.disabled = true; btn.textContent = PT('جاري الربط...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -1023,8 +1030,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
       const json = await res.json();
       if(!res.ok || json.error){
-        btn.disabled = false; btn.textContent = 'ربط مع تليجرام';
-        errBox.textContent = json.message || 'تعذّر الربط، تأكد من صحة التوكن.';
+        btn.disabled = false; btn.textContent = PT('ربط مع تليجرام');
+        errBox.textContent = json.message || PT('تعذّر الربط، تأكد من صحة التوكن.');
         errBox.style.display = 'block';
         return;
       }
@@ -1032,8 +1039,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       myClient.telegram_bot_username = json.bot_username;
       await loadTelegramStatus();
     } catch(e){
-      btn.disabled = false; btn.textContent = 'ربط مع تليجرام';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('ربط مع تليجرام');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -1068,24 +1075,24 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     disconnectedHint.style.display = 'none';
     if(!myClient || !myClient.whatsapp_phone_number_id){
-      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ لازم تفعّل رقم واتساب البوت أولاً</span>';
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ ' + PT('لازم تفعّل رقم واتساب البوت أولاً') + '</span>';
       btn.style.display = 'none';
       return;
     }
     const status = myClient.coexistence_status || 'not_connected';
     if(status === 'active' || status === 'pending_sync'){
-      statusBox.innerHTML = '<span class="status-badge shopify-connected">✅ ' + (status === 'active' ? 'مربوط' : 'جاري إتمام المزامنة...') + '</span>';
+      statusBox.innerHTML = '<span class="status-badge shopify-connected">✅ ' + (status === 'active' ? PT('مربوط') : PT('جاري إتمام المزامنة...')) + '</span>';
       btn.style.display = isOwner ? 'inline-block' : 'none';
-      btn.textContent = 'إعادة الربط';
+      btn.textContent = PT('إعادة الربط');
     } else if(status === 'disconnected'){
-      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ تم فصل الربط</span>';
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ ' + PT('تم فصل الربط') + '</span>';
       btn.style.display = isOwner ? 'inline-block' : 'none';
-      btn.textContent = 'ابدأ الربط';
+      btn.textContent = PT('ابدأ الربط');
       disconnectedHint.style.display = isOwner ? 'block' : 'none';
     } else {
-      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ غير مربوط بعد</span>';
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ ' + PT('غير مربوط بعد') + '</span>';
       btn.style.display = isOwner ? 'inline-block' : 'none';
-      btn.textContent = 'ابدأ الربط';
+      btn.textContent = PT('ابدأ الربط');
     }
   }
   async function loadWaAppStatus(){
@@ -1101,7 +1108,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const phoneNumberId = (data.data && data.data.phone_number_id) || myClient.whatsapp_phone_number_id;
     const wabaId = (data.data && data.data.waba_id) || '';
     const btn = document.getElementById('connectWaAppBtn');
-    if(btn){ btn.disabled = true; btn.textContent = 'جاري الربط...'; }
+    if(btn){ btn.disabled = true; btn.textContent = PT('جاري الربط...'); }
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -1113,22 +1120,22 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const json = await res.json();
       if(btn){ btn.disabled = false; }
       if(!res.ok || json.error){
-        alert(json.error || 'تعذّر إتمام الربط، حاول مرة أخرى.');
+        alert(json.error || PT('تعذّر إتمام الربط، حاول مرة أخرى.'));
         renderWaAppStatus();
         return;
       }
       myClient.coexistence_status = json.status;
-      alert(json.message || 'تم الربط بنجاح.');
+      alert(json.message || PT('تم الربط بنجاح.'));
       renderWaAppStatus();
     } catch(e){
       if(btn){ btn.disabled = false; }
-      alert('حصل خطأ بالاتصال، حاول مرة ثانية.');
+      alert(PT('حصل خطأ بالاتصال، حاول مرة ثانية.'));
     }
   });
   document.getElementById('connectWaAppBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner) return;
     if(!WA_COEXIST_APP_ID || !WA_COEXIST_CONFIG_ID){
-      alert('هذي الميزة قيد الإعداد من فريق نبضة حالياً، ترجع تقدر تستخدمها قريباً.');
+      alert(PT('هذي الميزة قيد الإعداد من فريق نبضة حالياً، ترجع تقدر تستخدمها قريباً.'));
       return;
     }
     const FB = await loadFacebookSdk();
@@ -1166,11 +1173,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
       form.style.display = 'none';
     } else if(addonLocked){
-      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ غير متصل بعد</span>' + (isOwner ? storeAddonLockedHtml('shopify') : '');
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>' + (isOwner ? storeAddonLockedHtml('shopify') : '');
       form.style.display = 'none';
       bindStoreAddonSupportBtn('shopify');
     } else {
-      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ غير متصل بعد</span>';
+      statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>';
       form.style.display = isOwner ? 'flex' : 'none';
     }
   }
@@ -1182,11 +1189,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const shopDomain = document.getElementById('shopifyDomain').value.trim();
     const accessToken = document.getElementById('shopifyAccessToken').value.trim();
     if(!shopDomain || !accessToken){
-      errBox.textContent = 'عبّي نطاق المتجر والتوكن كاملة.';
+      errBox.textContent = PT('عبّي نطاق المتجر والتوكن كاملة.');
       errBox.style.display = 'block';
       return;
     }
-    btn.disabled = true; btn.textContent = 'جاري الربط...';
+    btn.disabled = true; btn.textContent = PT('جاري الربط...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -1197,15 +1204,15 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
       const json = await res.json();
       if(!res.ok || json.error){
-        btn.disabled = false; btn.textContent = 'ربط مع شوبيفاي';
-        errBox.textContent = json.message || 'تعذّر الربط، تأكد من صحة البيانات.';
+        btn.disabled = false; btn.textContent = PT('ربط مع شوبيفاي');
+        errBox.textContent = json.message || PT('تعذّر الربط، تأكد من صحة البيانات.');
         errBox.style.display = 'block';
         return;
       }
       await loadShopifyStatus();
     } catch(e){
-      btn.disabled = false; btn.textContent = 'ربط مع شوبيفاي';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('ربط مع شوبيفاي');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -1216,7 +1223,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     addBtn.style.display = isOwner ? 'inline-block' : 'none';
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(staffList.length === 0){
-      list.innerHTML = '<div class="conv-empty">ما فيه موظفين مضافين بعد.</div>';
+      list.innerHTML = '<div class="conv-empty">' + PT('ما فيه موظفين مضافين بعد.') + '</div>';
       return;
     }
     list.innerHTML = '';
@@ -1228,11 +1235,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(isOwner){
         permsHtml = '<div class="staff-perms">' + PERMISSION_DEFS.map(function(p){
           var checked = perms[p.key] ? ' checked' : '';
-          return '<label class="staff-perm-chip"><input type="checkbox" class="staff-perm-cb" data-staff="' + s.id + '" data-perm="' + p.key + '"' + checked + '> ' + escapeHtml(p.label) + '</label>';
+          return '<label class="staff-perm-chip"><input type="checkbox" class="staff-perm-cb" data-staff="' + s.id + '" data-perm="' + p.key + '"' + checked + '> ' + escapeHtml(PT(p.label)) + '</label>';
         }).join('') + '</div>';
       } else if(Object.keys(perms).some(function(k){ return perms[k]; })){
         permsHtml = '<div class="staff-perms staff-perms-readonly">' + PERMISSION_DEFS.filter(function(p){ return perms[p.key]; }).map(function(p){
-          return '<span class="staff-perm-chip readonly">' + escapeHtml(p.label) + '</span>';
+          return '<span class="staff-perm-chip readonly">' + escapeHtml(PT(p.label)) + '</span>';
         }).join('') + '</div>';
       }
       div.innerHTML =
@@ -1244,7 +1251,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(isOwner){
       list.querySelectorAll('.staff-remove-btn').forEach(function(btn){
         btn.addEventListener('click', async function(){
-          if(!confirm('تأكيد إزالة هذا الموظف من الفريق؟')){ return; }
+          if(!confirm(PT('تأكيد إزالة هذا الموظف من الفريق؟'))){ return; }
           const id = btn.dataset.id;
           const { error } = await supabaseClient.from('client_staff').delete().eq('id', id);
           if(!error){
@@ -1266,7 +1273,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           cb.disabled = false;
           if(error){
             cb.checked = !cb.checked;
-            alert('تعذّر حفظ الصلاحية، حاول مرة ثانية.');
+            alert(PT('تعذّر حفظ الصلاحية، حاول مرة ثانية.'));
             return;
           }
           staffRow.permissions = newPerms;
@@ -1286,7 +1293,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   function categoryBadgeHtml(category){
     const info = CATEGORY_LABELS[category];
     if(!info){ return ''; }
-    return '<span class="cat-badge" style="background:' + info.bg + '; color:' + info.color + ';">' + info.label + '</span>';
+    return '<span class="cat-badge" style="background:' + info.bg + '; color:' + info.color + ';">' + PT(info.label) + '</span>';
   }
   function renderConvList(){
     const list = document.getElementById('convList');
@@ -1297,7 +1304,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       phones = phones.filter(function(p){ return conversations[p].assignedTo === myUserId; });
     }
     if(phones.length === 0){
-      list.innerHTML = '<div class="conv-empty">' + (filterMineOnly ? 'ما فيه محادثات معيّنة لك حالياً.' : 'ما فيه محادثات بعد. أول ما يراسل عميل بوتك، تظهر المحادثة هنا.') + '</div>';
+      list.innerHTML = '<div class="conv-empty">' + (filterMineOnly ? PT('ما فيه محادثات معيّنة لك حالياً.') : PT('ما فيه محادثات بعد. أول ما يراسل عميل بوتك، تظهر المحادثة هنا.')) + '</div>';
       return;
     }
     list.innerHTML = '';
@@ -1340,16 +1347,16 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     bar.style.display = 'flex';
     if(conv.botPaused){
       bar.classList.add('paused');
-      status.textContent = '🔴 الرد يدوي الآن';
-      btn.textContent = 'إرجاع الرد للبوت تلقائياً';
+      status.textContent = PT('🔴 الرد يدوي الآن');
+      btn.textContent = PT('إرجاع الرد للبوت تلقائياً');
       btn.className = 'takeover-btn to-resume';
     } else {
       bar.classList.remove('paused');
-      status.textContent = '🤖 البوت يرد تلقائياً';
-      btn.textContent = 'تولّي الرد يدوياً';
+      status.textContent = PT('🤖 البوت يرد تلقائياً');
+      btn.textContent = PT('تولّي الرد يدوياً');
       btn.className = 'takeover-btn to-pause';
     }
-    assignSelect.innerHTML = '<option value="">غير معيّن</option>';
+    assignSelect.innerHTML = '<option value="">' + PT('غير معيّن') + '</option>';
     Object.keys(staffMap).forEach(function(uid){
       const opt = document.createElement('option');
       opt.value = uid;
@@ -1379,7 +1386,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         assigned_to: val
       }, { onConflict: 'client_id,customer_phone' });
     if(error){
-      alert('تعذّر تحديث التعيين، حاول مرة ثانية.');
+      alert(PT('تعذّر تحديث التعيين، حاول مرة ثانية.'));
       return;
     }
     conversations[activePhone].assignedTo = val;
@@ -1403,7 +1410,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .upsert(payload, { onConflict: 'client_id,customer_phone' });
     btn.disabled = false;
     if(error){
-      alert('تعذّر تحديث حالة المحادثة، حاول مرة ثانية.');
+      alert(PT('تعذّر تحديث حالة المحادثة، حاول مرة ثانية.'));
       return;
     }
     conv.botPaused = newPaused;
@@ -1433,7 +1440,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const json = await res.json();
       if(!res.ok){
         hint.style.color = 'var(--danger)';
-        hint.textContent = json.error || 'تعذّر إرسال الرسالة.';
+        hint.textContent = json.error || PT('تعذّر إرسال الرسالة.');
       } else {
         // إرسال رد يدوي معناه صاحب النشاط أو الموظف تولى المحادثة — نوقف رد البوت التلقائي ونعيّنها له تلقائياً
         conversations[activePhone].messages.push({ dir: 'out', text: text, at: new Date().toISOString() });
@@ -1444,11 +1451,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         renderChat(activePhone);
         renderConvList();
         hint.style.color = 'var(--wa-green-dark)';
-        hint.textContent = '✓ تم الإرسال';
+        hint.textContent = PT('✓ تم الإرسال');
       }
     } catch(e){
       hint.style.color = 'var(--danger)';
-      hint.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      hint.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
     }
     btn.disabled = false;
   });
@@ -1496,7 +1503,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const errBox = document.getElementById('newStaffError');
     errBox.style.display = 'none';
     if(!fullName || !email){
-      errBox.textContent = 'الرجاء تعبئة الاسم والبريد الإلكتروني.';
+      errBox.textContent = PT('الرجاء تعبئة الاسم والبريد الإلكتروني.');
       errBox.style.display = 'block';
       return;
     }
@@ -1504,7 +1511,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const invitePermissions = {};
     document.querySelectorAll('.invite-perm-cb').forEach(function(cb){ invitePermissions[cb.dataset.perm] = cb.checked; });
     const btn = document.getElementById('newStaffConfirmBtn');
-    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+    btn.disabled = true; btn.textContent = PT('جاري الإرسال...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -1517,26 +1524,26 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         body: JSON.stringify({ client_id: myClient.id, email: email, full_name: fullName, permissions: invitePermissions })
       });
       const json = await res.json();
-      btn.disabled = false; btn.textContent = 'إرسال الدعوة';
+      btn.disabled = false; btn.textContent = PT('إرسال الدعوة');
       if(!res.ok){
-        errBox.textContent = json.error || 'تعذّر إرسال الدعوة.';
+        errBox.textContent = json.error || PT('تعذّر إرسال الدعوة.');
         errBox.style.display = 'block';
         return;
       }
       newStaffModal.classList.remove('show');
-      alert('تم إرسال دعوة للموظف عبر البريد الإلكتروني.');
+      alert(PT('تم إرسال دعوة للموظف عبر البريد الإلكتروني.'));
       const { data: staffRows } = await supabaseClient
         .from('client_staff')
         .select('id, user_id, full_name, email, permissions')
         .eq('client_id', myClient.id);
       staffList = staffRows || [];
       staffMap = {};
-      staffMap[myClient.user_id] = 'صاحب الحساب';
+      staffMap[myClient.user_id] = PT('صاحب الحساب');
       staffList.forEach(function(s){ if(s.user_id){ staffMap[s.user_id] = s.full_name; } });
       renderTeam();
     } catch(e){
-      btn.disabled = false; btn.textContent = 'إرسال الدعوة';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('إرسال الدعوة');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -1555,17 +1562,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const avgHint = document.getElementById('analyticsAvgResponseHint');
     if(responseTimes.length === 0){
       avgEl.textContent = '–';
-      avgHint.textContent = 'بيانات زمن الرد بتظهر تدريجياً مع الرسائل الجديدة.';
+      avgHint.textContent = PT('بيانات زمن الرد بتظهر تدريجياً مع الرسائل الجديدة.');
     } else {
       const avgSec = responseTimes.reduce(function(a,b){ return a+b; }, 0) / responseTimes.length;
       if(avgSec < 60){
-        avgEl.textContent = Math.round(avgSec) + ' ث';
+        avgEl.textContent = Math.round(avgSec) + (window.PORTAL_LANG === 'en' ? 's' : ' ث');
       } else {
         const mins = Math.floor(avgSec / 60);
         const secs = Math.round(avgSec % 60);
-        avgEl.textContent = mins + 'د ' + secs + 'ث';
+        avgEl.textContent = (window.PORTAL_LANG === 'en') ? (mins + 'm ' + secs + 's') : (mins + 'د ' + secs + 'ث');
       }
-      avgHint.textContent = 'بناءً على ' + responseTimes.length + ' رد آلي.';
+      avgHint.textContent = (window.PORTAL_LANG === 'en') ? ('Based on ' + responseTimes.length + ' automated replies.') : ('بناءً على ' + responseTimes.length + ' رد آلي.');
     }
     // آخر 7 أيام
     const chart = document.getElementById('analyticsBarChart');
@@ -1605,7 +1612,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const sorted = Object.keys(freq).sort(function(a,b){ return freq[b] - freq[a]; }).slice(0, 8);
     const qList = document.getElementById('analyticsTopQuestions');
     if(sorted.length === 0){
-      qList.innerHTML = '<div class="conv-empty">لا توجد بيانات كافية بعد.</div>';
+      qList.innerHTML = '<div class="conv-empty">' + PT('لا توجد بيانات كافية بعد.') + '</div>';
     } else {
             qList.innerHTML = '';
       sorted.forEach(function(q){
@@ -1622,14 +1629,14 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const catWrap = document.getElementById('analyticsCategoryBreakdown');
     const catKeys = Object.keys(catCounts).sort(function(a,b){ return catCounts[b] - catCounts[a]; });
     if(catKeys.length === 0){
-      catWrap.innerHTML = '<div class="conv-empty">لا توجد بيانات كافية بعد.</div>';
+      catWrap.innerHTML = '<div class="conv-empty">' + PT('لا توجد بيانات كافية بعد.') + '</div>';
     } else {
       catWrap.innerHTML = '';
       catKeys.forEach(function(key){
         const info = CATEGORY_LABELS[key] || CATEGORY_LABELS.other;
         const div = document.createElement('div');
         div.className = 'qa-item';
-        div.innerHTML = '<span class="qtext">' + info.label + '</span><span class="qcount" style="background:' + info.color + ';">' + catCounts[key] + '</span>';
+        div.innerHTML = '<span class="qtext">' + PT(info.label) + '</span><span class="qcount" style="background:' + info.color + ';">' + catCounts[key] + '</span>';
         catWrap.appendChild(div);
       });
     }
@@ -1641,7 +1648,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .select('event_type, status')
       .eq('client_id', myClient.id);
     if(error || !events || events.length === 0){
-      wrap.innerHTML = '<div class="conv-empty">لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.</div>';
+      wrap.innerHTML = '<div class="conv-empty">' + PT('لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.') + '</div>';
       return;
     }
     const ordersConfirmed = events.filter(function(e){ return e.event_type === 'order_create' && (e.status === 'confirmation_sent' || e.status === 'confirmed'); }).length;
@@ -1666,7 +1673,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const hoursSubEl = document.getElementById('roiHoursSavedSub');
     if(hoursEl){
       hoursEl.textContent = hoursSaved >= 10 ? Math.round(hoursSaved).toLocaleString('en-US') : hoursSaved.toFixed(1);
-      hoursSubEl.textContent = botReplies > 0 ? ('بناءً على ' + botReplies.toLocaleString('en-US') + ' رد آلي، بمعدّل 3 دقائق تقريباً لكل رد يدوي') : 'بتظهر تدريجياً مع أول ردود البوت';
+      hoursSubEl.textContent = (window.PORTAL_LANG === 'en')
+        ? (botReplies > 0 ? ('Based on ' + botReplies.toLocaleString('en-US') + ' automated replies, saving about 3 minutes per manual reply') : 'Will appear gradually as the bot starts replying')
+        : (botReplies > 0 ? ('بناءً على ' + botReplies.toLocaleString('en-US') + ' رد آلي، بمعدّل 3 دقائق تقريباً لكل رد يدوي') : 'بتظهر تدريجياً مع أول ردود البوت');
     }
     const sarEl = document.getElementById('roiSarRecovered');
     const sarSubEl = document.getElementById('roiSarRecoveredSub');
@@ -1679,7 +1688,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         .eq('status', 'recovered');
       if(error || !events || events.length === 0){
         sarEl.textContent = '0';
-        sarSubEl.textContent = 'لا توجد سلات مستردة بعد';
+        sarSubEl.textContent = PT('لا توجد سلات مستردة بعد');
       } else {
         const now = new Date();
         let monthTotal = 0, allTimeTotal = 0;
@@ -1692,7 +1701,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           }
         });
         sarEl.textContent = Math.round(monthTotal).toLocaleString('en-US');
-        sarSubEl.textContent = 'إجمالي كل الفترة: ' + Math.round(allTimeTotal).toLocaleString('en-US') + ' ريال من ' + events.length + ' سلة مستردة';
+        sarSubEl.textContent = (window.PORTAL_LANG === 'en')
+          ? ('Total all-time: ' + Math.round(allTimeTotal).toLocaleString('en-US') + ' SAR from ' + events.length + ' recovered cart(s)')
+          : ('إجمالي كل الفترة: ' + Math.round(allTimeTotal).toLocaleString('en-US') + ' ريال من ' + events.length + ' سلة مستردة');
       }
     }
     const hotEl = document.getElementById('roiHotLeads');
@@ -1769,9 +1780,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const json = await res.json();
       const typingEl = document.getElementById(typingId);
       if(typingEl){ typingEl.remove(); }
-      btn.disabled = false; btn.textContent = 'إرسال';
+      btn.disabled = false; btn.textContent = PT('إرسال');
       if(!res.ok){
-        statusEl.textContent = json.error || 'تعذّر توليد الرد، حاول مرة ثانية.';
+        statusEl.textContent = json.error || PT('تعذّر توليد الرد، حاول مرة ثانية.');
         return;
       }
       simHistory.push({ role: 'user', text: text });
@@ -1781,8 +1792,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     } catch(e){
       const typingEl = document.getElementById(typingId);
       if(typingEl){ typingEl.remove(); }
-      btn.disabled = false; btn.textContent = 'إرسال';
-      statusEl.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('إرسال');
+      statusEl.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
     }
   }
   const simSendBtnEl = document.getElementById('simSendBtn');
@@ -1804,7 +1815,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .order('updated_at', { ascending: false });
     if(error){
-      document.getElementById('ticketList').innerHTML = '<div class="conv-empty">تعذّر تحميل التذاكر، حدّث الصفحة.</div>';
+      document.getElementById('ticketList').innerHTML = '<div class="conv-empty">' + PT('تعذّر تحميل التذاكر، حدّث الصفحة.') + '</div>';
       return;
     }
     myTickets = data || [];
@@ -1846,8 +1857,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     statusEl.textContent = PT(ticketStatusLabels[ticket.status]);
     composerWrap.style.display = 'block';
     hint.style.color = 'var(--muted)';
-    hint.textContent = ticket.status === 'closed' ? 'ملاحظة: الرد سيعيد فتح هذي التذكرة تلقائياً.' : '';
-    body.innerHTML = '<div class="chat-placeholder">جاري التحميل...</div>';
+    hint.textContent = ticket.status === 'closed' ? PT('ملاحظة: الرد سيعيد فتح هذي التذكرة تلقائياً.') : '';
+    body.innerHTML = '<div class="chat-placeholder">' + PT('جاري التحميل...') + '</div>';
     const { data: msgs } = await supabaseClient
       .from('support_ticket_messages')
       .select('sender_type, message, created_at')
@@ -1876,14 +1887,14 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     btn.disabled = false;
     if(error){
       hint.style.color = 'var(--danger)';
-      hint.textContent = 'تعذّر إرسال الرد، حاول مرة ثانية.';
+      hint.textContent = PT('تعذّر إرسال الرد، حاول مرة ثانية.');
       return;
     }
     textarea.value = '';
     await loadTickets();
     await openTicketThread(activeTicketId);
     hint.style.color = 'var(--wa-green-dark)';
-    hint.textContent = '✓ تم الإرسال';
+    hint.textContent = PT('✓ تم الإرسال');
   });
   const newTicketModal = document.getElementById('newTicketModal');
   document.getElementById('newTicketBtn').addEventListener('click', function(){
@@ -1904,26 +1915,26 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const errBox = document.getElementById('newTicketError');
     errBox.style.display = 'none';
     if(!subject || !message){
-      errBox.textContent = 'الرجاء تعبئة الموضوع وتفاصيل المشكلة.';
+      errBox.textContent = PT('الرجاء تعبئة الموضوع وتفاصيل المشكلة.');
       errBox.style.display = 'block';
       return;
     }
     if(!myClient){ return; }
     const btn = document.getElementById('newTicketConfirmBtn');
-    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+    btn.disabled = true; btn.textContent = PT('جاري الإرسال...');
     const { data: ticket, error: ticketErr } = await supabaseClient
       .from('support_tickets')
       .insert({ client_id: myClient.id, subject: subject })
       .select('id')
       .single();
     if(ticketErr || !ticket){
-      errBox.textContent = 'تعذّر إنشاء التذكرة، حاول مرة ثانية.';
+      errBox.textContent = PT('تعذّر إنشاء التذكرة، حاول مرة ثانية.');
       errBox.style.display = 'block';
-      btn.disabled = false; btn.textContent = 'إرسال';
+      btn.disabled = false; btn.textContent = PT('إرسال');
       return;
     }
     await supabaseClient.from('support_ticket_messages').insert({ ticket_id: ticket.id, sender_type: 'client', message: message });
-    btn.disabled = false; btn.textContent = 'إرسال';
+    btn.disabled = false; btn.textContent = PT('إرسال');
     newTicketModal.classList.remove('show');
     activeTicketId = ticket.id;
     await loadTickets();
@@ -1942,7 +1953,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .order('created_at', { ascending: false });
     if(error){
-      document.getElementById('campaignList').innerHTML = '<div class="conv-empty">تعذّر تحميل الحملات، حدّث الصفحة.</div>';
+      document.getElementById('campaignList').innerHTML = '<div class="conv-empty">' + PT('تعذّر تحميل الحملات، حدّث الصفحة.') + '</div>';
       return;
     }
     myCampaigns = data || [];
@@ -2000,7 +2011,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const errBox = document.getElementById('newBroadcastError');
     errBox.style.display = 'none';
     if(!templateName){
-      errBox.textContent = 'الرجاء كتابة اسم القالب المعتمد.';
+      errBox.textContent = PT('الرجاء كتابة اسم القالب المعتمد.');
       errBox.style.display = 'block';
       return;
     }
@@ -2010,13 +2021,13 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const raw = document.getElementById('bcCustomNumbers').value.trim();
       recipients = raw.split('\n').map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
       if(recipients.length === 0){
-        errBox.textContent = 'الرجاء كتابة رقم واحد على الأقل.';
+        errBox.textContent = PT('الرجاء كتابة رقم واحد على الأقل.');
         errBox.style.display = 'block';
         return;
       }
     }
     const btn = document.getElementById('newBroadcastConfirmBtn');
-    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+    btn.disabled = true; btn.textContent = PT('جاري الإرسال...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -2035,18 +2046,20 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         })
       });
       const json = await res.json();
-      btn.disabled = false; btn.textContent = 'إرسال الحملة';
+      btn.disabled = false; btn.textContent = PT('إرسال الحملة');
       if(!res.ok){
-        errBox.textContent = json.error || 'تعذّر إرسال الحملة.';
+        errBox.textContent = json.error || PT('تعذّر إرسال الحملة.');
         errBox.style.display = 'block';
         return;
       }
       newBroadcastModal.classList.remove('show');
       await loadCampaigns();
-      alert('تم إرسال الحملة: ' + json.sent + ' نجح، ' + json.failed + ' فشل، من أصل ' + json.total + '.');
+      alert((window.PORTAL_LANG === 'en')
+        ? ('Campaign sent: ' + json.sent + ' succeeded, ' + json.failed + ' failed, out of ' + json.total + ' total.')
+        : ('تم إرسال الحملة: ' + json.sent + ' نجح، ' + json.failed + ' فشل، من أصل ' + json.total + '.'));
     } catch(e){
-      btn.disabled = false; btn.textContent = 'إرسال الحملة';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('إرسال الحملة');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -2060,7 +2073,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .order('created_at', { ascending: false });
     if(error){
-      document.getElementById('templateList').innerHTML = '<div class="conv-empty">تعذّر تحميل القوالب، حدّث الصفحة.</div>';
+      document.getElementById('templateList').innerHTML = '<div class="conv-empty">' + PT('تعذّر تحميل القوالب، حدّث الصفحة.') + '</div>';
       return;
     }
     myTemplates = data || [];
@@ -2096,7 +2109,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('tplStep1').style.display = 'block';
     document.getElementById('tplStep2').style.display = 'none';
     document.getElementById('tplGenerateBtn').disabled = false;
-    document.getElementById('tplGenerateBtn').textContent = 'توليد بالذكاء الاصطناعي';
+    document.getElementById('tplGenerateBtn').textContent = PT('توليد بالذكاء الاصطناعي');
     currentDraftTemplateId = null;
     newTemplateModal.classList.add('show');
   });
@@ -2115,13 +2128,13 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const errBox = document.getElementById('newTemplateError');
     errBox.style.display = 'none';
     if(!requestText){
-      errBox.textContent = 'الرجاء كتابة وصف للرسالة اللي تبيها.';
+      errBox.textContent = PT('الرجاء كتابة وصف للرسالة اللي تبيها.');
       errBox.style.display = 'block';
       return;
     }
     if(!myClient){ return; }
     const btn = this;
-    btn.disabled = true; btn.textContent = 'جاري التوليد...';
+    btn.disabled = true; btn.textContent = PT('جاري التوليد...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -2134,9 +2147,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         body: JSON.stringify({ client_id: myClient.id, request_text: requestText })
       });
       const json = await res.json();
-      btn.disabled = false; btn.textContent = 'توليد بالذكاء الاصطناعي';
+      btn.disabled = false; btn.textContent = PT('توليد بالذكاء الاصطناعي');
       if(!res.ok){
-        errBox.textContent = json.error || 'تعذّر توليد القالب، حاول صياغة الطلب بشكل مختلف.';
+        errBox.textContent = json.error || PT('تعذّر توليد القالب، حاول صياغة الطلب بشكل مختلف.');
         errBox.style.display = 'block';
         return;
       }
@@ -2151,8 +2164,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.getElementById('tplStep1').style.display = 'none';
       document.getElementById('tplStep2').style.display = 'block';
     } catch(e){
-      btn.disabled = false; btn.textContent = 'توليد بالذكاء الاصطناعي';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('توليد بالذكاء الاصطناعي');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -2165,17 +2178,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const bodyText = document.getElementById('tplBodyText').value.trim();
     const variableExample = document.getElementById('tplVariableExample').value.trim();
     if(!name || !bodyText){
-      errBox.textContent = 'الرجاء تعبئة اسم القالب ونص الرسالة.';
+      errBox.textContent = PT('الرجاء تعبئة اسم القالب ونص الرسالة.');
       errBox.style.display = 'block';
       return;
     }
     if(bodyText.indexOf('{{1}}') !== -1 && !variableExample){
-      errBox.textContent = 'الرسالة فيها {{1}} — لازم تكتب مثال على القيمة اللي بتحل محله (مطلوب من واتساب للمراجعة).';
+      errBox.textContent = PT('الرسالة فيها {{1}} — لازم تكتب مثال على القيمة اللي بتحل محله (مطلوب من واتساب للمراجعة).');
       errBox.style.display = 'block';
       return;
     }
     const btn = this;
-    btn.disabled = true; btn.textContent = 'جاري الإرسال...';
+    btn.disabled = true; btn.textContent = PT('جاري الإرسال...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
     const token = sessionData.session.access_token;
     try{
@@ -2196,18 +2209,18 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         })
       });
       const json = await res.json();
-      btn.disabled = false; btn.textContent = 'إرسال للمراجعة في واتساب';
+      btn.disabled = false; btn.textContent = PT('إرسال للمراجعة في واتساب');
       if(!res.ok){
-        errBox.textContent = json.error || 'تعذّر إرسال القالب لواتساب.';
+        errBox.textContent = json.error || PT('تعذّر إرسال القالب لواتساب.');
         errBox.style.display = 'block';
         return;
       }
       newTemplateModal.classList.remove('show');
       await loadTemplates();
-      alert('تم إرسال القالب لمراجعة واتساب. راح تشوف حالته تتحدث تلقائياً هنا بمجرد ما ميتا يراجعه.');
+      alert(PT('تم إرسال القالب لمراجعة واتساب. راح تشوف حالته تتحدث تلقائياً هنا بمجرد ما ميتا يراجعه.'));
     } catch(e){
-      btn.disabled = false; btn.textContent = 'إرسال للمراجعة في واتساب';
-      errBox.textContent = 'حصل خطأ بالاتصال، حاول مرة ثانية.';
+      btn.disabled = false; btn.textContent = PT('إرسال للمراجعة في واتساب');
+      errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
     }
   });
@@ -2217,7 +2230,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(!myClient){ return; }
     const balance = myClient.extra_message_credits || 0;
-    document.getElementById('topupCurrentBalance').textContent = 'رصيدك الإضافي الحالي: ' + balance + ' رسالة.';
+    document.getElementById('topupCurrentBalance').textContent = (window.PORTAL_LANG === 'en')
+      ? ('Your current extra credit: ' + balance + ' message(s).')
+      : ('رصيدك الإضافي الحالي: ' + balance + ' رسالة.');
     const { data: pending } = await supabaseClient
       .from('message_credit_topup_requests')
       .select('credits, price_sar, status, requested_at')

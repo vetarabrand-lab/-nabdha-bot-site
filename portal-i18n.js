@@ -366,7 +366,192 @@ var portalDynamicStrings = {
   'ما فيه تذاكر دعم بعد. اضغط "فتح تذكرة جديدة" لإرسال استفسارك.': 'No support tickets yet. Click "Open New Ticket" to send your question.',
   'ما فيه حملات بعد. اضغط "+ حملة جديدة" لإرسال أول رسالة جماعية.': 'No campaigns yet. Click "+ New Campaign" to send your first broadcast.',
   'ما فيه قوالب بعد. اضغط "+ قالب جديد" لإنشاء أول قالب بمساعدة الذكاء الاصطناعي.': 'No templates yet. Click "+ New Template" to create your first AI-assisted template.',
-  'قريباً — ربط متاجر جديدة متوقف مؤقتاً': 'Coming soon — connecting new stores is temporarily paused'
+  'قريباً — ربط متاجر جديدة متوقف مؤقتاً': 'Coming soon — connecting new stores is temporarily paused',
+
+  /* Plan names & related */
+  'أساسي': 'Basic',
+  'نمو': 'Growth',
+  'احترافي': 'Professional',
+  'مؤسسات': 'Enterprise',
+  'الأساسية': 'Basic',
+  'لم تُحدد بعد': 'Not set yet',
+
+  /* Setup checklist */
+  'ربط رقم واتساب': 'Link WhatsApp number',
+  'تخصيص تعليمات البوت': 'Customize bot instructions',
+  'رسالة الترحيب': 'Welcome message',
+  'ربط متجرك (اختياري)': 'Connect your store (optional)',
+  'أول محادثة حقيقية': 'First real conversation',
+  'بوتك جاهز': 'Your bot is ready',
+
+  /* Subscription banners */
+  '🚫 اشتراكك غير فعّال حالياً. ': '🚫 Your subscription is currently inactive. ',
+  'ادفع الآن لتفعيل البوت': 'Pay now to activate the bot',
+  'جدّده الآن': 'Renew now',
+
+  /* Conversation category badges */
+  'استفسار عام': 'General inquiry',
+  'استفسار منتج': 'Product inquiry',
+  'متابعة طلب': 'Order tracking',
+  'شكوى': 'Complaint',
+  'استرجاع': 'Return/refund',
+  'نية شراء': 'Purchase intent',
+  'أخرى': 'Other',
+
+  /* Nav / permission labels (also used as staff permission chips) */
+  'التحليلات': 'Analytics',
+  'قوالب الرسائل': 'Message Templates',
+  'الإضافات': 'Add-ons',
+  'قنوات الربط': 'Connection Channels',
+  'إعدادات البوت': 'Bot Settings',
+  'المحادثات': 'Conversations',
+  'الطلبات': 'Orders',
+  'الدعم الفني': 'Support',
+  'الرسائل الجماعية': 'Broadcasts',
+
+  /* Page head subtitles */
+  "كل محادثات عملائك من واتساب وتيليجرام في مكان واحد.": "All your customers' conversations from WhatsApp and Telegram in one place.",
+  'طلبات متجرك المربوط في جدول موحّد ومحدّث.': "Your connected store's orders in one unified, up-to-date table.",
+  'تذاكر الدعم والتواصل المباشر مع فريق نبضة.': 'Support tickets and direct contact with the Nabdh team.',
+  'أداء البوت وأثره على مبيعاتك وخدمة عملائك.': "Your bot's performance and its impact on your sales and customer service.",
+  'أرسل حملات واتساب بقوالب معتمدة لقاعدة عملائك.': 'Send WhatsApp campaigns with approved templates to your customer base.',
+  'أنشئ قوالب واتساب معتمدة بالذكاء الاصطناعي.': 'Create WhatsApp-approved templates with AI assistance.',
+  'اربط متجرك وقنوات التواصل ببوت نبضة.': 'Connect your store and communication channels to the Nabdh bot.',
+  'قدرات إضافية تفعّلها برسوم لمرة واحدة.': 'Extra capabilities you activate with a one-time fee.',
+  'شخصية البوت وتعليماته وصلاحيات فريق العمل.': "The bot's persona, instructions, and team permissions.",
+
+  /* Quick bot-setup template chips */
+  'متجر عطور': 'Perfume Store',
+  'أزياء وملابس': 'Fashion & Clothing',
+  'مستحضرات تجميل': 'Cosmetics',
+  'إلكترونيات وجوالات': 'Electronics & Phones',
+  'مطاعم وكافيهات': 'Restaurants & Cafés',
+  'إكسسوارات ومجوهرات': 'Accessories & Jewelry',
+  'أثاث ومنزل': 'Furniture & Home',
+  'نشاط عام': 'General Business',
+
+  /* Team */
+  'صاحب الحساب': 'Account Owner',
+  'عضو فريق': 'Team Member',
+
+  /* Login / password recovery */
+  'جاري الدخول...': 'Logging in...',
+  'تسجيل الدخول': 'Log In',
+  'بيانات الدخول غير صحيحة.': 'Incorrect login credentials.',
+  'إرسال رابط الاستعادة': 'Send Reset Link',
+  'تعذّر إرسال الرابط، حاول مرة ثانية.': 'Could not send the link, please try again.',
+  '✓ تم إرسال رابط الاستعادة، افتح بريدك الإلكتروني.': '✓ Reset link sent, check your email.',
+  'جاري الحفظ...': 'Saving...',
+  'حفظ كلمة المرور': 'Save Password',
+  'تعذّر حفظ كلمة المرور، حاول مرة ثانية.': 'Could not save the password, please try again.',
+  'تعذّر العثور على حساب مرتبط بهذا الدخول. تواصل مع فريق نبضة.': 'No account found linked to this login. Contact the Nabdh team.',
+
+  /* Add-ons tab */
+  'ما فيه إضافات متاحة حالياً.': 'No add-ons available right now.',
+  'جاري الإرسال...': 'Sending...',
+  'ريال دفعة وحدة': 'SAR one-time',
+  'تعذّر إرسال طلبك، حاول مرة ثانية.': 'Could not send your request, please try again.',
+
+  /* PWA install hint */
+  'اضغط زر المشاركة 🔗 بالأسفل، ثم اختر "إضافة إلى الشاشة الرئيسية"': 'Tap the Share 🔗 button below, then choose "Add to Home Screen"',
+
+  /* Orders tab */
+  'تعذّر تحميل الطلبات، حاول مرة ثانية.': 'Could not load the orders, please try again.',
+  'تواصل مع الدعم للتفعيل': 'Contact support to enable',
+  'تواصل مع الدعم': 'Contact support',
+
+  /* Store / channel connections (Zid, Salla, WooCommerce, Telegram, Shopify) */
+  'غير متصل بعد': 'Not connected yet',
+  'غير مربوط بعد': 'Not linked yet',
+  'لازم تفعّل رقم واتساب البوت أولاً': "You must activate the bot's WhatsApp number first",
+  'مربوط': 'Linked',
+  'جاري إتمام المزامنة...': 'Finishing sync...',
+  'إعادة الربط': 'Reconnect',
+  'تم فصل الربط': 'Disconnected',
+  'ابدأ الربط': 'Start Connecting',
+  'عبّي نطاق المتجر والتوكن كاملة.': 'Please fill in the store domain and token completely.',
+  'ربط مع شوبيفاي': 'Connect with Shopify',
+  'تعذّر الربط، تأكد من صحة البيانات.': 'Could not connect, please check your details.',
+  'حصل خطأ بالاتصال، حاول مرة ثانية.': 'A connection error occurred, please try again.',
+  'عبّي رابط المتجر ومفتاحي الـ API كاملة.': 'Please fill in the store URL and both API keys completely.',
+  'ربط مع ووكومرس': 'Connect with WooCommerce',
+  'جاري الربط...': 'Connecting...',
+  'جاري التحضير...': 'Preparing...',
+  'ربط مع زد': 'Connect with Zid',
+  'تعذّر بدء الربط مع زد، حاول مرة ثانية.': 'Could not start connecting with Zid, please try again.',
+  'ربط مع سلة': 'Connect with Salla',
+  'تعذّر بدء الربط مع سلة، حاول مرة ثانية.': 'Could not start connecting with Salla, please try again.',
+  'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة، بدون اشتراك شهري إضافي).': 'The Telegram channel add-on isn\'t enabled on your account yet. Enable it from the "Add-ons" tab (399 SAR one-time, no extra monthly subscription).',
+  'الرجاء لصق توكن البوت.': 'Please paste the bot token.',
+  'تعذّر الربط، تأكد من صحة التوكن.': 'Could not connect, please check the token.',
+  'ما فيه موظفين مضافين بعد.': 'No staff added yet.',
+
+  /* Inbox */
+  'ما فيه محادثات معيّنة لك حالياً.': 'No conversations currently assigned to you.',
+  'ما فيه محادثات بعد. أول ما يراسل عميل بوتك، تظهر المحادثة هنا.': 'No conversations yet. As soon as a customer messages your bot, the conversation will appear here.',
+  '🔴 الرد يدوي الآن': '🔴 Manual reply mode is on',
+  'إرجاع الرد للبوت تلقائياً': 'Return replies to the bot automatically',
+  '🤖 البوت يرد تلقائياً': '🤖 The bot is replying automatically',
+  'تولّي الرد يدوياً': 'Take over replying manually',
+  'غير معيّن': 'Unassigned',
+  'تعذّر إرسال الرسالة.': 'Could not send the message.',
+  '✓ تم الإرسال': '✓ Sent',
+
+  /* Staff invite */
+  'الرجاء تعبئة الاسم والبريد الإلكتروني.': 'Please fill in your name and email.',
+  'إرسال الدعوة': 'Send Invite',
+  'تعذّر إرسال الدعوة.': 'Could not send the invite.',
+
+  /* Analytics / ROI */
+  'بيانات زمن الرد بتظهر تدريجياً مع الرسائل الجديدة.': 'Response time data will appear gradually as new messages come in.',
+  'لا توجد بيانات كافية بعد.': 'Not enough data yet.',
+  'لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.': 'No store connected yet, or no orders recorded.',
+  'لا توجد سلات مستردة بعد': 'No recovered carts yet',
+
+  /* Support chat (AI reply) */
+  'إرسال': 'Send',
+  'تعذّر توليد الرد، حاول مرة ثانية.': 'Could not generate the reply, please try again.',
+
+  /* Support tickets */
+  'تعذّر تحميل التذاكر، حدّث الصفحة.': 'Could not load the tickets, please refresh the page.',
+  'ملاحظة: الرد سيعيد فتح هذي التذكرة تلقائياً.': 'Note: replying will automatically reopen this ticket.',
+  'جاري التحميل...': 'Loading...',
+  'تعذّر إرسال الرد، حاول مرة ثانية.': 'Could not send the reply, please try again.',
+  'الرجاء تعبئة الموضوع وتفاصيل المشكلة.': 'Please fill in the subject and issue details.',
+  'تعذّر إنشاء التذكرة، حاول مرة ثانية.': 'Could not create the ticket, please try again.',
+
+  /* Campaigns */
+  'تعذّر تحميل الحملات، حدّث الصفحة.': 'Could not load the campaigns, please refresh the page.',
+  'الرجاء كتابة اسم القالب المعتمد.': 'Please enter the approved template name.',
+  'الرجاء كتابة رقم واحد على الأقل.': 'Please enter at least one number.',
+  'إرسال الحملة': 'Send Campaign',
+  'تعذّر إرسال الحملة.': 'Could not send the campaign.',
+
+  /* Templates */
+  'تعذّر تحميل القوالب، حدّث الصفحة.': 'Could not load the templates, please refresh the page.',
+  'توليد بالذكاء الاصطناعي': 'Generate with AI',
+  'الرجاء كتابة وصف للرسالة اللي تبيها.': 'Please describe the message you want.',
+  'جاري التوليد...': 'Generating...',
+  'تعذّر توليد القالب، حاول صياغة الطلب بشكل مختلف.': 'Could not generate the template, try phrasing the request differently.',
+  'الرجاء تعبئة اسم القالب ونص الرسالة.': 'Please fill in the template name and message text.',
+  'الرسالة فيها {{1}} — لازم تكتب مثال على القيمة اللي بتحل محله (مطلوب من واتساب للمراجعة).': 'The message contains {{1}} — you need to provide an example value for it (required by WhatsApp for review).',
+  'إرسال للمراجعة في واتساب': 'Submit for WhatsApp Review',
+  'تعذّر إرسال القالب لواتساب.': 'Could not submit the template to WhatsApp.',
+
+  /* Store OAuth redirect + misc alerts */
+  '✅ تم ربط متجر زد بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.': '✅ Zid store connected successfully! The bot can now automatically answer questions about order status and inventory.',
+  '✅ تم ربط متجر سلة بنجاح! البوت الآن يقدر يجاوب تلقائياً عن حالة الطلبات والمخزون.': '✅ Salla store connected successfully! The bot can now automatically answer questions about order status and inventory.',
+  'تعذّر إتمام عملية الدفع، حاول مرة ثانية أو تواصل مع الدعم.': 'Could not complete the payment, please try again or contact support.',
+  'تعذّر إتمام الربط، حاول مرة أخرى.': 'Could not complete the connection, please try again.',
+  'تم الربط بنجاح.': 'Connected successfully.',
+  'هذي الميزة قيد الإعداد من فريق نبضة حالياً، ترجع تقدر تستخدمها قريباً.': "This feature is currently being set up by the Nabdh team — you'll be able to use it again soon.",
+  'تعذّر حفظ الصلاحية، حاول مرة ثانية.': 'Could not save the permission, please try again.',
+  'تعذّر تحديث التعيين، حاول مرة ثانية.': 'Could not update the assignment, please try again.',
+  'تعذّر تحديث حالة المحادثة، حاول مرة ثانية.': 'Could not update the conversation status, please try again.',
+  'تم إرسال دعوة للموظف عبر البريد الإلكتروني.': 'An invite was sent to the staff member by email.',
+  'تم إرسال القالب لمراجعة واتساب. راح تشوف حالته تتحدث تلقائياً هنا بمجرد ما ميتا يراجعه.': "The template was submitted for WhatsApp review. You'll see its status update here automatically once Meta reviews it.",
+  'بيستبدل هذا القالب تعليمات البوت الحالية بالكامل. متأكد تبي تكمل؟': "This template will completely replace the bot's current instructions. Are you sure you want to continue?",
+  'تأكيد إزالة هذا الموظف من الفريق؟': 'Confirm removing this staff member from the team?'
 };
 
 function PT(text){
