@@ -350,7 +350,7 @@
     <div class="alert-box ok" id="forgotSuccess"></div>
     <form id="forgotForm">
       <div class="field">
-        <label>البريد الإلكتروني</label>
+        <label data-i18n="login.email">البريد الإلكتروني</label>
         <input type="email" id="forgotEmail" required autocomplete="username">
       </div>
       <button type="submit" class="primary-btn" id="forgotBtn" data-i18n="forgot.submit">إرسال رابط الاستعادة</button>
@@ -491,7 +491,7 @@
         <div class="analytics-card">
           <h3 data-i18n="analytics.convoBreakdown">تصنيف المحادثات</h3>
           <div class="qa-list" id="analyticsCategoryBreakdown">
-            <div class="conv-empty">لا توجد بيانات كافية بعد.</div>
+            <div class="conv-empty" data-i18n="common.notEnoughData">لا توجد بيانات كافية بعد.</div>
           </div>
         </div>
         <div class="analytics-card">
@@ -551,7 +551,7 @@
           <div id="ticketComposerWrap" style="display:none;">
             <div class="composer">
               <textarea id="ticketReplyText" placeholder="اكتب ردك هنا..." data-i18n-placeholder="common.replyPlaceholder"></textarea>
-              <button class="send-btn" id="ticketSendBtn">إرسال</button>
+              <button class="send-btn" id="ticketSendBtn" data-i18n="common.send">إرسال</button>
             </div>
             <div class="send-hint" id="ticketSendHint"></div>
           </div>
@@ -564,7 +564,7 @@
         <div class="field" style="margin-bottom:16px;">
           <label><span data-i18n="channels.zid.title">ربط متجر زد (Zid)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></label>
         </div>
-        <div id="zidStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="zidStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <button class="primary-btn" id="connectZidBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.zid.connectBtn">ربط مع زد</button>
         <div class="helper-text" id="zidHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="channels.zid.desc">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div>
@@ -573,16 +573,16 @@
         <div class="field" style="margin-bottom:16px;">
           <label><span data-i18n="channels.salla.title">ربط متجر سلة (Salla)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></label>
         </div>
-        <div id="sallaStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="sallaStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.salla.connectBtn">ربط مع سلة</button>
-        <div class="helper-text" id="sallaHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="sallaHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="channels.storesIntro">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
       </div>
       <div class="settings-card" id="wooCard">
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="channels.woo.title">ربط متجر ووكومرس (ووردبريس)</label>
         </div>
-        <div id="wooStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="wooStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <div class="store-connect-form" id="wooConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
             <label data-i18n="channels.woo.urlLabel">رابط المتجر</label>
@@ -599,14 +599,14 @@
           <div class="alert-box error" id="wooConnectError" style="display:none;"></div>
           <button class="primary-btn" id="connectWooBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.woo.connectBtn">ربط مع ووكومرس</button>
         </div>
-        <div class="helper-text" id="wooHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="wooHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="channels.woo.desc">تسوي المفاتيح من لوحة ووردبريس: WooCommerce ← Settings ← Advanced ← REST API ← Add key، وتختار صلاحية "Read/Write". انسخ المفتاحين وألصقهم هنا.</div>
       </div>
       <div class="settings-card" id="shopifyCard">
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="channels.shopify.title">ربط متجر شوبيفاي (Shopify)</label>
         </div>
-        <div id="shopifyStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="shopifyStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <div class="store-connect-form" id="shopifyConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
             <label data-i18n="channels.shopify.domainLabel">نطاق المتجر</label>
@@ -619,24 +619,24 @@
           <div class="alert-box error" id="shopifyConnectError" style="display:none;"></div>
           <button class="primary-btn" id="connectShopifyBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.shopify.connectBtn">ربط مع شوبيفاي</button>
         </div>
-        <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="channels.shopify.desc">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
       </div>
       <div class="settings-card" id="waAppCard">
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="channels.wa.title">ربط تطبيق واتساب الأعمال (مجاني)</label>
         </div>
-        <div id="waAppStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="waAppStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 30px; display:none;" data-i18n="channels.wa.startBtn">ابدأ الربط</button>
         <div class="helper-text" id="waAppHelperNonOwner" style="display:none;" data-i18n="channels.wa.ownerOnly">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;" data-i18n="channels.wa.disconnected">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
-        <div class="helper-text" style="margin-top:10px;">تقدر تستخدم تطبيق واتساب الأعمال (على جوالك) بجانب بوت نبضة على نفس رقمك — البوت يستمر يرد تلقائياً على عملائك، وتقدر تفتح التطبيق على جوالك وترد بنفسك شخصياً في أي وقت تحب. بعد الضغط على "ابدأ الربط" أكمل خطوات التأكيد من تطبيق واتساب الأعمال على جوالك، وافتح التطبيق مرة كل أسبوعين على الأقل حتى يبقى الربط شغّال.</div>
+        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.wa.coexistenceInfo">تقدر تستخدم تطبيق واتساب الأعمال (على جوالك) بجانب بوت نبضة على نفس رقمك — البوت يستمر يرد تلقائياً على عملائك، وتقدر تفتح التطبيق على جوالك وترد بنفسك شخصياً في أي وقت تحب. بعد الضغط على "ابدأ الربط" أكمل خطوات التأكيد من تطبيق واتساب الأعمال على جوالك، وافتح التطبيق مرة كل أسبوعين على الأقل حتى يبقى الربط شغّال.</div>
       </div>
       <div class="settings-card" id="telegramCard">
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="channels.telegram.title">ربط بوت تليجرام (Telegram)</label>
         </div>
-        <div id="telegramStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="telegramStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <div class="store-connect-form" id="telegramConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
             <label data-i18n="channels.telegram.tokenLabel">توكن البوت (Bot Token)</label>
@@ -688,7 +688,7 @@
           <div class="chat-body" id="simChatBody"></div>
           <div class="composer">
             <textarea id="simText" placeholder="اكتب رسالة تجريبية من عميل..." data-i18n-placeholder="sim.placeholder"></textarea>
-            <button class="send-btn" id="simSendBtn">إرسال</button>
+            <button class="send-btn" id="simSendBtn" data-i18n="common.send">إرسال</button>
           </div>
         </div>
         <div class="save-status" id="simStatus" style="color:var(--danger);"></div>
@@ -698,7 +698,7 @@
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="staff.title">فريق العمل</label>
         </div>
-        <div id="staffList"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="staffList"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <button class="add-staff-btn" id="addStaffBtn" style="display:none;" data-i18n="staff.addBtn">+ إضافة موظف</button>
         <div class="helper-text" id="teamHelperNonOwner" style="display:none;" data-i18n="staff.ownerOnly">إدارة الفريق (إضافة/إزالة موظفين) متاحة فقط لصاحب الحساب.</div>
       </div>
@@ -706,7 +706,7 @@
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="billing.subTitle">اشتراكك</label>
         </div>
-        <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
+        <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;" data-i18n="common.loading">جاري التحميل...</div>
         <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;" data-i18n="common.contactUs">📞 تواصل معنا</button>
         <div class="helper-text" id="planHelperNonOwner" style="display:none;" data-i18n="billing.renewOwnerOnly">تجديد الاشتراك متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="billing.renewNoOnlinePay">الدفع الإلكتروني غير متاح مؤقتاً. تواصل مع فريق الدعم لتجديد اشتراكك يدوياً.</div>
@@ -715,7 +715,7 @@
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="billing.topupTitle">رصيد رسائل إضافي</label>
         </div>
-        <div id="topupCurrentBalance" class="helper-text" style="margin-bottom:14px;">جاري التحميل...</div>
+        <div id="topupCurrentBalance" class="helper-text" style="margin-bottom:14px;" data-i18n="common.loading">جاري التحميل...</div>
         <div id="topupPendingNotice"></div>
         <div id="topupPackages"></div>
         <div class="helper-text" id="topupHelperNonOwner" style="display:none; margin-top:10px;" data-i18n="billing.topupOwnerOnly">شراء رصيد إضافي متاح فقط لصاحب الحساب.</div>
@@ -739,7 +739,7 @@
     </div>
     <div class="modal-actions">
       <button class="modal-cancel" id="newTicketCancelBtn" data-i18n="common.cancel">إلغاء</button>
-      <button class="modal-confirm" id="newTicketConfirmBtn">إرسال</button>
+      <button class="modal-confirm" id="newTicketConfirmBtn" data-i18n="common.send">إرسال</button>
     </div>
   </div>
 </div>
@@ -769,11 +769,11 @@
         <label><input type="radio" name="bcRecipients" value="all" checked> <span data-i18n="modal.campaign.recipientsAll">كل العملاء اللي راسلوا بوتك من قبل</span></label>
         <label><input type="radio" name="bcRecipients" value="custom"> <span data-i18n="modal.campaign.recipientsSpecific">أرقام محددة</span></label>
       </div>
-      <textarea id="bcCustomNumbers" style="display:none; min-height:90px;" placeholder="رقم واتساب بكل سطر، مثال:&#10;966501234567&#10;966559876543"></textarea>
+      <textarea id="bcCustomNumbers" style="display:none; min-height:90px;" placeholder="رقم واتساب بكل سطر، مثال:&#10;966501234567&#10;966559876543" data-i18n-placeholder="modal.campaign.customNumbersPlaceholder"></textarea>
       <div class="helper-text" data-i18n="modal.campaign.maxNumbers">الحد الأقصى 100 رقم بكل حملة حالياً.</div>
     </div>
     <div class="modal-actions">
-      <button class="modal-cancel" id="newBroadcastCancelBtn">إلغاء</button>
+      <button class="modal-cancel" id="newBroadcastCancelBtn" data-i18n="common.cancel">إلغاء</button>
       <button class="modal-confirm" id="newBroadcastConfirmBtn" data-i18n="modal.campaign.sendBtn">إرسال الحملة</button>
     </div>
   </div>
@@ -790,7 +790,7 @@
         <div class="helper-text" data-i18n="modal.template.ideaDesc">اكتبها بالعامية كأنك تشرح لموظف، والذكاء الاصطناعي بيصيغها بصيغة قالب واتساب رسمية.</div>
       </div>
       <div class="modal-actions">
-        <button class="modal-cancel" id="newTemplateCancelBtn">إلغاء</button>
+        <button class="modal-cancel" id="newTemplateCancelBtn" data-i18n="common.cancel">إلغاء</button>
         <button class="modal-confirm" id="tplGenerateBtn" data-i18n="modal.template.generateBtn">توليد بالذكاء الاصطناعي</button>
       </div>
     </div>
@@ -832,7 +832,7 @@
       <input type="text" id="staffFullName" placeholder="مثال: سارة أحمد" data-i18n-placeholder="modal.staff.namePlaceholder">
     </div>
     <div class="field">
-      <label>البريد الإلكتروني</label>
+      <label data-i18n="login.email">البريد الإلكتروني</label>
       <input type="email" id="staffEmail" placeholder="employee@example.com">
       <div class="helper-text" data-i18n="modal.staff.emailDesc">بيوصله بريد دعوة يقدر منه يعيّن كلمة مرور ويدخل على نفس بوابة نشاطك.</div>
     </div>
@@ -848,7 +848,7 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button class="modal-cancel" id="newStaffCancelBtn">إلغاء</button>
+      <button class="modal-cancel" id="newStaffCancelBtn" data-i18n="common.cancel">إلغاء</button>
       <button class="modal-confirm" id="newStaffConfirmBtn" data-i18n="modal.staff.sendBtn">إرسال الدعوة</button>
     </div>
   </div>
@@ -1004,6 +1004,9 @@
       font-size:11.5px; font-weight:800; color:var(--muted);
       letter-spacing:.04em; padding:6px 13px 9px;
       border-bottom:1px solid var(--border); margin-bottom:5px;
+    }
+    html[dir="ltr"] .top-stats > .tabs::before{
+      content:'Sections';
     }
     /* لا نلمس خاصية display إطلاقاً — الكود يبدّلها لإخفاء
        "الرسائل الجماعية" عن غير المالك (inline-block / none)،

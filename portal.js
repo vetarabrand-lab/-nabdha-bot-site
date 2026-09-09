@@ -381,8 +381,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       }
 
       card.innerHTML =
-        '<h3>' + escapeHtml(a.name_ar) + '</h3>' +
-        '<div class="addon-desc">' + escapeHtml(a.description_ar || '') + '</div>' +
+        '<h3>' + escapeHtml(PT(a.name_ar)) + '</h3>' +
+        '<div class="addon-desc">' + escapeHtml(PT(a.description_ar || '')) + '</div>' +
         '<div class="addon-foot">' +
           '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة') + '</span></div>' +
           (statusHtml || actionHtml) +
@@ -633,7 +633,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
   }
   function formatDateAr(iso){
-    return new Date(iso).toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+    return new Date(iso).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   /* ---------- الدفع الإلكتروني عبر Network International (N-Genius) ----------
@@ -787,7 +787,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           + '<td style="padding:10px 8px;">' + escapeHtml(o.customer_name || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.status || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.total || '—') + '</td>'
-          + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString('ar-SA') : '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA')) : '—') + '</td>'
           + '</tr>';
       });
       tableHtml += '</tbody></table></div>';
@@ -819,7 +819,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .maybeSingle();
     if(data){
-      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge zid-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -869,7 +869,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .maybeSingle();
     if(data){
-      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge salla-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -918,7 +918,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .maybeSingle();
     const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
     if(data){
-      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge woo-connected">' + PT('✅ متصل') + (data.store_url ? ' — ' + escapeHtml(data.store_url) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -1167,10 +1167,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .maybeSingle();
     const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
     if(data){
-      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
-        '<span class="status-badge shopify-connected">✅ متصل' + (data.shop_domain ? ' — ' + escapeHtml(data.shop_domain) : '') + '</span>' +
-        (dateStr ? '<div class="helper-text" style="margin-top:8px;">تم الربط بتاريخ ' + dateStr + '</div>' : '');
+        '<span class="status-badge shopify-connected">' + PT('✅ متصل') + (data.shop_domain ? ' — ' + escapeHtml(data.shop_domain) : '') + '</span>' +
+        (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
       form.style.display = 'none';
     } else if(addonLocked){
       statusBox.innerHTML = '<span class="status-badge shopify-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>' + (isOwner ? storeAddonLockedHtml('shopify') : '');
@@ -1244,7 +1244,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       }
       div.innerHTML =
         '<div class="staff-item-row"><div><div class="sname">' + escapeHtml(s.full_name) + '</div><div class="semail">' + escapeHtml(s.email) + '</div></div>' +
-        (isOwner ? '<button class="staff-remove-btn" data-id="' + s.id + '">إزالة</button>' : '') + '</div>' +
+        (isOwner ? '<button class="staff-remove-btn" data-id="' + s.id + '">' + PT('إزالة') + '</button>' : '') + '</div>' +
         permsHtml;
       list.appendChild(div);
     });
@@ -1369,7 +1369,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     conv.messages.forEach(function(m){
       const b = document.createElement('div');
       b.className = 'bubble ' + m.dir;
-      const time = new Date(m.at).toLocaleTimeString('ar-SA', { hour:'2-digit', minute:'2-digit' });
+      const time = new Date(m.at).toLocaleTimeString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { hour:'2-digit', minute:'2-digit' });
       b.innerHTML = escapeHtml(m.text) + '<span class="t">' + time + '</span>';
       body.appendChild(b);
     });
@@ -1594,7 +1594,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const heightPct = Math.max(4, Math.round((counts[i] / maxCount) * 100));
       const col = document.createElement('div');
       col.className = 'bar-col';
-      const label = d.toLocaleDateString('ar-SA', { weekday: 'short' });
+      const label = d.toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { weekday: 'short' });
       col.innerHTML =
         '<span class="bcount">' + counts[i] + '</span>' +
         '<div class="bar" style="height:' + heightPct + '%;"></div>' +
@@ -1657,10 +1657,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const recoveryRate = cartsDetected > 0 ? Math.round((cartsRecovered / cartsDetected) * 100) : 0;
     wrap.innerHTML =
       '<div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">' +
-        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + ordersConfirmed + '</div><div class="helper-text">طلبات تم تأكيدها تلقائياً</div></div>' +
-        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + cartsDetected + '</div><div class="helper-text">سلة متروكة تم رصدها</div></div>' +
-        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + cartsRecovered + '</div><div class="helper-text">سلة تم استردادها</div></div>' +
-        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + recoveryRate + '%</div><div class="helper-text">نسبة استرداد السلال</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + ordersConfirmed + '</div><div class="helper-text">' + PT('طلبات تم تأكيدها تلقائياً') + '</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-teal-dark);">' + cartsDetected + '</div><div class="helper-text">' + PT('سلة متروكة تم رصدها') + '</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + cartsRecovered + '</div><div class="helper-text">' + PT('سلة تم استردادها') + '</div></div>' +
+        '<div><div class="n" style="font-size:22px;font-weight:900;color:var(--wa-green-dark);">' + recoveryRate + '%</div><div class="helper-text">' + PT('نسبة استرداد السلال') + '</div></div>' +
       '</div>';
   }
   /* ---------- ROI dashboard (قيمة البوت) ---------- */
@@ -1728,7 +1728,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
   /* ---------- محاكي شخصية البوت (bot personality simulator) ---------- */
   function simBubbleHtml(text, dir){
-    const time = new Date().toLocaleTimeString('ar-SA', { hour:'2-digit', minute:'2-digit' });
+    const time = new Date().toLocaleTimeString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { hour:'2-digit', minute:'2-digit' });
     return '<div class="bubble ' + dir + '">' + escapeHtml(text) + '<span class="t">' + time + '</span></div>';
   }
   function resetSimChat(){
@@ -1736,7 +1736,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const body = document.getElementById('simChatBody');
     if(!body){ return; }
     const welcomeField = document.getElementById('settingWelcome');
-    const welcome = (welcomeField && welcomeField.value ? welcomeField.value.trim() : '') || 'أهلاً بك! كيف أقدر أساعدك؟';
+    const welcome = (welcomeField && welcomeField.value ? welcomeField.value.trim() : '') || ((window.PORTAL_LANG === 'en') ? 'Welcome! How can I help you?' : 'أهلاً بك! كيف أقدر أساعدك؟');
     body.innerHTML = simBubbleHtml(welcome, 'in');
     const statusEl = document.getElementById('simStatus');
     if(statusEl){ statusEl.textContent = ''; }
@@ -1758,7 +1758,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const btn = document.getElementById('simSendBtn');
     btn.disabled = true; btn.textContent = '...';
     const typingId = 'simTyping_' + Date.now();
-    body.insertAdjacentHTML('beforeend', '<div class="bubble in" id="' + typingId + '" style="opacity:.6;">يكتب الآن...</div>');
+    body.insertAdjacentHTML('beforeend', '<div class="bubble in" id="' + typingId + '" style="opacity:.6;">' + PT('يكتب الآن...') + '</div>');
     body.scrollTop = body.scrollHeight;
     try{
       const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -1831,7 +1831,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     myTickets.forEach(function(t){
       const div = document.createElement('div');
       div.className = 'ticket-item' + (t.id === activeTicketId ? ' active' : '');
-      const dateStr = new Date(t.updated_at).toLocaleDateString('ar-SA', { month:'short', day:'numeric' });
+      const dateStr = new Date(t.updated_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric' });
       div.innerHTML =
         '<div class="tsubject">' + escapeHtml(t.subject) + '</div>' +
         '<div class="tmeta"><span class="status-badge ' + t.status + '">' + PT(ticketStatusLabels[t.status]) + '</span><span class="tdate">' + dateStr + '</span></div>';
@@ -1868,7 +1868,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     (msgs || []).forEach(function(m){
       const b = document.createElement('div');
       b.className = 'bubble ' + (m.sender_type === 'client' ? 'out' : 'in');
-      const time = new Date(m.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const time = new Date(m.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
       b.innerHTML = escapeHtml(m.message) + '<span class="t">' + time + '</span>';
       body.appendChild(b);
     });
@@ -1967,16 +1967,16 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
     list.innerHTML = '';
     myCampaigns.forEach(function(c){
-      const dateStr = new Date(c.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const dateStr = new Date(c.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
       const div = document.createElement('div');
       div.className = 'campaign-card';
       div.innerHTML =
         '<div class="ctop"><span class="cname">' + escapeHtml(c.template_name) + '</span><span class="status-badge ' + c.status + '">' + PT(campaignStatusLabels[c.status]) + '</span></div>' +
         '<div class="cmeta">' +
           '<span>📅 ' + dateStr + '</span>' +
-          '<span>👥 <b>' + c.total_recipients + '</b> مستلم</span>' +
-          '<span>✅ <b>' + c.sent_count + '</b> تم الإرسال</span>' +
-          '<span>❌ <b>' + c.failed_count + '</b> فشل</span>' +
+          '<span>👥 <b>' + c.total_recipients + '</b> ' + PT('مستلم') + '</span>' +
+          '<span>✅ <b>' + c.sent_count + '</b> ' + PT('تم الإرسال') + '</span>' +
+          '<span>❌ <b>' + c.failed_count + '</b> ' + PT('فشل') + '</span>' +
         '</div>';
       list.appendChild(div);
     });
@@ -2088,17 +2088,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
     list.innerHTML = '';
     myTemplates.forEach(function(t){
-      const dateStr = new Date(t.created_at).toLocaleString('ar-SA', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const dateStr = new Date(t.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
       const div = document.createElement('div');
       div.className = 'campaign-card';
       div.innerHTML =
         '<div class="ctop"><span class="cname">' + escapeHtml(t.name) + '</span><span class="status-badge ' + t.status + '">' + PT(templateStatusLabels[t.status]) + '</span></div>' +
         '<div class="cmeta">' +
-          '<span>🏷️ ' + (templateCategoryLabels[t.category] || t.category) + '</span>' +
+          '<span>🏷️ ' + PT(templateCategoryLabels[t.category] || t.category) + '</span>' +
           '<span>📅 ' + dateStr + '</span>' +
         '</div>' +
         '<div class="helper-text" style="margin-top:8px; white-space:pre-wrap;">' + escapeHtml(t.body_text) + '</div>' +
-        (t.status === 'rejected' && t.rejected_reason ? '<div class="helper-text" style="margin-top:6px; color:var(--danger);">سبب الرفض من واتساب: ' + escapeHtml(t.rejected_reason) + '</div>' : '');
+        (t.status === 'rejected' && t.rejected_reason ? '<div class="helper-text" style="margin-top:6px; color:var(--danger);">' + PT('سبب الرفض من واتساب') + ': ' + escapeHtml(t.rejected_reason) + '</div>' : '');
       list.appendChild(div);
     });
   }
@@ -2242,7 +2242,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const pendingBox = document.getElementById('topupPendingNotice');
     if(pending && pending.length > 0){
       pendingBox.innerHTML = pending.map(function(r){
-        return '<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + r.price_sar + ' ريال — بانتظار تأكيد الدفع.</div>';
+        return (window.PORTAL_LANG === 'en')
+          ? ('<div class="cost-note">⏳ Pending request: ' + r.credits + ' message(s) for ' + r.price_sar + ' SAR — awaiting payment confirmation.</div>')
+          : ('<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + r.price_sar + ' ريال — بانتظار تأكيد الدفع.</div>');
       }).join('');
     } else {
       pendingBox.innerHTML = '';
@@ -2265,9 +2267,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     packages.forEach(function(p){
       const row = document.createElement('div');
       row.className = 'topup-row';
-      row.innerHTML =
-        '<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
-        '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 تواصل معنا</button>';
+      row.innerHTML = (window.PORTAL_LANG === 'en')
+        ? ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' extra messages — <b>' + p.price_sar + ' SAR</b> (one-time)</span>' +
+           '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 Contact Us</button>')
+        : ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
+           '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 تواصل معنا</button>');
       box.appendChild(row);
     });
     document.querySelectorAll('.topup-request-btn').forEach(function(btn){
