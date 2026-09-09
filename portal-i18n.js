@@ -560,6 +560,16 @@ function PT(text){
 }
 window.PT = PT;
 
+// Set window.PORTAL_LANG synchronously and as early as possible (this file
+// is loaded BEFORE portal.js so that every PT(...) call portal.js makes --
+// including the ones fired from the very first getSession().then() on page
+// load, which can resolve before the rest of the HTML/scripts finish
+// parsing -- always finds window.PT and window.PORTAL_LANG already defined.
+// Never let this throw or block: a race here must never crash the login flow.
+var savedLang = 'ar';
+try{ savedLang = localStorage.getItem('nabda_lang') || 'ar'; }catch(e){}
+window.PORTAL_LANG = savedLang;
+
 (function(){
   function applyStaticLanguage(lang){
     var t = portalTranslations[lang];
@@ -587,17 +597,6 @@ window.PT = PT;
     if(langBtn){ langBtn.textContent = btnLabel; }
   }
 
-  // Set window.PORTAL_LANG synchronously, before portal.js's async data
-  // rendering runs, so every PT(...) call it makes returns the right language
-  // from the very first render (no flash of the wrong language).
-  var savedLang = 'ar';
-  try{ savedLang = localStorage.getItem('nabda_lang') || 'ar'; }catch(e){}
-  window.PORTAL_LANG = savedLang;
-
-  // Translate everything already in the DOM (this script runs at the end of
-  // <body>, so all static markup is already parsed and present).
-  applyStaticLanguage(savedLang);
-
   function toggleLanguage(){
     var root = document.getElementById('htmlRoot') || document.documentElement;
     var current = root.getAttribute('lang') || 'ar';
@@ -610,6 +609,19 @@ window.PT = PT;
     location.reload();
   }
 
-  var langBtn = document.getElementById('langBtn');
-  if(langBtn){ langBtn.addEventListener('click', toggleLanguage); }
+  // This script is now loaded early (before portal.js, before most of the
+  // page's markup exists), so the DOM-touching part must wait for the
+  // document to finish parsing -- DOMContentLoaded fires after every
+  // element (including [data-i18n] ones added later in the HTML) exists,
+  // regardless of how early this <script> tag itself sits.
+  function boot(){
+    applyStaticLanguage(savedLang);
+    var langBtn = document.getElementById('langBtn');
+    if(langBtn){ langBtn.addEventListener('click', toggleLanguage); }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
+  }
 })();
