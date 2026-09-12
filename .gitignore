@@ -12,3 +12,6 @@ supabase/.temp/
 # ملفات نظام التشغيل
 .DS_Store
 Thumbs.db
+
+# مخرجات جانبية من جلسات Claude (سكرين شوتات وملاحظات، ليست جزءاً من كود الموقع)
+Claude outputs/
