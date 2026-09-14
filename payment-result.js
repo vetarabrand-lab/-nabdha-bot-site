@@ -11,17 +11,14 @@
   }
 
   async function confirmPayment(){
-    // نحدد مزود الدفع من رابط الرجوع: N-Genius يرجّع provider=ngenius + mor (مرجعنا الخاص)،
-    // Tap (القديم) يرجّع tap_id أو id مباشرة.
+    // نحدد مزود الدفع من رابط الرجوع: N-Genius يرجّع provider=ngenius + mor (مرجعنا الخاص).
+    // (تمت إزالة مسار Tap القديم — الدفع الإلكتروني توقف عن استخدام Tap نهائياً.)
     const provider = qs('provider');
     const mor = qs('mor');
-    const tapId = qs('tap_id') || qs('id');
 
     let endpoint = null;
     if(provider === 'ngenius' && mor){
       endpoint = FUNCTIONS_BASE + '/ngenius-webhook?mor=' + encodeURIComponent(mor);
-    } else if(tapId){
-      endpoint = FUNCTIONS_BASE + '/tap-webhook?tap_id=' + encodeURIComponent(tapId);
     }
 
     if(!endpoint){

@@ -1099,7 +1099,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     renderWaAppStatus();
   }
   window.addEventListener('message', async function(event){
-    if(!event.origin || event.origin.indexOf('facebook.com') === -1) return;
+    if(!event.origin || (event.origin !== 'https://www.facebook.com' && event.origin !== 'https://web.facebook.com')) return;
     let data;
     try{ data = JSON.parse(event.data); } catch(e){ return; }
     if(!data || data.type !== 'WA_EMBEDDED_SIGNUP') return;
