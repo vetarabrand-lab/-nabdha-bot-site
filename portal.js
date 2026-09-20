@@ -856,7 +856,6 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   });
   /* ---------- ربط متجر سلة ---------- */
   async function loadSallaStatus(){
-    // ربط سلة الجديد متوقف مؤقتاً (قريباً) — لكن التجار المربوطين فعلاً قبل التوقف يستمر عرض اتصالهم الحقيقي.
     const statusBox = document.getElementById('sallaStatus');
     const btn = document.getElementById('connectSallaBtn');
     const nonOwnerHint = document.getElementById('sallaHelperNonOwner');
@@ -874,7 +873,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<span class="status-badge salla-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
     } else {
-      statusBox.innerHTML = '<span class="status-badge salla-disconnected">🔜 ' + PT('قريباً — ربط متاجر جديدة متوقف مؤقتاً') + '</span>';
+      statusBox.innerHTML = '<span class="status-badge salla-disconnected">' + PT('⛔ غير متصل') + '</span>';
+      if(isOwner){ btn.style.display = 'inline-block'; } else { nonOwnerHint.style.display = 'block'; }
     }
   }
   document.getElementById('connectSallaBtn').addEventListener('click', async function(){
