@@ -5,6 +5,33 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   // نلتقط كود الإحالة من الرابط (?ref=CODE) لو المستخدم جا عن طريق رابط أحد الشركاء
   const refCode = new URLSearchParams(window.location.search).get('ref');
 
+// لو التاجر جاي من تثبيت التطبيق مباشرة من متجر تطبيقات سلة، بيوصل هنا برابط فيه
+// salla_pending=<id> — نجيب اسم/إيميل متجره لتعبئتها تلقائياً (تبقى قابلة للتعديل)،
+// وعند الإرسال نمرّرها لدالة finalize-salla-signup عشان تربط توكنات سلة المحفوظة مؤقتاً
+// بالحساب الجديد بدل الإنشاء التلقائي الصامت.
+const sallaPendingId = new URLSearchParams(window.location.search).get('salla_pending');
+
+async function prefillFromSallaPending(){
+  if(!sallaPendingId) return;
+  try{
+    const res = await fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/salla-pending-lookup?id=' + encodeURIComponent(sallaPendingId));
+    const json = await res.json();
+    if(!res.ok || json.error) return; // رابط منتهي أو غير صالح — نسيب النموذج فاضي عادي، التاجر يعبيه يدوياً
+    const bannerHtml = '<div class="salla-pending-banner" style="background:#EAF7EF;border:1.5px solid #25D366;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:14px;font-weight:700;color:#075E54;">✅ ' +
+      (currentLang === 'ar' ? 'تم استرجاع بيانات متجرك من سلة — أكمل باقي بيانات التسجيل لإتمام الربط' : 'Your store details were pulled from Salla — complete the rest of the form to finish connecting') + '</div>';
+    const form = document.getElementById('signupForm');
+    form.insertAdjacentHTML('beforebegin', bannerHtml);
+    if(json.store_name){
+      document.getElementById('businessNameAr').value = json.store_name;
+    }
+    if(json.store_email){
+      document.getElementById('ownerEmail').value = json.store_email;
+    }
+  }catch(_e){ /* نتجاهل بهدوء — النموذج يبقى شغال عادي */ }
+}
+prefillFromSallaPending();
+
+
   var translations = {
     ar: {
       pageTitle: "سجّل نشاطك | بوت نبضة",
@@ -253,25 +280,61 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(affId){ affiliateId = affId; }
     }
 
-    const { error } = await supabaseClient.from('clients').insert({
-      business_name: businessName,
-      business_name_ar: businessNameAr,
-      owner_email: ownerEmail,
-      owner_phone: ownerPhone,
-      whatsapp_display_number: whatsappDisplayNumber,
-      system_prompt: systemPrompt,
-      welcome_message: welcomeMessage,
-      plan_id: planId,
-      subscription_status: 'trial',
-      affiliate_id: affiliateId
-    });
+    let signupFailed = false;
 
-    if(error){
+    if(sallaPendingId){
+      // تدفق سلة: نمرّر البيانات لدالة finalize-salla-signup عشان تربط توكنات سلة
+      // المحفوظة مؤقتاً بالحساب الجديد — ما نقدر نسوي هذا بإدراج مباشر من المتصفح
+      try{
+        const res = await fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/finalize-salla-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            salla_pending: sallaPendingId,
+            business_name: businessName,
+            business_name_ar: businessNameAr,
+            owner_email: ownerEmail,
+            owner_phone: ownerPhone,
+            whatsapp_display_number: whatsappDisplayNumber,
+            system_prompt: systemPrompt,
+            welcome_message: welcomeMessage,
+            plan_id: planId,
+            website_hp: document.getElementById('websiteHp').value
+          })
+        });
+        const json = await res.json();
+        if(!res.ok || json.error){
+          signupFailed = true;
+          errorAlert.textContent = json.error || t['form.errorSubmit'];
+        }
+      }catch(err){
+        signupFailed = true;
+        console.error(err);
+      }
+    } else {
+      const { error } = await supabaseClient.from('clients').insert({
+        business_name: businessName,
+        business_name_ar: businessNameAr,
+        owner_email: ownerEmail,
+        owner_phone: ownerPhone,
+        whatsapp_display_number: whatsappDisplayNumber,
+        system_prompt: systemPrompt,
+        welcome_message: welcomeMessage,
+        plan_id: planId,
+        subscription_status: 'trial',
+        affiliate_id: affiliateId
+      });
+      if(error){
+        signupFailed = true;
+        errorAlert.textContent = t['form.errorSubmit'];
+        console.error(error);
+      }
+    }
+
+    if(signupFailed){
       submitBtn.disabled = false;
       submitBtn.textContent = t['form.submit'];
-      errorAlert.textContent = t['form.errorSubmit'];
       errorAlert.style.display = 'block';
-      console.error(error);
       return;
     }
 
