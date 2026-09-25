@@ -541,6 +541,28 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('hidePhoneField').style.display = isOwner ? 'block' : 'none';
     hidePhoneToggle.disabled = !isOwner;
     document.getElementById('templatePickerField').style.display = isOwner ? 'block' : 'none';
+    // أرقام واتساب الرسمية المرتبطة بالحساب (قد يكون أكثر من رقم حسب الباقة) — عرض فقط
+    (async function loadWaNumbersList(){
+      const listEl = document.getElementById('waNumbersList');
+      const { data: numbers, error: waNumErr } = await supabaseClient
+        .from('client_whatsapp_numbers')
+        .select('whatsapp_display_number, phone_number_id, label, is_primary, status')
+        .eq('client_id', clientRow.id)
+        .eq('status', 'active')
+        .order('is_primary', { ascending: false });
+      if(waNumErr || !numbers || numbers.length === 0){
+        listEl.innerHTML = '<div class="biz-sub">' + PT('لا يوجد رقم مسجّل بعد.') + '</div>';
+        return;
+      }
+      listEl.innerHTML = numbers.map(function(n){
+        const display = escapeHtml(n.whatsapp_display_number || n.phone_number_id || '—');
+        const label = escapeHtml(n.label || (n.is_primary ? PT('الرقم الرئيسي') : ''));
+        return '<div style="display:flex; align-items:center; gap:8px; padding:9px 12px; border:1px solid var(--border); border-radius:10px; font-size:13.5px;">' +
+          '<span>📱 ' + display + '</span>' +
+          (label ? '<span class="biz-sub">— ' + label + '</span>' : '') +
+          '</div>';
+      }).join('');
+    })();
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
     // تبويبات اختيارية للموظفين — صاحب الحساب يشوفها دايماً، والموظف حسب الصلاحيات اللي منحها له صاحب الحساب

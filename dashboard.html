@@ -642,6 +642,31 @@
     </div>
   </div>
 </div>
+<!-- MODAL: إدارة أرقام واتساب الرسمية المتعددة لعميل (حسب حد باقته) -->
+<div class="modal-overlay" id="waNumbersModal">
+  <div class="modal-card wide">
+    <h3>أرقام واتساب — <span id="waNumbersModalBiz"></span></h3>
+    <p class="sub" id="waNumbersModalLimit">—</p>
+    <div class="modal-error" id="waNumbersModalError"></div>
+    <div id="waNumbersModalList" style="display:flex; flex-direction:column; gap:10px; margin-bottom:18px;"></div>
+    <div class="modal-field" style="border-top:1px solid var(--border); padding-top:14px;">
+      <label>إضافة رقم واتساب رسمي جديد</label>
+      <div class="row" style="margin-bottom:8px;">
+        <input type="text" id="waNumAddPhoneId" placeholder="Phone Number ID (من Meta)" dir="ltr" style="text-align:left;">
+      </div>
+      <div class="row" style="margin-bottom:8px;">
+        <input type="text" id="waNumAddDisplay" placeholder="الرقم المعروض (اختياري — يُجلب تلقائياً إن أمكن)" dir="ltr" style="text-align:left;">
+      </div>
+      <div class="row">
+        <input type="text" id="waNumAddLabel" placeholder="تسمية (مثال: فرع الرياض)">
+        <button type="button" class="gen-btn" id="waNumAddBtn">إضافة</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" id="waNumbersModalCloseBtn">إغلاق</button>
+    </div>
+  </div>
+</div>
 <!-- MODAL: create client login -->
 <div class="modal-overlay" id="linkModal">
   <div class="modal-card">

@@ -681,6 +681,11 @@
           <div class="helper-text" style="margin:0 0 10px;" data-i18n="settings.webhookUrlDesc">فعّل إضافة "تكامل الأتمتة" من تبويب الإضافات، والصق هنا رابط Catch Hook من Zapier — بيوصلك تلقائياً كل عميل مهتم، طلب جديد، وتقييم عميل، وتقدر توصّله بعدين لـ Google Sheets أو Slack أو أي أداة ثانية.</div>
           <input type="url" id="settingWebhookUrl" placeholder="https://hooks.zapier.com/hooks/catch/..." dir="ltr" style="text-align:left;">
         </div>
+        <div class="field" id="waNumbersField">
+          <label data-i18n="settings.waNumbersLabel">📞 أرقام واتساب الرسمية المرتبطة بحسابك</label>
+          <div class="helper-text" style="margin:0 0 10px;" data-i18n="settings.waNumbersDesc">هذي الأرقام الرسمية اللي مفعّلة على حسابك حالياً حسب باقتك. لإضافة رقم جديد تواصل مع فريق الدعم.</div>
+          <div id="waNumbersList" style="display:flex; flex-direction:column; gap:8px;"></div>
+        </div>
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;" data-i18n="common.saveChanges">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus" data-i18n="common.savedSuccess">✓ تم الحفظ بنجاح</div>
       </div>

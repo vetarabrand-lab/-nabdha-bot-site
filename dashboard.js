@@ -274,11 +274,21 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<td></td>' +
         '<td>' + dateStr + '</td>';
       const planTd = tr.children[2];
+      const waHealthTd = tr.children[3];
       const statusTd = tr.children[4];
       const daysTd = tr.children[5];
       const linkTd = tr.children[6];
       const couponTd = tr.children[7];
       const reportTd = tr.children[8];
+      // زر إدارة أرقام واتساب الرسمية المتعددة (حسب حد الباقة: نمو 2 / احترافي 5 / مؤسسات 12)
+      const waNumbersBtn = document.createElement('button');
+      waNumbersBtn.type = 'button';
+      waNumbersBtn.className = 'link-btn';
+      waNumbersBtn.style.marginTop = '4px';
+      waNumbersBtn.textContent = 'إدارة الأرقام';
+      waNumbersBtn.addEventListener('click', function(){ openWaNumbersModal(c); });
+      waHealthTd.appendChild(document.createElement('br'));
+      waHealthTd.appendChild(waNumbersBtn);
       const select = document.createElement('select');
       select.className = 'status-select';
       ['trial','active','expired','past_due','canceled'].forEach(function(s){
@@ -1148,6 +1158,131 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       wrap.appendChild(row);
     });
   }
+  /* ---------- إدارة أرقام واتساب الرسمية المتعددة لعميل ---------- */
+  let waNumbersModalClient = null;
+  const waNumbersModal = document.getElementById('waNumbersModal');
+  const waNumbersModalError = document.getElementById('waNumbersModalError');
+  function showWaNumbersError(msg){
+    waNumbersModalError.textContent = msg;
+    waNumbersModalError.style.display = 'block';
+  }
+  function openWaNumbersModal(client){
+    waNumbersModalClient = client;
+    document.getElementById('waNumbersModalBiz').textContent = client.business_name_ar || client.business_name || '';
+    document.getElementById('waNumbersModalLimit').textContent = 'جاري التحميل...';
+    waNumbersModalError.style.display = 'none';
+    document.getElementById('waNumbersModalList').innerHTML = '';
+    document.getElementById('waNumAddPhoneId').value = '';
+    document.getElementById('waNumAddDisplay').value = '';
+    document.getElementById('waNumAddLabel').value = '';
+    waNumbersModal.classList.add('show');
+    loadWaNumbersModal();
+  }
+  function closeWaNumbersModal(){
+    waNumbersModal.classList.remove('show');
+    waNumbersModalClient = null;
+  }
+  document.getElementById('waNumbersModalCloseBtn').addEventListener('click', closeWaNumbersModal);
+  waNumbersModal.addEventListener('click', function(e){ if(e.target === waNumbersModal){ closeWaNumbersModal(); } });
+
+  async function callWaNumbersFn(payload){
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    const token = sessionData.session.access_token;
+    const res = await fetch(FUNCTIONS_BASE + '/admin-manage-whatsapp-numbers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if(!res.ok){ throw new Error(json.error || 'حدث خطأ غير متوقع'); }
+    return json;
+  }
+
+  async function loadWaNumbersModal(){
+    if(!waNumbersModalClient){ return; }
+    try{
+      const result = await callWaNumbersFn({ action: 'list', client_id: waNumbersModalClient.id });
+      document.getElementById('waNumbersModalLimit').textContent =
+        'مستخدَم ' + result.used + ' من أصل ' + result.limit + ' رقم مسموح لهذه الباقة';
+      renderWaNumbersList(result.numbers || []);
+    } catch(e){
+      document.getElementById('waNumbersModalLimit').textContent = '—';
+      showWaNumbersError('تعذّر تحميل الأرقام: ' + e.message);
+    }
+  }
+
+  function renderWaNumbersList(numbers){
+    const wrap = document.getElementById('waNumbersModalList');
+    wrap.innerHTML = '';
+    if(numbers.length === 0){
+      wrap.innerHTML = '<div class="biz-sub">ما فيه أي رقم مضاف بعد.</div>';
+      return;
+    }
+    numbers.forEach(function(n){
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; border:1px solid var(--border); border-radius:12px;';
+      const info = document.createElement('div');
+      const statusBadge = n.status === 'active' ? '🟢' : '⚪';
+      info.innerHTML =
+        '<div style="font-weight:800; font-size:13.5px;">' + statusBadge + ' ' + escapeHtml(n.whatsapp_display_number || n.phone_number_id) +
+          (n.is_primary ? ' <span class="badge active" style="margin-right:6px;">أساسي</span>' : '') + '</div>' +
+        '<div class="biz-sub">' + escapeHtml(n.label || '') + ' — ' + escapeHtml(n.phone_number_id) + '</div>';
+      row.appendChild(info);
+      if(!n.is_primary && n.status === 'active'){
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'link-btn';
+        removeBtn.textContent = 'تعطيل';
+        removeBtn.addEventListener('click', async function(){
+          if(!confirm('تعطيل هذا الرقم؟ العميل ما راح يقدر يستقبل رسائل عليه بعدها.')) return;
+          removeBtn.disabled = true;
+          waNumbersModalError.style.display = 'none';
+          try{
+            await callWaNumbersFn({ action: 'remove', client_id: waNumbersModalClient.id, number_id: n.id });
+            await loadWaNumbersModal();
+          } catch(e){
+            showWaNumbersError('تعذّر تعطيل الرقم: ' + e.message);
+            removeBtn.disabled = false;
+          }
+        });
+        row.appendChild(removeBtn);
+      }
+      wrap.appendChild(row);
+    });
+  }
+
+  document.getElementById('waNumAddBtn').addEventListener('click', async function(){
+    if(!waNumbersModalClient){ return; }
+    const btn = this;
+    const phoneNumberId = document.getElementById('waNumAddPhoneId').value.trim();
+    const displayNumber = document.getElementById('waNumAddDisplay').value.trim();
+    const label = document.getElementById('waNumAddLabel').value.trim();
+    waNumbersModalError.style.display = 'none';
+    if(!phoneNumberId){
+      showWaNumbersError('لازم تدخل Phone Number ID من إعدادات واتساب الرسمي (Meta) لهذا الرقم.');
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = '...';
+    try{
+      await callWaNumbersFn({
+        action: 'add',
+        client_id: waNumbersModalClient.id,
+        phone_number_id: phoneNumberId,
+        whatsapp_display_number: displayNumber || undefined,
+        label: label || undefined
+      });
+      document.getElementById('waNumAddPhoneId').value = '';
+      document.getElementById('waNumAddDisplay').value = '';
+      document.getElementById('waNumAddLabel').value = '';
+      await loadWaNumbersModal();
+    } catch(e){
+      showWaNumbersError('تعذّر إضافة الرقم: ' + e.message);
+    }
+    btn.disabled = false;
+    btn.textContent = 'إضافة';
+  });
+
   /* ---------- link account modal ---------- */
   const linkModal = document.getElementById('linkModal');
   const modalBizName = document.getElementById('modalBizName');
