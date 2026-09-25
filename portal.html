@@ -676,6 +676,11 @@
           <input type="tel" id="settingOwnerPhone" placeholder="مثال: 0555555555 أو 966555555555" data-i18n-placeholder="settings.ownerPhonePlaceholder" dir="ltr" style="text-align:left;">
           <div class="helper-text" id="ownerPhoneError" style="display:none; color:var(--danger);" data-i18n="settings.ownerPhoneError">الرقم غير صحيح — لازم يكون رقم جوال سعودي (يبدأ بـ 05 أو 966 أو +966).</div>
         </div>
+        <div class="field">
+          <label data-i18n="settings.webhookUrlLabel">🔌 رابط Webhook (Zapier / Google Sheets)</label>
+          <div class="helper-text" style="margin:0 0 10px;" data-i18n="settings.webhookUrlDesc">فعّل إضافة "تكامل الأتمتة" من تبويب الإضافات، والصق هنا رابط Catch Hook من Zapier — بيوصلك تلقائياً كل عميل مهتم، طلب جديد، وتقييم عميل، وتقدر توصّله بعدين لـ Google Sheets أو Slack أو أي أداة ثانية.</div>
+          <input type="url" id="settingWebhookUrl" placeholder="https://hooks.zapier.com/hooks/catch/..." dir="ltr" style="text-align:left;">
+        </div>
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;" data-i18n="common.saveChanges">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus" data-i18n="common.savedSuccess">✓ تم الحفظ بنجاح</div>
       </div>
@@ -697,6 +702,12 @@
       <div class="settings-card" id="teamCard">
         <div class="field" style="margin-bottom:16px;">
           <label data-i18n="staff.title">فريق العمل</label>
+        </div>
+        <div class="field" id="hidePhoneField" style="margin-bottom:16px;">
+          <label class="staff-perm-chip" style="cursor:pointer;">
+            <input type="checkbox" id="hideCustomerPhoneToggle">
+            <span data-i18n="staff.hidePhoneLabel">إخفاء رقم جوال العميل عن الموظفين (يبقى ظاهر لك فقط)</span>
+          </label>
         </div>
         <div id="staffList"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <button class="add-staff-btn" id="addStaffBtn" style="display:none;" data-i18n="staff.addBtn">+ إضافة موظف</button>

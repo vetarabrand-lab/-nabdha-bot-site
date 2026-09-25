@@ -58,6 +58,23 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
   }
+  // إخفاء رقم العميل عن الموظفين (غير صاحب الحساب) — تُطبَّق فقط على العرض، الإرسال الفعلي يستمر يستخدم الرقم الحقيقي
+  function phoneHidingActive(){
+    return !isOwner && !!(myClient && myClient.hide_customer_phone_from_staff);
+  }
+  function maskPhone(phone){
+    const digits = String(phone || '').replace(/[^0-9]/g, '');
+    return digits.length > 4 ? '•••• ' + digits.slice(-4) : '••••';
+  }
+  function displayPhone(phone){
+    return phoneHidingActive() ? maskPhone(phone) : phone;
+  }
+  function displayConvName(conv, phone){
+    if(phoneHidingActive() && conv.name === phone){
+      return PT('عميل') + ' ' + maskPhone(phone);
+    }
+    return conv.name;
+  }
   /* ---------- قوالب بوت جاهزة حسب نوع النشاط ---------- */
   // تعبئة سريعة لخانة "تعليمات البوت" و"رسالة الترحيب" — بدل ما التاجر يواجه خانة فاضية ويعلّق،
   // يختار نوع نشاطه فتتعبى القوالب تلقائياً، ويعدّل بعدين على التفاصيل بين الأقواس [ ].
@@ -479,7 +496,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, zapier_webhook_url, hide_customer_phone_from_staff')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -494,7 +511,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, zapier_webhook_url, hide_customer_phone_from_staff')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -512,10 +529,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('settingPrompt').value = clientRow.system_prompt || '';
     document.getElementById('settingWelcome').value = clientRow.welcome_message || '';
     document.getElementById('settingOwnerPhone').value = clientRow.owner_phone || '';
+    document.getElementById('settingWebhookUrl').value = clientRow.zapier_webhook_url || '';
     document.getElementById('settingPrompt').disabled = !isOwner;
     document.getElementById('settingWelcome').disabled = !isOwner;
     document.getElementById('settingOwnerPhone').disabled = !isOwner;
+    document.getElementById('settingWebhookUrl').disabled = !isOwner;
     document.getElementById('saveSettingsBtn').style.display = isOwner ? 'inline-block' : 'none';
+    // إخفاء رقم العميل عن الموظفين — يظهر التحكم لصاحب الحساب فقط، ويُطبَّق فوراً على الموظفين حسب قيمة الحقل بقاعدة البيانات
+    const hidePhoneToggle = document.getElementById('hideCustomerPhoneToggle');
+    hidePhoneToggle.checked = !!clientRow.hide_customer_phone_from_staff;
+    document.getElementById('hidePhoneField').style.display = isOwner ? 'block' : 'none';
+    hidePhoneToggle.disabled = !isOwner;
     document.getElementById('templatePickerField').style.display = isOwner ? 'block' : 'none';
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
@@ -1317,8 +1341,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const div = document.createElement('div');
       div.className = 'conv-item' + (phone === activePhone ? ' active' : '');
            div.innerHTML =
-        '<div class="cname">' + escapeHtml(conv.name) + categoryBadgeHtml(conv.category) + '</div>' +
-        '<div class="cphone">' + phone + '</div>' +
+        '<div class="cname">' + escapeHtml(displayConvName(conv, phone)) + categoryBadgeHtml(conv.category) + '</div>' +
+        '<div class="cphone">' + escapeHtml(displayPhone(phone)) + '</div>' +
         '<div class="cpreview">' + escapeHtml(lastMsg ? lastMsg.text : '') + '</div>';
       div.addEventListener('click', function(){
         activePhone = phone;
@@ -1342,7 +1366,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const btn = document.getElementById('takeoverBtn');
     const assignSelect = document.getElementById('assignSelect');
     head.style.display = 'block';
-    head.textContent = conv.name + ' — ' + phone;
+    head.textContent = displayConvName(conv, phone) + ' — ' + displayPhone(phone);
     composerWrap.style.display = 'block';
     bar.style.display = 'flex';
     if(conv.botPaused){
@@ -1472,14 +1496,31 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       return;
     }
     ownerPhoneError.style.display = 'none';
+    const webhookUrlRaw = document.getElementById('settingWebhookUrl').value.trim();
     const status = document.getElementById('saveStatus');
     const { error } = await supabaseClient
       .from('clients')
-      .update({ system_prompt: prompt, welcome_message: welcome, owner_phone: ownerPhoneRaw || null })
+      .update({ system_prompt: prompt, welcome_message: welcome, owner_phone: ownerPhoneRaw || null, zapier_webhook_url: webhookUrlRaw || null })
       .eq('id', myClient.id);
     if(!error){
       status.classList.add('show');
       setTimeout(function(){ status.classList.remove('show'); }, 2000);
+    }
+  });
+  // إخفاء رقم العميل عن الموظفين — يُحفظ فوراً عند التبديل (بدون انتظار زر "حفظ التعديلات")
+  document.getElementById('hideCustomerPhoneToggle').addEventListener('change', async function(){
+    if(!myClient || !isOwner){ return; }
+    const checked = this.checked;
+    const { error } = await supabaseClient
+      .from('clients')
+      .update({ hide_customer_phone_from_staff: checked })
+      .eq('id', myClient.id);
+    if(!error){
+      myClient.hide_customer_phone_from_staff = checked;
+      renderConvList();
+      if(activePhone){ renderChat(activePhone); }
+    } else {
+      this.checked = !checked;
     }
   });
   /* ---------- team management (owner only) ---------- */
