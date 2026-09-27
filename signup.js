@@ -31,6 +31,37 @@ async function prefillFromSallaPending(){
 }
 prefillFromSallaPending();
 
+// لو التاجر جاي من تثبيت التطبيق مباشرة من متجر تطبيقات زد، بيوصل هنا برابط فيه
+// zid_pending=<id> — نفس النمط بالضبط المستخدم أعلاه لسلة (salla_pending).
+const zidPendingId = new URLSearchParams(window.location.search).get('zid_pending');
+
+async function prefillFromZidPending(){
+  if(!zidPendingId) return;
+  try{
+    const res = await fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/zid-pending-lookup?id=' + encodeURIComponent(zidPendingId));
+    const json = await res.json();
+    if(!res.ok || json.error) return; // رابط منتهي أو غير صالح — نسيب النموذج فاضي عادي، التاجر يعبيه يدوياً
+    const bannerHtml = '<div class="zid-pending-banner" style="background:#EAF7EF;border:1.5px solid #25D366;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:14px;font-weight:700;color:#075E54;">✅ ' +
+      (currentLang === 'ar' ? 'تم استرجاع بيانات متجرك من زد — أكمل باقي بيانات التسجيل لإتمام الربط' : 'Your store details were pulled from Zid — complete the rest of the form to finish connecting') + '</div>';
+    const form = document.getElementById('signupForm');
+    form.insertAdjacentHTML('beforebegin', bannerHtml);
+    if(json.store_name){
+      document.getElementById('businessNameAr').value = json.store_name;
+    }
+    if(json.store_email){
+      document.getElementById('ownerEmail').value = json.store_email;
+    }
+  }catch(_e){ /* نتجاهل بهدوء — النموذج يبقى شغال عادي */ }
+}
+prefillFromZidPending();
+
+// حقل كلمة المرور مطلوب فقط لتدفقات التثبيت المباشر (سلة/زد) لأن الحساب يُنشأ فورًا بدخول
+// فعلي — التسجيل العادي بدون تثبيت لا ينشئ حساب دخول تلقائي (يبقى يدوي من فريق نبضة).
+if(sallaPendingId || zidPendingId){
+  const pwField = document.getElementById('pendingPasswordField');
+  if(pwField){ pwField.style.display = ''; }
+}
+
 
   var translations = {
     ar: {
@@ -52,6 +83,9 @@ prefillFromSallaPending();
       "form.phone": "رقم جوالك (للتواصل معك) *",
       "form.waNumber": "رقم واتساب النشاط الذي تريد ربطه بالبوت",
       "form.waNumberHint": "إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.",
+      "form.password": "كلمة مرور الدخول للوحة التحكم *",
+      "form.passwordHint": "بما إنك جاي من تثبيت مباشر، حسابك يُنشأ فورًا — اختر كلمة مرور لدخول لوحة التحكم لاحقًا.",
+      "form.errorPassword": "كلمة المرور لازم تكون 8 أحرف على الأقل.",
       "form.s3": "تعليمات البوت",
       "form.prompt": "عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *",
       "form.promptPh": "مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال...",
@@ -104,6 +138,9 @@ prefillFromSallaPending();
       "form.phone": "Your Phone Number (for us to reach you) *",
       "form.waNumber": "The business WhatsApp number you want to connect",
       "form.waNumberHint": "If you do not have a number ready yet, leave this blank, our team will help you set one up.",
+      "form.password": "Dashboard Login Password *",
+      "form.passwordHint": "Since you are coming from a direct install, your account is created immediately, choose a password to log in to the dashboard later.",
+      "form.errorPassword": "Password must be at least 8 characters.",
       "form.s3": "Bot Instructions",
       "form.prompt": "Tell us about your business (what you sell, shipping policy, common questions...) *",
       "form.promptPh": "e.g. We sell authentic spices and herbs through our online store on Zid. Shipping within Saudi Arabia takes 3-5 business days, free over 200 SAR...",
@@ -270,6 +307,14 @@ prefillFromSallaPending();
       return;
     }
 
+    const pendingPasswordEl = document.getElementById('pendingPassword');
+    const pendingPassword = pendingPasswordEl ? pendingPasswordEl.value : '';
+    if((sallaPendingId || zidPendingId) && pendingPassword.length < 8){
+      errorAlert.textContent = t['form.errorPassword'];
+      errorAlert.style.display = 'block';
+      return;
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = t['form.submitting'];
 
@@ -282,7 +327,37 @@ prefillFromSallaPending();
 
     let signupFailed = false;
 
-    if(sallaPendingId){
+    if(zidPendingId){
+      // تدفق زد: نمرّر البيانات لدالة finalize-zid-signup عشان تربط توكنات زد
+      // المحفوظة مؤقتاً بالحساب الجديد — ما نقدر نسوي هذا بإدراج مباشر من المتصفح
+      try{
+        const res = await fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/finalize-zid-signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            zid_pending: zidPendingId,
+            business_name: businessName,
+            business_name_ar: businessNameAr,
+            owner_email: ownerEmail,
+            owner_phone: ownerPhone,
+            whatsapp_display_number: whatsappDisplayNumber,
+            system_prompt: systemPrompt,
+            welcome_message: welcomeMessage,
+            plan_id: planId,
+            password: pendingPassword,
+            website_hp: document.getElementById('websiteHp').value
+          })
+        });
+        const json = await res.json();
+        if(!res.ok || json.error){
+          signupFailed = true;
+          errorAlert.textContent = json.error || t['form.errorSubmit'];
+        }
+      }catch(err){
+        signupFailed = true;
+        console.error(err);
+      }
+    } else if(sallaPendingId){
       // تدفق سلة: نمرّر البيانات لدالة finalize-salla-signup عشان تربط توكنات سلة
       // المحفوظة مؤقتاً بالحساب الجديد — ما نقدر نسوي هذا بإدراج مباشر من المتصفح
       try{
@@ -299,6 +374,7 @@ prefillFromSallaPending();
             system_prompt: systemPrompt,
             welcome_message: welcomeMessage,
             plan_id: planId,
+            password: pendingPassword,
             website_hp: document.getElementById('websiteHp').value
           })
         });
