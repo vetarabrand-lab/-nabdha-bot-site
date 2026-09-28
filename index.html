@@ -41,7 +41,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --wa-green:#25D366;
@@ -392,6 +392,13 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
     .footer-social{justify-content:center;}
     .cta-banner{margin:0 12px; padding:48px 24px;}
   }
+  /* إصلاح: على الجوالات الضيقة (٣٢٠–٤٨٠px) كان الشعار + زر "جرّب مجاناً"
+     + زر القائمة يتجاوزون عرض الشاشة فعلياً (overflow أفقي ~70px)،
+     مما يقصّ الشعار. الزر مكرر أصلاً في قائمة الجوال وفي قسم Hero
+     فنخفيه من الشريط العلوي فقط هنا؛ يبقى بالكامل قابلاً للوصول. */
+  @media (max-width:480px){
+    .nav-cta .btn-primary{display:none;}
+  }
 </style>
 </head>
 <body>
@@ -438,7 +445,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="hero-ctas">
         <a href="signup.html" class="btn btn-primary" data-i18n="hero.ctaPrimary">جرّب البوت 7 أيام مجاناً</a>
         <a href="#how" class="btn btn-ghost-light" data-i18n="hero.ctaSecondary">شاهد كيف يعمل</a>
-        <a href="https://wa.me/966510745353?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%A8%D8%BA%D9%89%20%D8%A3%D8%AC%D8%B1%D8%A8%20%D8%A8%D9%88%D8%AA%20%D9%86%D8%A8%D8%B6%D8%A9" target="_blank" rel="noopener" class="btn btn-outline" data-i18n="hero.ctaWhatsapp">💬 جرّب المحادثة الآن على واتساب</a>
+        <a href="https://wa.me/966510745353?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%A8%D8%BA%D9%89%20%D8%A3%D8%AC%D8%B1%D8%A8%20%D8%A8%D9%88%D8%AA%20%D9%86%D8%A8%D8%B6%D8%A9" target="_blank" rel="noopener" class="btn btn-ghost-light" data-i18n="hero.ctaWhatsapp">💬 جرّب المحادثة الآن على واتساب</a>
       </div>
       <ul class="hero-trust">
         <li data-i18n="hero.trust4">🎁 جرّب 7 أيام مجاناً بدون بطاقة ائتمان</li>

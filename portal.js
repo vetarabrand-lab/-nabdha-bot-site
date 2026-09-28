@@ -1651,6 +1651,15 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         return md.getFullYear() === d.getFullYear() && md.getMonth() === d.getMonth() && md.getDate() === d.getDate();
       }).length;
     });
+    const realMax = Math.max.apply(null, counts);
+    // إصلاح: بدل رسم 7 أعمدة شبه فارغة (4% ارتفاع لكل يوم) بلا أي توضيح
+    // لما ما توجد رسائل إطلاقاً هذا الأسبوع، نعرض حالة فارغة مفهومة.
+    // (بدون return مبكر — بقية الدالة تكمل تطبيع أقسام التحليلات الأخرى تحتها)
+    if(realMax === 0){
+      chart.innerHTML = '<div class="conv-empty" style="width:100%; text-align:center;">' +
+        PT('لسه ما وصلت رسائل هذا الأسبوع. بمجرد ما توصل رسائل، يبدأ الرسم البياني يتحرك تلقائياً.') +
+        '</div>';
+    } else {
     const maxCount = Math.max.apply(null, counts.concat([1]));
     chart.innerHTML = '';
     days.forEach(function(d, i){
@@ -1664,6 +1673,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<span class="blabel">' + label + '</span>';
       chart.appendChild(col);
     });
+    }
     // أكثر الأسئلة تكراراً — تجميع نصوص الرسائل الواردة المتطابقة (بعد تنضيف بسيط)
     const freq = {};
     allMessages.forEach(function(m){

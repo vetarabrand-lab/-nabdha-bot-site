@@ -15,7 +15,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="portal-i18n.js"></script>
 <style>
@@ -27,6 +27,7 @@
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{font-family:'Tajawal','Segoe UI',sans-serif; background:var(--bg); color:var(--ink); line-height:1.6; overflow-x:hidden;}
+  html[lang="en"] body{font-family:'Inter','Segoe UI',sans-serif;}
   a{text-decoration:none; color:inherit;}
   button{font-family:inherit;}
   .container{max-width:1180px; margin:0 auto; padding:0 24px;}
@@ -1212,6 +1213,15 @@ nav{max-width:1440px; padding:13px 24px;}
   .tabs{gap:7px; padding-bottom:6px;}
   .tabs .tab-btn{border-radius:100px; padding:9px 16px; font-size:13px; background:var(--card);}
   .tabs .tab-btn.active{background:linear-gradient(135deg,var(--brand-900),var(--brand-700)); border-color:transparent;}
+  /* إصلاح: أول/آخر زر بالشريط الأفقي كان يظهر مقطوعاً عند حافة الشاشة —
+     نضيف مساحة داخلية + تلاشي عند الطرفين + توقّف تمرير مرتّب (snap)
+     بدل ما يقف التمرير في منتصف زر. */
+  .tabs{
+    padding-inline:2px; scroll-snap-type:x proximity; scroll-padding-inline:16px;
+    -webkit-mask-image:linear-gradient(to right, transparent 0, black 32px, black calc(100% - 32px), transparent 100%);
+    mask-image:linear-gradient(to right, transparent 0, black 32px, black calc(100% - 32px), transparent 100%);
+  }
+  .tabs .tab-btn{scroll-snap-align:start;}
 }
 
 /* ─────────── بطاقات المحتوى ─────────── */
@@ -1354,10 +1364,15 @@ nav{max-width:1440px; padding:13px 24px;}
   #panelChannels.active{grid-template-columns:1fr;}
   .inbox-wrap{grid-template-columns:1fr; height:auto; min-height:0; gap:14px;}
   .conv-list{max-height:260px;}
-  .chat-panel{height:70vh; min-height:420px;}
+  /* إصلاح: 70vh كانت تترك مساحة بيضاء ضخمة تحت رسالة "اختر محادثة"
+     قبل ما التاجر يفتح أي محادثة، خصوصاً على الجوالات الطويلة. */
+  .chat-panel{height:min(58vh, 480px); min-height:340px;}
 }
 @media (max-width:520px){
-  .stats-row{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:repeat(2,1fr); gap:10px;}
+  .stats-row .stat-card:nth-child(3){grid-column:1 / -1;}
+  .stat-card{padding:13px 15px;}
+  .stat-card .n{font-size:21px;}
   .biz-tag{display:none;}
 }
 </style>
