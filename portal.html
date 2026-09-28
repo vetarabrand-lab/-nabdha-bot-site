@@ -284,7 +284,9 @@
     .inbox-wrap{grid-template-columns:1fr; height:auto;}
     .conv-list{max-height:220px;}
     .chat-panel{height:480px;}
-    .stats-row{grid-template-columns:1fr;}
+    /* .stats-row: القاعدة الفعلية بعمودين موجودة أسفل الصفحة ضمن طبقة
+       nabdaEnterprisePortal (وهي الأحدث في ترتيب الـ CSS)، فحُذفت هذه
+       القاعدة المكررة هنا تجنباً لأي تعارض أو التباس عند الصيانة. */
     .analytics-grid{grid-template-columns:1fr;}
   }
 </style>

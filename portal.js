@@ -1685,7 +1685,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const sorted = Object.keys(freq).sort(function(a,b){ return freq[b] - freq[a]; }).slice(0, 8);
     const qList = document.getElementById('analyticsTopQuestions');
     if(sorted.length === 0){
-      qList.innerHTML = '<div class="conv-empty">' + PT('لا توجد بيانات كافية بعد.') + '</div>';
+      qList.innerHTML = '<div class="conv-empty">' + PT('ما فيه أسئلة كافية بعد لعرض الأكثر تكراراً — تظهر تلقائياً بمجرد وصول عدد أكبر من الرسائل.') + '</div>';
     } else {
             qList.innerHTML = '';
       sorted.forEach(function(q){
@@ -1702,7 +1702,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const catWrap = document.getElementById('analyticsCategoryBreakdown');
     const catKeys = Object.keys(catCounts).sort(function(a,b){ return catCounts[b] - catCounts[a]; });
     if(catKeys.length === 0){
-      catWrap.innerHTML = '<div class="conv-empty">' + PT('لا توجد بيانات كافية بعد.') + '</div>';
+      catWrap.innerHTML = '<div class="conv-empty">' + PT('ما فيه تصنيف كافٍ للمحادثات بعد — تُحسب الفئات تلقائياً كل ما تصنّفت محادثات جديدة.') + '</div>';
     } else {
       catWrap.innerHTML = '';
       catKeys.forEach(function(key){
@@ -1721,7 +1721,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .select('event_type, status')
       .eq('client_id', myClient.id);
     if(error || !events || events.length === 0){
-      wrap.innerHTML = '<div class="conv-empty">' + PT('لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.') + '</div>';
+      wrap.innerHTML = '<div class="conv-empty">' + PT('لا يوجد متجر مربوط بعد، أو ما وصل أي طلب لسه. اربط متجرك من «قنوات الربط» — وبمجرد وصول أول طلب، تظهر هنا مؤشرات الطلبات والسلات المستردة تلقائياً.') + '</div>';
       return;
     }
     const ordersConfirmed = events.filter(function(e){ return e.event_type === 'order_create' && (e.status === 'confirmation_sent' || e.status === 'confirmed'); }).length;

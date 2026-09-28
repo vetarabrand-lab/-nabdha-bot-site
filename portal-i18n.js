@@ -546,8 +546,10 @@ var portalDynamicStrings = {
 
   /* Analytics / ROI */
   'بيانات زمن الرد بتظهر تدريجياً مع الرسائل الجديدة.': 'Response time data will appear gradually as new messages come in.',
-  'لا توجد بيانات كافية بعد.': 'Not enough data yet.',
-  'لا يوجد متجر مربوط بعد أو ما فيه طلبات مسجّلة.': 'No store connected yet, or no orders recorded.',
+  'لسه ما وصلت رسائل هذا الأسبوع. بمجرد ما توصل رسائل، يبدأ الرسم البياني يتحرك تلقائياً.': "No messages have come in this week yet. As soon as messages arrive, the chart will start moving automatically.",
+  'ما فيه أسئلة كافية بعد لعرض الأكثر تكراراً — تظهر تلقائياً بمجرد وصول عدد أكبر من الرسائل.': 'Not enough questions yet to show the most common ones — this fills in automatically once more messages come in.',
+  'ما فيه تصنيف كافٍ للمحادثات بعد — تُحسب الفئات تلقائياً كل ما تصنّفت محادثات جديدة.': 'Not enough categorized conversations yet — categories are calculated automatically as new conversations get classified.',
+  'لا يوجد متجر مربوط بعد، أو ما وصل أي طلب لسه. اربط متجرك من «قنوات الربط» — وبمجرد وصول أول طلب، تظهر هنا مؤشرات الطلبات والسلات المستردة تلقائياً.': 'No store connected yet, or no orders have come in so far. Connect your store from "Channels" — once the first order arrives, order and recovered-cart metrics will appear here automatically.',
   'لا توجد سلات مستردة بعد': 'No recovered carts yet',
 
   /* Support chat (AI reply) */
