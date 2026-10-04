@@ -712,6 +712,35 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.querySelector('.tab-btn[data-tab="support"]').click();
     }
   }
+  /* ---------- الدفع الإلكتروني عبر Geidea (Checkout v2 - Hosted Payment Page) ----------
+     مطابقة لـ startNgeniusCheckout بالضبط، بس تستدعي create-geidea-order. لو نظام الدفع
+     لسه ما تفعّل (الأسرار ما انضافت بعد)، الدالة ترجع payment_not_configured فنوجّه العميل
+     لتبويب الدعم (نفس السلوك الحالي). */
+  async function startGeideaCheckout(purpose, extra, title){
+    if(!myClient){ return; }
+    try{
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const authToken = sessionData.session.access_token;
+      const res = await fetch(FUNCTIONS_BASE + '/create-geidea-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(Object.assign({ purpose: purpose }, extra || {}))
+      });
+      const resJson = await res.json().catch(function(){ return {}; });
+
+      if(resJson.error === 'payment_not_configured'){
+        document.querySelector('.tab-btn[data-tab="support"]').click();
+        return;
+      }
+      if(!res.ok || !resJson.payment_url){
+        alert(resJson.error || PT('تعذّر إتمام عملية الدفع، حاول مرة ثانية أو تواصل مع الدعم.'));
+        return;
+      }
+      window.location.href = resJson.payment_url;
+    } catch(e){
+      document.querySelector('.tab-btn[data-tab="support"]').click();
+    }
+  }
   function renderSubscriptionBanner(){
     const banner = document.getElementById('subscriptionBanner');
     if(!myClient || !isOwner){ banner.style.display = 'none'; return; }
@@ -766,7 +795,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
   document.getElementById('renewPlanBtn').addEventListener('click', function(){
     if(!myClient || !myPlan){ return; }
-    startNgeniusCheckout('subscription', { plan_id: myPlan.id }, 'تجديد الاشتراك');
+    startGeideaCheckout('subscription', { plan_id: myPlan.id }, 'تجديد الاشتراك');
   });
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){
