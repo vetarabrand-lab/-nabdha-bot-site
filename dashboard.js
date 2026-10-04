@@ -1109,6 +1109,28 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       info.innerHTML = '<div style="font-weight:800; font-size:13.5px;">' + escapeHtml(a.name_ar) + '</div>' +
                        '<div class="biz-sub">' + Number(a.price_sar).toLocaleString('ar') + ' ريال دفعة وحدة</div>';
 
+      const expiryWrap = document.createElement('div');
+      expiryWrap.style.cssText = 'display:flex; align-items:center; gap:6px;';
+      const expiryInput = document.createElement('input');
+      expiryInput.type = 'date';
+      expiryInput.style.cssText = 'font-size:12px; padding:4px 6px; border:1px solid var(--border); border-radius:8px; max-width:130px;';
+      expiryInput.title = 'تاريخ انتهاء اختياري لهذه الإضافة لهذا التاجر (اتركه فاضي = إضافة دائمة بلا نهاية)';
+      if(existing && existing.expires_at){
+        expiryInput.value = existing.expires_at.slice(0, 10);
+        const expiryLabel = document.createElement('span');
+        expiryLabel.style.cssText = 'font-size:11px; color:var(--muted);';
+        expiryLabel.textContent = 'تنتهي:';
+        expiryWrap.appendChild(expiryLabel);
+      }
+      expiryWrap.appendChild(expiryInput);
+      // تحديث فوري لتاريخ الانتهاء لو الإضافة مفعّلة أصلاً (بدون الحاجة تلمس زر التفعيل/الإيقاف)
+      expiryInput.addEventListener('change', async function(){
+        if(!existing){ return; } // لو ما فيه صف بعد، التاريخ المختار هنا بينطبق تلقائياً وقت الضغط على "تفعيل"
+        const val = expiryInput.value ? new Date(expiryInput.value + 'T23:59:59').toISOString() : null;
+        const res = await supabaseClient.from('client_addons').update({ expires_at: val }).eq('id', existing.id);
+        if(!res.error){ existing.expires_at = val; }
+      });
+
       const toggle = document.createElement('button');
       toggle.className = 'link-btn' + (isOn ? ' active-addon' : '');
       toggle.textContent = isOn ? '✓ مفعّلة — إيقاف' : 'تفعيل';
@@ -1130,7 +1152,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
             addon_id: a.id,
             enabled: true,
             price_paid_sar: a.price_sar,
-            activated_by: adminEmail
+            activated_by: adminEmail,
+            expires_at: expiryInput.value ? new Date(expiryInput.value + 'T23:59:59').toISOString() : null
           }).select('*').single();
           error = res.error;
           if(!error && res.data){ allClientAddons.push(res.data); }
@@ -1154,6 +1177,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
 
       row.appendChild(info);
+      row.appendChild(expiryWrap);
       row.appendChild(toggle);
       wrap.appendChild(row);
     });
