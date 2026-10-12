@@ -1,11 +1,12 @@
 (function(){
-  // شارة عرض الافتتاح أكتوبر 2026 فوق جدول الباقات — تُخفى تلقائياً لو انتهى العرض (زمنياً أو
-  // باكتمال العدد) أو لو فشل الجلب، فما يحتاج أي تعديل يدوي لاحق عند انتهاء الحملة.
+  // شارة عرض الافتتاح أكتوبر 2026 — بانر الصورة أعلى الصفحة + شريط النص فوق جدول الباقات.
+  // تُخفى تلقائياً لو انتهى العرض (زمنياً أو باكتمال العدد) أو لو فشل الجلب، فما يحتاج أي
+  // تعديل يدوي لاحق عند انتهاء الحملة.
   var STATUS_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/get-launch-promo-status';
+  var topBanner = document.getElementById('topLaunchBanner');
   var banner = document.getElementById('launchPromoBanner');
   var titleEl = document.getElementById('launchPromoTitle');
   var subEl = document.getElementById('launchPromoSub');
-  if(!banner) return;
 
   var lastData = null;
 
@@ -15,7 +16,13 @@
   }
 
   function renderBanner(data){
-    if(!data || !data.active){ banner.style.display = 'none'; return; }
+    var active = !!(data && data.active);
+
+    if(topBanner) topBanner.style.display = active ? 'block' : 'none';
+
+    if(!banner) return;
+    if(!active){ banner.style.display = 'none'; return; }
+
     var lang = currentLang();
     var freeSetupActive = !!(data.freeSetup && data.freeSetup.active);
     if(lang === 'en'){
@@ -35,7 +42,7 @@
   fetch(STATUS_URL)
     .then(function(r){ return r.json(); })
     .then(function(data){ lastData = data; renderBanner(data); })
-    .catch(function(){ banner.style.display = 'none'; });
+    .catch(function(){ if(topBanner) topBanner.style.display = 'none'; if(banner) banner.style.display = 'none'; });
 
   var langBtn = document.getElementById('langBtn');
   var langBtnMobile = document.getElementById('langBtnMobile');
