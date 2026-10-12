@@ -227,6 +227,14 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .billing-toggle-switch[aria-checked="true"] .billing-toggle-knob{inset-inline-start:25px;}
   .billing-toggle-save{font-size:12.5px; font-weight:800; color:var(--wa-green-dark); background:rgba(37,211,102,.14); padding:4px 12px; border-radius:100px;}
   .price-annual-note{color:var(--muted); font-size:12.5px; margin-top:-2px; margin-bottom:10px; min-height:16px;}
+  .price-num .price-strike{font-size:.48em; font-weight:700; color:var(--muted); text-decoration:line-through; margin-inline-end:6px; vertical-align:middle;}
+  .launch-promo-banner{max-width:860px; margin:-6px auto 28px; background:linear-gradient(120deg, var(--wa-green-dark), var(--wa-teal)); border-radius:20px; padding:22px 28px; color:#fff; text-align:center; box-shadow:0 20px 40px -20px rgba(16,125,113,.5);}
+  .launch-promo-banner h3{font-size:17.5px; font-weight:900; margin-bottom:6px; line-height:1.4;}
+  .launch-promo-banner p{font-size:13.5px; color:rgba(255,255,255,.95); margin-bottom:12px;}
+  .launch-promo-counter{display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,.18); padding:6px 16px; border-radius:100px; font-size:13px; font-weight:800;}
+  .launch-promo-counter b{font-size:15px;}
+  @media (max-width:640px){ .launch-promo-banner{padding:20px 18px;} }
+
   .price-card{
     background:var(--card); border:1.5px solid var(--border); border-radius:24px;
     padding:30px 22px; display:flex; flex-direction:column; position:relative;
@@ -1025,6 +1033,11 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <h2 data-i18n="pricing.title">باقة تناسب كل حجم نشاط</h2>
       <p data-i18n="pricing.sub">اشتراك شهري بسيط، بدون رسوم خفية — غيّر باقتك أو ألغِ في أي وقت.</p>
       <p class="trial-note" data-i18n="pricing.trialNote">🎁 كل الباقات تشمل تجربة مجانية 7 أيام — بدون بطاقة ائتمان</p>
+    <div class="launch-promo-banner reveal" id="launchPromoBanner" style="display:none;">
+      <h3 id="launchPromoTitle">🎉 عرض الافتتاح: خصم 50% على الاشتراك السنوي + هدية 5 إضافات مجاناً بقيمة 1,395 ريال</h3>
+      <p id="launchPromoSub">ولأول 20 عميل فقط: إعداد كامل مجاني (999 ريال) 🎁 — العرض حتى 31 أكتوبر 2026 أو حتى اكتمال العدد</p>
+      <span class="launch-promo-counter" id="launchPromoCounter"></span>
+    </div>
     </div>
     <div class="billing-toggle reveal">
       <span class="billing-toggle-label is-active" id="billingLabelMonthly" data-i18n="pricing.monthlyLabel">شهري</span>
@@ -1140,6 +1153,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   </div>
 </section>
 <script src="index-pricing-toggle.js"></script>
+<script src="index-launch-promo.js"></script>
 
 <section class="section" id="addons-teaser">
   <div class="container">

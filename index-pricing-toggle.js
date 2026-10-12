@@ -6,6 +6,14 @@
 
   var priceCards = document.querySelectorAll('#pricing .price-card');
   var isAnnual = false;
+  // عرض الافتتاح أكتوبر 2026 — نجيبه من دالة عامة بدون أي بيانات حساسة؛ لو فشل الجلب أو كان
+  // العرض منتهي/مكتمل، تبقى الأسعار العادية كما هي بدون أي تغيير (سلوك رجوعي آمن).
+  var promo = null;
+
+  fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/get-launch-promo-status')
+    .then(function(r){ return r.json(); })
+    .then(function(data){ promo = data; render(); })
+    .catch(function(){ /* تجاهل بأمان */ });
 
   function currentLang(){
     var root = document.getElementById('htmlRoot');
@@ -22,6 +30,12 @@
       : ('يُدفع ' + fmt(total) + ' ريال سنوياً');
   }
 
+  function promoAnnualNoteText(promoTotal, originalTotal){
+    return currentLang() === 'en'
+      ? ('Billed ' + fmt(promoTotal) + ' SAR/year (50% launch discount, was ' + fmt(originalTotal) + ')')
+      : ('يُدفع ' + fmt(promoTotal) + ' ريال سنوياً (خصم الافتتاح 50%، بدل ' + fmt(originalTotal) + ')');
+  }
+
   function render(){
     priceCards.forEach(function(card){
       var numEl = card.querySelector('.price-num');
@@ -34,8 +48,18 @@
         if(!numEl.dataset.baseline){ numEl.dataset.baseline = monthly; }
 
         if(isAnnual){
-          numEl.textContent = fmt(noteEl.dataset.annualMonthly);
-          noteEl.textContent = annualNoteText(noteEl.dataset.annualTotal);
+          var annualTotal = Number(noteEl.dataset.annualTotal);
+          var annualMonthly = Number(noteEl.dataset.annualMonthly);
+
+          if(promo && promo.active){
+            var promoTotal = Math.round(annualTotal * 0.5);
+            var promoMonthly = Math.round(promoTotal / 12);
+            numEl.innerHTML = '<s class="price-strike">' + fmt(annualMonthly) + '</s> ' + fmt(promoMonthly);
+            noteEl.textContent = promoAnnualNoteText(promoTotal, annualTotal);
+          } else {
+            numEl.textContent = fmt(annualMonthly);
+            noteEl.textContent = annualNoteText(annualTotal);
+          }
         } else {
           numEl.textContent = fmt(numEl.dataset.baseline);
           noteEl.textContent = '';
