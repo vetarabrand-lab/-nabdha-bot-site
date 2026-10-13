@@ -16,10 +16,21 @@
       return; // ما نعيد إظهاره لو المستخدم أغلقه أو اشترك قبل
     }
 
-    setTimeout(function(){
-      card.classList.add('show');
-      requestAnimationFrame(function(){ card.classList.add('visible'); });
-    }, 8000);
+    // نظهر النافذة بعد ما يتصفح الزائر نص الصفحة (بدل مؤقت 8 ثواني) — مرة وحدة لكل زائر كما قبل
+    var shown = false;
+    function onScroll(){
+      if(shown) return;
+      var doc = document.documentElement;
+      var scrollable = doc.scrollHeight - window.innerHeight;
+      if(scrollable <= 0) return;
+      if((window.scrollY || doc.scrollTop) / scrollable >= 0.5){
+        shown = true;
+        window.removeEventListener('scroll', onScroll);
+        card.classList.add('show');
+        requestAnimationFrame(function(){ card.classList.add('visible'); });
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
 
     closeBtn.addEventListener('click', function(){
       card.classList.remove('visible');

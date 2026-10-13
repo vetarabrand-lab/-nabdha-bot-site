@@ -75,7 +75,7 @@
     font-family:inherit; font-size:14px; outline:none; resize:vertical; background:#fff; color:var(--ink);
   }
   .form-card .field input:focus, .form-card .field textarea:focus{border-color:var(--wa-teal);}
-  .hp-field{position:absolute; left:-9999px; width:1px; height:1px; opacity:0;}
+  .hp-field{position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; opacity:0; pointer-events:none;}
   #ccSubmit{
     width:100%; background:linear-gradient(135deg, var(--wa-teal-dark), var(--wa-green)); color:#fff;
     border:none; border-radius:100px; padding:13px 20px; font-weight:800; font-size:14.5px; cursor:pointer; margin-top:2px;
@@ -117,6 +117,14 @@
     .back-link span.txt{display:none;}
   }
 </style>
+<link rel="canonical" href="https://www.nabdh.online/contact.html">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
+  @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
+  .back-link{min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center;}
+  :focus-visible{outline:2.5px solid rgba(18,140,126,.6); outline-offset:3px;}
+</style>
 </head>
 <body>
 
@@ -130,7 +138,7 @@
     </div>
     <div class="nav-right">
       <button class="lang-btn" id="langBtn">English</button>
-      <a class="back-link" href="index.html"><span data-i18n="backArrow">→</span> <span class="txt" data-i18n="backLink">الرجوع للرئيسية</span></a>
+      <a class="back-link" href="index.html" aria-label="الرجوع للرئيسية"><span data-i18n="backArrow">→</span> <span class="txt" data-i18n="backLink">الرجوع للرئيسية</span></a>
     </div>
   </nav>
 </header>

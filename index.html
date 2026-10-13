@@ -12,14 +12,19 @@
 src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
-<link rel="canonical" href="https://nabdh.online/">
+<link rel="canonical" href="https://www.nabdh.online/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="بوت نبضة">
 <meta property="og:title" id="ogTitle" content="بوت نبضة | منصّة بوت واتساب ذكي لأعمالك">
 <meta property="og:description" id="ogDesc" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
-<meta property="og:url" content="https://nabdh.online/">
+<meta property="og:url" content="https://www.nabdh.online/">
 <meta property="og:locale" content="ar_SA">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://www.nabdh.online/assets/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="بوت نبضة — بوت واتساب يرد على عملائك على مدار الساعة">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.nabdh.online/assets/og-cover.jpg">
 <meta name="twitter:title" id="twTitle" content="بوت نبضة | منصّة بوت واتساب ذكي لأعمالك">
 <meta name="twitter:description" id="twDesc" content="بوت نبضة يرد على عملائك في واتساب تلقائياً وبذكاء اصطناعي، على مدار الساعة، بهوية نشاطك أنت.">
 <script type="application/ld+json">
@@ -29,7 +34,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   "name": "بوت نبضة",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web",
-  "url": "https://nabdh.online/",
+  "url": "https://www.nabdh.online/",
   "description": "منصّة بوت واتساب ذكي بالذكاء الاصطناعي لأصحاب الأنشطة التجارية في السعودية والخليج، يرد على العملاء تلقائياً على مدار الساعة ويربط مباشرة مع متاجر زد وسلة.",
   "offers": {
     "@type": "Offer",
@@ -122,7 +127,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .nav-links{display:flex; align-items:center; gap:36px; font-weight:500; color:var(--muted);}
   .nav-links a:hover{color:var(--wa-teal-dark);}
   .nav-cta{display:flex; align-items:center; gap:14px;}
-  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px;}
+  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:6px; min-width:44px; min-height:44px; align-items:center; justify-content:center;}
   .burger span{width:24px; height:2.5px; background:var(--ink); border-radius:2px;}
   .mobile-menu{display:none; flex-direction:column; gap:4px; padding:8px 24px 20px; border-top:1px solid var(--border);}
   .mobile-menu a{padding:12px 4px; font-weight:600; border-bottom:1px solid var(--border);}
@@ -237,6 +242,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   @media (max-width:640px){ .launch-promo-banner{padding:20px 18px;} }
   .top-launch-banner{display:block; width:100%; line-height:0;}
   .top-launch-banner img{width:100%; height:auto; display:block;}
+  .section-head .launch-promo-banner p{color:rgba(255,255,255,.95); font-size:14px; max-width:none; margin-inline:auto;}
 
 
   .price-card{
@@ -412,10 +418,18 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
     .nav-cta .btn-primary{display:none;}
   }
 </style>
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
+  @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
+</style>
 </head>
 <body>
 <a href="#pricing" id="topLaunchBanner" class="top-launch-banner" style="display:none;">
-  <img src="assets/launch-offer-banner.png" alt="عرض الافتتاح: خصم 50% على الاشتراك السنوي + هدية 5 إضافات مجاناً بقيمة 1,395 ريال، ولأول 20 عميل إعداد كامل مجاني" width="2172" height="724" loading="eager">
+  <picture>
+    <source type="image/webp" srcset="assets/launch-offer-banner-700.webp 700w, assets/launch-offer-banner-1200.webp 1200w, assets/launch-offer-banner-2172.webp 2172w" sizes="100vw">
+    <img src="assets/launch-offer-banner.png" alt="عرض الافتتاح: خصم 50% على الاشتراك السنوي + هدية 5 إضافات مجاناً بقيمة 1,395 ريال، ولأول 20 عميل إعداد كامل مجاني" width="2172" height="724" loading="eager" fetchpriority="high" decoding="async">
+  </picture>
 </a>
 
 <header>
@@ -632,31 +646,31 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
     <div class="channels-grid">
       <div class="channel-badge">
         <div class="channel-icon">
-          <img src="assets/logos/telegram.svg" alt="Telegram" loading="lazy">
+          <img src="assets/logos/telegram.svg" alt="Telegram" width="28" height="28" loading="lazy">
         </div>
         <span data-i18n="channelsStrip.telegram">تيليجرام</span>
       </div>
       <div class="channel-badge">
         <div class="channel-icon">
-          <img src="assets/logos/shopify.svg" alt="Shopify" loading="lazy">
+          <img src="assets/logos/shopify.svg" alt="Shopify" width="28" height="28" loading="lazy">
         </div>
         <span data-i18n="channelsStrip.shopify">شوبيفاي</span>
       </div>
       <div class="channel-badge">
         <div class="channel-icon">
-          <img src="assets/logos/woocommerce.svg" alt="WooCommerce" loading="lazy">
+          <img src="assets/logos/woocommerce.svg" alt="WooCommerce" width="28" height="28" loading="lazy">
         </div>
         <span data-i18n="channelsStrip.woo">ووكومرس (ووردبريس)</span>
       </div>
       <div class="channel-badge">
         <div class="channel-icon">
-          <img src="assets/logos/zid.png" alt="Zid" loading="lazy">
+          <img src="assets/logos/zid.png" alt="Zid" width="28" height="28" loading="lazy">
         </div>
         <span data-i18n="channelsStrip.zid">زد <em class="channel-soon-tag">قريباً</em></span>
       </div>
       <div class="channel-badge">
         <div class="channel-icon" style="background:var(--ink);">
-          <img src="assets/logos/salla.svg" alt="Salla" loading="lazy">
+          <img src="assets/logos/salla.svg" alt="Salla" width="28" height="28" loading="lazy">
         </div>
         <span data-i18n="channelsStrip.salla">سلة <em class="channel-soon-tag">قريباً</em></span>
       </div>
@@ -958,7 +972,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <h3 data-i18n="testi.formTitle">شاركنا رأيك</h3>
           <form id="testiForm" class="testi-form">
             <div class="testi-form-row">
-              <input type="text" id="testiName" data-i18n-placeholder="testi.namePh" placeholder="اسمك" maxlength="80" required>
+              <input type="text" id="testiName" aria-label="اسمك" data-i18n-placeholder="testi.namePh" placeholder="اسمك" maxlength="80" required>
               <div class="testi-stars" id="testiStars" data-rating="0">
                 <span class="testi-star" data-v="1">★</span>
                 <span class="testi-star" data-v="2">★</span>
@@ -967,7 +981,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
                 <span class="testi-star" data-v="5">★</span>
               </div>
             </div>
-            <textarea id="testiComment" data-i18n-placeholder="testi.commentPh" placeholder="اكتب تجربتك مع بوت نبضة..." maxlength="600" rows="3" required></textarea>
+            <textarea id="testiComment" aria-label="تجربتك مع بوت نبضة" data-i18n-placeholder="testi.commentPh" placeholder="اكتب تجربتك مع بوت نبضة..." maxlength="600" rows="3" required></textarea>
             <button type="submit" class="btn btn-primary btn-block" data-i18n="testi.submit">إرسال التقييم</button>
             <p class="testi-msg" id="testiMsg"></p>
           </form>
@@ -1266,7 +1280,6 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           <li><a href="about.html" data-i18n="footer.about">من نحن</a></li>
           <li><a href="contact.html" data-i18n="footer.contact">تواصل معنا</a></li>
           <li><a href="affiliate.html" data-i18n="footer.affiliate">برنامج الشركاء</a></li>
-          <li><a href="#" data-i18n="footer.jobs">الوظائف</a></li>
         </ul>
       </div>
       <div>
@@ -1383,7 +1396,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   }
   .nabda-nl-card.show{ display:block; }
   .nabda-nl-card.visible{ opacity:1; transform:translateY(0); }
-  .nabda-nl-close{ position:absolute; top:12px; left:12px; background:none; border:none; font-size:14px; color:#8A9994; cursor:pointer; padding:4px; }
+  .nabda-nl-close{ position:absolute; top:6px; left:6px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:none; border:none; border-radius:10px; font-size:15px; color:#8A9994; cursor:pointer; padding:0; }
   .nabda-nl-close:hover{ color:#0B1A17; }
   .nabda-nl-icon{ font-size:26px; margin-bottom:8px; }
   .nabda-nl-title{ font-size:15.5px; font-weight:800; color:#0B1A17; margin-bottom:6px; line-height:1.5; }
@@ -1394,7 +1407,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
     font-family:'Tajawal','Segoe UI',sans-serif; text-align:right; direction:rtl; outline:none; box-sizing:border-box;
   }
   .nabda-nl-input:focus{ border-color:#25D366; }
-  .nabda-nl-honeypot{ position:absolute; left:-9999px; opacity:0; height:0; width:0; }
+  .nabda-nl-honeypot{position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; opacity:0; pointer-events:none;}
   .nabda-nl-consent{ display:flex; align-items:flex-start; gap:8px; font-size:11.5px; color:#5B6B67; line-height:1.6; cursor:pointer; }
   .nabda-nl-consent input{ margin-top:2px; flex-shrink:0; }
   .nabda-nl-submit{
@@ -1407,7 +1420,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .nabda-nl-msg.success{ color:#167D3C; font-weight:700; }
   .nabda-nl-msg.error{ color:#D9534F; font-weight:700; }
   @media (max-width:480px){
-    .nabda-nl-card{ bottom:16px; left:16px; width:270px; }
+    .nabda-nl-card{ bottom:16px; left:16px; right:16px; width:auto; max-width:none; }
   }
 </style>
 <script src="index-newsletter.js"></script>

@@ -4,4 +4,4 @@ Disallow: /portal.html
 Disallow: /dashboard.html
 Disallow: /zid-connected.html
 
-Sitemap: https://nabdh.online/sitemap.xml
+Sitemap: https://www.nabdh.online/sitemap.xml

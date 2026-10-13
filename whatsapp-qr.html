@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مولد رمز QR لواتساب المجاني | بوت نبضة</title>
 <meta name="description" content="أنشئ رمز QR لرقم واتساب نشاطك مجاناً — يفتح محادثة مباشرة عند مسحه، مثالي للفواتير والمتجر والبنرات.">
-<link rel="canonical" href="https://nabdh.online/whatsapp-qr.html">
+<link rel="canonical" href="https://www.nabdh.online/whatsapp-qr.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -65,6 +65,24 @@
   footer{text-align:center; padding:24px 0 40px; color:var(--muted); font-size:13px;}
   @media (max-width:640px){ .tool-card{padding:22px 18px;} }
 </style>
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="بوت نبضة">
+<meta property="og:title" content="مولد رمز QR لواتساب المجاني | بوت نبضة">
+<meta property="og:description" content="أنشئ رمز QR لرقم واتساب نشاطك مجاناً — يفتح محادثة مباشرة عند مسحه، مثالي للفواتير والمتجر والبنرات.">
+<meta property="og:url" content="https://www.nabdh.online/whatsapp-qr.html">
+<meta property="og:image" content="https://www.nabdh.online/assets/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.nabdh.online/assets/og-cover.jpg">
+<style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
+  @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
+  .back-link{min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center;}
+  :focus-visible{outline:2.5px solid rgba(18,140,126,.6); outline-offset:3px;}
+</style>
 </head>
 <body>
 
@@ -76,7 +94,7 @@
       </div>
       <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
     </div>
-    <a class="back-link" href="index.html">→ الرجوع للرئيسية</a>
+    <a class="back-link" href="index.html" aria-label="الرجوع للرئيسية">→ الرجوع للرئيسية</a>
   </nav>
 </header>
 
@@ -91,19 +109,19 @@
 <div class="tool-wrap container">
   <div class="tool-card">
     <div class="field">
-      <label>رقم الواتساب (مع رمز الدولة، بدون + أو 00)</label>
+      <label for="phoneInput">رقم الواتساب (مع رمز الدولة، بدون + أو 00)</label>
       <input type="tel" id="phoneInput" placeholder="9665xxxxxxxx">
       <div class="hint">مثال: للسعودية 9665xxxxxxxx، للإمارات 9715xxxxxxxx</div>
     </div>
     <div class="field">
-      <label>رسالة جاهزة (اختياري)</label>
+      <label for="msgInput">رسالة جاهزة (اختياري)</label>
       <textarea id="msgInput" placeholder="مرحباً، أبي أستفسر عن..."></textarea>
     </div>
     <button class="gen-btn" id="genBtn">إنشاء رمز QR</button>
 
     <div class="result-box" id="resultBox">
       <div class="qr-frame">
-        <img id="qrImg" alt="رمز QR لواتساب">
+        <img id="qrImg" alt="رمز QR لواتساب" width="240" height="240">
       </div>
       <div>
         <a class="dl-btn" id="dlBtn" download="whatsapp-qr.png">⬇ تحميل الصورة</a>

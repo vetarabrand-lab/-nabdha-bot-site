@@ -59,7 +59,7 @@ const FUNCTIONS_BASE = 'https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1';
       return;
     }
 
-    const referralLink = 'https://nabdh.online/signup.html?ref=' + result.referral_code;
+    const referralLink = 'https://www.nabdh.online/signup.html?ref=' + result.referral_code;
     document.getElementById('referralLinkInput').value = referralLink;
 
     form.style.display = 'none';

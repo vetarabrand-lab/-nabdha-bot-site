@@ -290,6 +290,10 @@
     .analytics-grid{grid-template-columns:1fr;}
   }
 </style>
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
+  @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
+</style>
 </head>
 <body>
 <header>
@@ -326,11 +330,11 @@
     <div class="alert-box error" id="loginError"></div>
     <form id="loginForm">
       <div class="field">
-        <label data-i18n="login.email">البريد الإلكتروني</label>
+        <label for="loginEmail" data-i18n="login.email">البريد الإلكتروني</label>
         <input type="email" id="loginEmail" required autocomplete="username">
       </div>
       <div class="field">
-        <label data-i18n="login.password">كلمة المرور</label>
+        <label for="loginPassword" data-i18n="login.password">كلمة المرور</label>
         <input type="password" id="loginPassword" required autocomplete="current-password">
       </div>
       <button type="submit" class="primary-btn" id="loginBtn" data-i18n="login.submit">تسجيل الدخول</button>

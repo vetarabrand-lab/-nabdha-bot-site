@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>برنامج الشراكة بالعمولة | بوت نبضة</title>
 <meta name="description" content="انضم لبرنامج الشراكة بالعمولة في بوت نبضة، واكسب 10% عمولة متكررة شهريًا على كل نشاط تجاري تحيله لنا.">
-<link rel="canonical" href="https://nabdh.online/affiliate.html">
+<link rel="canonical" href="https://www.nabdh.online/affiliate.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@
   .field label{display:block; font-weight:700; font-size:14.5px; margin-bottom:7px;}
   .field input, .field select{width:100%; border:1.5px solid var(--border); border-radius:12px; padding:13px 14px; font-family:inherit; font-size:15px; color:var(--ink); background:#FCFEFD;}
   .field input:focus, .field select:focus{outline:none; border-color:var(--wa-teal);}
-  .honeypot{position:absolute; left:-9999px; opacity:0; height:0;}
+  .honeypot{position:absolute; width:1px; height:1px; margin:-1px; padding:0; border:0; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; opacity:0; pointer-events:none;}
   .recaptcha-wrap{display:flex; justify-content:center; margin:6px 0 18px; max-width:100%; overflow-x:auto;}
   .submit-btn{width:100%; padding:16px; border:none; border-radius:100px; background:var(--wa-green); color:#04210F; font-weight:800; font-size:16px; cursor:pointer; margin-top:8px; box-shadow:0 12px 24px -8px rgba(37,211,102,.55);}
   .submit-btn:hover{background:var(--wa-green-dark);}
@@ -116,6 +116,24 @@
     .recaptcha-wrap{ height:70px; }
   }
 </style>
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="بوت نبضة">
+<meta property="og:title" content="برنامج الشراكة بالعمولة | بوت نبضة">
+<meta property="og:description" content="انضم لبرنامج الشراكة بالعمولة في بوت نبضة، واكسب 10% عمولة متكررة شهريًا على كل نشاط تجاري تحيله لنا.">
+<meta property="og:url" content="https://www.nabdh.online/affiliate.html">
+<meta property="og:image" content="https://www.nabdh.online/assets/og-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.nabdh.online/assets/og-cover.jpg">
+<style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
+  @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
+  .back-link{min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center;}
+  :focus-visible{outline:2.5px solid rgba(18,140,126,.6); outline-offset:3px;}
+</style>
 </head>
 <body>
 
@@ -127,7 +145,7 @@
       </div>
       <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
     </div>
-    <a class="back-link" href="index.html"><span>→</span> <span class="txt">الرجوع للرئيسية</span></a>
+    <a class="back-link" href="index.html" aria-label="الرجوع للرئيسية"><span>→</span> <span class="txt">الرجوع للرئيسية</span></a>
   </nav>
 </header>
 
@@ -194,19 +212,19 @@
       <form id="affiliateForm">
         <h2 style="text-align:right; margin-bottom:22px;">سجّل كشريك الآن</h2>
         <div class="field">
-          <label>الاسم الكامل *</label>
+          <label for="fullName">الاسم الكامل *</label>
           <input type="text" id="fullName" required placeholder="مثال: محمد العتيبي">
         </div>
         <div class="field">
-          <label>البريد الإلكتروني *</label>
+          <label for="affEmail">البريد الإلكتروني *</label>
           <input type="email" id="affEmail" required placeholder="you@example.com">
         </div>
         <div class="field">
-          <label>رقم الجوال *</label>
+          <label for="affPhone">رقم الجوال *</label>
           <input type="tel" id="affPhone" required placeholder="9665xxxxxxxx">
         </div>
         <div class="field">
-          <label>كيف بتروّج للرابط؟ (اختياري)</label>
+          <label for="promotionMethod">كيف بتروّج للرابط؟ (اختياري)</label>
           <select id="promotionMethod">
             <option value="">اختر...</option>
             <option value="سوشيال ميديا شخصي">سوشيال ميديا شخصي</option>
