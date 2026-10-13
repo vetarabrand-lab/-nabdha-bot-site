@@ -4,7 +4,7 @@
 // فقط ملفات الواجهة الثابتة (portal.html نفسه، الأيقونات، الـ manifest). كل طلبات البيانات
 // الحية تروح للشبكة مباشرة، عشان التاجر يشوف دايماً أحدث محادثاته ولا يشوف بيانات قديمة مخزّنة.
 
-const CACHE_NAME = 'nabda-portal-shell-v1';
+const CACHE_NAME = 'nabda-portal-shell-v2';
 const SHELL_FILES = [
   '/portal.html',
   '/manifest.json',
@@ -48,7 +48,9 @@ self.addEventListener('fetch', function(event){
     // شبكة أولاً (نفس النسخة الحية)، ولو ما فيه إنترنت نرجع آخر نسخة محفوظة
     event.respondWith(
       fetch(req).then(function(res){
-        caches.open(CACHE_NAME).then(function(cache){ cache.put(req, res.clone()); });
+        // ننسخ الاستجابة فوراً قبل ما المتصفح يبدأ يقرأ جسمها (النسخ المتأخر داخل then يفشل أحياناً)
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(function(cache){ cache.put(req, copy); });
         return res;
       }).catch(function(){
         return caches.match(req);
@@ -61,7 +63,8 @@ self.addEventListener('fetch', function(event){
   event.respondWith(
     caches.match(req).then(function(cached){
       const network = fetch(req).then(function(res){
-        caches.open(CACHE_NAME).then(function(cache){ cache.put(req, res.clone()); });
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then(function(cache){ cache.put(req, copy); });
         return res;
       }).catch(function(){ return cached; });
       return cached || network;
