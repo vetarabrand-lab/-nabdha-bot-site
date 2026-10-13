@@ -682,40 +682,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     return new Date(iso).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
-  /* ---------- الدفع الإلكتروني عبر Network International (N-Genius) ----------
-     صفحة دفع مستضافة (Hosted Payment Page) — بخلاف Tap ما فيه نموذج بطاقة مدمج بالصفحة،
-     ننشئ عملية الدفع عبر create-ngenius-order ونحوّل العميل مباشرة لرابط N-Genius.
-     لو نظام الدفع لسه ما تفعّل (الأسرار ما انضافت بعد بمشروع Supabase)، الدالة ترجع
-     payment_not_configured فنرجع نفس السلوك الحالي بالضبط: نوجّه العميل لتبويب الدعم. */
-  async function startNgeniusCheckout(purpose, extra, title){
-    if(!myClient){ return; }
-    try{
-      const { data: sessionData } = await supabaseClient.auth.getSession();
-      const authToken = sessionData.session.access_token;
-      const res = await fetch(FUNCTIONS_BASE + '/create-ngenius-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-        body: JSON.stringify(Object.assign({ purpose: purpose }, extra || {}))
-      });
-      const resJson = await res.json().catch(function(){ return {}; });
-
-      if(resJson.error === 'payment_not_configured'){
-        document.querySelector('.tab-btn[data-tab="support"]').click();
-        return;
-      }
-      if(!res.ok || !resJson.payment_url){
-        alert(resJson.error || PT('تعذّر إتمام عملية الدفع، حاول مرة ثانية أو تواصل مع الدعم.'));
-        return;
-      }
-      window.location.href = resJson.payment_url;
-    } catch(e){
-      document.querySelector('.tab-btn[data-tab="support"]').click();
-    }
-  }
   /* ---------- الدفع الإلكتروني عبر Geidea (Checkout v2 - Hosted Payment Page) ----------
-     مطابقة لـ startNgeniusCheckout بالضبط، بس تستدعي create-geidea-order. لو نظام الدفع
-     لسه ما تفعّل (الأسرار ما انضافت بعد)، الدالة ترجع payment_not_configured فنوجّه العميل
-     لتبويب الدعم (نفس السلوك الحالي). */
+     نستدعي create-geidea-order وننقل العميل لرابط الدفع. لو نظام الدفع لسه ما تفعّل
+     (الأسرار ما انضافت بعد)، الدالة ترجع payment_not_configured فنوجّه العميل لتبويب الدعم. */
   async function startGeideaCheckout(purpose, extra, title){
     if(!myClient){ return; }
     try{

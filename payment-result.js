@@ -11,15 +11,12 @@
   }
 
   async function confirmPayment(){
-    // نحدد مزود الدفع من رابط الرجوع: Geidea أو N-Genius يرجّعون provider=geidea/ngenius + mor (مرجعنا الخاص).
-    // (تمت إزالة مسار Tap القديم — الدفع الإلكتروني توقف عن استخدام Tap نهائياً.)
+    // مزود الدفع الوحيد: Geidea — يرجّع provider=geidea + mor (مرجعنا الخاص) في رابط الرجوع.
     const provider = qs('provider');
     const mor = qs('mor');
 
     let endpoint = null;
-    if(provider === 'ngenius' && mor){
-      endpoint = FUNCTIONS_BASE + '/ngenius-webhook?mor=' + encodeURIComponent(mor);
-    } else if(provider === 'geidea' && mor){
+    if(provider === 'geidea' && mor){
       endpoint = FUNCTIONS_BASE + '/geidea-webhook?mor=' + encodeURIComponent(mor);
     }
 
