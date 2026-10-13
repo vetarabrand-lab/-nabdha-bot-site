@@ -55,11 +55,12 @@ async function prefillFromZidPending(){
 }
 prefillFromZidPending();
 
-// حقل كلمة المرور مطلوب فقط لتدفقات التثبيت المباشر (سلة/زد) لأن الحساب يُنشأ فورًا بدخول
-// فعلي — التسجيل العادي بدون تثبيت لا ينشئ حساب دخول تلقائي (يبقى يدوي من فريق نبضة).
+// حقل كلمة المرور ظاهر ومطلوب لكل التسجيلات: كل المسارات (العادي عبر submit-signup،
+// وسلة/زد عبر finalize-*) تنشئ حساب دخول فعلي فورًا بلوحة التحكم.
+// مربع reCAPTCHA مطلوب فقط للتسجيل العادي — نخفيه بمسارات التثبيت المباشر من سلة/زد.
 if(sallaPendingId || zidPendingId){
-  const pwField = document.getElementById('pendingPasswordField');
-  if(pwField){ pwField.style.display = ''; }
+  const rcWrap = document.querySelector('.recaptcha-wrap');
+  if(rcWrap){ rcWrap.style.display = 'none'; }
 }
 
 
@@ -72,7 +73,7 @@ if(sallaPendingId || zidPendingId){
       backLink: "الرجوع للرئيسية",
       "hero.eyebrow": "سجّل نشاطك",
       "hero.title": "خلّي بوت نبضة يشتغل لحساب نشاطك",
-      "hero.sub": "عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.",
+      "hero.sub": "عبّي البيانات التالية وحسابك يُنشأ فورًا، وفريقنا يساعدك تربط رقم واتساب نشاطك وتفعّل الاشتراك.",
       "form.s1": "بيانات النشاط",
       "form.bizNameAr": "اسم النشاط (بالعربي) *",
       "form.bizNameArPh": "مثال: متجر جُمان للبهارات",
@@ -84,7 +85,7 @@ if(sallaPendingId || zidPendingId){
       "form.waNumber": "رقم واتساب النشاط الذي تريد ربطه بالبوت",
       "form.waNumberHint": "إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.",
       "form.password": "كلمة مرور الدخول للوحة التحكم *",
-      "form.passwordHint": "بما إنك جاي من تثبيت مباشر، حسابك يُنشأ فورًا — اختر كلمة مرور لدخول لوحة التحكم لاحقًا.",
+      "form.passwordHint": "حسابك يُنشأ فورًا — اختر كلمة مرور (8 أحرف على الأقل) لدخول لوحة التحكم.",
       "form.errorPassword": "كلمة المرور لازم تكون 8 أحرف على الأقل.",
       "form.s3": "تعليمات البوت",
       "form.prompt": "عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *",
@@ -97,10 +98,12 @@ if(sallaPendingId || zidPendingId){
       "form.agreeTerms": "أوافق على <a href=\"terms.html\" target=\"_blank\" rel=\"noopener\">الشروط والأحكام</a> وسياسة الخصوصية *",
       "form.marketingConsent": "أحب أستلم عروض وتحديثات بوت نبضة عبر الإيميل (اختياري)",
       "form.submit": "إرسال طلب التسجيل",
-      "form.note": "بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.",
+      "form.note": "بعد التسجيل تقدر تدخل لوحة التحكم فورًا، وفريقنا يساعدك تربط رقم واتساب نشاطك — بدون أي التزام مسبق.",
       "form.errorRequired": "الرجاء تعبئة كل الحقول المطلوبة (المعلّمة بـ *).",
       "form.errorTerms": "الرجاء الموافقة على الشروط والأحكام للمتابعة.",
       "form.errorSubmit": "حصل خطأ أثناء إرسال طلبك، حاول مرة ثانية أو تواصل معنا مباشرة.",
+      "form.errorRecaptcha": "الرجاء تأكيد أنك لست روبوتاً (مربع التحقق فوق زر الإرسال).",
+      "form.errorNetwork": "تعذّر الاتصال بالخادم — تأكد من اتصالك بالإنترنت وحاول مرة ثانية.",
       "form.submitting": "جاري الإرسال...",
       "form.plansError": "تعذّر تحميل الباقات، حدّث الصفحة أو تواصل معنا مباشرة.",
       "form.perMonth": "ريال/شهر",
@@ -110,13 +113,14 @@ if(sallaPendingId || zidPendingId){
       "form.msgWord": "رسالة",
       "form.validFor": "صالحة",
       "form.monthsWord": "شهر",
-      "success.title": "تم استلام تسجيلك بنجاح!",
-      "success.sub": "شكراً لك، حسابك الآن بحالة \"تجريبي\". هذي الخطوات الجاية:",
-      "success.s1": "فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.",
+      "success.title": "تم إنشاء حسابك بنجاح!",
+      "success.sub": "شكراً لك، حسابك الآن بحالة \"تجريبي\" وتقدر تسجّل دخولك مباشرة بالبريد وكلمة المرور اللي اخترتها. هذي الخطوات الجاية:",
+      "success.s1": "ادخل <a href=\"portal.html\">لوحة التحكم</a> بالبريد وكلمة المرور اللي سجّلت فيها.",
       "success.s2": "نساعدك تربط رقم واتساب نشاطك عبر Meta.",
       "success.s3": "نفعّل اشتراكك بعد تأكيد الباقة والدفع.",
       "success.s4": "بوتك يبدأ يرد على عملائك تلقائياً 🎉",
       "success.back": "الرجوع للصفحة الرئيسية",
+      "success.login": "تسجيل الدخول للوحة التحكم",
       "footer.copy": "© 2026 بوت نبضة. جميع الحقوق محفوظة."
     },
     en: {
@@ -127,7 +131,7 @@ if(sallaPendingId || zidPendingId){
       backLink: "Back to Home",
       "hero.eyebrow": "Sign Up Your Business",
       "hero.title": "Get Nabda Bot working for your business",
-      "hero.sub": "Fill in the details below, and our team will reach out within 24 hours to connect your WhatsApp number and activate your subscription.",
+      "hero.sub": "Fill in the details below and your account is created instantly, then our team helps you connect your WhatsApp number and activate your subscription.",
       "form.s1": "Business Details",
       "form.bizNameAr": "Business Name (Arabic) *",
       "form.bizNameArPh": "e.g. Juman Spices Store",
@@ -139,7 +143,7 @@ if(sallaPendingId || zidPendingId){
       "form.waNumber": "The business WhatsApp number you want to connect",
       "form.waNumberHint": "If you do not have a number ready yet, leave this blank, our team will help you set one up.",
       "form.password": "Dashboard Login Password *",
-      "form.passwordHint": "Since you are coming from a direct install, your account is created immediately, choose a password to log in to the dashboard later.",
+      "form.passwordHint": "Your account is created immediately, choose a password (at least 8 characters) to log in to the dashboard.",
       "form.errorPassword": "Password must be at least 8 characters.",
       "form.s3": "Bot Instructions",
       "form.prompt": "Tell us about your business (what you sell, shipping policy, common questions...) *",
@@ -152,10 +156,12 @@ if(sallaPendingId || zidPendingId){
       "form.agreeTerms": "I agree to the <a href=\"terms.html\" target=\"_blank\" rel=\"noopener\">Terms & Conditions</a> and Privacy Policy *",
       "form.marketingConsent": "I'd like to receive Nabda Bot offers and updates via email (optional)",
       "form.submit": "Submit Sign-up Request",
-      "form.note": "By submitting, our team will reach out to complete setup and payment, no upfront commitment.",
+      "form.note": "After signing up you can log in to the dashboard right away, and our team helps you connect your WhatsApp number, no upfront commitment.",
       "form.errorRequired": "Please fill in all required fields (marked with *).",
       "form.errorTerms": "Please agree to the Terms & Conditions to continue.",
       "form.errorSubmit": "Something went wrong while submitting your request. Please try again or contact us directly.",
+      "form.errorRecaptcha": "Please confirm you are not a robot (the check box above the submit button).",
+      "form.errorNetwork": "Could not reach the server. Check your internet connection and try again.",
       "form.submitting": "Submitting...",
       "form.plansError": "Could not load plans. Refresh the page or contact us directly.",
       "form.perMonth": "SAR/month",
@@ -165,13 +171,14 @@ if(sallaPendingId || zidPendingId){
       "form.msgWord": "messages",
       "form.validFor": "valid for",
       "form.monthsWord": "months",
-      "success.title": "Your sign-up was received!",
-      "success.sub": "Thank you, your account is now in \"trial\" status. Here is what happens next:",
-      "success.s1": "Our team reviews your request and reaches out within 24 hours.",
+      "success.title": "Your account has been created!",
+      "success.sub": "Thank you, your account is now in \"trial\" status and you can log in right away with the email and password you chose. Here is what happens next:",
+      "success.s1": "Log in to the <a href=\"portal.html\">dashboard</a> with the email and password you signed up with.",
       "success.s2": "We help you connect your business WhatsApp number via Meta.",
       "success.s3": "We activate your subscription after confirming your plan and payment.",
       "success.s4": "Your bot starts replying to your customers automatically!",
       "success.back": "Back to Home",
+      "success.login": "Log in to the dashboard",
       "footer.copy": "© 2026 Nabda Bot. All rights reserved."
     }
   };
@@ -309,21 +316,26 @@ if(sallaPendingId || zidPendingId){
 
     const pendingPasswordEl = document.getElementById('pendingPassword');
     const pendingPassword = pendingPasswordEl ? pendingPasswordEl.value : '';
-    if((sallaPendingId || zidPendingId) && pendingPassword.length < 8){
+    if(pendingPassword.length < 8){
       errorAlert.textContent = t['form.errorPassword'];
       errorAlert.style.display = 'block';
       return;
     }
 
+    // التسجيل العادي يمر عبر دالة submit-signup اللي تشترط reCAPTCHA (مسارات سلة/زد ما تحتاجه)
+    const isGenericSignup = !zidPendingId && !sallaPendingId;
+    let recaptchaToken = '';
+    if(isGenericSignup){
+      recaptchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : '';
+      if(!recaptchaToken){
+        errorAlert.textContent = t['form.errorRecaptcha'];
+        errorAlert.style.display = 'block';
+        return;
+      }
+    }
+
     submitBtn.disabled = true;
     submitBtn.textContent = t['form.submitting'];
-
-    // لو فيه كود إحالة بالرابط، نتحقق منه عبر دالة آمنة (بدون فتح جدول الشركاء بالكامل)
-    let affiliateId = null;
-    if(refCode){
-      const { data: affId } = await supabaseClient.rpc('lookup_referral_code', { p_code: refCode });
-      if(affId){ affiliateId = affId; }
-    }
 
     let signupFailed = false;
 
@@ -388,22 +400,45 @@ if(sallaPendingId || zidPendingId){
         console.error(err);
       }
     } else {
-      const { error } = await supabaseClient.from('clients').insert({
-        business_name: businessName,
-        business_name_ar: businessNameAr,
-        owner_email: ownerEmail,
-        owner_phone: ownerPhone,
-        whatsapp_display_number: whatsappDisplayNumber,
-        system_prompt: systemPrompt,
-        welcome_message: welcomeMessage,
-        plan_id: planId,
-        subscription_status: 'trial',
-        affiliate_id: affiliateId
-      });
-      if(error){
+      // التسجيل العادي: الإدراج المباشر بجدول clients من المتصفح مرفوض بسياسات RLS،
+      // فنمرّر البيانات لدالة submit-signup (تتحقق من reCAPTCHA، تنشئ العميل وحساب الدخول فورًا)
+      try{
+        const res = await fetch(SUPABASE_URL + '/functions/v1/submit-signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_KEY
+          },
+          body: JSON.stringify({
+            business_name: businessName,
+            business_name_ar: businessNameAr,
+            owner_email: ownerEmail,
+            owner_phone: ownerPhone,
+            whatsapp_display_number: whatsappDisplayNumber,
+            system_prompt: systemPrompt,
+            welcome_message: welcomeMessage,
+            plan_id: planId,
+            ref_code: refCode || null,
+            password: pendingPassword,
+            recaptcha_token: recaptchaToken,
+            website_hp: document.getElementById('websiteHp').value
+          })
+        });
+        let json = {};
+        try{ json = await res.json(); }catch(_e){ json = {}; }
+        if(!res.ok || json.error || !json.success){
+          signupFailed = true;
+          // الدالة ترجع رسائل عربية واضحة (بريد مكرر، باقة غير متاحة، تحقق روبوت...)
+          errorAlert.textContent = json.error || t['form.errorSubmit'];
+        }
+      }catch(err){
         signupFailed = true;
-        errorAlert.textContent = t['form.errorSubmit'];
-        console.error(error);
+        errorAlert.textContent = t['form.errorNetwork'];
+        console.error(err);
+      }
+      if(signupFailed && typeof grecaptcha !== 'undefined'){
+        try{ grecaptcha.reset(); }catch(_e){}
       }
     }
 

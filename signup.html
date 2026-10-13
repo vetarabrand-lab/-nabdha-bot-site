@@ -15,6 +15,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <style>
   :root{
     --wa-green:#25D366;
@@ -108,6 +109,12 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
     overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
     opacity:0; pointer-events:none;}
 
+  .recaptcha-wrap{display:flex; justify-content:center; margin:18px 0 6px; max-width:100%; overflow-x:auto;}
+  @media (max-width:400px){
+    #recaptchaWidget{ transform:scale(0.88); transform-origin:center top; }
+    .recaptcha-wrap{ height:72px; overflow:hidden; }
+  }
+
   .consent-block{ margin:22px 0 6px; display:flex; flex-direction:column; gap:13px; }
   .consent-row{ display:flex; align-items:flex-start; gap:10px; font-size:13.5px; color:var(--muted); cursor:pointer; line-height:1.7; }
   .consent-row input{ margin-top:3px; flex-shrink:0; width:17px; height:17px; accent-color:var(--wa-green); cursor:pointer; }
@@ -180,7 +187,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   <div class="container">
     <div class="eyebrow"><span class="dot"></span> <span data-i18n="hero.eyebrow">سجّل نشاطك</span></div>
     <h1 data-i18n="hero.title">خلّي بوت نبضة يشتغل لحساب نشاطك</h1>
-    <p data-i18n="hero.sub">عبّي البيانات التالية، وفريقنا يتواصل معك خلال 24 ساعة لربط رقم واتساب نشاطك وتفعيل الاشتراك.</p>
+    <p data-i18n="hero.sub">عبّي البيانات التالية وحسابك يُنشأ فورًا، وفريقنا يساعدك تربط رقم واتساب نشاطك وتفعّل الاشتراك.</p>
   </div>
 </section>
 
@@ -193,11 +200,11 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="form-section-title" data-i18n="form.s1">بيانات النشاط</div>
       <div class="row-2">
         <div class="field">
-          <label data-i18n="form.bizNameAr">اسم النشاط (بالعربي) *</label>
+          <label for="businessNameAr" data-i18n="form.bizNameAr">اسم النشاط (بالعربي) *</label>
           <input type="text" id="businessNameAr" name="organization" autocomplete="organization" required data-i18n-placeholder="form.bizNameArPh" placeholder="مثال: متجر جُمان للبهارات">
         </div>
         <div class="field">
-          <label data-i18n="form.bizNameEn">اسم النشاط (بالإنجليزي)</label>
+          <label for="businessName" data-i18n="form.bizNameEn">اسم النشاط (بالإنجليزي)</label>
           <input type="text" id="businessName" name="organization-latin" autocomplete="off" data-i18n-placeholder="form.bizNameEnPh" placeholder="Juman Spices">
         </div>
       </div>
@@ -205,33 +212,33 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="form-section-title" data-i18n="form.s2">بيانات التواصل</div>
       <div class="row-2">
         <div class="field">
-          <label data-i18n="form.email">البريد الإلكتروني *</label>
+          <label for="ownerEmail" data-i18n="form.email">البريد الإلكتروني *</label>
           <input type="email" id="ownerEmail" name="email" autocomplete="email" inputmode="email" required placeholder="you@example.com">
         </div>
         <div class="field">
-          <label data-i18n="form.phone">رقم جوالك (للتواصل معك) *</label>
+          <label for="ownerPhone" data-i18n="form.phone">رقم جوالك (للتواصل معك) *</label>
           <input type="tel" id="ownerPhone" name="tel" autocomplete="tel" inputmode="tel" required placeholder="9665xxxxxxxx">
         </div>
       </div>
-      <div class="field" id="pendingPasswordField" style="display:none;">
-        <label data-i18n="form.password">كلمة مرور الدخول للوحة التحكم *</label>
-        <input type="password" id="pendingPassword" name="new-password" autocomplete="new-password" minlength="8" placeholder="8 أحرف على الأقل">
-        <div class="hint" data-i18n="form.passwordHint">بما إنك جاي من تثبيت مباشر، حسابك يُنشأ فورًا — اختر كلمة مرور لدخول لوحة التحكم لاحقًا.</div>
+      <div class="field" id="pendingPasswordField">
+        <label for="pendingPassword" data-i18n="form.password">كلمة مرور الدخول للوحة التحكم *</label>
+        <input type="password" id="pendingPassword" name="new-password" autocomplete="new-password" minlength="8" required placeholder="8 أحرف على الأقل">
+        <div class="hint" data-i18n="form.passwordHint">حسابك يُنشأ فورًا — اختر كلمة مرور (8 أحرف على الأقل) لدخول لوحة التحكم.</div>
       </div>
       <div class="field">
-        <label data-i18n="form.waNumber">رقم واتساب النشاط الذي تريد ربطه بالبوت</label>
+        <label for="whatsappDisplayNumber" data-i18n="form.waNumber">رقم واتساب النشاط الذي تريد ربطه بالبوت</label>
         <input type="tel" id="whatsappDisplayNumber" name="whatsapp-number" autocomplete="off" inputmode="tel" placeholder="9665xxxxxxxx">
         <div class="hint" data-i18n="form.waNumberHint">إذا ما عندك رقم جاهز بعد، اتركه فاضي — فريقنا يساعدك تجهزه.</div>
       </div>
 
       <div class="form-section-title" data-i18n="form.s3">تعليمات البوت</div>
       <div class="field">
-        <label data-i18n="form.prompt">عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *</label>
+        <label for="systemPrompt" data-i18n="form.prompt">عرّفنا بنشاطك (وش تبيعون، سياسة الشحن، أهم الأسئلة المتكررة...) *</label>
         <textarea id="systemPrompt" required data-i18n-placeholder="form.promptPh" placeholder="مثال: نبيع بهارات وتوابل أصلية عبر متجرنا الإلكتروني على Zid. الشحن داخل السعودية 3-5 أيام عمل، مجاني فوق 200 ريال..."></textarea>
         <div class="hint" data-i18n="form.promptHint">هذا النص هو اللي البوت بيعتمد عليه بالرد على عملائك — كل ما كان أوضح، كانت ردوده أدق.</div>
       </div>
       <div class="field">
-        <label data-i18n="form.welcome">رسالة الترحيب الأولى (اختياري)</label>
+        <label for="welcomeMessage" data-i18n="form.welcome">رسالة الترحيب الأولى (اختياري)</label>
         <input type="text" id="welcomeMessage" data-i18n-placeholder="form.welcomePh" placeholder="أهلاً بك في متجر جُمان 🌿 كيف أقدر أساعدك؟">
       </div>
 
@@ -246,6 +253,10 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
         <input type="text" id="websiteHp" tabindex="-1" autocomplete="off">
       </div>
 
+      <div class="recaptcha-wrap">
+        <div class="g-recaptcha" id="recaptchaWidget" data-sitekey="6Ldq8YUtAAAAACieM0xQ17KAtx6iU373CwGNOpbg"></div>
+      </div>
+
       <div class="consent-block">
         <label class="consent-row">
           <input type="checkbox" id="agreeTerms" required>
@@ -258,20 +269,20 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn" data-i18n="form.submit">إرسال طلب التسجيل</button>
-      <p class="form-note" data-i18n="form.note">بإرسالك للطلب، فريقنا بيتواصل معك لإكمال الربط والدفع — بدون أي التزام مسبق.</p>
+      <p class="form-note" data-i18n="form.note">بعد التسجيل تقدر تدخل لوحة التحكم فورًا، وفريقنا يساعدك تربط رقم واتساب نشاطك — بدون أي التزام مسبق.</p>
     </form>
 
     <div class="success-card" id="successCard">
       <div class="success-icon">✓</div>
-      <h2 data-i18n="success.title">تم استلام تسجيلك بنجاح!</h2>
-      <p data-i18n="success.sub">شكراً لك، حسابك الآن بحالة "تجريبي". هذي الخطوات الجاية:</p>
+      <h2 data-i18n="success.title">تم إنشاء حسابك بنجاح!</h2>
+      <p data-i18n="success.sub">شكراً لك، حسابك الآن بحالة "تجريبي" وتقدر تسجّل دخولك مباشرة بالبريد وكلمة المرور اللي اخترتها. هذي الخطوات الجاية:</p>
       <ul class="success-steps">
-        <li><b>1.</b> <span data-i18n="success.s1">فريقنا يراجع طلبك ويتواصل معك خلال 24 ساعة.</span></li>
+        <li><b>1.</b> <span data-i18n="success.s1">ادخل <a href="portal.html">لوحة التحكم</a> بالبريد وكلمة المرور اللي سجّلت فيها.</span></li>
         <li><b>2.</b> <span data-i18n="success.s2">نساعدك تربط رقم واتساب نشاطك عبر Meta.</span></li>
         <li><b>3.</b> <span data-i18n="success.s3">نفعّل اشتراكك بعد تأكيد الباقة والدفع.</span></li>
         <li><b>4.</b> <span data-i18n="success.s4">بوتك يبدأ يرد على عملائك تلقائياً 🎉</span></li>
       </ul>
-      <a href="index.html" class="submit-btn" style="display:inline-block; width:auto; padding:14px 34px;" data-i18n="success.back">الرجوع للصفحة الرئيسية</a>
+      <a href="portal.html" class="submit-btn" style="display:inline-block; width:auto; padding:14px 34px;" data-i18n="success.login">تسجيل الدخول للوحة التحكم</a>
     </div>
 
   </div>
