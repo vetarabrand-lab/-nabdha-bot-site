@@ -496,7 +496,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, zapier_webhook_url, hide_customer_phone_from_staff')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, zapier_webhook_url, hide_customer_phone_from_staff')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -511,7 +511,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, zapier_webhook_url, hide_customer_phone_from_staff')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, zapier_webhook_url, hide_customer_phone_from_staff')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -716,7 +716,18 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const endsAt = myClient.current_period_ends_at ? new Date(myClient.current_period_ends_at) : null;
     const now = new Date();
     const daysLeft = endsAt ? Math.ceil((endsAt - now) / (1000 * 60 * 60 * 24)) : null;
-    if(myClient.subscription_status !== 'active' || !endsAt || daysLeft < 0){
+    const BEN = (window.PORTAL_LANG === 'en');
+    const trialEnds = myClient.trial_ends_at ? new Date(myClient.trial_ends_at) : null;
+    const trialDaysLeft = trialEnds ? Math.ceil((trialEnds - now) / (1000 * 60 * 60 * 24)) : null;
+    if(myClient.subscription_status === 'trial' && (trialDaysLeft === null || trialDaysLeft >= 0)){
+      // الفترة التجريبية: تنبيه ودّي بدل رسالة "غير فعّال"
+      banner.className = 'cost-note';
+      banner.style.display = 'block';
+      banner.innerHTML = (trialDaysLeft !== null
+        ? (BEN ? ('🕐 You are on the free trial — ' + trialDaysLeft + ' day(s) left. ') : ('🕐 أنت في الفترة التجريبية — باقي ' + trialDaysLeft + ' يوم. '))
+        : (BEN ? '🕐 You are on the free trial. ' : '🕐 أنت في الفترة التجريبية. ')) +
+        '<a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">' + (BEN ? 'Choose your plan' : 'اختر باقتك الآن') + '</a>';
+    } else if(myClient.subscription_status !== 'active' || !endsAt || daysLeft < 0){
       banner.className = 'alert-box error';
       banner.style.display = 'block';
       banner.innerHTML = PT('🚫 اشتراكك غير فعّال حالياً. ') + '<a href="#" id="bannerRenewLink" style="color:inherit; text-decoration:underline; font-weight:800;">' + PT('ادفع الآن لتفعيل البوت') + '</a>';
@@ -756,15 +767,176 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     box.innerHTML = (LANG_EN ? 'Plan: ' : 'الباقة: ') + '<b>' + escapeHtml(planName) + '</b>' + priceLabel +
       (isPrepaid && myPlan.prepaid_credits ? '<br>' + (LANG_EN ? 'Prepaid message credit: ' : 'رصيد الرسائل المسبق: ') + Number(myPlan.prepaid_credits).toLocaleString('en') + (LANG_EN ? ' messages' : ' رسالة') : '') +
       '<br>' + (LANG_EN ? 'Status: ' : 'الحالة: ') + statusLabel + '<br>' + endsAtWord + endsAtLabel;
-    if(isOwner && myPlan){
+    btn.style.display = 'none';
+    if(isOwner){ loadPlanOptions(); }
+  }
+
+  /* ---------- اختيار/تغيير الباقة + عرض الافتتاح (خصم 50% سنوي) ----------
+     التاجر يختار المدة (سنوي/شهري/رصيد مسبق) والباقة، ثم يدفع عبر Geidea.
+     الخصم الفعلي يحسبه الخادم (create-geidea-order) — هنا للعرض فقط. */
+  let planOptions = null;      // الباقات المفعّلة
+  let promoState = null;       // حالة عرض الافتتاح من get-launch-promo-status
+  let selectedCycle = null;    // annual | monthly | prepaid
+  let selectedPlanId = null;
+  let planOptionsLoading = false;
+
+  function planCycleOf(p){ return p.is_prepaid ? 'prepaid' : (p.billing_cycle === 'annual' ? 'annual' : 'monthly'); }
+  function planTierOf(p){ return String(p.code || '').replace(/_annual$/, ''); }
+  function fmtSar(n){ return Number(n).toLocaleString('en', { maximumFractionDigits: 2 }); }
+  function planFinalPrice(p){
+    const price = Number(p.monthly_price_sar);
+    return (planCycleOf(p) === 'annual' && promoState) ? price * 0.5 : price;
+  }
+  function planDisplayName(p){
+    const EN = (window.PORTAL_LANG === 'en');
+    const base = String(p.name_ar || '').replace(/\s*\(سنوي\)\s*/, '');
+    return EN ? PT(base) : base;
+  }
+
+  async function loadPlanOptions(){
+    if(planOptions){ renderPlanPicker(); return; }
+    if(planOptionsLoading){ return; }
+    planOptionsLoading = true;
+    try{
+      const results = await Promise.all([
+        supabaseClient.from('subscription_plans')
+          .select('id, code, name_ar, billing_cycle, monthly_price_sar, monthly_message_limit, is_prepaid, prepaid_credits, prepaid_validity_months, sort_order')
+          .eq('is_active', true).order('sort_order'),
+        fetch(FUNCTIONS_BASE + '/get-launch-promo-status').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+      ]);
+      planOptions = (results[0] && results[0].data) || [];
+      const promo = results[1];
+      promoState = (promo && promo.active) ? promo : null;
+    } catch(e){
+      planOptions = [];
+    }
+    planOptionsLoading = false;
+    // الاختيار الافتراضي: نفس باقة العميل، ومع العرض نقترح السنوي من نفس المستوى
+    const current = myClient && planOptions.find(function(p){ return p.id === myClient.plan_id; });
+    if(current){
+      selectedCycle = (promoState && planCycleOf(current) === 'monthly') ? 'annual' : planCycleOf(current);
+    } else {
+      selectedCycle = promoState ? 'annual' : 'monthly';
+    }
+    pickDefaultPlanInCycle(current ? planTierOf(current) : 'growth');
+    renderPlanPicker();
+  }
+
+  function pickDefaultPlanInCycle(tier){
+    const inCycle = (planOptions || []).filter(function(p){ return planCycleOf(p) === selectedCycle; });
+    const current = inCycle.find(function(p){ return myClient && p.id === myClient.plan_id; });
+    const sameTier = inCycle.find(function(p){ return planTierOf(p) === tier; });
+    const pick = current || sameTier || inCycle[0] || null;
+    selectedPlanId = pick ? pick.id : null;
+  }
+
+  function renderPlanPicker(){
+    const wrap = document.getElementById('planPicker');
+    const btn = document.getElementById('renewPlanBtn');
+    if(!wrap || !planOptions || !planOptions.length || !isOwner){ if(wrap){ wrap.style.display = 'none'; } return; }
+    const EN = (window.PORTAL_LANG === 'en');
+    wrap.style.display = 'block';
+
+    // شريط عرض الافتتاح
+    const promoEl = document.getElementById('planPromoNote');
+    if(promoState){
+      const ends = promoState.endsAt ? formatDateAr(promoState.endsAt) : '';
+      const setup = (promoState.freeSetup && promoState.freeSetup.active)
+        ? (EN ? ' + free full setup (first 20 customers)' : ' + إعداد كامل مجاني (لأول 20 عميل)') : '';
+      promoEl.innerHTML = '<b>' + (EN ? '🎉 Launch offer: ' : '🎉 عرض الافتتاح: ') + '</b>' +
+        (EN ? '50% off every annual plan + 5 add-ons free for one year (worth 1,395 SAR)' : 'خصم 50% على كل الباقات السنوية + 5 إضافات مجانية لمدة سنة (قيمتها 1,395 ريال)') +
+        escapeHtml(setup) + (ends ? (EN ? ' — until ' : ' — حتى ') + escapeHtml(ends) : '');
+      promoEl.style.display = 'block';
+    } else {
+      promoEl.style.display = 'none';
+    }
+
+    // أزرار المدة
+    const cycles = [
+      { key: 'annual', label: EN ? 'Annual' : 'سنوي', badge: promoState ? '-50%' : '' },
+      { key: 'monthly', label: EN ? 'Monthly' : 'شهري', badge: '' },
+      { key: 'prepaid', label: EN ? 'Prepaid credit' : 'رصيد مسبق', badge: '' }
+    ].filter(function(c){ return planOptions.some(function(p){ return planCycleOf(p) === c.key; }); });
+    const cycleBox = document.getElementById('planCycle');
+    cycleBox.innerHTML = cycles.map(function(c){
+      const on = c.key === selectedCycle;
+      return '<button type="button" class="cycle-btn' + (on ? ' on' : '') + '" role="tab" aria-selected="' + on + '" data-cycle="' + c.key + '">' +
+        escapeHtml(c.label) + (c.badge ? ' <span class="cycle-badge">' + escapeHtml(c.badge) + '</span>' : '') + '</button>';
+    }).join('');
+
+    // بطاقات الباقات
+    const list = planOptions.filter(function(p){ return planCycleOf(p) === selectedCycle; });
+    const optBox = document.getElementById('planOptions');
+    optBox.innerHTML = list.map(function(p){
+      const cyc = planCycleOf(p);
+      const price = Number(p.monthly_price_sar);
+      const final = planFinalPrice(p);
+      const on = p.id === selectedPlanId;
+      const isCurrent = myClient && p.id === myClient.plan_id;
+      let priceHtml;
+      if(cyc === 'annual'){
+        priceHtml = (final < price ? '<s>' + fmtSar(price) + '</s> ' : '') + '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR/year' : 'ريال/سنة') +
+          '<span class="plan-sub">' + (EN ? '≈ ' + fmtSar(Math.round(final / 12)) + ' SAR/month' : '≈ ' + fmtSar(Math.round(final / 12)) + ' ريال/شهر') + '</span>';
+      } else if(cyc === 'prepaid'){
+        priceHtml = '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR one-time' : 'ريال دفعة واحدة');
+      } else {
+        priceHtml = '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR/month' : 'ريال/شهر');
+      }
+      const limit = cyc === 'prepaid'
+        ? (fmtSar(p.prepaid_credits || 0) + (EN ? ' messages' : ' رسالة'))
+        : (fmtSar(p.monthly_message_limit || 0) + (EN ? ' messages/month' : ' رسالة/شهر'));
+      return '<button type="button" class="plan-opt' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-plan="' + escapeHtml(p.id) + '">' +
+        '<span class="plan-opt-head"><span class="plan-opt-name">' + escapeHtml(planDisplayName(p)) + '</span>' +
+        (isCurrent ? '<span class="plan-cur">' + (EN ? 'Current' : 'باقتك الحالية') + '</span>' : '') + '</span>' +
+        '<span class="plan-opt-price">' + priceHtml + '</span>' +
+        '<span class="plan-opt-limit">' + escapeHtml(limit) + '</span></button>';
+    }).join('');
+
+    // زر الدفع + ملاحظة التغيير
+    const sel = planOptions.find(function(p){ return p.id === selectedPlanId; });
+    const note = document.getElementById('planChangeNote');
+    if(sel){
+      const final = planFinalPrice(sel);
+      const isRenew = myClient && sel.id === myClient.plan_id;
+      btn.textContent = (EN ? (isRenew ? '💳 Renew — ' : '💳 Pay ') : (isRenew ? '💳 جدّد باقتك — ' : '💳 ادفع ')) + fmtSar(final) + (EN ? ' SAR' : ' ريال') +
+        (isRenew ? '' : (EN ? ' — ' : ' — ') + planDisplayName(sel));
       btn.style.display = 'inline-block';
+      const activeNow = myClient && myClient.subscription_status === 'active' && myClient.current_period_ends_at && new Date(myClient.current_period_ends_at) > new Date();
+      note.textContent = activeNow
+        ? (EN ? 'Your new plan applies right after payment, and its period is added on top of the time left in your current subscription.' : 'الباقة تتفعّل فور الدفع، ومدتها تُضاف على المتبقي من اشتراكك الحالي.')
+        : (EN ? 'Your bot is activated automatically right after payment.' : 'يتفعّل البوت تلقائياً فور إتمام الدفع.');
     } else {
       btn.style.display = 'none';
+      note.textContent = '';
     }
   }
+
+  document.getElementById('planCycle').addEventListener('click', function(e){
+    const b = e.target.closest('.cycle-btn');
+    if(!b){ return; }
+    const prev = planOptions && planOptions.find(function(p){ return p.id === selectedPlanId; });
+    selectedCycle = b.getAttribute('data-cycle');
+    pickDefaultPlanInCycle(prev ? planTierOf(prev) : 'growth');
+    renderPlanPicker();
+  });
+  document.getElementById('planOptions').addEventListener('click', function(e){
+    const b = e.target.closest('.plan-opt');
+    if(!b){ return; }
+    selectedPlanId = b.getAttribute('data-plan');
+    renderPlanPicker();
+  });
+  document.getElementById('planPromoNote').addEventListener('click', function(){
+    if(selectedCycle === 'annual'){ return; }
+    const prev = planOptions && planOptions.find(function(p){ return p.id === selectedPlanId; });
+    selectedCycle = 'annual';
+    pickDefaultPlanInCycle(prev ? planTierOf(prev) : 'growth');
+    renderPlanPicker();
+  });
   document.getElementById('renewPlanBtn').addEventListener('click', function(){
-    if(!myClient || !myPlan){ return; }
-    startGeideaCheckout('subscription', { plan_id: myPlan.id }, 'تجديد الاشتراك');
+    if(!myClient || !isOwner || !selectedPlanId){ return; }
+    const btnEl = this;
+    btnEl.disabled = true;
+    startGeideaCheckout('subscription', { plan_id: selectedPlanId }, 'الاشتراك').finally(function(){ btnEl.disabled = false; });
   });
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){

@@ -730,7 +730,13 @@
           <label data-i18n="billing.subTitle">اشتراكك</label>
         </div>
         <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;" data-i18n="common.loading">جاري التحميل...</div>
-        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;" data-i18n="billing.renewBtn">💳 الدفع وتجديد الاشتراك</button>
+        <div id="planPicker" class="plan-picker" style="display:none;">
+          <button type="button" class="plan-promo" id="planPromoNote" style="display:none;"></button>
+          <div class="plan-cycle" id="planCycle" role="tablist" aria-label="مدة الاشتراك"></div>
+          <div class="plan-options" id="planOptions" role="radiogroup" aria-label="الباقات"></div>
+          <div class="helper-text" id="planChangeNote" style="margin:10px 0 14px;"></div>
+        </div>
+        <button class="primary-btn" id="renewPlanBtn" style="width:auto; padding:12px 30px; display:none;">💳 الدفع وتجديد الاشتراك</button>
         <div class="helper-text" id="planHelperNonOwner" style="display:none;" data-i18n="billing.renewOwnerOnly">تجديد الاشتراك متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="billing.renewPayNote">الدفع الإلكتروني متاح الآن عبر بطاقات فيزا، ماستركارد، ومدى — سيتم تفعيل اشتراكك تلقائياً فور إتمام الدفع.</div>
       </div>
@@ -1381,6 +1387,28 @@ nav{max-width:1440px; padding:13px 24px;}
   .stat-card .n{font-size:21px;}
   .biz-tag{display:none;}
 }
+
+  /* اختيار الباقة داخل البوابة (2026-10) */
+  .plan-picker{margin:4px 0 6px;}
+  .plan-promo{display:block; width:100%; text-align:start; font:inherit; font-size:14px; line-height:1.7; color:#fff; background:linear-gradient(135deg,var(--wa-green-dark),var(--wa-teal)); border:none; border-radius:var(--r-md,14px); padding:12px 16px; margin-bottom:14px; cursor:pointer;}
+  .plan-cycle{display:inline-flex; gap:4px; padding:4px; background:var(--tint,#F0F7F5); border:1px solid var(--border); border-radius:100px; margin-bottom:14px; flex-wrap:wrap;}
+  .cycle-btn{font:inherit; font-size:14px; font-weight:700; color:var(--muted); background:transparent; border:none; border-radius:100px; padding:8px 16px; min-height:40px; cursor:pointer;}
+  .cycle-btn.on{background:var(--card); color:var(--ink); box-shadow:0 1px 3px rgba(11,31,26,.12);}
+  .cycle-badge{display:inline-block; font-size:11px; font-weight:800; color:#fff; background:var(--wa-green-dark); border-radius:100px; padding:1px 7px; margin-inline-start:4px;}
+  .plan-options{display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px;}
+  .plan-opt{display:flex; flex-direction:column; gap:6px; text-align:start; font:inherit; color:var(--ink); background:var(--card); border:1.5px solid var(--border); border-radius:var(--r-md,14px); padding:14px; cursor:pointer; transition:border-color .15s, box-shadow .15s;}
+  .plan-opt:hover{border-color:var(--wa-teal);}
+  .plan-opt.on{border-color:var(--wa-green-dark); box-shadow:0 0 0 3px rgba(13,124,85,.15);}
+  .plan-opt-head{display:flex; align-items:center; justify-content:space-between; gap:6px;}
+  .plan-opt-name{font-weight:800; font-size:15px;}
+  .plan-cur{font-size:11px; font-weight:700; color:var(--wa-teal-dark); background:var(--wa-bubble); border-radius:100px; padding:2px 8px; white-space:nowrap;}
+  .plan-opt-price{font-size:14px; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .plan-opt-price b{font-size:20px; color:var(--ink);}
+  .plan-opt-price s{color:var(--muted); opacity:.75;}
+  .plan-sub{display:block; font-size:12px; margin-top:2px;}
+  .plan-opt-limit{font-size:13px; color:var(--muted);}
+  .plan-opt:focus-visible,.cycle-btn:focus-visible,.plan-promo:focus-visible{outline:2.5px solid rgba(18,140,126,.6); outline-offset:2px;}
+  @media (max-width:480px){ .plan-options{grid-template-columns:1fr 1fr;} .plan-opt{padding:12px;} .plan-opt-price b{font-size:17px;} }
 </style>
 <script src="portal-header.js"></script>
 
