@@ -286,7 +286,7 @@ if(sallaPendingId || zidPendingId){
         unit = ar ? 'ريال / شهرياً' : 'SAR / month';
         if(launchPromoOn){ strike = '<s class="p-strike">' + fmtN(Math.round(total / 12)) + '</s> '; }
         note = launchPromoOn
-          ? (ar ? 'يُدفع ' + fmtN(payTotal) + ' ريال سنوياً (خصم الافتتاح 50%، بدل ' + fmtN(total) + ')' : 'Billed ' + fmtN(payTotal) + ' SAR/year (50% launch discount, was ' + fmtN(total) + ')')
+          ? (ar ? 'يُدفع ' + fmtN(payTotal) + ' ريال سنوياً (بدل ' + fmtN(total) + ')' : 'Billed ' + fmtN(payTotal) + ' SAR/year (was ' + fmtN(total) + ')')
           : (ar ? 'يُدفع ' + fmtN(total) + ' ريال سنوياً' : 'Billed ' + fmtN(total) + ' SAR/year');
       } else {
         big = fmtN(total); unit = ar ? 'ريال / شهرياً' : 'SAR / month';
