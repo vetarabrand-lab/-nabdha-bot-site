@@ -183,6 +183,28 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
   .back-link{min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center;}
 </style>
+<style>
+  /* بطاقات الباقات بنفس شكل الصفحة الرئيسية */
+  .plan-tabs{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:22px;}
+  .plan-tab{font:inherit; font-weight:800; font-size:14px; padding:9px 20px; border-radius:100px; border:1.5px solid var(--border); background:#fff; color:var(--muted); cursor:pointer; display:inline-flex; align-items:center; gap:8px; min-height:44px;}
+  .plan-tab.active{background:var(--wa-teal-dark); border-color:var(--wa-teal-dark); color:#fff;}
+  .plan-tab em{font-style:normal; font-size:12px; font-weight:800; background:rgba(37,211,102,.2); color:#0b6b3a; padding:2px 9px; border-radius:100px;}
+  .plan-tab.active em{background:#25d366; color:#04210f;}
+  .plans{grid-template-columns:repeat(2,1fr); gap:20px; padding-top:10px;}
+  .plan-card{text-align:start; border-radius:24px; padding:30px 22px 24px; background:var(--card,#fff); overflow:visible;}
+  .plan-card .p-name{font-size:20px; font-weight:900; margin-bottom:10px;}
+  .plan-card .p-price{display:flex; align-items:baseline; gap:6px; flex-wrap:wrap; color:inherit; font-weight:600; letter-spacing:0;}
+  .plan-card .p-price b{font-size:40px; font-weight:900; color:inherit; letter-spacing:-.02em;}
+  .plan-card .p-price span{font-size:14px; color:var(--muted);}
+  .plan-card .p-strike{font-size:19px; font-weight:700; color:var(--muted); text-decoration:line-through;}
+  .plan-card .p-note{color:var(--muted); font-size:12.5px; margin:2px 0 10px; min-height:16px; line-height:1.5;}
+  .plan-card .p-limit{color:var(--wa-teal-dark); font-weight:700; font-size:14px; margin-top:0;}
+  .plan-card.popular{border-color:var(--wa-green);}
+  .plan-card .p-badge{position:absolute; top:-14px; inset-inline-start:50%; transform:translateX(-50%); background:var(--wa-green); color:#04210F; font-size:12.5px; font-weight:800; padding:6px 18px; border-radius:100px; white-space:nowrap;}
+  [dir="rtl"] .plan-card .p-badge{transform:translateX(50%);}
+  .plan-card.selected{border-color:var(--wa-green);}
+  @media (max-width:640px){ .plans{grid-template-columns:1fr;} }
+</style>
 </head>
 <body>
 

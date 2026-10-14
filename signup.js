@@ -223,36 +223,79 @@ if(sallaPendingId || zidPendingId){
   let plansData = [];
   let preselectedIndex = 0;
 
+  var planTab = null; // monthly | annual | prepaid
+  function planCycle(p){ return p.is_prepaid ? 'prepaid' : (p.billing_cycle === 'annual' ? 'annual' : 'monthly'); }
+  function fmtN(n){ return Number(n).toLocaleString('en-US'); }
+
   function renderPlans(){
     var t = translations[currentLang];
+    var ar = currentLang === 'ar';
+    if(!planTab && plansData.length){ planTab = planCycle(plansData[preselectedIndex] || plansData[0]); }
+
+    // أزرار اختيار المدة (مثل مفتاح الشهري/السنوي بالصفحة الرئيسية)
+    var tabsEl = document.getElementById('planTabs');
+    if(!tabsEl){
+      tabsEl = document.createElement('div');
+      tabsEl.id = 'planTabs';
+      tabsEl.className = 'plan-tabs';
+      plansContainer.parentNode.insertBefore(tabsEl, plansContainer);
+    }
+    var tabs = [['annual', ar ? 'سنوي' : 'Annual'], ['monthly', ar ? 'شهري' : 'Monthly'], ['prepaid', ar ? 'رصيد مسبق' : 'Prepaid']];
+    tabsEl.innerHTML = '';
+    tabs.forEach(function(tb){
+      if(!plansData.some(function(p){ return planCycle(p) === tb[0]; })) return;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'plan-tab' + (planTab === tb[0] ? ' active' : '');
+      b.textContent = tb[1];
+      if(tb[0] === 'annual' && launchPromoOn){
+        var sv = document.createElement('em'); sv.textContent = ar ? 'وفّر 50%' : 'Save 50%'; b.appendChild(sv);
+      }
+      b.addEventListener('click', function(){
+        planTab = tb[0];
+        var first = plansData.findIndex(function(p){ return planCycle(p) === planTab; });
+        var pref = plansData.findIndex(function(p){ return planCycle(p) === planTab && /growth/.test(p.code); });
+        preselectedIndex = pref !== -1 ? pref : first;
+        selectedPlanIdInput.value = plansData[preselectedIndex].id;
+        renderPlans();
+      });
+      tabsEl.appendChild(b);
+    });
+
     plansContainer.innerHTML = '';
     plansData.forEach(function(plan, idx){
-      const card = document.createElement('div');
-      card.className = 'plan-card' + (idx === preselectedIndex ? ' selected' : '');
+      if(planCycle(plan) !== planTab) return;
+      var card = document.createElement('div');
+      card.className = 'plan-card' + (idx === preselectedIndex ? ' selected' : '') + (/growth/.test(plan.code) ? ' popular' : '');
       card.dataset.planId = plan.id;
-      var planName = currentLang === 'en' && plan.name_en ? plan.name_en : plan.name_ar;
-      // ميزة 7: باقات الدفع المسبق تخزّن عدد الرسائل بعمود prepaid_credits (مو monthly_message_limit،
-      // اللي يفضل 0 لها بقصد)، والسعر دفعة وحدة مو شهري — لازم نميّزها هنا وإلا تطلع "0 رسالة" غلط
+      var planName = currentLang === 'en' && plan.name_en ? plan.name_en : String(plan.name_ar || '').replace(/\s*\(سنوي\)\s*/, '');
       var isPrepaid = !!plan.is_prepaid;
-      var isAnnual = !isPrepaid && plan.billing_cycle === 'annual';
-      var priceUnitLabel = isPrepaid ? t['form.oneTime'] : (isAnnual ? t['form.perYear'] : t['form.perMonth']);
+      var isAnnual = planCycle(plan) === 'annual';
       var msgCount = isPrepaid ? (plan.prepaid_credits || 0) : (plan.monthly_message_limit || 0);
-      var limitLine = t['form.upTo'] + ' ' + Number(msgCount).toLocaleString(currentLang === 'ar' ? 'ar' : 'en') + ' ' + t['form.msgWord'];
+      var limitLine = t['form.upTo'] + ' ' + fmtN(msgCount) + ' ' + t['form.msgWord'] + (isPrepaid ? '' : (ar ? ' شهرياً' : '/month'));
       if(isPrepaid && plan.prepaid_validity_months){
         limitLine += ' — ' + t['form.validFor'] + ' ' + plan.prepaid_validity_months + ' ' + t['form.monthsWord'];
       }
-      var loc = currentLang === 'ar' ? 'ar' : 'en';
-      var priceHtml;
-      if(isAnnual && launchPromoOn){
-        priceHtml = '<div class="p-old" style="text-decoration:line-through;color:#6b7a77;font-size:14px;font-weight:700">' + Number(plan.monthly_price_sar).toLocaleString(loc) + '</div>' +
-          '<div class="p-price">' + Math.round(Number(plan.monthly_price_sar) * 0.5).toLocaleString(loc) + '<span> ' + priceUnitLabel + '</span></div>' +
-          '<div style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:99px;background:#075e54;color:#fff;font-size:12px;font-weight:800">' + (currentLang === 'ar' ? 'خصم ٥٠٪ عرض الافتتاح' : '50% launch offer') + '</div>';
+      var total = Number(plan.monthly_price_sar);
+      var big, unit, strike = '', note = '';
+      if(isPrepaid){
+        big = fmtN(total); unit = t['form.oneTime'];
+      } else if(isAnnual){
+        var payTotal = launchPromoOn ? Math.round(total * 0.5) : total;
+        big = fmtN(Math.round(payTotal / 12));
+        unit = ar ? 'ريال / شهرياً' : 'SAR / month';
+        if(launchPromoOn){ strike = '<s class="p-strike">' + fmtN(Math.round(total / 12)) + '</s> '; }
+        note = launchPromoOn
+          ? (ar ? 'يُدفع ' + fmtN(payTotal) + ' ريال سنوياً (خصم الافتتاح 50%، بدل ' + fmtN(total) + ')' : 'Billed ' + fmtN(payTotal) + ' SAR/year (50% launch discount, was ' + fmtN(total) + ')')
+          : (ar ? 'يُدفع ' + fmtN(total) + ' ريال سنوياً' : 'Billed ' + fmtN(total) + ' SAR/year');
       } else {
-        priceHtml = '<div class="p-price">' + Number(plan.monthly_price_sar).toLocaleString(loc) + '<span> ' + priceUnitLabel + '</span></div>';
+        big = fmtN(total); unit = ar ? 'ريال / شهرياً' : 'SAR / month';
       }
       card.innerHTML =
+        (card.classList.contains('popular') ? '<span class="p-badge">' + (ar ? 'الأكثر طلباً' : 'Most popular') + '</span>' : '') +
         '<div class="p-name">' + planName + '</div>' +
-        priceHtml +
+        '<div class="p-price">' + strike + '<b>' + big + '</b><span> ' + unit + '</span></div>' +
+        '<div class="p-note">' + note + '</div>' +
         '<div class="p-limit">' + limitLine + '</div>';
       card.addEventListener('click', function(){
         document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
