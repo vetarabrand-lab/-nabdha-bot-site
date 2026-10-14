@@ -241,9 +241,18 @@ if(sallaPendingId || zidPendingId){
       if(isPrepaid && plan.prepaid_validity_months){
         limitLine += ' — ' + t['form.validFor'] + ' ' + plan.prepaid_validity_months + ' ' + t['form.monthsWord'];
       }
+      var loc = currentLang === 'ar' ? 'ar' : 'en';
+      var priceHtml;
+      if(isAnnual && launchPromoOn){
+        priceHtml = '<div class="p-old" style="text-decoration:line-through;color:#6b7a77;font-size:14px;font-weight:700">' + Number(plan.monthly_price_sar).toLocaleString(loc) + '</div>' +
+          '<div class="p-price">' + Math.round(Number(plan.monthly_price_sar) * 0.5).toLocaleString(loc) + '<span> ' + priceUnitLabel + '</span></div>' +
+          '<div style="display:inline-block;margin-top:4px;padding:2px 8px;border-radius:99px;background:#075e54;color:#fff;font-size:12px;font-weight:800">' + (currentLang === 'ar' ? 'خصم ٥٠٪ عرض الافتتاح' : '50% launch offer') + '</div>';
+      } else {
+        priceHtml = '<div class="p-price">' + Number(plan.monthly_price_sar).toLocaleString(loc) + '<span> ' + priceUnitLabel + '</span></div>';
+      }
       card.innerHTML =
         '<div class="p-name">' + planName + '</div>' +
-        '<div class="p-price">' + Number(plan.monthly_price_sar).toLocaleString(currentLang === 'ar' ? 'ar' : 'en') + '<span> ' + priceUnitLabel + '</span></div>' +
+        priceHtml +
         '<div class="p-limit">' + limitLine + '</div>';
       card.addEventListener('click', function(){
         document.querySelectorAll('.plan-card').forEach(function(c){ c.classList.remove('selected'); });
@@ -255,7 +264,17 @@ if(sallaPendingId || zidPendingId){
     });
   }
 
+  var launchPromoOn = false;
+  async function loadLaunchPromo(){
+    try{
+      var r = await fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/get-launch-promo-status');
+      var j = await r.json();
+      launchPromoOn = !!(j && j.active && j.annual && j.annual.remaining > 0);
+    }catch(e){ launchPromoOn = false; }
+  }
+
   async function loadPlans(){
+    await loadLaunchPromo();
     const { data, error } = await supabaseClient
       .from('subscription_plans')
       .select('id, code, name_ar, monthly_price_sar, monthly_message_limit, is_prepaid, prepaid_credits, prepaid_validity_months, billing_cycle')
