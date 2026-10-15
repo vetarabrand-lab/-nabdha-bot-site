@@ -938,6 +938,20 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     btnEl.disabled = true;
     startGeideaCheckout('subscription', { plan_id: selectedPlanId }, 'الاشتراك').finally(function(){ btnEl.disabled = false; });
   });
+  // اختبار الدفع الحقيقي بمبلغ ريال واحد — يظهر لحساب الإدارة فقط، والدالة ترفض أي حساب آخر من جهة الخادم
+  (function(){
+    const btn = document.getElementById('liveTestPayBtn');
+    if(!btn) return;
+    setInterval(function(){
+      const show = !!(myClient && isOwner && String(myClient.owner_email || '').toLowerCase().trim() === 'vetarabrand@gmail.com');
+      btn.style.display = show ? 'inline-block' : 'none';
+    }, 1000);
+    btn.addEventListener('click', function(){
+      if(!myClient){ return; }
+      btn.disabled = true;
+      startGeideaCheckout('live_test_1sar', {}, 'اختبار').finally(function(){ btn.disabled = false; });
+    });
+  })();
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){
     const price = (myPlan && myPlan.store_integration_addon_price_sar) || 25;
