@@ -1,6 +1,7 @@
 /* رأس القسم الديناميكي + بطاقة الباقة في القائمة الجانبية */
 (function(){
   var META = {
+    home:      ['الرئيسية','نظرة سريعة على أداء بوتك اليوم.'],
     inbox:     ['المحادثات','كل محادثات عملائك من واتساب وتيليجرام في مكان واحد.'],
     orders:    ['الطلبات','طلبات متجرك المربوط في جدول موحّد ومحدّث.'],
     support:   ['الدعم الفني','تذاكر الدعم والتواصل المباشر مع فريق نبضة.'],
@@ -12,7 +13,7 @@
     settings:  ['إعدادات البوت','شخصية البوت وتعليماته وصلاحيات فريق العمل.']
   };
   var PANEL2TAB = {
-    panelInbox:'inbox', panelOrders:'orders', panelSupport:'support', panelAnalytics:'analytics',
+    panelHome:'home', panelInbox:'inbox', panelOrders:'orders', panelSupport:'support', panelAnalytics:'analytics',
     panelBroadcast:'broadcast', panelTemplates:'templates', panelChannels:'channels',
     panelAddons:'addons', panelSettings:'settings'
   };

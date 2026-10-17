@@ -225,6 +225,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     resetScreen.style.display = 'none';
     appScreen.style.display = 'none';
     logoutBtn.style.display = 'none';
+    document.body.classList.toggle('v2-in-app', name === 'app');
     if(name === 'login'){ loginScreen.style.display = 'flex'; }
     else if(name === 'forgot'){ forgotScreen.style.display = 'flex'; }
     else if(name === 'reset'){ resetScreen.style.display = 'flex'; }
@@ -357,10 +358,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels' };
+      const map = { home: 'panelHome', inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
       if(btn.dataset.tab === 'addons'){ loadPortalAddonsTab(); }
+      if(btn.dataset.tab === 'home'){ renderHome(); }
+      v2AfterTabChange(btn.dataset.tab);
     });
   });
   /* ---------- الإضافات المدفوعة ---------- */
@@ -652,7 +655,337 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadTopupInfo();
     renderSubscriptionBanner();
     renderPlanCard();
+    renderHome();
   }
+  /* ════════ v2: الهيكل الجديد (القائمة الجوال + الشريط العلوي) والصفحة الرئيسية ════════ */
+  function V2L(ar, en){ return (window.PORTAL_LANG === 'en') ? en : ar; }
+  var V2_TITLES = {
+    home: ['الرئيسية','Home'], inbox: ['المحادثات','Conversations'], orders: ['الطلبات','Orders'],
+    support: ['الدعم الفني','Support'], analytics: ['التحليلات','Analytics'], broadcast: ['الرسائل الجماعية','Broadcasts'],
+    templates: ['قوالب الرسائل','Message templates'], channels: ['قنوات الربط','Channels'], addons: ['الإضافات','Add-ons'],
+    settings: ['إعدادات البوت','Bot settings']
+  };
+  function v2AfterTabChange(tab){
+    var t = V2_TITLES[tab];
+    var titleEl = document.getElementById('v2Title');
+    if(titleEl && t){ titleEl.textContent = V2L(t[0], t[1]); }
+    document.querySelectorAll('#v2Tabbar [data-go]').forEach(function(b){ b.classList.toggle('on', b.dataset.go === tab); });
+    document.body.classList.remove('v2-menu-open');
+    window.scrollTo(0, 0);
+  }
+  function v2Go(tab){
+    if(tab === '__menu'){ document.body.classList.add('v2-menu-open'); return; }
+    var btn = document.querySelector('.tab-btn[data-tab="' + tab + '"]');
+    if(btn && btn.style.display !== 'none'){ btn.click(); }
+  }
+  (function v2BindShell(){
+    document.addEventListener('click', function(e){
+      var go = e.target.closest ? e.target.closest('[data-go]') : null;
+      if(go && document.body.classList.contains('v2-in-app')){ e.preventDefault(); v2Go(go.dataset.go); }
+    });
+    var menuBtn = document.getElementById('v2MenuBtn');
+    if(menuBtn){ menuBtn.addEventListener('click', function(){ document.body.classList.add('v2-menu-open'); }); }
+    ['v2SideClose','v2Backdrop'].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){ el.addEventListener('click', function(){ document.body.classList.remove('v2-menu-open'); }); }
+    });
+    document.addEventListener('keydown', function(e){ if(e.key === 'Escape'){ document.body.classList.remove('v2-menu-open'); } });
+    var lang = document.getElementById('v2LangBtn');
+    if(lang){
+      lang.textContent = (window.PORTAL_LANG === 'en') ? 'العربية' : 'English';
+      lang.addEventListener('click', function(){ var b = document.getElementById('langBtn'); if(b){ b.click(); } });
+    }
+    var out = document.getElementById('v2LogoutBtn');
+    if(out){ out.addEventListener('click', function(){ var b = document.getElementById('logoutBtn'); if(b){ b.click(); } }); }
+    var manage = document.getElementById('v2ManagePlan');
+    if(manage){ manage.addEventListener('click', v2OpenPlanCard); }
+    var range = document.getElementById('homeRange');
+    if(range){
+      range.addEventListener('click', function(e){
+        var b = e.target.closest('button[data-days]'); if(!b){ return; }
+        range.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
+        v2HomeDays = Number(b.dataset.days) || 7;
+        renderHome();
+      });
+    }
+    var resizeTimer = null;
+    window.addEventListener('resize', function(){
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function(){ if(document.getElementById('panelHome').classList.contains('active')){ v2DrawChart(); } }, 150);
+    });
+    v2AfterTabChange('home');
+  })();
+  function v2OpenPlanCard(){
+    v2Go('settings');
+    setTimeout(function(){
+      var card = document.getElementById('planCard');
+      if(card){ card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }, 120);
+  }
+
+  var v2HomeDays = 7;
+  var V2_AV_COLORS = ['#0B7A6B','#A35A1B','#2F5FB3','#7B3F98','#B23A2E','#4C7A1E','#0E6E8C'];
+  function v2AvColor(key){ var h = 0; key = String(key || ''); for(var i = 0; i < key.length; i++){ h = (h * 31 + key.charCodeAt(i)) >>> 0; } return V2_AV_COLORS[h % V2_AV_COLORS.length]; }
+  function v2Initial(name){ var n = String(name || '').trim().replace(/^\+/, ''); return n ? n.charAt(0).toUpperCase() : '؟'; }
+  function v2Fmt(n){ return Number(n || 0).toLocaleString('en-US'); }
+  function v2DayKey(d){ return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+  function v2Ago(iso){
+    var diff = (Date.now() - new Date(iso).getTime()) / 60000;
+    if(diff < 1){ return V2L('الآن', 'now'); }
+    if(diff < 60){ return V2L('قبل ' + Math.round(diff) + ' د', Math.round(diff) + 'm ago'); }
+    if(diff < 1440){ return V2L('قبل ' + Math.round(diff / 60) + ' س', Math.round(diff / 60) + 'h ago'); }
+    var days = Math.round(diff / 1440);
+    if(days < 30){ return V2L('قبل ' + days + ' يوم', days + 'd ago'); }
+    return new Date(iso).toLocaleDateString(window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn', { month: 'short', day: 'numeric' });
+  }
+  // سلسلة يومية: لكل يوم من آخر N يوم → [رسائل العملاء، ردود البوت، محادثات فريدة]
+  function v2DailySeries(days, offsetDays){
+    var start = new Date(); start.setHours(0, 0, 0, 0); start.setDate(start.getDate() - (days - 1) - (offsetDays || 0));
+    var end = new Date(start); end.setDate(end.getDate() + days);
+    var idx = {}, out = [];
+    for(var i = 0; i < days; i++){
+      var d = new Date(start); d.setDate(start.getDate() + i);
+      idx[v2DayKey(d)] = i; out.push({ date: d, inMsgs: 0, outMsgs: 0, phones: {} });
+    }
+    allMessages.forEach(function(r){
+      var t = new Date(r.created_at);
+      if(t < start || t >= end){ return; }
+      var slot = out[idx[v2DayKey(t)]]; if(!slot){ return; }
+      if(r.inbound_message){ slot.inMsgs++; slot.phones[r.customer_phone] = 1; }
+      if(r.outbound_message){ slot.outMsgs++; }
+    });
+    return out;
+  }
+  function v2Sum(series, key){ return series.reduce(function(a, d){ return a + d[key]; }, 0); }
+  function v2UniquePhones(series){ var all = {}; series.forEach(function(d){ Object.keys(d.phones).forEach(function(p){ all[p] = 1; }); }); return Object.keys(all).length; }
+  function v2Spark(values){
+    var w = 200, h = 34;
+    if(!values.length){ return ''; }
+    var rtl = window.PORTAL_LANG !== 'en';
+    if(rtl){ values = values.slice().reverse(); } // الأحدث على اليسار بالعربي، مثل الرسم الرئيسي
+    var mx = Math.max.apply(null, values), mn = Math.min.apply(null, values), rg = (mx - mn) || 1;
+    var step = values.length > 1 ? w / (values.length - 1) : w;
+    var pts = values.map(function(v, i){ return [i * step, h - 4 - ((v - mn) / rg) * (h - 10)]; });
+    var d = pts.map(function(p, i){ return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+    var last = rtl ? pts[0] : pts[pts.length - 1];
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="' + d + ' L' + w + ' ' + h + ' L0 ' + h + 'Z" fill="rgba(18,163,140,.12)"/>' +
+      '<path d="' + d + '" fill="none" stroke="#0B7A6B" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>' +
+      '<circle cx="' + last[0].toFixed(1) + '" cy="' + last[1].toFixed(1) + '" r="3" fill="#0B7A6B"/></svg>';
+  }
+  function v2Delta(cur, prev, unit){
+    if(!prev && !cur){ return '<span class="d">' + V2L('لا يوجد نشاط بعد', 'No activity yet') + '</span>'; }
+    if(!prev){ return '<span class="d">' + V2L('أول نشاط في هذه الفترة', 'First activity this period') + '</span>'; }
+    var pct = Math.round(((cur - prev) / prev) * 100);
+    var cls = pct >= 0 ? 'up' : 'down';
+    var sign = pct > 0 ? '+' : '';
+    return '<span class="d"><b class="' + cls + '">' + sign + pct + '%</b> ' + V2L('عن الفترة السابقة', 'vs previous period') + '</span>';
+  }
+  function v2Kpi(label, value, unit, deltaHtml, spark){
+    return '<div class="v2-kpi"><span class="l">' + label + '</span><span class="v">' + value + (unit ? '<small>' + unit + '</small>' : '') + '</span>' + deltaHtml + spark + '</div>';
+  }
+  function renderHome(){
+    var panel = document.getElementById('panelHome');
+    if(!panel || !myClient){ return; }
+    var days = v2HomeDays;
+    var cur = v2DailySeries(days, 0), prev = v2DailySeries(days, days);
+    var convNow = v2UniquePhones(cur), convPrev = v2UniquePhones(prev);
+    var inNow = v2Sum(cur, 'inMsgs'), outNow = v2Sum(cur, 'outMsgs'), outPrev = v2Sum(prev, 'outMsgs');
+    var hoursNow = outNow * 3 / 60, hoursPrev = outPrev * 3 / 60;
+
+    // محادثات تولّاها الفريق = محادثات موقوف فيها البوت ونشطة في الفترة
+    var phonesNow = {}; cur.forEach(function(d){ Object.keys(d.phones).forEach(function(p){ phonesNow[p] = 1; }); });
+    var activePhones = Object.keys(phonesNow);
+    var humanCount = activePhones.filter(function(p){ return conversations[p] && conversations[p].botPaused; }).length;
+    var autoPct = activePhones.length ? Math.round(((activePhones.length - humanCount) / activePhones.length) * 100) : 0;
+
+    // الترحيب
+    var hr = new Date().getHours();
+    var greet = hr < 12 ? V2L('صباح الخير', 'Good morning') : V2L('مساء الخير', 'Good evening');
+    var biz = myClient.business_name_ar || myClient.business_name || '';
+    document.getElementById('homeHello').textContent = greet + (biz ? V2L('، ', ', ') + biz : '');
+    var periodTxt = days === 7 ? V2L('آخر 7 أيام', 'the last 7 days') : V2L('آخر 30 يوم', 'the last 30 days');
+    document.getElementById('homeSummary').textContent = outNow
+      ? V2L('خلال ' + periodTxt + ' رد بوتك على ' + v2Fmt(outNow) + ' رسالة، ووفّر عليك تقريباً ' + (hoursNow >= 10 ? Math.round(hoursNow) : hoursNow.toFixed(1)) + ' ساعة من الرد اليدوي.',
+            'In ' + periodTxt + ' your bot sent ' + v2Fmt(outNow) + ' replies and saved you about ' + (hoursNow >= 10 ? Math.round(hoursNow) : hoursNow.toFixed(1)) + ' hours of manual replies.')
+      : V2L('ما فيه نشاط خلال ' + periodTxt + '. أول ما يراسلك عميل، تظهر الأرقام هنا.', 'No activity in ' + periodTxt + '. Numbers appear here once customers message you.');
+
+    // المؤشرات
+    var convSpark = cur.map(function(d){ return Object.keys(d.phones).length; });
+    var outSpark = cur.map(function(d){ return d.outMsgs; });
+    var inSpark = cur.map(function(d){ return d.inMsgs; });
+    document.getElementById('homeKpis').innerHTML =
+      v2Kpi(V2L('محادثات', 'Conversations'), v2Fmt(convNow), '', v2Delta(convNow, convPrev), v2Spark(convSpark)) +
+      v2Kpi(V2L('ردود البوت', 'Bot replies'), v2Fmt(outNow), '', v2Delta(outNow, outPrev), v2Spark(outSpark)) +
+      v2Kpi(V2L('محادثات أنهاها البوت وحده', 'Handled fully by the bot'), activePhones.length ? autoPct : '–', activePhones.length ? '%' : '',
+        '<span class="d">' + (activePhones.length ? V2L(humanCount + ' محادثة تولّاها فريقك', humanCount + ' taken over by your team') : V2L('لا يوجد نشاط بعد', 'No activity yet')) + '</span>', v2Spark(inSpark)) +
+      v2Kpi(V2L('وقت وفّره البوت', 'Time saved'), hoursNow >= 10 ? v2Fmt(Math.round(hoursNow)) : hoursNow.toFixed(1), V2L('ساعة', 'hrs'), v2Delta(hoursNow, hoursPrev), v2Spark(outSpark));
+
+    v2HomeSeries = cur;
+    v2DrawChart();
+    v2RenderAttention();
+    v2RenderRecent();
+    v2RenderUsage();
+    v2RenderTopState();
+    document.querySelectorAll('.v2-owner-only').forEach(function(el){ el.style.display = isOwner ? '' : 'none'; });
+  }
+  var v2HomeSeries = [];
+  function v2DrawChart(){
+    var svg = document.getElementById('homeChart');
+    if(!svg){ return; }
+    var data = v2HomeSeries;
+    var W = Math.max(280, svg.clientWidth || 600), H = svg.clientHeight || 230;
+    var rtl = window.PORTAL_LANG !== 'en';
+    var pl = rtl ? 6 : 34, pr = rtl ? 34 : 6, pt = 10, pb = 26;
+    var mx = 0; data.forEach(function(d){ mx = Math.max(mx, d.inMsgs, d.outMsgs); });
+    var top = mx <= 4 ? 4 : Math.ceil(mx / 4) * 4;
+    var plotH = H - pt - pb, plotW = W - pl - pr, slot = plotW / Math.max(1, data.length);
+    var out = '';
+    for(var g = 0; g <= 4; g++){
+      var y = pt + plotH * (g / 4), val = Math.round(top * (1 - g / 4));
+      out += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="#E2EAE7"' + (g === 4 ? '' : ' stroke-dasharray="3 4"') + '/>';
+      out += '<text x="' + (rtl ? W - 4 : 4) + '" y="' + (y + 4).toFixed(1) + '" font-size="10.5" fill="#5F716C" text-anchor="' + (rtl ? 'end' : 'start') + '">' + val + '</text>';
+    }
+    var labelEvery = data.length > 14 ? 5 : (data.length > 7 ? 2 : 1);
+    data.forEach(function(d, i){
+      // أحدث يوم على اليسار في العربي (اتجاه القراءة)، وعلى اليمين في الإنجليزي
+      var pos = rtl ? (data.length - 1 - i) : i;
+      var x0 = pl + pos * slot, bw = Math.max(2, Math.min(14, slot * 0.32)), gap = Math.max(1, bw * 0.25);
+      var cx = x0 + slot / 2;
+      var hIn = (d.inMsgs / top) * plotH, hOut = (d.outMsgs / top) * plotH, base = pt + plotH;
+      var tip = d.date.toLocaleDateString(window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn', { weekday: 'short', month: 'short', day: 'numeric' }) + ' — ' + V2L('رسائل العملاء ', 'Customer messages ') + d.inMsgs + ' · ' + V2L('ردود البوت ', 'Bot replies ') + d.outMsgs;
+      out += '<g><title>' + escapeHtml(tip) + '</title>';
+      out += '<rect x="' + (cx - bw - gap / 2).toFixed(1) + '" y="' + (base - hIn).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0, hIn).toFixed(1) + '" rx="2" fill="#B9DDD5"/>';
+      out += '<rect x="' + (cx + gap / 2).toFixed(1) + '" y="' + (base - hOut).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0, hOut).toFixed(1) + '" rx="2" fill="#0B7A6B"/>';
+      out += '<rect x="' + x0.toFixed(1) + '" y="' + pt + '" width="' + slot.toFixed(1) + '" height="' + plotH + '" fill="transparent"/></g>';
+      var isLast = i === data.length - 1;
+      if(isLast || (data.length - 1 - i) % labelEvery === 0){
+        var lbl = isLast ? V2L('اليوم', 'Today') : d.date.toLocaleDateString(window.PORTAL_LANG === 'en' ? 'en-US' : 'en-GB', { day: 'numeric', month: 'numeric' });
+        out += '<text x="' + cx.toFixed(1) + '" y="' + (H - 7) + '" font-size="10.5" fill="#5F716C" text-anchor="middle">' + lbl + '</text>';
+      }
+    });
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.innerHTML = out;
+  }
+  function v2OpenConversation(phone){
+    v2Go('inbox');
+    activePhone = phone;
+    renderConvList();
+    renderChat(phone);
+    var chat = document.querySelector('.chat-panel');
+    if(chat && window.innerWidth < 1000){ setTimeout(function(){ chat.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 80); }
+  }
+  function v2RenderAttention(){
+    var box = document.getElementById('homeAttn');
+    var now = Date.now(), items = [], seen = {};
+    Object.keys(conversations).forEach(function(phone){
+      var c = conversations[phone];
+      var last = c.messages[c.messages.length - 1];
+      var age = (now - new Date(c.lastAt).getTime()) / 3600000;
+      var reason = null;
+      if(c.botPaused && last && last.dir === 'in'){ reason = { sev: '#C0362C', pill: ['v2-p-bad', V2L('بانتظار ردك', 'Awaiting your reply')], rank: 0 }; }
+      else if(c.category === 'complaint' && age < 72){ reason = { sev: '#C0362C', pill: ['v2-p-bad', V2L('شكوى', 'Complaint')], rank: 1 }; }
+      else if(c.category === 'return_refund' && age < 72){ reason = { sev: '#B07800', pill: ['v2-p-warn', V2L('طلب استرجاع', 'Return request')], rank: 2 }; }
+      else if(c.category === 'purchase_intent' && age < 48){ reason = { sev: '#2F5FB3', pill: ['v2-p-info', V2L('جاهز للشراء', 'Ready to buy')], rank: 3 }; }
+      if(reason && !seen[phone]){ seen[phone] = 1; items.push({ phone: phone, conv: c, last: last, r: reason }); }
+    });
+    items.sort(function(a, b){ return a.r.rank - b.r.rank || new Date(b.conv.lastAt) - new Date(a.conv.lastAt); });
+    var countEl = document.getElementById('homeAttnCount');
+    var cnt = document.getElementById('v2TabCnt');
+    var waiting = items.filter(function(x){ return x.r.rank === 0; }).length;
+    if(countEl){ countEl.hidden = !items.length; countEl.textContent = items.length; }
+    if(cnt){ cnt.hidden = !waiting; cnt.textContent = waiting; }
+    if(!items.length){
+      box.innerHTML = '<div class="v2-empty"><span class="v2-empty-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>' +
+        V2L('كل شيء تحت السيطرة', 'All caught up') + '</b>' + V2L('ما فيه محادثات تنتظر ردك أو شكاوى جديدة.', 'No conversations are waiting for you and no new complaints.') + '</span></div>';
+      return;
+    }
+    box.innerHTML = items.slice(0, 6).map(function(x){
+      return '<button type="button" class="v2-row" data-phone="' + escapeHtml(x.phone) + '"><span class="v2-sev" style="background:' + x.r.sev + '"></span>' +
+        '<span class="v2-row-mid"><b>' + escapeHtml(displayConvName(x.conv, x.phone)) + '</b><span>' + escapeHtml(x.last ? x.last.text : '') + '</span></span>' +
+        '<span class="v2-row-end"><span class="v2-pill ' + x.r.pill[0] + '">' + x.r.pill[1] + '</span>' + v2Ago(x.conv.lastAt) + '</span></button>';
+    }).join('');
+    box.querySelectorAll('.v2-row').forEach(function(b){ b.addEventListener('click', function(){ v2OpenConversation(b.dataset.phone); }); });
+  }
+  function v2RenderRecent(){
+    var box = document.getElementById('homeRecent');
+    var phones = Object.keys(conversations).sort(function(a, b){ return new Date(conversations[b].lastAt) - new Date(conversations[a].lastAt); }).slice(0, 6);
+    if(!phones.length){
+      box.innerHTML = '<div class="v2-empty"><span><b>' + V2L('ما فيه محادثات بعد', 'No conversations yet') + '</b>' +
+        V2L('أول ما يراسل عميل رقم واتساب نشاطك، تظهر المحادثة هنا.', 'Once a customer messages your WhatsApp number, the conversation shows up here.') + '</span></div>';
+      return;
+    }
+    box.innerHTML = phones.map(function(phone){
+      var c = conversations[phone], last = c.messages[c.messages.length - 1];
+      var name = displayConvName(c, phone);
+      var state = c.botPaused ? '<span class="v2-pill v2-p-warn">' + V2L('فريقك يرد', 'Team replying') + '</span>' : '<span class="v2-pill v2-p-ok">' + V2L('البوت يرد', 'Bot replying') + '</span>';
+      return '<button type="button" class="v2-row" data-phone="' + escapeHtml(phone) + '"><span class="v2-av" style="background:' + v2AvColor(phone) + '">' + escapeHtml(v2Initial(name)) + '</span>' +
+        '<span class="v2-row-mid"><b>' + escapeHtml(name) + '</b><span>' + (last && last.dir === 'out' ? V2L('البوت: ', 'Bot: ') : '') + escapeHtml(last ? last.text : '') + '</span></span>' +
+        '<span class="v2-row-end">' + state + v2Ago(c.lastAt) + '</span></button>';
+    }).join('');
+    box.querySelectorAll('.v2-row').forEach(function(b){ b.addEventListener('click', function(){ v2OpenConversation(b.dataset.phone); }); });
+  }
+  function v2MonthCount(){
+    var now = new Date(), n = 0;
+    allMessages.forEach(function(r){ var d = new Date(r.created_at); if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()){ n++; } });
+    return n;
+  }
+  function v2FmtDate(iso){ return new Date(iso).toLocaleDateString(window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' }); }
+  function v2RenderUsage(){
+    var box = document.getElementById('homeUsage');
+    var used = v2MonthCount();
+    var limit = (myPlan && myPlan.monthly_message_limit) || 0;
+    var extra = (myClient && myClient.extra_message_credits) || 0;
+    var allowance = limit ? limit + extra : 0;
+    var pct = allowance ? Math.min(100, Math.round((used / allowance) * 100)) : 0;
+    var meterCls = pct >= 100 ? 'full' : (pct >= 80 ? 'warn' : '');
+    var planName = myPlan ? PT(myPlan.name_ar || '') : V2L('بدون باقة', 'No plan');
+    var st = myClient.subscription_status;
+    var stateEl = document.getElementById('homeSubState');
+    var stMap = { active: ['v2-p-ok', V2L('فعّال', 'Active')], trial: ['v2-p-info', V2L('فترة تجريبية', 'Trial')], past_due: ['v2-p-warn', V2L('متأخر الدفع', 'Past due')], expired: ['v2-p-bad', V2L('منتهي', 'Expired')], canceled: ['v2-p-bad', V2L('ملغي', 'Canceled')] };
+    var s = stMap[st] || stMap.expired;
+    if(stateEl){ stateEl.hidden = false; stateEl.className = 'v2-pill ' + s[0]; stateEl.textContent = s[1]; }
+    var endIso = st === 'trial' ? myClient.trial_ends_at : myClient.current_period_ends_at;
+    var html = '<div class="v2-usage">' +
+      '<div class="r"><span>' + V2L('الباقة', 'Plan') + '</span><b>' + escapeHtml(planName) + '</b></div>';
+    if(allowance){
+      html += '<div><div class="r"><span>' + V2L('رسائل هذا الشهر', 'Messages this month') + '</span><b>' + pct + '%</b></div>' +
+        '<span class="v2-meter ' + meterCls + '"><i style="width:' + pct + '%"></i></span>' +
+        '<div class="r"><span class="big">' + v2Fmt(used) + '</span><span>' + V2L('من ', 'of ') + v2Fmt(allowance) + (extra ? V2L(' (منها ' + v2Fmt(extra) + ' رصيد إضافي)', ' (incl. ' + v2Fmt(extra) + ' extra)') : '') + '</span></div></div>';
+    } else {
+      html += '<div class="r"><span>' + V2L('رسائل هذا الشهر', 'Messages this month') + '</span><b>' + v2Fmt(used) + '</b></div>';
+    }
+    if(endIso){ html += '<div class="r"><span>' + (st === 'trial' ? V2L('تنتهي التجربة', 'Trial ends') : V2L('يتجدد / ينتهي', 'Renews / ends')) + '</span><b>' + v2FmtDate(endIso) + '</b></div>'; }
+    if(isOwner){ html += '<button type="button" class="v2-link" id="homeManagePlan" style="align-self:flex-start">' + (st === 'active' ? V2L('إدارة الاشتراك والترقية', 'Manage or upgrade plan') : V2L('اختر باقتك وفعّل اشتراكك', 'Choose a plan and activate')) + '</button>'; }
+    html += '</div>';
+    box.innerHTML = html;
+    var mp = document.getElementById('homeManagePlan'); if(mp){ mp.addEventListener('click', v2OpenPlanCard); }
+    // القائمة الجانبية
+    var nm = document.getElementById('v2NavMeter'), nu = document.getElementById('v2NavUsage');
+    if(nm){ nm.style.width = pct + '%'; nm.parentNode.className = 'v2-meter ' + meterCls; nm.parentNode.style.display = allowance ? '' : 'none'; }
+    if(nu){ nu.textContent = allowance ? (v2Fmt(used) + ' / ' + v2Fmt(allowance) + V2L(' رسالة', ' msgs')) : ''; }
+    var mg = document.getElementById('v2ManagePlan'); if(mg){ mg.style.display = isOwner ? '' : 'none'; }
+  }
+  function v2RenderTopState(){
+    var name = myClient.business_name_ar || myClient.business_name || '';
+    var nameEl = document.getElementById('v2StoreName'), avEl = document.getElementById('v2StoreAv'), subEl = document.getElementById('v2StoreSub');
+    if(nameEl){ nameEl.textContent = name || '–'; }
+    if(avEl){ avEl.textContent = v2Initial(name); }
+    var links = [];
+    if(myClient.salla_store_id){ links.push(V2L('سلة', 'Salla')); }
+    if(myClient.zid_store_id || myClient.zid_integration_enabled){ links.push(V2L('زد', 'Zid')); }
+    if(subEl){ subEl.textContent = (isOwner ? V2L('صاحب الحساب', 'Owner') : V2L('عضو فريق', 'Team member')) + (links.length ? ' · ' + links.join(V2L('، ', ', ')) : ''); }
+    var wa = document.getElementById('v2WaState');
+    if(wa){
+      var ok = !!myClient.whatsapp_phone_number_id;
+      wa.hidden = false;
+      wa.className = 'v2-wa ' + (ok ? 'ok' : 'off');
+      wa.textContent = ok ? V2L('واتساب متصل', 'WhatsApp connected') : V2L('واتساب غير مربوط', 'WhatsApp not connected');
+      wa.title = ok ? '' : V2L('افتح خطوات الإعداد في الرئيسية لربط رقمك', 'Open the setup steps on Home to connect your number');
+      wa.onclick = ok ? null : function(){ v2Go('home'); };
+    }
+  }
+
   /* ---------- استهلاك الرسائل + تنبيه الاقتراب من الحد ---------- */
   function renderUsageStat(monthCount){
     const limit = (myPlan && myPlan.monthly_message_limit) || null;
@@ -679,7 +1012,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
   }
   function formatDateAr(iso){
-    return new Date(iso).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year: 'numeric', month: 'long', day: 'numeric' });
+    return new Date(iso).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { year: 'numeric', month: 'long', day: 'numeric' });
   }
 
   /* ---------- الدفع الإلكتروني عبر Geidea (Checkout v2 - Hosted Payment Page) ----------
@@ -1017,7 +1350,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           + '<td style="padding:10px 8px;">' + escapeHtml(o.customer_name || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.status || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.total || '—') + '</td>'
-          + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA')) : '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn')) : '—') + '</td>'
           + '</tr>';
       });
       tableHtml += '</tbody></table></div>';
@@ -1049,7 +1382,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .maybeSingle();
     if(data){
-      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge zid-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -1098,7 +1431,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .eq('client_id', myClient.id)
       .maybeSingle();
     if(data){
-      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.connected_at ? new Date(data.connected_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge salla-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -1148,7 +1481,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .maybeSingle();
     const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
     if(data){
-      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge woo-connected">' + PT('✅ متصل') + (data.store_url ? ' — ' + escapeHtml(data.store_url) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -1397,7 +1730,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       .maybeSingle();
     const addonLocked = myPlan && !myPlan.store_integration_included && !myClient.zid_integration_enabled;
     if(data){
-      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { year:'numeric', month:'short', day:'numeric' }) : '';
+      const dateStr = data.created_at ? new Date(data.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { year:'numeric', month:'short', day:'numeric' }) : '';
       statusBox.innerHTML =
         '<span class="status-badge shopify-connected">' + PT('✅ متصل') + (data.shop_domain ? ' — ' + escapeHtml(data.shop_domain) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
@@ -1599,7 +1932,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     conv.messages.forEach(function(m){
       const b = document.createElement('div');
       b.className = 'bubble ' + m.dir;
-      const time = new Date(m.at).toLocaleTimeString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { hour:'2-digit', minute:'2-digit' });
+      const time = new Date(m.at).toLocaleTimeString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { hour:'2-digit', minute:'2-digit' });
       b.innerHTML = escapeHtml(m.text) + '<span class="t">' + time + '</span>';
       body.appendChild(b);
     });
@@ -1850,7 +2183,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const heightPct = Math.max(4, Math.round((counts[i] / maxCount) * 100));
       const col = document.createElement('div');
       col.className = 'bar-col';
-      const label = d.toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { weekday: 'short' });
+      const label = d.toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { weekday: 'short' });
       col.innerHTML =
         '<span class="bcount">' + counts[i] + '</span>' +
         '<div class="bar" style="height:' + heightPct + '%;"></div>' +
@@ -1985,7 +2318,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
   /* ---------- محاكي شخصية البوت (bot personality simulator) ---------- */
   function simBubbleHtml(text, dir){
-    const time = new Date().toLocaleTimeString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { hour:'2-digit', minute:'2-digit' });
+    const time = new Date().toLocaleTimeString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { hour:'2-digit', minute:'2-digit' });
     return '<div class="bubble ' + dir + '">' + escapeHtml(text) + '<span class="t">' + time + '</span></div>';
   }
   function resetSimChat(){
@@ -2088,7 +2421,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     myTickets.forEach(function(t){
       const div = document.createElement('div');
       div.className = 'ticket-item' + (t.id === activeTicketId ? ' active' : '');
-      const dateStr = new Date(t.updated_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric' });
+      const dateStr = new Date(t.updated_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { month:'short', day:'numeric' });
       div.innerHTML =
         '<div class="tsubject">' + escapeHtml(t.subject) + '</div>' +
         '<div class="tmeta"><span class="status-badge ' + t.status + '">' + PT(ticketStatusLabels[t.status]) + '</span><span class="tdate">' + dateStr + '</span></div>';
@@ -2125,7 +2458,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     (msgs || []).forEach(function(m){
       const b = document.createElement('div');
       b.className = 'bubble ' + (m.sender_type === 'client' ? 'out' : 'in');
-      const time = new Date(m.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const time = new Date(m.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
       b.innerHTML = escapeHtml(m.message) + '<span class="t">' + time + '</span>';
       body.appendChild(b);
     });
@@ -2200,6 +2533,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
     document.querySelector('.tab-btn[data-tab="support"]').classList.add('active');
     document.getElementById('panelSupport').classList.add('active');
+    v2AfterTabChange('support');
   });
   /* ---------- broadcast campaigns (client side) ---------- */
   async function loadCampaigns(){
@@ -2224,7 +2558,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
     list.innerHTML = '';
     myCampaigns.forEach(function(c){
-      const dateStr = new Date(c.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const dateStr = new Date(c.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
       const div = document.createElement('div');
       div.className = 'campaign-card';
       div.innerHTML =
@@ -2345,7 +2679,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
     list.innerHTML = '';
     myTemplates.forEach(function(t){
-      const dateStr = new Date(t.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+      const dateStr = new Date(t.created_at).toLocaleString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
       const div = document.createElement('div');
       div.className = 'campaign-card';
       div.innerHTML =
