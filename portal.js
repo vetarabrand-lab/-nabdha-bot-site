@@ -937,6 +937,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     var limit = (myPlan && myPlan.monthly_message_limit) || 0;
     var extra = (myClient && myClient.extra_message_credits) || 0;
     var allowance = limit ? limit + extra : 0;
+    var qKind = 'monthly';
+    if(v2Quota){ used = Number(v2Quota.used) || 0; allowance = Number(v2Quota.allowance) || 0; qKind = v2Quota.kind; if(qKind !== 'monthly'){ extra = 0; } }
     var pct = allowance ? Math.min(100, Math.round((used / allowance) * 100)) : 0;
     var meterCls = pct >= 100 ? 'full' : (pct >= 80 ? 'warn' : '');
     var planName = myPlan ? PT(myPlan.name_ar || '') : V2L('بدون باقة', 'No plan');
@@ -949,7 +951,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     var html = '<div class="v2-usage">' +
       '<div class="r"><span>' + V2L('الباقة', 'Plan') + '</span><b>' + escapeHtml(planName) + '</b></div>';
     if(allowance){
-      html += '<div><div class="r"><span>' + V2L('رسائل هذا الشهر', 'Messages this month') + '</span><b>' + pct + '%</b></div>' +
+      var usageLbl = qKind === 'trial' ? V2L('ردود الفترة التجريبية', 'Trial replies') : (qKind === 'prepaid' ? V2L('الرصيد المسبق', 'Prepaid credit') : V2L('ردود هذا الشهر', 'Replies this month'));
+      html += '<div><div class="r"><span>' + usageLbl + '</span><b>' + pct + '%</b></div>' +
         '<span class="v2-meter ' + meterCls + '"><i style="width:' + pct + '%"></i></span>' +
         '<div class="r"><span class="big">' + v2Fmt(used) + '</span><span>' + V2L('من ', 'of ') + v2Fmt(allowance) + (extra ? V2L(' (منها ' + v2Fmt(extra) + ' رصيد إضافي)', ' (incl. ' + v2Fmt(extra) + ' extra)') : '') + '</span></div></div>';
     } else {
@@ -987,29 +990,52 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
 
   /* ---------- استهلاك الرسائل + تنبيه الاقتراب من الحد ---------- */
+  // الرصيد الفعلي اللي يطبّقه البوت (my_reply_quota) — نفس الحساب بالضبط: سقف الباقة الشهري،
+  // أو الرصيد المسبق، أو 300 رد للفترة التجريبية. عند 100% البوت يوقف الرد الآلي فعلياً.
+  var v2Quota = null;
   function renderUsageStat(monthCount){
+    const EN = (window.PORTAL_LANG === 'en');
+    function paint(used, allowance, kind){
+      document.getElementById('statUsage').textContent = allowance ? (used + ' / ' + allowance) : used;
+      const banner = document.getElementById('usageWarningBanner');
+      if(!allowance){ banner.style.display = 'none'; return; }
+      const pct = Math.round((used / allowance) * 100);
+      const scope = kind === 'trial' ? (EN ? 'your free trial' : 'الفترة التجريبية') : (kind === 'prepaid' ? (EN ? 'your prepaid credit' : 'رصيدك المسبق') : (EN ? 'this month' : 'هذا الشهر'));
+      const fix = kind === 'trial' ? (EN ? 'Choose a plan' : 'اختر باقتك') : (EN ? 'Top up credit or upgrade your plan' : 'اشحن رصيد رسائل أو رقّ باقتك');
+      if(pct >= 100){
+        banner.className = 'alert-box error';
+        banner.style.display = 'block';
+        banner.innerHTML = EN
+          ? ('🚫 Auto-replies are paused: your bot used all ' + allowance + ' replies of ' + scope + '. New customer messages still arrive in Conversations so you can reply manually. ')
+          : ('🚫 توقف الرد الآلي: استخدم بوتك كامل الـ ' + allowance + ' رد المتاحة في ' + scope + '. رسائل العملاء الجديدة تصلك في المحادثات وتقدر ترد يدوياً. ');
+      } else if(pct >= 80){
+        banner.className = 'cost-note';
+        banner.style.display = 'block';
+        banner.innerHTML = EN
+          ? ('⚠️ Your bot used ' + pct + '% of ' + scope + ' (' + used + ' / ' + allowance + '). Auto-replies pause at 100%. ')
+          : ('⚠️ استخدم بوتك ' + pct + '% من ردود ' + scope + ' (' + used + ' / ' + allowance + '). الرد الآلي يتوقف عند 100%. ');
+      } else {
+        banner.style.display = 'none';
+        return;
+      }
+      if(isOwner){
+        const a = document.createElement('a');
+        a.href = '#'; a.style.cssText = 'color:inherit; text-decoration:underline; font-weight:800;';
+        a.textContent = fix;
+        a.addEventListener('click', function(e){ e.preventDefault(); if(typeof v2OpenPlanCard === 'function'){ v2OpenPlanCard(); } });
+        banner.appendChild(a);
+      }
+    }
+    // عرض مبدئي فوري من البيانات المحلية، ثم الرقم الدقيق من الخادم
     const limit = (myPlan && myPlan.monthly_message_limit) || null;
     const extraCredits = (myClient && myClient.extra_message_credits) || 0;
-    const totalAllowance = limit ? (limit + extraCredits) : null;
-    document.getElementById('statUsage').textContent = totalAllowance ? (monthCount + ' / ' + totalAllowance) : monthCount;
-    const banner = document.getElementById('usageWarningBanner');
-    if(!totalAllowance){ banner.style.display = 'none'; return; }
-    const pct = Math.round((monthCount / totalAllowance) * 100);
-    if(pct >= 100){
-      banner.className = 'alert-box error';
-      banner.style.display = 'block';
-      banner.textContent = (window.PORTAL_LANG === 'en')
-        ? ('🚫 You have reached your message limit this month (' + monthCount + ' / ' + totalAllowance + '). The bot may stop replying until you add extra credit or the monthly cycle renews. Open the "Bot Settings" tab to request extra credit.')
-        : ('🚫 وصلت لحد رسائلك هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). البوت ممكن يتوقف عن الرد حتى تضيف رصيد إضافي أو تنتهي الدورة الشهرية. افتح تبويب "إعدادات البوت" لطلب رصيد إضافي.');
-    } else if(pct >= 80){
-      banner.className = 'cost-note';
-      banner.style.display = 'block';
-      banner.textContent = (window.PORTAL_LANG === 'en')
-        ? ('⚠️ You have used ' + pct + '% of this month\'s messages (' + monthCount + ' / ' + totalAllowance + '). Consider adding extra credit from the "Bot Settings" tab before your messages run out.')
-        : ('⚠️ استهلكت ' + pct + '% من رسائل هذا الشهر (' + monthCount + ' / ' + totalAllowance + '). فكّر بإضافة رصيد إضافي من تبويب "إعدادات البوت" قبل ما تنتهي رسائلك.');
-    } else {
-      banner.style.display = 'none';
-    }
+    paint(monthCount, limit ? (limit + extraCredits) : null, 'monthly');
+    supabaseClient.rpc('my_reply_quota').then(function(res){
+      if(res.error || !res.data){ return; }
+      v2Quota = res.data;
+      paint(Number(res.data.used) || 0, Number(res.data.allowance) || 0, res.data.kind);
+      if(typeof v2RenderUsage === 'function' && myClient){ v2RenderUsage(); }
+    });
   }
   function formatDateAr(iso){
     return new Date(iso).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn'), { year: 'numeric', month: 'long', day: 'numeric' });
