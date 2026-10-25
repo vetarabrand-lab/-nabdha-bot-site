@@ -1721,8 +1721,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     renderWaAppStatus();
   }
 
-  async function finishWaSignupIfReady(){
-    if(!waSignup || waSignup.sent || !waSignup.code || !waSignup.phone_number_id || !waSignup.waba_id) return;
+  async function finishWaSignupIfReady(opts_forceCodeOnly){
+    if(!waSignup || waSignup.sent || !waSignup.code) return;
+    // إذا وصل الرمز بدون المعرّفات ننتظر لحظات رسالة ميتا، ثم نكمل بالرمز فقط
+    // (الدالة تجد حساب واتساب والرقم بنفسها من الخادم). رمز ميتا يعيش 30 ثانية فقط.
+    if((!waSignup.phone_number_id || !waSignup.waba_id) && !opts_forceCodeOnly){ 
+      if(!waSignup.waitTimer){
+        waSignup.waitTimer = setTimeout(function(){ finishWaSignupIfReady(true); }, 4000);
+      }
+      return;
+    }
+    if(waSignup.waitTimer){ clearTimeout(waSignup.waitTimer); waSignup.waitTimer = null; }
     waSignup.sent = true;
     setWaButtonsBusy(true, PT('جاري إكمال الربط مع واتساب...'));
     try{
@@ -1734,8 +1743,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         body: JSON.stringify({
           client_id: myClient.id,
           code: waSignup.code,
-          waba_id: waSignup.waba_id,
-          phone_number_id: waSignup.phone_number_id,
+          waba_id: waSignup.waba_id || '',
+          phone_number_id: waSignup.phone_number_id || '',
           mode: waSignup.mode
         })
       });
@@ -1769,7 +1778,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!event.origin || !/^https:\/\/([a-z]+\.)?facebook\.com$/.test(event.origin)) return;
     let data;
     try{ data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data; } catch(e){ return; }
-    if(!data || data.type !== 'WA_EMBEDDED_SIGNUP' || !waSignup) return;
+    if(!data || data.type !== 'WA_EMBEDDED_SIGNUP') return;
+    try{ console.log('[nabda-wa] Meta event:', data.event, JSON.stringify(data.data || {})); }catch(e){}
+    if(!waSignup) return;
     if(data.event === 'FINISH' || data.event === 'FINISH_ONLY_WABA' || data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING'){
       const d = data.data || {};
       const wid = d.waba_id || d.whatsapp_business_account_id;
@@ -1777,6 +1788,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(wid) waSignup.waba_id = String(wid);
       if(pid) waSignup.phone_number_id = String(pid);
       if(data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') waSignup.mode = 'coexistence';
+      // لو اكتملت نافذة ميتا ولم يصل الرمز خلال 25 ثانية نبلّغ التاجر بدل ما تبقى البطاقة معلّقة
+      if(!waSignup.code && !waSignup.codeTimer){
+        const ref = waSignup;
+        waSignup.codeTimer = setTimeout(function(){
+          if(waSignup === ref && !ref.code && !ref.sent){
+            setWaButtonsBusy(false, '');
+            showWaConnectError(PT('اكتمل الربط في ميتا لكن لم يصل رمز التأكيد للبوابة. اضغط الزر مرة ثانية لإكمال الربط.'));
+            waSignup = null;
+          }
+        }, 25000);
+      }
       if(data.event === 'FINISH_ONLY_WABA' && !d.phone_number_id){
         setWaButtonsBusy(false, '');
         showWaConnectError(PT('تم إنشاء حساب واتساب للأعمال لكن بدون رقم. أعد الربط واختر أو أضف رقم الهاتف.'));
@@ -1807,6 +1829,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const extras = { version: 'v5' };
     if(mode !== 'coexistence') extras.features = [{ name: 'whatsapp_business_app_onboarding', enabled: false }];
     FB.login(function(response){
+      try{ console.log('[nabda-wa] FB.login status:', response && response.status, 'code:', !!(response && response.authResponse && response.authResponse.code)); }catch(e){}
       if(response && response.authResponse && response.authResponse.code){
         if(waSignup){ waSignup.code = response.authResponse.code; finishWaSignupIfReady(); }
       } else if(waSignup && !waSignup.sent){

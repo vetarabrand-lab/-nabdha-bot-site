@@ -626,7 +626,8 @@ var portalDynamicStrings = {
   'تم إنشاء حساب واتساب للأعمال لكن بدون رقم. أعد الربط واختر أو أضف رقم الهاتف.': "A WhatsApp Business account was created without a phone number. Reconnect and choose or add a phone number.",
   'تم إلغاء الربط قبل اكتماله.': "The connection was cancelled before it finished.",
   'ميتا أرجعت خطأ أثناء الربط': "Meta returned an error during connection",
-  'لم يكتمل تسجيل الدخول في نافذة ميتا. حاول مرة ثانية.': "Login in the Meta window did not complete. Please try again."
+  'لم يكتمل تسجيل الدخول في نافذة ميتا. حاول مرة ثانية.': "Login in the Meta window did not complete. Please try again.",
+  'اكتمل الربط في ميتا لكن لم يصل رمز التأكيد للبوابة. اضغط الزر مرة ثانية لإكمال الربط.': "Meta finished connecting but the confirmation code did not reach the portal. Click the button again to complete the connection."
 };
 
 function PT(text){
