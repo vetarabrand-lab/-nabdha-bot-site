@@ -499,7 +499,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -514,7 +514,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -650,6 +650,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadWooCommerceStatus();
     loadShopifyStatus();
     loadTelegramStatus();
+    loadInstagramStatus();
     loadWaAppStatus();
     loadTemplates();
     loadTopupInfo();
@@ -1631,6 +1632,95 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       btn.disabled = false; btn.textContent = PT('ربط مع تليجرام');
       errBox.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
       errBox.style.display = 'block';
+    }
+  });
+
+  /* ---------- ربط حساب انستقرام (Business Login for Instagram) ---------- */
+  // التاجر يضغط "ربط حساب انستقرام" ← نطلب رابط موافقة موقّع من instagram-connect-start
+  // ← صفحة انستقرام الرسمية (تسجيل الدخول + الموافقة على الصلاحيات) ← ترجع ميتا إلى
+  // instagram-oauth-callback اللي تحفظ الربط وترجعنا هنا مع ?ig=connected أو ?ig=error.
+  function igResultMessage(){
+    const p = new URLSearchParams(location.search);
+    const r = p.get('ig');
+    if(!r) return null;
+    const reasons = {
+      state: PT('انتهت صلاحية طلب الربط، ابدأ الربط من جديد.'),
+      permissions: PT('لم تتم الموافقة على صلاحية الرسائل، أعد الربط ووافق على كل الصلاحيات.'),
+      not_professional: PT('الحساب ليس حساباً احترافياً (أعمال أو صانع محتوى). حوّله من إعدادات انستقرام ثم أعد الربط.'),
+      in_use: PT('حساب انستقرام هذا مربوط بحساب آخر في نبضة.')
+    };
+    history.replaceState(null, '', location.pathname + location.hash);
+    if(r === 'connected') return { ok: true, text: PT('تم ربط حساب انستقرام بنجاح ✅ البوت سيرد الآن على رسائل Direct.') };
+    if(r === 'cancelled') return { ok: false, text: PT('تم إلغاء الربط من صفحة انستقرام.') };
+    return { ok: false, text: reasons[p.get('reason')] || PT('تعذّر إكمال ربط انستقرام، حاول مرة ثانية.') };
+  }
+  const igPendingResult = igResultMessage();
+  if(igPendingResult){
+    window.addEventListener('load', function(){ setTimeout(function(){ alert(igPendingResult.text); }, 400); });
+  }
+
+  async function loadInstagramStatus(){
+    const statusBox = document.getElementById('instagramStatus');
+    const btn = document.getElementById('connectInstagramBtn');
+    const nonOwnerHint = document.getElementById('instagramHelperNonOwner');
+    const lockedHint = document.getElementById('instagramLockedHint');
+    const msg = document.getElementById('instagramConnectMsg');
+    if(!statusBox || !myClient) return;
+    nonOwnerHint.style.display = isOwner ? 'none' : 'block';
+    if(igPendingResult && msg){
+      msg.style.display = 'block';
+      msg.className = 'alert-box ' + (igPendingResult.ok ? 'ok' : 'error');
+      msg.textContent = igPendingResult.text;
+    }
+
+    const connected = myClient.instagram_connection_status === 'connected';
+    statusBox.innerHTML = connected
+      ? '<span class="status-badge telegram-connected">' + PT('✅ متصل') + (myClient.instagram_username ? ' — <span dir="ltr">@' + escapeHtml(myClient.instagram_username) + '</span>' : '') + '</span>'
+      : '<span class="status-badge telegram-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>';
+
+    const { data: addonRow } = await supabaseClient
+      .from('client_addons').select('enabled')
+      .eq('client_id', myClient.id).eq('addon_id', 'instagram_dm').maybeSingle();
+    const addonEnabled = !!(addonRow && addonRow.enabled);
+
+    if(!addonEnabled){
+      btn.style.display = 'none';
+      lockedHint.style.display = isOwner ? 'block' : 'none';
+      lockedHint.textContent = PT('إضافة قناة انستقرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات".');
+      return;
+    }
+    lockedHint.style.display = 'none';
+    btn.style.display = isOwner ? 'inline-block' : 'none';
+    btn.textContent = connected ? PT('إعادة ربط حساب انستقرام') : PT('ربط حساب انستقرام');
+  }
+
+  document.getElementById('connectInstagramBtn').addEventListener('click', async function(){
+    if(!myClient || !isOwner) return;
+    const btn = this;
+    const msg = document.getElementById('instagramConnectMsg');
+    msg.style.display = 'none';
+    btn.disabled = true;
+    const original = btn.textContent;
+    btn.textContent = PT('جاري التحويل إلى انستقرام...');
+    try{
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const res = await fetch(FUNCTIONS_BASE + '/instagram-connect-start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + sessionData.session.access_token },
+        body: JSON.stringify({ client_id: myClient.id })
+      });
+      const json = await res.json().catch(function(){ return {}; });
+      if(!res.ok || !json.url){
+        btn.disabled = false; btn.textContent = original;
+        msg.style.display = 'block'; msg.className = 'alert-box error';
+        msg.textContent = json.message || PT('تعذّر بدء الربط، حاول مرة ثانية.');
+        return;
+      }
+      window.location.href = json.url;
+    } catch(e){
+      btn.disabled = false; btn.textContent = original;
+      msg.style.display = 'block'; msg.className = 'alert-box error';
+      msg.textContent = PT('حصل خطأ بالاتصال، حاول مرة ثانية.');
     }
   });
 
