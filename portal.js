@@ -1772,8 +1772,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!data || data.type !== 'WA_EMBEDDED_SIGNUP' || !waSignup) return;
     if(data.event === 'FINISH' || data.event === 'FINISH_ONLY_WABA' || data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING'){
       const d = data.data || {};
-      if(d.waba_id) waSignup.waba_id = String(d.waba_id);
-      if(d.phone_number_id) waSignup.phone_number_id = String(d.phone_number_id);
+      const wid = d.waba_id || d.whatsapp_business_account_id;
+      const pid = d.phone_number_id || d.business_phone_number_id;
+      if(wid) waSignup.waba_id = String(wid);
+      if(pid) waSignup.phone_number_id = String(pid);
+      if(data.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') waSignup.mode = 'coexistence';
       if(data.event === 'FINISH_ONLY_WABA' && !d.phone_number_id){
         setWaButtonsBusy(false, '');
         showWaConnectError(PT('تم إنشاء حساب واتساب للأعمال لكن بدون رقم. أعد الربط واختر أو أضف رقم الهاتف.'));
@@ -1799,8 +1802,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     waSignup = { mode: mode, code: null, waba_id: null, phone_number_id: null, sent: false };
     setWaButtonsBusy(true, PT('أكمل الخطوات في نافذة ميتا...'));
     const FB = await loadFacebookSdk();
-    const extras = { setup: {}, sessionInfoVersion: '3' };
-    if(mode === 'coexistence') extras.featureType = 'whatsapp_business_app_onboarding';
+    // ميتا أوقفت الإصدار v3 في 15 أكتوبر 2026 (يُخدم كـ v4 ويتجاهل featureType).
+    // في v5 ربط تطبيق واتساب للأعمال (التشغيل المزدوج) مفعّل افتراضياً؛ لزر "رقم جديد" نطفيه.
+    const extras = { version: 'v5' };
+    if(mode !== 'coexistence') extras.features = [{ name: 'whatsapp_business_app_onboarding', enabled: false }];
     FB.login(function(response){
       if(response && response.authResponse && response.authResponse.code){
         if(waSignup){ waSignup.code = response.authResponse.code; finishWaSignupIfReady(); }
