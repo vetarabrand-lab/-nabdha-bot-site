@@ -220,6 +220,8 @@ var portalTranslations = {
     'channels.wa.startBtn': 'Start Connecting',
     'channels.wa.coexistenceInfo': 'You can use the WhatsApp Business app (on your phone) alongside the Nabdha bot (on the same number) — the bot keeps replying automatically to your customers, and you can open the app on your phone and reply personally yourself anytime you like. After clicking "Start Connecting", complete the confirmation steps from the WhatsApp Business app on your phone, and open the app at least once every two weeks to keep the connection active.',
     'channels.wa.title': 'Connect WhatsApp Business App (Free)',
+    'channels.wa.title2': 'Connect a WhatsApp number to the bot',
+    'channels.wa.selfConnectInfo': '<b>Your current number (recommended):</b> if your store number runs on the WhatsApp Business app on your phone, click "Connect my WhatsApp Business app" — the app keeps working for you, the bot replies automatically on the same number, and you can reply yourself anytime. If your number is on regular WhatsApp, switch it to the WhatsApp Business app first (your chats move with it).<br><b>New number:</b> a number not used in any WhatsApp app becomes the bot number directly.<br>Connecting happens in Meta\'s official window in about two minutes, and connection credentials are stored securely on Nabdha servers only.',
     'channels.woo.connectBtn': 'Connect with WooCommerce',
     'channels.woo.desc': 'Create the keys from your WordPress dashboard: WooCommerce ← Settings ← Advanced ← REST API ← Add key, and choose "Read/Write" permission. Copy both keys and paste them here.',
     'channels.woo.title': 'Connect WooCommerce Store (WordPress)',
@@ -611,7 +613,20 @@ var portalDynamicStrings = {
   'تم إرسال دعوة للموظف عبر البريد الإلكتروني.': 'An invite was sent to the staff member by email.',
   'تم إرسال القالب لمراجعة واتساب. راح تشوف حالته تتحدث تلقائياً هنا بمجرد ما ميتا يراجعه.': "The template was submitted for WhatsApp review. You'll see its status update here automatically once Meta reviews it.",
   'بيستبدل هذا القالب تعليمات البوت الحالية بالكامل. متأكد تبي تكمل؟': "This template will completely replace the bot's current instructions. Are you sure you want to continue?",
-  'تأكيد إزالة هذا الموظف من الفريق؟': 'Confirm removing this staff member from the team?'
+  'تأكيد إزالة هذا الموظف من الفريق؟': 'Confirm removing this staff member from the team?',
+  'لا يوجد رقم واتساب مربوط بعد': "No WhatsApp number connected yet",
+  'ربط رقم جديد': "Connect a new number",
+  'ربط تطبيق واتساب للأعمال على جوالي': "Connect my WhatsApp Business app",
+  'إعادة ربط تطبيق واتساب للأعمال': "Reconnect WhatsApp Business app",
+  'رقم واتساب مربوط': "WhatsApp number connected",
+  'التشغيل المزدوج مفعّل: البوت يرد، وتقدر ترد بنفسك من تطبيق واتساب للأعمال.': "Coexistence is on: the bot replies, and you can reply yourself from the WhatsApp Business app.",
+  'جاري إتمام مزامنة المحادثات...': "Finishing chat sync...",
+  'جاري إكمال الربط مع واتساب...': "Completing the WhatsApp connection...",
+  'أكمل الخطوات في نافذة ميتا...': "Complete the steps in the Meta window...",
+  'تم إنشاء حساب واتساب للأعمال لكن بدون رقم. أعد الربط واختر أو أضف رقم الهاتف.': "A WhatsApp Business account was created without a phone number. Reconnect and choose or add a phone number.",
+  'تم إلغاء الربط قبل اكتماله.': "The connection was cancelled before it finished.",
+  'ميتا أرجعت خطأ أثناء الربط': "Meta returned an error during connection",
+  'لم يكتمل تسجيل الدخول في نافذة ميتا. حاول مرة ثانية.': "Login in the Meta window did not complete. Please try again."
 };
 
 function PT(text){

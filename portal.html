@@ -694,13 +694,17 @@
       </div>
       <div class="settings-card" id="waAppCard">
         <div class="field" style="margin-bottom:16px;">
-          <label data-i18n="channels.wa.title">ربط تطبيق واتساب الأعمال (مجاني)</label>
+          <label data-i18n="channels.wa.title2">ربط رقم واتساب بالبوت</label>
         </div>
         <div id="waAppStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
-        <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 30px; display:none;" data-i18n="channels.wa.startBtn">ابدأ الربط</button>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 24px; display:none;">ربط تطبيق واتساب للأعمال على جوالي</button>
+          <button class="new-ticket-btn" id="connectWaNewBtn" style="width:auto; padding:12px 24px; font-size:15px; display:none;">ربط رقم جديد</button>
+        </div>
+        <div class="alert-box" id="waConnectMsg" style="display:none; margin-top:12px;"></div>
         <div class="helper-text" id="waAppHelperNonOwner" style="display:none;" data-i18n="channels.wa.ownerOnly">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
         <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;" data-i18n="channels.wa.disconnected">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.wa.coexistenceInfo">تقدر تستخدم تطبيق واتساب الأعمال (على جوالك) بجانب بوت نبضة على نفس رقمك — البوت يستمر يرد تلقائياً على عملائك، وتقدر تفتح التطبيق على جوالك وترد بنفسك شخصياً في أي وقت تحب. بعد الضغط على "ابدأ الربط" أكمل خطوات التأكيد من تطبيق واتساب الأعمال على جوالك، وافتح التطبيق مرة كل أسبوعين على الأقل حتى يبقى الربط شغّال.</div>
+        <div class="helper-text" style="margin-top:12px;" data-i18n="channels.wa.selfConnectInfo"><b>رقمك الحالي (الأنسب):</b> إذا رقم متجرك شغّال على تطبيق "واتساب للأعمال" بجوالك، اضغط "ربط تطبيق واتساب للأعمال على جوالي" — يبقى التطبيق شغّال معك، والبوت يرد تلقائياً على نفس الرقم وتقدر ترد بنفسك متى ما تبي. لو رقمك على واتساب العادي، حوّله أولاً لتطبيق واتساب للأعمال (تنتقل محادثاتك معه).<br><b>رقم جديد:</b> رقم غير مستخدم في أي تطبيق واتساب، يصير رقم البوت مباشرة.<br>الربط يتم من نافذة ميتا الرسمية خلال دقيقتين، وبيانات الربط تُحفظ بأمان في خوادم نبضة فقط.</div>
       </div>
       <div class="settings-card" id="telegramCard">
         <div class="field" style="margin-bottom:16px;">
