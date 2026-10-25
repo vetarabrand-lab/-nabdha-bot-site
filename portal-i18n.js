@@ -35,6 +35,9 @@ var portalTranslations = {
     'channels.telegram.ownerOnly': 'ربط تليجرام متاح فقط لصاحب الحساب.',
     'channels.telegram.steps': 'خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.',
     'channels.telegram.title': 'ربط بوت تليجرام (Telegram)',
+    'channels.instagram.title': 'ربط حساب انستقرام (Instagram Direct)',
+    'channels.instagram.ownerOnly': 'ربط انستقرام متاح فقط لصاحب الحساب.',
+    'channels.instagram.steps': 'اضغط "ربط حساب انستقرام" ← سجّل الدخول بحساب انستقرام الاحترافي لمتجرك (أعمال أو صانع محتوى) ← وافق على صلاحيات الرسائل ← ترجع هنا تلقائياً. بعدها يرد البوت على رسائل Direct خلال 24 ساعة من آخر رسالة للعميل (قيد ميتا).',
     'channels.telegram.tokenLabel': 'توكن البوت (Bot Token)',
     'channels.wa.disconnected': 'تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.',
     'channels.wa.ownerOnly': 'ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.',
@@ -214,6 +217,9 @@ var portalTranslations = {
     'channels.telegram.ownerOnly': 'Connecting Telegram is only available to the account owner.',
     'channels.telegram.steps': 'Steps to create the bot: open Telegram ← search for <b>BotFather</b> ← send it <b>/newbot</b> ← choose a name and username for your bot (must end in "bot") ← BotFather will send you a long token that looks like <span dir="ltr">123456789:AA...</span> ← copy it and paste it here.',
     'channels.telegram.title': 'Connect Telegram Bot',
+    'channels.instagram.title': 'Connect Instagram Account (Instagram Direct)',
+    'channels.instagram.ownerOnly': 'Connecting Instagram is only available to the account owner.',
+    'channels.instagram.steps': 'Click "Connect Instagram account" ← log in with your store\'s professional Instagram account (Business or Creator) ← approve the messaging permissions ← you are brought back here automatically. The bot then replies to Direct messages within 24 hours of the customer\'s last message (Meta policy).',
     'channels.telegram.tokenLabel': 'Bot Token',
     'channels.wa.disconnected': 'The connection was disconnected from within the WhatsApp Business app. Click "Start Connecting" to reconnect.',
     'channels.wa.ownerOnly': 'Connecting the WhatsApp Business app is only available to the account owner.',
@@ -627,7 +633,20 @@ var portalDynamicStrings = {
   'تم إلغاء الربط قبل اكتماله.': "The connection was cancelled before it finished.",
   'ميتا أرجعت خطأ أثناء الربط': "Meta returned an error during connection",
   'لم يكتمل تسجيل الدخول في نافذة ميتا. حاول مرة ثانية.': "Login in the Meta window did not complete. Please try again.",
-  'اكتمل الربط في ميتا لكن لم يصل رمز التأكيد للبوابة. اضغط الزر مرة ثانية لإكمال الربط.': "Meta finished connecting but the confirmation code did not reach the portal. Click the button again to complete the connection."
+  'اكتمل الربط في ميتا لكن لم يصل رمز التأكيد للبوابة. اضغط الزر مرة ثانية لإكمال الربط.': "Meta finished connecting but the confirmation code did not reach the portal. Click the button again to complete the connection.",
+  /* Instagram connection */
+  'ربط حساب انستقرام': 'Connect Instagram account',
+  'إعادة ربط حساب انستقرام': 'Reconnect Instagram account',
+  'جاري التحويل إلى انستقرام...': 'Redirecting to Instagram...',
+  'تعذّر بدء الربط، حاول مرة ثانية.': 'Could not start the connection, please try again.',
+  'إضافة قناة انستقرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات".': 'The Instagram channel add-on is not enabled on your account yet. Enable it from the "Add-ons" tab.',
+  'تم ربط حساب انستقرام بنجاح ✅ البوت سيرد الآن على رسائل Direct.': 'Instagram account connected successfully ✅ The bot will now reply to Direct messages.',
+  'تم إلغاء الربط من صفحة انستقرام.': 'The connection was cancelled on the Instagram page.',
+  'تعذّر إكمال ربط انستقرام، حاول مرة ثانية.': 'Could not complete the Instagram connection, please try again.',
+  'انتهت صلاحية طلب الربط، ابدأ الربط من جديد.': 'The connection request expired, please start again.',
+  'لم تتم الموافقة على صلاحية الرسائل، أعد الربط ووافق على كل الصلاحيات.': 'The messaging permission was not approved. Reconnect and approve all permissions.',
+  'الحساب ليس حساباً احترافياً (أعمال أو صانع محتوى). حوّله من إعدادات انستقرام ثم أعد الربط.': 'This is not a professional account (Business or Creator). Switch it in Instagram settings, then reconnect.',
+  'حساب انستقرام هذا مربوط بحساب آخر في نبضة.': 'This Instagram account is already connected to another Nabda account.'
 };
 
 function PT(text){
