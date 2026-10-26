@@ -197,6 +197,28 @@
   .status-badge.telegram-disconnected{background:#EEE; color:var(--muted);}
   .coming-soon-badge{display:inline-block; margin-inline-start:8px; padding:2px 10px; border-radius:100px; font-size:11px; font-weight:800; background:#EEE; color:var(--muted); vertical-align:middle;}
   .settings-card.coming-soon{opacity:.6; filter:grayscale(1);}
+  /* قاعدة معرفة المتجر */
+  .kb-usage{margin:4px 0 16px;}
+  .kb-usage-bar{height:8px; border-radius:99px; background:var(--border); overflow:hidden;}
+  .kb-usage-bar span{display:block; height:100%; width:0; background:var(--wa-green); border-radius:99px; transition:width .3s;}
+  .kb-list{display:flex; flex-direction:column; gap:8px; margin-bottom:18px;}
+  .kb-item{display:flex; align-items:center; gap:10px; padding:10px 12px; border:1px solid var(--border); border-radius:12px;}
+  .kb-item-main{flex:1; min-width:0;}
+  .kb-item-title{font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .kb-item-meta{font-size:12px; opacity:.7;}
+  .kb-item button{border:1px solid var(--border); background:transparent; border-radius:99px; padding:6px 12px; font:inherit; font-size:13px; cursor:pointer; color:inherit;}
+  .kb-item button.kb-del{color:var(--danger);}
+  .kb-file-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:8px;}
+  .kb-file-btn{display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border:1px dashed var(--border); border-radius:99px; cursor:pointer; font-size:14px;}
+  .kb-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .kb-cancel-btn{border:none; background:transparent; font:inherit; cursor:pointer; text-decoration:underline; color:inherit;}
+  .kb-test{margin-top:22px; padding-top:16px; border-top:1px solid var(--border);}
+  .kb-test-row{display:flex; gap:8px;}
+  .kb-test-row input{flex:1; min-width:0;}
+  .kb-test-row button{border:none; border-radius:99px; padding:0 18px; background:var(--wa-green); color:#04210F; font-weight:800; cursor:pointer; font:inherit;}
+  .kb-hit{margin-top:10px; padding:10px 12px; border-radius:12px; background:rgba(37,211,102,.08); font-size:14px; white-space:pre-wrap;}
+  .kb-hit b{display:block; margin-bottom:4px; font-size:13px;}
+  .kb-empty{font-size:14px; opacity:.7; padding:8px 0;}
   .store-connect-form{margin-top:12px; display:flex; flex-direction:column; gap:10px; max-width:420px;}
   .store-connect-form input{width:100%;}
   .store-connect-form .field-label{font-size:12px; font-weight:700; color:var(--muted); margin-bottom:4px; display:block;}
@@ -775,6 +797,47 @@
         </div>
         <button class="primary-btn" id="saveSettingsBtn" style="width:auto; padding:12px 30px;" data-i18n="common.saveChanges">حفظ التعديلات</button>
         <div class="save-status" id="saveStatus" data-i18n="common.savedSuccess">✓ تم الحفظ بنجاح</div>
+      </div>
+      <div class="settings-card" id="kbCard" style="display:none;">
+        <div class="field" style="margin-bottom:8px;">
+          <label data-i18n="kb.title">📚 قاعدة معرفة المتجر</label>
+          <div class="helper-text" style="margin:0;" data-i18n="kb.desc">ارفع سياسات متجرك (الاسترجاع، الشحن، المواعيد، الضمان، الأسئلة الشائعة...) كنص أو ملف، والبوت يبحث فيها ويجاوب عملاءك منها بدقة بدل ما يقول "ما عندي معلومات".</div>
+        </div>
+        <div class="helper-text kb-locked" id="kbLocked" style="display:none;"></div>
+        <div id="kbBody" style="display:none;">
+          <div class="kb-usage">
+            <div class="kb-usage-bar"><span id="kbUsageFill"></span></div>
+            <div class="helper-text" id="kbUsageText" style="margin:6px 0 0;"></div>
+          </div>
+          <div class="kb-list" id="kbList"></div>
+          <div id="kbEditor">
+            <div class="field">
+              <label for="kbTitle" data-i18n="kb.docTitle">عنوان المستند</label>
+              <input type="text" id="kbTitle" maxlength="150" placeholder="مثال: سياسة الاسترجاع والاستبدال" data-i18n-placeholder="kb.docTitlePh">
+            </div>
+            <div class="field">
+              <label for="kbContent" data-i18n="kb.docContent">المحتوى</label>
+              <textarea id="kbContent" style="min-height:160px;" placeholder="اكتب أو الصق المعلومات هنا، أو ارفع ملف..." data-i18n-placeholder="kb.docContentPh"></textarea>
+              <div class="kb-file-row">
+                <label class="kb-file-btn"><span data-i18n="kb.upload">📎 رفع ملف (PDF / Word / TXT)</span><input type="file" id="kbFile" accept=".pdf,.docx,.txt,.md,.csv" hidden></label>
+                <span class="helper-text" id="kbFileNote" style="margin:0;"></span>
+              </div>
+            </div>
+            <div class="kb-actions">
+              <button class="primary-btn" id="kbSaveBtn" style="width:auto; padding:12px 26px;" data-i18n="kb.save">حفظ في قاعدة المعرفة</button>
+              <button type="button" class="kb-cancel-btn" id="kbCancelBtn" style="display:none;" data-i18n="kb.cancelEdit">إلغاء التعديل</button>
+            </div>
+            <div class="save-status" id="kbStatus"></div>
+          </div>
+          <div class="field kb-test">
+            <label for="kbTestInput" data-i18n="kb.testTitle">🔎 جرّب سؤال</label>
+            <div class="kb-test-row">
+              <input type="text" id="kbTestInput" placeholder="مثال: كم مدة الاسترجاع؟" data-i18n-placeholder="kb.testPh">
+              <button type="button" id="kbTestBtn" data-i18n="kb.testBtn">ابحث</button>
+            </div>
+            <div id="kbTestResults"></div>
+          </div>
+        </div>
       </div>
       <div class="settings-card" id="simCard">
         <div class="field" style="margin-bottom:6px;">
