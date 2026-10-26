@@ -230,6 +230,20 @@ if(sallaPendingId || zidPendingId){
   function renderPlans(){
     var t = translations[currentLang];
     var ar = currentLang === 'ar';
+    // 2026-10-26 — سياسة سلة: تاجر تطبيق سلة يختار باقته ويدفع من سلة فقط، فما نعرض له باقات أو أسعار هنا
+    if(sallaPendingId){
+      translations.ar['success.s3'] = 'تختار باقتك وتدفع من داخل سلة، وتتفعّل في نبضة تلقائياً.';
+      translations.en['success.s3'] = 'Choose and pay for your plan inside Salla; it activates in Nabda automatically.';
+      var s3el = document.querySelector('[data-i18n="success.s3"]');
+      if(s3el){ s3el.textContent = translations[currentLang]['success.s3']; }
+      selectedPlanIdInput.value = '';
+      var s4 = document.querySelector('[data-i18n="form.s4"]');
+      if(s4){ s4.textContent = ar ? 'باقتك' : 'Your plan'; }
+      plansContainer.innerHTML = '<div class="plans-loading">' + (ar
+        ? 'تبدأ بتجربة مجانية 7 أيام. تختار باقتك وتدفع من داخل سلة: لوحة سلة ← التطبيقات ← نبضة، وتتفعّل هنا تلقائياً.'
+        : 'You start with a 7-day free trial. Choose and pay for your plan inside Salla (Salla dashboard → Apps → Nabda); it activates here automatically.') + '</div>';
+      return;
+    }
     if(!planTab && plansData.length){ planTab = planCycle(plansData[preselectedIndex] || plansData[0]); }
 
     // أزرار اختيار المدة (مثل مفتاح الشهري/السنوي بالصفحة الرئيسية)
