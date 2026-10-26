@@ -408,6 +408,7 @@ var portalDynamicStrings = {
   /* Plan names & related */
   'أساسي': 'Basic',
   'انطلاقة': 'Starter',
+  '✓ مشمولة في باقتك': '✓ Included in your plan',
   'باقة 2,000 رد (دفعة واحدة)': '2,000 replies (one-time)',
   'باقة 5,000 رد (دفعة واحدة)': '5,000 replies (one-time)',
   'باقة 12,000 رد (دفعة واحدة)': '12,000 replies (one-time)',
