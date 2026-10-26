@@ -1,6 +1,6 @@
 var portalTranslations = {
   ar: {
-    'addons.desc': 'إضافات اختيارية برسوم تفعيل لمرة واحدة. اطلب أي إضافة وبنتواصل معك لتأكيد الدفع وتفعيلها.',
+    'addons.desc': 'إضافات اختيارية برسوم لمرة واحدة وتبقى فعّالة طوال اشتراكك. اطلب أي إضافة وبنتواصل معك لتأكيد الدفع وتفعيلها.',
     'analytics.avgResponseLabel': 'متوسط زمن رد البوت',
     'analytics.convoBreakdown': 'تصنيف المحادثات',
     'analytics.hotLeadsLabel': 'عميل جاهز للشراء نبّهك عنه البوت (هذا الشهر)',
@@ -182,7 +182,7 @@ var portalTranslations = {
     'topbar.title': 'لوحة نشاطي',
   },
   en: {
-    'addons.desc': 'Optional add-ons with a one-time activation fee. Request any add-on and we’ll contact you to confirm payment and activate it.',
+    'addons.desc': 'Optional add-ons with a one-time fee, active for your whole subscription. Request any add-on and we’ll contact you to confirm payment and activate it.',
     'analytics.avgResponseLabel': 'Average bot response time',
     'analytics.convoBreakdown': 'Conversation breakdown',
     'analytics.hotLeadsLabel': 'purchase-ready customers the bot flagged for you (this month)',
@@ -498,7 +498,7 @@ var portalDynamicStrings = {
   'أرسل حملات واتساب بقوالب معتمدة لقاعدة عملائك.': 'Send WhatsApp campaigns with approved templates to your customer base.',
   'أنشئ قوالب واتساب معتمدة بالذكاء الاصطناعي.': 'Create WhatsApp-approved templates with AI assistance.',
   'اربط متجرك وقنوات التواصل ببوت نبضة.': 'Connect your store and communication channels to the Nabdh bot.',
-  'قدرات إضافية تفعّلها برسوم لمرة واحدة.': 'Extra capabilities you activate with a one-time fee.',
+  'قدرات إضافية تفعّلها بدفعة وحدة طوال اشتراكك.': 'Extra capabilities you activate with a one-time fee for your whole subscription.',
   'شخصية البوت وتعليماته وصلاحيات فريق العمل.': "The bot's persona, instructions, and team permissions.",
 
   /* Quick bot-setup template chips */
@@ -530,7 +530,7 @@ var portalDynamicStrings = {
   /* Add-ons tab */
   'ما فيه إضافات متاحة حالياً.': 'No add-ons available right now.',
   'جاري الإرسال...': 'Sending...',
-  'ريال دفعة وحدة': 'SAR one-time',
+  'ريال دفعة وحدة · طوال اشتراكك': 'SAR one-time · for your whole subscription',
   'تعذّر إرسال طلبك، حاول مرة ثانية.': 'Could not send your request, please try again.',
 
   /* Add-ons catalog (name_ar / description_ar from DB) */
@@ -588,7 +588,7 @@ var portalDynamicStrings = {
   'تعذّر بدء الربط مع زد، حاول مرة ثانية.': 'Could not start connecting with Zid, please try again.',
   'ربط مع سلة': 'Connect with Salla',
   'تعذّر بدء الربط مع سلة، حاول مرة ثانية.': 'Could not start connecting with Salla, please try again.',
-  'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة، بدون اشتراك شهري إضافي).': 'The Telegram channel add-on isn\'t enabled on your account yet. Enable it from the "Add-ons" tab (399 SAR one-time, no extra monthly subscription).',
+  'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة وتبقى طوال اشتراكك، بدون رسوم شهرية).': 'The Telegram channel add-on isn\'t enabled on your account yet. Enable it from the "Add-ons" tab (399 SAR one-time, active for your whole subscription, no monthly fee).',
   'الرجاء لصق توكن البوت.': 'Please paste the bot token.',
   'تعذّر الربط، تأكد من صحة التوكن.': 'Could not connect, please check the token.',
   'ما فيه موظفين مضافين بعد.': 'No staff added yet.',

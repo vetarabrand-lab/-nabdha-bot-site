@@ -407,7 +407,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<h3>' + escapeHtml(PT(a.name_ar)) + '</h3>' +
         '<div class="addon-desc">' + escapeHtml(PT(a.description_ar || '')) + '</div>' +
         '<div class="addon-foot">' +
-          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة') + '</span></div>' +
+          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة · طوال اشتراكك') + '</span></div>' +
           (statusHtml || actionHtml) +
         '</div>';
       grid.appendChild(card);
@@ -1789,7 +1789,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       form.style.display = 'none';
       if(isOwner){
         lockedHint.style.display = 'block';
-        lockedHint.innerHTML = PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة، بدون اشتراك شهري إضافي).');
+        lockedHint.innerHTML = PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة وتبقى طوال اشتراكك، بدون رسوم شهرية).');
       } else {
         lockedHint.style.display = 'none';
       }

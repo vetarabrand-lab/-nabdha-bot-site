@@ -857,7 +857,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         (a.has_ongoing_cost ? '<span class="addon-cost-tag">⚠ تكلفة مستمرة — الاستهلاك من الرصيد</span>' : '') +
         '<div class="addon-desc">' + escapeHtml(a.description_ar || '') + '</div>' +
         '<div class="addon-foot">' +
-          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + ' <span>ريال دفعة وحدة</span></div>' +
+          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + ' <span>ريال دفعة وحدة · طوال اشتراكك</span></div>' +
           '<span class="addon-count">' + count + ' متجر</span>' +
         '</div>';
       grid.appendChild(card);
@@ -1107,7 +1107,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; border:1px solid var(--border); border-radius:12px;';
       const info = document.createElement('div');
       info.innerHTML = '<div style="font-weight:800; font-size:13.5px;">' + escapeHtml(a.name_ar) + '</div>' +
-                       '<div class="biz-sub">' + Number(a.price_sar).toLocaleString('ar') + ' ريال دفعة وحدة</div>';
+                       '<div class="biz-sub">' + Number(a.price_sar).toLocaleString('ar') + ' ريال دفعة وحدة · طوال اشتراكك</div>';
 
       const expiryWrap = document.createElement('div');
       expiryWrap.style.cssText = 'display:flex; align-items:center; gap:6px;';
@@ -1153,6 +1153,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
             enabled: true,
             price_paid_sar: a.price_sar,
             activated_by: adminEmail,
+            // الإضافة دفعة وحدة وتبقى طوال اشتراك التاجر (قرار 26 أكتوبر 2026) — التاريخ اختياري
             expires_at: expiryInput.value ? new Date(expiryInput.value + 'T23:59:59').toISOString() : null
           }).select('*').single();
           error = res.error;
