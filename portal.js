@@ -25,6 +25,15 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     paused: 'موقوف'
   };
   let myClient = null;
+  /* 2026-10-26 — سياسة سلة: تاجر تطبيق سلة يشتري الباقات والإضافات من سلة فقط.
+     ما نعرض له أي دفع أو طلب شراء خارج منصة سلة. */
+  const SALLA_APPS_URL = 'https://s.salla.sa/apps';
+  function isSallaMerchant(){ return !!(myClient && myClient.salla_store_id); }
+  function sallaManageHtml(labelAr, labelEn){
+    const EN = (window.PORTAL_LANG === 'en');
+    return '<a class="addon-request-btn" style="display:inline-block; text-decoration:none;" href="' + SALLA_APPS_URL + '" target="_blank" rel="noopener">' +
+      (EN ? labelEn : labelAr) + '</a>';
+  }
   let myPlan = null;
   let myUserId = null;
   let isOwner = false;
@@ -368,6 +377,16 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   });
   /* ---------- الإضافات المدفوعة ---------- */
   async function loadPortalAddonsTab(){
+    // سياسة سلة: تاجر سلة يشتري الإضافات من سلة فقط
+    if(isSallaMerchant()){
+      const descEl = document.querySelector('[data-i18n="addons.desc"]');
+      if(descEl){
+        descEl.removeAttribute('data-i18n');
+        descEl.textContent = (window.PORTAL_LANG === 'en')
+          ? 'Your account is linked to Salla, so add-ons are purchased inside Salla: Salla dashboard → Apps → Nabda. They activate here automatically.'
+          : 'حسابك مربوط بسلة، فالإضافات تشتريها من داخل سلة: لوحة سلة ← التطبيقات ← نبضة، وتتفعّل هنا تلقائياً.';
+      }
+    }
     const grid = document.getElementById('portalAddonGrid');
     if(!myClient){ return; }
 
@@ -399,6 +418,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         statusHtml = '<span class="addon-status active">' + PT('✓ مفعّلة') + '</span>';
       } else if(pendingRow){
         statusHtml = '<span class="addon-status pending">' + PT('قيد المراجعة (إضافة)') + '</span>';
+      } else if(isSallaMerchant()){
+        actionHtml = sallaManageHtml('اشترِها من سلة', 'Buy in Salla');
       } else {
         actionHtml = '<button type="button" class="addon-request-btn" data-id="' + a.id + '">' + PT('اطلب التفعيل') + '</button>';
       }
@@ -1258,6 +1279,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
      (الأسرار ما انضافت بعد)، الدالة ترجع payment_not_configured فنوجّه العميل لتبويب الدعم. */
   async function startGeideaCheckout(purpose, extra, title){
     if(!myClient){ return; }
+    if(isSallaMerchant()){ window.open(SALLA_APPS_URL, '_blank', 'noopener'); return; }
     try{
       const { data: sessionData } = await supabaseClient.auth.getSession();
       const authToken = sessionData.session.access_token;
@@ -1311,7 +1333,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       return;
     }
     const link = document.getElementById('bannerRenewLink');
-    if(link){
+    if(link && isSallaMerchant()){
+      link.textContent = BEN ? 'Manage your subscription in Salla' : 'أدِر اشتراكك من لوحة سلة';
+      link.href = SALLA_APPS_URL; link.target = '_blank'; link.rel = 'noopener';
+    } else if(link){
       link.addEventListener('click', function(e){
         e.preventDefault();
         document.querySelector('.tab-btn[data-tab="settings"]').click();
@@ -1339,6 +1364,15 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       (isPrepaid && myPlan.prepaid_credits ? '<br>' + (LANG_EN ? 'Prepaid message credit: ' : 'رصيد الرسائل المسبق: ') + Number(myPlan.prepaid_credits).toLocaleString('en') + (LANG_EN ? ' messages' : ' رسالة') : '') +
       '<br>' + (LANG_EN ? 'Status: ' : 'الحالة: ') + statusLabel + '<br>' + endsAtWord + endsAtLabel;
     btn.style.display = 'none';
+    if(isSallaMerchant()){
+      const picker = document.getElementById('planPicker');
+      if(picker){ picker.style.display = 'none'; }
+      box.innerHTML += '<br><br>' + (LANG_EN
+        ? 'Your subscription is billed through Salla. To subscribe, upgrade or renew: Salla dashboard → Apps → Nabda.'
+        : 'اشتراكك يُدار عبر سلة. للاشتراك أو الترقية أو التجديد: لوحة سلة ← التطبيقات ← نبضة.') +
+        '<br>' + sallaManageHtml('فتح تطبيقات سلة', 'Open Salla apps');
+      return;
+    }
     if(isOwner){ loadPlanOptions(); }
   }
 
@@ -3242,6 +3276,22 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const nonOwnerHint = document.getElementById('topupHelperNonOwner');
     nonOwnerHint.style.display = isOwner ? 'none' : 'block';
     if(!myClient){ return; }
+    if(isSallaMerchant()){
+      const tbox = document.getElementById('topupPackages');
+      if(tbox){
+        tbox.innerHTML = '<div class="cost-note">' + ((window.PORTAL_LANG === 'en')
+          ? 'Need more replies? Upgrade your plan from Salla: Salla dashboard → Apps → Nabda.'
+          : 'تحتاج ردود أكثر؟ رقِّ باقتك من سلة: لوحة سلة ← التطبيقات ← نبضة.') + '<br>' +
+          sallaManageHtml('فتح تطبيقات سلة', 'Open Salla apps') + '</div>';
+      }
+      const sBal = myClient.extra_message_credits || 0;
+      document.getElementById('topupCurrentBalance').textContent = (window.PORTAL_LANG === 'en')
+        ? ('Your current extra credit: ' + sBal + ' message(s).')
+        : ('رصيدك الإضافي الحالي: ' + sBal + ' رسالة.');
+      const pBox = document.getElementById('topupPendingNotice');
+      if(pBox){ pBox.innerHTML = ''; }
+      return;
+    }
     const balance = myClient.extra_message_credits || 0;
     document.getElementById('topupCurrentBalance').textContent = (window.PORTAL_LANG === 'en')
       ? ('Your current extra credit: ' + balance + ' message(s).')
