@@ -439,6 +439,213 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
     });
   }
+
+  /* ---------- قاعدة معرفة المتجر (إضافة knowledge_base) — 2026-10-26 ----------
+     التاجر يضيف مستندات نصية أو يرفع ملفات (PDF/Word/TXT تُقرأ داخل المتصفح)، والحفظ عبر
+     kb_save_doc (تتحقق من الصلاحية والإضافة والحدود وتقطّع المستند للبحث). البوت يبحث عبر kb_search. */
+  const KB_MAX_DOC = 20000, KB_MAX_TOTAL = 60000;
+  let kbDocs = [];
+  let kbEditingId = null;
+  let kbSource = { type: 'text', file: null };
+
+  function kbFmt(n){ return Number(n || 0).toLocaleString('en'); }
+
+  async function loadKnowledgeBase(){
+    const card = document.getElementById('kbCard');
+    if(!card || !myClient){ return; }
+    card.style.display = 'block';
+    const locked = document.getElementById('kbLocked');
+    const body = document.getElementById('kbBody');
+    let has = false;
+    try{
+      const { data } = await supabaseClient.rpc('client_has_addon', { p_client_id: myClient.id, p_addon_id: 'knowledge_base' });
+      has = data === true;
+    } catch(e){ has = false; }
+    if(!has){
+      body.style.display = 'none';
+      locked.style.display = 'block';
+      locked.textContent = PT('قاعدة المعرفة مشمولة في باقة المؤسسات، أو تقدر تفعّلها كإضافة من تبويب "الإضافات".');
+      return;
+    }
+    locked.style.display = 'none';
+    body.style.display = 'block';
+    document.getElementById('kbEditor').style.display = isOwner ? 'block' : 'none';
+    await refreshKbList();
+  }
+
+  async function refreshKbList(){
+    const { data } = await supabaseClient.from('client_knowledge_docs')
+      .select('id, title, char_count, source_type, file_name, updated_at')
+      .eq('client_id', myClient.id).order('created_at', { ascending: true });
+    kbDocs = data || [];
+    const used = kbDocs.reduce(function(s, d){ return s + (d.char_count || 0); }, 0);
+    document.getElementById('kbUsageFill').style.width = Math.min(100, Math.round(used / KB_MAX_TOTAL * 100)) + '%';
+    document.getElementById('kbUsageText').textContent =
+      kbFmt(kbDocs.length) + ' ' + PT('مستند') + ' · ' + kbFmt(used) + ' / ' + kbFmt(KB_MAX_TOTAL) + ' ' + PT('حرف');
+    const list = document.getElementById('kbList');
+    if(!kbDocs.length){
+      list.innerHTML = '<div class="kb-empty">' + escapeHtml(PT('ما فيه مستندات بعد. أضف أول مستند تحت 👇')) + '</div>';
+      return;
+    }
+    list.innerHTML = kbDocs.map(function(d){
+      const meta = kbFmt(d.char_count) + ' ' + PT('حرف') + (d.file_name ? ' · ' + d.file_name : '');
+      return '<div class="kb-item" data-id="' + escapeHtml(d.id) + '">' +
+        '<div class="kb-item-main"><div class="kb-item-title">' + escapeHtml(d.title) + '</div>' +
+        '<div class="kb-item-meta">' + escapeHtml(meta) + '</div></div>' +
+        (isOwner ? '<button type="button" class="kb-edit">' + escapeHtml(PT('تعديل')) + '</button>' +
+                   '<button type="button" class="kb-del">' + escapeHtml(PT('حذف')) + '</button>' : '') +
+        '</div>';
+    }).join('');
+  }
+
+  function kbResetEditor(){
+    kbEditingId = null;
+    kbSource = { type: 'text', file: null };
+    document.getElementById('kbTitle').value = '';
+    document.getElementById('kbContent').value = '';
+    document.getElementById('kbFile').value = '';
+    document.getElementById('kbFileNote').textContent = '';
+    document.getElementById('kbCancelBtn').style.display = 'none';
+    document.getElementById('kbSaveBtn').textContent = PT('حفظ في قاعدة المعرفة');
+  }
+
+  function kbStatus(msg, ok){
+    const el = document.getElementById('kbStatus');
+    el.textContent = msg;
+    el.style.color = ok ? '' : 'var(--danger)';
+    el.classList.add('show');
+    el.style.display = 'block';
+  }
+
+  function kbLoadScript(src){
+    return new Promise(function(resolve, reject){
+      if(document.querySelector('script[src="' + src + '"]')){ resolve(); return; }
+      const s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = function(){ reject(new Error('load ' + src)); };
+      document.head.appendChild(s);
+    });
+  }
+
+  async function kbExtractText(file){
+    const name = (file.name || '').toLowerCase();
+    if(/\.(txt|md|csv)$/.test(name)){ return await file.text(); }
+    if(name.endsWith('.pdf')){
+      await kbLoadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+      const pdfjs = window.pdfjsLib;
+      pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+      const parts = [];
+      for(let i = 1; i <= Math.min(pdf.numPages, 60); i++){
+        const page = await pdf.getPage(i);
+        const tc = await page.getTextContent();
+        parts.push(tc.items.map(function(it){ return it.str + (it.hasEOL ? '\n' : ' '); }).join(''));
+      }
+      return parts.join('\n\n');
+    }
+    if(name.endsWith('.docx')){
+      await kbLoadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+      const res = await window.mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
+      return res.value || '';
+    }
+    throw new Error('unsupported');
+  }
+
+  document.getElementById('kbFile').addEventListener('change', async function(e){
+    const file = e.target.files && e.target.files[0];
+    if(!file){ return; }
+    const note = document.getElementById('kbFileNote');
+    note.textContent = PT('جاري قراءة الملف...');
+    try{
+      let text = (await kbExtractText(file)).replace(/\r/g, '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+      if(!text){ note.textContent = PT('ما قدرنا نقرأ نص من الملف (ممكن يكون صور ممسوحة). الصق النص يدوياً.'); return; }
+      let cut = '';
+      if(text.length > KB_MAX_DOC){ text = text.slice(0, KB_MAX_DOC); cut = ' ' + PT('(اختصرناه لأول 20,000 حرف)'); }
+      document.getElementById('kbContent').value = text;
+      const titleEl = document.getElementById('kbTitle');
+      if(!titleEl.value.trim()){ titleEl.value = file.name.replace(/\.[^.]+$/, '').slice(0, 150); }
+      kbSource = { type: 'file', file: file.name };
+      note.textContent = '✓ ' + file.name + ' — ' + kbFmt(text.length) + ' ' + PT('حرف') + cut;
+    } catch(err){
+      note.textContent = PT('تعذّر قراءة الملف. الصيغ المدعومة: PDF و Word (docx) و TXT.');
+    }
+  });
+
+  document.getElementById('kbSaveBtn').addEventListener('click', async function(){
+    const btn = this;
+    const title = document.getElementById('kbTitle').value.trim();
+    const content = document.getElementById('kbContent').value.trim();
+    if(!title || !content){ kbStatus(PT('اكتب عنوان ومحتوى للمستند.'), false); return; }
+    if(content.length > KB_MAX_DOC){ kbStatus(PT('المستند أطول من 20,000 حرف — قسّمه لأكثر من مستند.'), false); return; }
+    btn.disabled = true;
+    try{
+      const { data, error } = await supabaseClient.rpc('kb_save_doc', {
+        p_client_id: myClient.id, p_title: title, p_content: content,
+        p_doc_id: kbEditingId, p_source_type: kbSource.type, p_file_name: kbSource.file
+      });
+      if(error){ throw error; }
+      if(!data || !data.ok){
+        const map = {
+          addon_required: PT('قاعدة المعرفة غير مفعّلة في حسابك.'),
+          not_allowed: PT('ما عندك صلاحية تعديل قاعدة المعرفة.'),
+          too_many_docs: PT('وصلت الحد الأقصى (30 مستند). احذف مستند قديم أو ادمج المستندات.'),
+          total_too_long: PT('وصلت الحد الأقصى لمجموع قاعدة المعرفة (60,000 حرف). اختصر أو احذف مستندات.'),
+          doc_too_long: PT('المستند أطول من 20,000 حرف — قسّمه لأكثر من مستند.'),
+          empty: PT('اكتب عنوان ومحتوى للمستند.')
+        };
+        kbStatus(map[data && data.error] || PT('تعذّر الحفظ، حاول مرة ثانية.'), false);
+      } else {
+        kbStatus(PT('✓ تم الحفظ — البوت صار يستخدمه من الرسالة الجاية.'), true);
+        kbResetEditor();
+        await refreshKbList();
+      }
+    } catch(e){
+      kbStatus(PT('تعذّر الحفظ، حاول مرة ثانية.'), false);
+    }
+    btn.disabled = false;
+  });
+
+  document.getElementById('kbCancelBtn').addEventListener('click', kbResetEditor);
+
+  document.getElementById('kbList').addEventListener('click', async function(e){
+    const item = e.target.closest('.kb-item');
+    if(!item){ return; }
+    const id = item.getAttribute('data-id');
+    if(e.target.classList.contains('kb-del')){
+      if(!confirm(PT('حذف هذا المستند من قاعدة المعرفة؟'))){ return; }
+      const { data, error } = await supabaseClient.rpc('kb_delete_doc', { p_client_id: myClient.id, p_doc_id: id });
+      if(error || !data || !data.ok){ alert(PT('تعذّر الحذف، حاول مرة ثانية.')); return; }
+      if(kbEditingId === id){ kbResetEditor(); }
+      await refreshKbList();
+    } else if(e.target.classList.contains('kb-edit')){
+      const { data } = await supabaseClient.from('client_knowledge_docs').select('id, title, content, source_type, file_name').eq('id', id).maybeSingle();
+      if(!data){ return; }
+      kbEditingId = data.id;
+      kbSource = { type: data.source_type || 'text', file: data.file_name || null };
+      document.getElementById('kbTitle').value = data.title;
+      document.getElementById('kbContent').value = data.content;
+      document.getElementById('kbCancelBtn').style.display = 'inline-block';
+      document.getElementById('kbSaveBtn').textContent = PT('حفظ التعديل');
+      document.getElementById('kbTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  async function kbRunTest(){
+    const q = document.getElementById('kbTestInput').value.trim();
+    const box = document.getElementById('kbTestResults');
+    if(!q){ return; }
+    box.innerHTML = '<div class="kb-empty">' + escapeHtml(PT('جاري البحث...')) + '</div>';
+    const { data, error } = await supabaseClient.rpc('kb_search', { p_client_id: myClient.id, p_query: q, p_limit: 3 });
+    if(error || !data || !data.length){
+      box.innerHTML = '<div class="kb-empty">' + escapeHtml(PT('ما لقينا نتيجة. جرّب كلمات ثانية، أو أضف المعلومة في مستند.')) + '</div>';
+      return;
+    }
+    box.innerHTML = data.map(function(h){
+      const txt = h.content.length > 400 ? h.content.slice(0, 400) + '…' : h.content;
+      return '<div class="kb-hit"><b>📄 ' + escapeHtml(h.doc_title) + '</b>' + escapeHtml(txt) + '</div>';
+    }).join('');
+  }
+  document.getElementById('kbTestBtn').addEventListener('click', kbRunTest);
+  document.getElementById('kbTestInput').addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); kbRunTest(); } });
   renderTemplateChips();
   /* ---------- تثبيت البوابة كتطبيق (PWA) ---------- */
   (function setupPwaInstall(){
@@ -541,6 +748,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('settingOwnerPhone').disabled = !isOwner;
     document.getElementById('settingWebhookUrl').disabled = !isOwner;
     document.getElementById('saveSettingsBtn').style.display = isOwner ? 'inline-block' : 'none';
+    loadKnowledgeBase();
     // إخفاء رقم العميل عن الموظفين — يظهر التحكم لصاحب الحساب فقط، ويُطبَّق فوراً على الموظفين حسب قيمة الحقل بقاعدة البيانات
     const hidePhoneToggle = document.getElementById('hideCustomerPhoneToggle');
     hidePhoneToggle.checked = !!clientRow.hide_customer_phone_from_staff;
