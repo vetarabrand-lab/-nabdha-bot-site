@@ -34,6 +34,22 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     return '<a class="addon-request-btn" style="display:inline-block; text-decoration:none;" href="' + SALLA_APPS_URL + '" target="_blank" rel="noopener">' +
       (EN ? labelEn : labelAr) + '</a>';
   }
+  // شرط سلة: تاجر سلة ما يشوف أي أسعار عندنا. الإضافات تُباع في سلة كحزم (salla_addon_bundles).
+  const SALLA_BUNDLE_OF = {
+    back_in_stock: ['حزمة المتجر', 'Store bundle'], shipment_tracking: ['حزمة المتجر', 'Store bundle'],
+    post_delivery_review: ['حزمة المتجر', 'Store bundle'], whatsapp_catalog: ['حزمة المتجر', 'Store bundle'],
+    instagram_dm: ['حزمة القنوات', 'Channels bundle'], telegram_dm: ['حزمة القنوات', 'Channels bundle'],
+    knowledge_base: ['حزمة الذكاء', 'AI bundle'], multilingual: ['حزمة الذكاء', 'AI bundle'], voice_replies: ['حزمة الذكاء', 'AI bundle'],
+    sales_summary: ['حزمة التقارير والربط', 'Insights and integrations bundle'], csat_survey: ['حزمة التقارير والربط', 'Insights and integrations bundle'],
+    webhook_integration: ['حزمة التقارير والربط', 'Insights and integrations bundle'],
+    full_setup: ['الإعداد الكامل', 'Full done-for-you setup']
+  };
+  function sallaBundleNote(addonId){
+    const EN = (window.PORTAL_LANG === 'en');
+    const b = SALLA_BUNDLE_OF[addonId];
+    if(!b){ return EN ? 'Available in Salla' : 'متاحة من سلة'; }
+    return EN ? ('Available in Salla: ' + b[1]) : ('متاحة في سلة ضمن: ' + b[0]);
+  }
   let myPlan = null;
   let myUserId = null;
   let isOwner = false;
@@ -402,7 +418,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
 
     grid.innerHTML = '';
+    const sallaMode = isSallaMerchant();
     addons.forEach(function(a){
+      if(sallaMode && !SALLA_BUNDLE_OF[a.id]){ return; } // إضافات غير معروضة في سلة (مثل اختبار الدفع)
       const activeRow = (myAddons || []).find(function(ca){ return ca.addon_id === a.id && ca.enabled; });
       const pendingRow = (myRequests || []).find(function(r){ return r.addon_id === a.id; });
 
@@ -428,7 +446,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<h3>' + escapeHtml(PT(a.name_ar)) + '</h3>' +
         '<div class="addon-desc">' + escapeHtml(PT(a.description_ar || '')) + '</div>' +
         '<div class="addon-foot">' +
-          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة · طوال اشتراكك') + '</span></div>' +
+          (sallaMode
+            ? '<div class="addon-price" style="font-size:13px; font-weight:700;">' + escapeHtml(sallaBundleNote(a.id)) + '</div>'
+            : '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة · طوال اشتراكك') + '</span></div>') +
           (statusHtml || actionHtml) +
         '</div>';
       grid.appendChild(card);
@@ -1356,7 +1376,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const isPrepaid = !!(myPlan && myPlan.is_prepaid);
     const isAnnual = !!(myPlan && myPlan.billing_cycle === 'annual');
     const LANG_EN = (window.PORTAL_LANG === 'en');
-    const priceLabel = price !== null ? (' — ' + price + (isPrepaid ? (LANG_EN ? ' SAR (one-time)' : ' ريال (دفعة وحدة)') : (isAnnual ? (LANG_EN ? ' SAR/year' : ' ريال/سنة') : (LANG_EN ? ' SAR/month' : ' ريال/شهر')))) : '';
+    const priceLabel = (price !== null && !isSallaMerchant()) ? (' — ' + price + (isPrepaid ? (LANG_EN ? ' SAR (one-time)' : ' ريال (دفعة وحدة)') : (isAnnual ? (LANG_EN ? ' SAR/year' : ' ريال/سنة') : (LANG_EN ? ' SAR/month' : ' ريال/شهر')))) : '';
     const endsAtLabel = myClient.current_period_ends_at ? formatDateAr(myClient.current_period_ends_at) : (LANG_EN ? 'Not active yet' : 'غير مفعّل بعد');
     const endsAtWord = isPrepaid ? (LANG_EN ? 'Credit valid until: ' : 'صلاحية الرصيد حتى: ') : (isAnnual ? (LANG_EN ? 'Annual subscription ends on: ' : 'ينتهي الاشتراك السنوي بتاريخ: ') : (LANG_EN ? 'Ends on: ' : 'ينتهي بتاريخ: '));
     const statusLabel = myClient.subscription_status === 'active' ? (LANG_EN ? '✅ Active' : '✅ فعّال') : (myClient.subscription_status === 'trial' ? (LANG_EN ? '🕐 Trial period' : '🕐 فترة تجريبية') : (LANG_EN ? '🚫 Inactive' : '🚫 غير فعّال'));
@@ -1549,6 +1569,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   })();
   /* ---------- ربط متجر زد ---------- */
   function storeAddonLockedHtml(suffix){
+    if(isSallaMerchant()){
+      return '<div class="alert-box error" style="display:block; margin-top:10px;">' + ((window.PORTAL_LANG === 'en')
+        ? 'Store connection isn\'t enabled on your current plan. Upgrade your plan from Salla: Salla dashboard → Apps → Nabda.'
+        : 'ربط المتجر غير مفعّل في باقتك الحالية. رقِّ باقتك من سلة: لوحة سلة ← التطبيقات ← نبضة.') + '</div>' +
+        sallaManageHtml('فتح تطبيقات سلة', 'Open Salla apps');
+    }
     const price = (myPlan && myPlan.store_integration_addon_price_sar) || 25;
     return '<div class="alert-box error" style="display:block; margin-top:10px;">'
       + (window.PORTAL_LANG === 'en'
@@ -1823,7 +1849,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       form.style.display = 'none';
       if(isOwner){
         lockedHint.style.display = 'block';
-        lockedHint.innerHTML = PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة وتبقى طوال اشتراكك، بدون رسوم شهرية).');
+        lockedHint.innerHTML = isSallaMerchant()
+          ? ((window.PORTAL_LANG === 'en')
+              ? 'The Telegram channel add-on isn\'t enabled on your account yet. Get it in Salla as part of the Channels bundle: Salla dashboard → Apps → Nabda.'
+              : 'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من سلة ضمن "حزمة القنوات": لوحة سلة ← التطبيقات ← نبضة.')
+          : PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة وتبقى طوال اشتراكك، بدون رسوم شهرية).');
       } else {
         lockedHint.style.display = 'none';
       }
