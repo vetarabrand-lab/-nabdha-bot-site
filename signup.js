@@ -110,7 +110,7 @@ if(sallaPendingId || zidPendingId){
       "form.oneTime": "ريال (دفعة وحدة)",
       "form.perYear": "ريال/سنة",
       "form.upTo": "حتى",
-      "form.msgWord": "رسالة",
+      "form.msgWord": "رد ذكي",
       "form.validFor": "صالحة",
       "form.monthsWord": "شهر",
       "success.title": "تم إنشاء حسابك بنجاح!",
@@ -168,7 +168,7 @@ if(sallaPendingId || zidPendingId){
       "form.oneTime": "SAR (one-time)",
       "form.perYear": "SAR/year",
       "form.upTo": "Up to",
-      "form.msgWord": "messages",
+      "form.msgWord": "AI replies",
       "form.validFor": "valid for",
       "form.monthsWord": "months",
       "success.title": "Your account has been created!",
@@ -248,9 +248,6 @@ if(sallaPendingId || zidPendingId){
       b.type = 'button';
       b.className = 'plan-tab' + (planTab === tb[0] ? ' active' : '');
       b.textContent = tb[1];
-      if(tb[0] === 'annual' && launchPromoOn){
-        var sv = document.createElement('em'); sv.textContent = ar ? 'وفّر 50%' : 'Save 50%'; b.appendChild(sv);
-      }
       b.addEventListener('click', function(){
         planTab = tb[0];
         var first = plansData.findIndex(function(p){ return planCycle(p) === planTab; });
@@ -281,13 +278,9 @@ if(sallaPendingId || zidPendingId){
       if(isPrepaid){
         big = fmtN(total); unit = t['form.oneTime'];
       } else if(isAnnual){
-        var payTotal = launchPromoOn ? Math.round(total * 0.5) : total;
-        big = fmtN(Math.round(payTotal / 12));
+        big = fmtN(Math.round(total / 12));
         unit = ar ? 'ريال / شهرياً' : 'SAR / month';
-        if(launchPromoOn){ strike = '<s class="p-strike">' + fmtN(Math.round(total / 12)) + '</s> '; }
-        note = launchPromoOn
-          ? (ar ? 'يُدفع ' + fmtN(payTotal) + ' ريال سنوياً (بدل ' + fmtN(total) + ')' : 'Billed ' + fmtN(payTotal) + ' SAR/year (was ' + fmtN(total) + ')')
-          : (ar ? 'يُدفع ' + fmtN(total) + ' ريال سنوياً' : 'Billed ' + fmtN(total) + ' SAR/year');
+        note = (ar ? 'يُدفع ' + fmtN(total) + ' ريال سنوياً' : 'Billed ' + fmtN(total) + ' SAR/year');
       } else {
         big = fmtN(total); unit = ar ? 'ريال / شهرياً' : 'SAR / month';
       }
@@ -307,17 +300,7 @@ if(sallaPendingId || zidPendingId){
     });
   }
 
-  var launchPromoOn = false;
-  async function loadLaunchPromo(){
-    try{
-      var r = await fetch('https://anptuwcfvfcjqtqqnirt.supabase.co/functions/v1/get-launch-promo-status');
-      var j = await r.json();
-      launchPromoOn = !!(j && j.active && j.annual && j.annual.remaining > 0);
-    }catch(e){ launchPromoOn = false; }
-  }
-
   async function loadPlans(){
-    await loadLaunchPromo();
     const { data, error } = await supabaseClient
       .from('subscription_plans')
       .select('id, code, name_ar, monthly_price_sar, monthly_message_limit, is_prepaid, prepaid_credits, prepaid_validity_months, billing_cycle')

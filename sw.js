@@ -4,7 +4,7 @@
 // فقط ملفات الواجهة الثابتة (portal.html نفسه، الأيقونات، الـ manifest). كل طلبات البيانات
 // الحية تروح للشبكة مباشرة، عشان التاجر يشوف دايماً أحدث محادثاته ولا يشوف بيانات قديمة مخزّنة.
 
-const CACHE_NAME = 'nabda-portal-shell-v2';
+const CACHE_NAME = 'nabda-portal-shell-v3';
 const SHELL_FILES = [
   '/portal.html',
   '/manifest.json',
