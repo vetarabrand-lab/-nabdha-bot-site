@@ -1789,7 +1789,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       form.style.display = 'none';
       if(isOwner){
         lockedHint.style.display = 'block';
-        lockedHint.innerHTML = PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (490 ريال دفعة وحدة تغطي سنة كاملة، بدون اشتراك شهري).');
+        lockedHint.innerHTML = PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة تغطي سنة كاملة، بدون اشتراك شهري).');
       } else {
         lockedHint.style.display = 'none';
       }

@@ -588,7 +588,7 @@ var portalDynamicStrings = {
   'تعذّر بدء الربط مع زد، حاول مرة ثانية.': 'Could not start connecting with Zid, please try again.',
   'ربط مع سلة': 'Connect with Salla',
   'تعذّر بدء الربط مع سلة، حاول مرة ثانية.': 'Could not start connecting with Salla, please try again.',
-  'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (490 ريال دفعة وحدة تغطي سنة كاملة، بدون اشتراك شهري).': 'The Telegram channel add-on isn\'t enabled on your account yet. Enable it from the "Add-ons" tab (490 SAR one-time, covers a full year, no monthly subscription).',
+  'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة تغطي سنة كاملة، بدون اشتراك شهري).': 'The Telegram channel add-on isn\'t enabled on your account yet. Enable it from the "Add-ons" tab (399 SAR one-time, covers a full year, no monthly subscription).',
   'الرجاء لصق توكن البوت.': 'Please paste the bot token.',
   'تعذّر الربط، تأكد من صحة التوكن.': 'Could not connect, please check the token.',
   'ما فيه موظفين مضافين بعد.': 'No staff added yet.',
