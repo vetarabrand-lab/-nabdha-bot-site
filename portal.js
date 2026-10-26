@@ -1131,7 +1131,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(isOwner){ loadPlanOptions(); }
   }
 
-  /* ---------- اختيار/تغيير الباقة + عرض الافتتاح (خصم 50% سنوي) ----------
+  /* ---------- اختيار/تغيير الباقة (عرض الافتتاح أُوقف 26 أكتوبر 2026) ----------
      التاجر يختار المدة (سنوي/شهري/رصيد مسبق) والباقة، ثم يدفع عبر Geidea.
      الخصم الفعلي يحسبه الخادم (create-geidea-order) — هنا للعرض فقط. */
   let planOptions = null;      // الباقات المفعّلة
@@ -1162,7 +1162,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         supabaseClient.from('subscription_plans')
           .select('id, code, name_ar, billing_cycle, monthly_price_sar, monthly_message_limit, is_prepaid, prepaid_credits, prepaid_validity_months, sort_order')
           .eq('is_active', true).order('sort_order'),
-        fetch(FUNCTIONS_BASE + '/get-launch-promo-status').then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+        Promise.resolve(null) // عرض الافتتاح أُوقف 26 أكتوبر 2026
       ]);
       planOptions = (results[0] && results[0].data) || [];
       const promo = results[1];
@@ -1197,19 +1197,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const EN = (window.PORTAL_LANG === 'en');
     wrap.style.display = 'block';
 
-    // شريط عرض الافتتاح
+    // عرض الافتتاح أُوقف 26 أكتوبر 2026 — الشريط مخفي دائماً
     const promoEl = document.getElementById('planPromoNote');
-    if(promoState){
-      const ends = promoState.endsAt ? formatDateAr(promoState.endsAt) : '';
-      const setup = (promoState.freeSetup && promoState.freeSetup.active)
-        ? (EN ? ' + free full setup (first 20 customers)' : ' + إعداد كامل مجاني (لأول 20 عميل)') : '';
-      promoEl.innerHTML = '<b>' + (EN ? '🎉 Launch offer: ' : '🎉 عرض الافتتاح: ') + '</b>' +
-        (EN ? '50% off every annual plan + 5 add-ons free for one year (worth 1,395 SAR)' : 'خصم 50% على كل الباقات السنوية + 5 إضافات مجانية لمدة سنة (قيمتها 1,395 ريال)') +
-        escapeHtml(setup) + (ends ? (EN ? ' — until ' : ' — حتى ') + escapeHtml(ends) : '');
-      promoEl.style.display = 'block';
-    } else {
-      promoEl.style.display = 'none';
-    }
+    if(promoEl){ promoEl.style.display = 'none'; }
 
     // أزرار المدة
     const cycles = [
@@ -1243,8 +1233,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         priceHtml = '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR/month' : 'ريال/شهر');
       }
       const limit = cyc === 'prepaid'
-        ? (fmtSar(p.prepaid_credits || 0) + (EN ? ' messages' : ' رسالة'))
-        : (fmtSar(p.monthly_message_limit || 0) + (EN ? ' messages/month' : ' رسالة/شهر'));
+        ? (fmtSar(p.prepaid_credits || 0) + (EN ? ' AI replies' : ' رد ذكي'))
+        : (fmtSar(p.monthly_message_limit || 0) + (EN ? ' AI replies/month' : ' رد ذكي/شهر'));
       return '<button type="button" class="plan-opt' + (on ? ' on' : '') + '" role="radio" aria-checked="' + on + '" data-plan="' + escapeHtml(p.id) + '">' +
         '<span class="plan-opt-head"><span class="plan-opt-name">' + escapeHtml(planDisplayName(p)) + '</span>' +
         (isCurrent ? '<span class="plan-cur">' + (EN ? 'Current' : 'باقتك الحالية') + '</span>' : '') + '</span>' +
