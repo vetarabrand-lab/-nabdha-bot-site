@@ -373,7 +373,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
 
     const [{ data: addons }, { data: myAddons }, { data: myRequests }] = await Promise.all([
       supabaseClient.from('addons').select('*').eq('is_active', true).order('sort_order'),
-      supabaseClient.from('client_addons').select('addon_id, enabled').eq('client_id', myClient.id),
+      supabaseClient.from('client_addons').select('addon_id, enabled, activated_by').eq('client_id', myClient.id),
       supabaseClient.from('addon_requests').select('addon_id, status').eq('client_id', myClient.id).eq('status', 'pending')
     ]);
 
@@ -392,7 +392,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
 
       let statusHtml = '';
       let actionHtml = '';
-      if(activeRow){
+      if(activeRow && activeRow.activated_by === 'plan'){
+        // 2026-10-26: إضافة مشمولة في باقة التاجر (تتفعّل وتنشال تلقائياً مع الباقة)
+        statusHtml = '<span class="addon-status active">' + PT('✓ مشمولة في باقتك') + '</span>';
+      } else if(activeRow){
         statusHtml = '<span class="addon-status active">' + PT('✓ مفعّلة') + '</span>';
       } else if(pendingRow){
         statusHtml = '<span class="addon-status pending">' + PT('قيد المراجعة (إضافة)') + '</span>';
