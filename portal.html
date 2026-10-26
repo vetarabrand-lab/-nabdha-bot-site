@@ -69,6 +69,7 @@
   .primary-btn:disabled{opacity:.6; cursor:not-allowed;}
   .alert-box{border-radius:10px; padding:11px 14px; font-size:13px; margin-bottom:14px; display:none;}
   .alert-box.error{background:#FDEDEC; color:var(--danger); border:1px solid #F5C6C3;}
+  .alert-box.success{background:#E9F9EF; color:#0B6B3A; border:1px solid #BDEBCD;}
   .alert-box.ok{background:rgba(37,211,102,.12); color:var(--wa-green-dark); border:1px solid rgba(37,211,102,.3);}
   .forgot-link{display:block; text-align:center; margin-top:14px; font-size:13.5px; color:var(--wa-teal-dark); font-weight:700; cursor:pointer;}
   .forgot-link:hover{text-decoration:underline;}
@@ -138,6 +139,20 @@
   .settings-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:28px; max-width:640px; margin-bottom:24px;}
   /* ---------- ADD-ONS ---------- */
   .addon-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px, 1fr)); gap:14px;}
+  .cart-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:16px;}
+  .cart-stat{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px 16px;}
+  .cart-stat b{display:block; font-size:24px; font-weight:900; color:var(--wa-teal-dark);}
+  .cart-stat span{font-size:12px; color:var(--muted);}
+  .cart-box{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 18px; margin-bottom:16px;}
+  .cart-box h3{font-size:15px; font-weight:900; margin-bottom:10px;}
+  .cart-check{display:flex; align-items:flex-start; gap:8px; font-size:13px; line-height:1.6; padding:5px 0;}
+  .cart-steps{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
+  .cart-step{border:1px solid var(--border); border-radius:12px; padding:8px 12px; font-size:12.5px; line-height:1.5; min-width:120px;}
+  .cart-step.on{border-color:var(--wa-green); background:rgba(37,211,102,.08);}
+  .cart-step.off{opacity:.45;}
+  .cart-row{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--border); font-size:13px;}
+  .cart-row:first-of-type{border-top:none;}
+  .cart-badge{font-size:11.5px; font-weight:800; border-radius:999px; padding:3px 10px; white-space:nowrap;}
   .addon-card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px 20px; display:flex; flex-direction:column; gap:8px;}
   .addon-card h3{font-size:15px; font-weight:900;}
   .addon-card .addon-desc{font-size:12.5px; color:var(--muted); line-height:1.65; flex:1;}
@@ -423,6 +438,7 @@
       <button class="tab-btn" data-tab="support" data-i18n="nav.support">الدعم الفني</button>
       <span class="nav-sec" data-i18n="nav.groupGrowth">النمو والتحليل</span>
       <button class="tab-btn" data-tab="analytics" data-i18n="nav.analytics">التحليلات</button>
+      <button class="tab-btn" data-tab="carts" data-i18n="nav.carts">السلات المتروكة</button>
       <button class="tab-btn" data-tab="broadcast" data-i18n="nav.broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="templates" data-i18n="nav.templates">قوالب الرسائل</button>
       <span class="nav-sec" data-i18n="nav.groupPlatform">إعدادات المنصة</span>
@@ -616,6 +632,11 @@
       <div class="cost-note" data-i18n="orders.desc">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
       <div id="ordersContent">
         <div class="conv-empty" data-i18n="orders.loading">جاري تحميل الطلبات...</div>
+      </div>
+    </div>
+    <div class="panel" id="panelCarts">
+      <div id="cartsContent">
+        <div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div>
       </div>
     </div>
     <div class="panel" id="panelAddons">
@@ -1219,6 +1240,7 @@
   .tabs .tab-btn[data-tab="broadcast"]::before{ content:'📣'; }
   .tabs .tab-btn[data-tab="templates"]::before{ content:'📝'; }
   .tabs .tab-btn[data-tab="orders"]::before{ content:'📦'; }
+  .tabs .tab-btn[data-tab="carts"]::before{ content:'🛒'; }
   .tabs .tab-btn[data-tab="addons"]::before{ content:'🧩'; }
   .tabs .tab-btn[data-tab="support"]::before{ content:'🛟'; }
   .tabs .tab-btn[data-tab="channels"]::before{ content:'🔗'; }
@@ -1333,6 +1355,7 @@ nav{max-width:1440px; padding:13px 24px;}
   -webkit-mask:var(--ico) center/18px 18px no-repeat; mask:var(--ico) center/18px 18px no-repeat;
 }
 .tabs .tab-btn[data-tab="inbox"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E");}
+.tabs .tab-btn[data-tab="carts"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='8' cy='21' r='1'/%3E%3Ccircle cx='19' cy='21' r='1'/%3E%3Cpath d='M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12'/%3E%3C/svg%3E");}
 .tabs .tab-btn[data-tab="orders"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/%3E%3Cpath d='m3.3 7 8.7 5 8.7-5'/%3E%3Cpath d='M12 22V12'/%3E%3C/svg%3E");}
 .tabs .tab-btn[data-tab="support"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9.2 9.3a3 3 0 0 1 5.8 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17.2h.01'/%3E%3C/svg%3E");}
 .tabs .tab-btn[data-tab="analytics"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20V4'/%3E%3Cpath d='M4 20h16'/%3E%3Cpath d='M8.5 20v-6'/%3E%3Cpath d='M13 20V8'/%3E%3Cpath d='M17.5 20v-9'/%3E%3C/svg%3E");}

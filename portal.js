@@ -383,14 +383,137 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { home: 'panelHome', inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels' };
+      const map = { home: 'panelHome', inbox: 'panelInbox', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels', carts: 'panelCarts' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
       if(btn.dataset.tab === 'addons'){ loadPortalAddonsTab(); }
+      if(btn.dataset.tab === 'carts'){ loadCartsTab(); }
       if(btn.dataset.tab === 'home'){ renderHome(); }
       v2AfterTabChange(btn.dataset.tab);
     });
   });
+
+  /* ---------- السلات المتروكة — 2026-10-26 ----------
+     صفحة توضّح للتاجر الميزة: حالتها حسب باقته، شروط التشغيل، مراحل التذكير، والأرقام وآخر السلات.
+     بدون أي أسعار (شرط سلة). السياسة من my_cart_reminder_policy (نفس منطق المعالج المجدول). */
+  async function loadCartsTab(){
+    const box = document.getElementById('cartsContent');
+    if(!box || !myClient){ return; }
+    const EN = (window.PORTAL_LANG === 'en');
+    const L = function(ar, en){ return EN ? en : ar; };
+    box.innerHTML = '<div class="conv-empty">' + L('جاري التحميل...', 'Loading...') + '</div>';
+
+    const [polRes, evRes, tplRes, sallaCredRes, zidCredRes] = await Promise.all([
+      supabaseClient.rpc('my_cart_reminder_policy', { p_client_id: myClient.id }),
+      supabaseClient.from('store_order_events')
+        .select('id, status, customer_name, customer_phone, order_total, created_at, resolved_at')
+        .eq('client_id', myClient.id).eq('event_type', 'abandoned_cart')
+        .order('created_at', { ascending: false }).limit(200),
+      supabaseClient.from('whatsapp_message_templates').select('purpose, status')
+        .eq('client_id', myClient.id).like('purpose', 'cart_reminder%'),
+      myClient.salla_store_id ? Promise.resolve({ data: true }) : Promise.resolve({ data: null }),
+      myClient.zid_store_id ? Promise.resolve({ data: true }) : Promise.resolve({ data: null })
+    ]);
+
+    const policy = polRes.data || { limit: 0, coupon: false, tier: null };
+    const limit = Number(policy.limit || 0);
+    const events = evRes.data || [];
+    const tpls = tplRes.data || [];
+    const isTrial = myClient.subscription_status === 'trial';
+    const storeLinked = !!(sallaCredRes.data || zidCredRes.data);
+    const waLinked = !!myClient.whatsapp_phone_number_id;
+    const tpl4 = tpls.find(function(t){ return t.purpose === 'cart_reminder_4h'; });
+
+    // ---- الحالة ----
+    let statusHtml;
+    if(limit === 0){
+      const how = isSallaMerchant()
+        ? L('رقِّ باقتك من سلة: لوحة سلة ← التطبيقات ← نبضة.', 'Upgrade your plan from Salla: Salla dashboard → Apps → Nabda.')
+        : L('رقِّ باقتك من «إعدادات البوت» ← الباقة.', 'Upgrade from "Bot settings" → Plan.');
+      statusHtml = '<div class="alert-box error" style="display:block;">🔒 ' +
+        L('استرجاع السلات المتروكة غير متاح في باقتك الحالية. متاح من باقة نمو وما فوق. ', 'Abandoned cart recovery isn\'t included in your current plan. It\'s available from the Growth plan and up. ') + how +
+        (isSallaMerchant() ? '<br>' + sallaManageHtml('فتح تطبيقات سلة', 'Open Salla apps') : '') + '</div>';
+    } else {
+      const remindersTxt = limit === 1 ? L('تذكير واحد', '1 reminder') : (limit === 2 ? L('تذكيرين', '2 reminders') : L(limit + ' تذكيرات', limit + ' reminders'));
+      statusHtml = '<div class="alert-box success" style="display:block;">✅ ' +
+        L('مفعّلة في حسابك: ', 'Active on your account: ') + '<b>' + remindersTxt + '</b>' +
+        (policy.coupon ? L(' + كوبون خصم 10% تلقائي', ' + automatic 10% discount coupon') : '') +
+        (isTrial ? L(' (الفترة التجريبية)', ' (trial period)') : '') + '</div>';
+    }
+
+    // ---- شروط التشغيل ----
+    function check(ok, okAr, okEn, noAr, noEn){
+      return '<div class="cart-check"><span>' + (ok ? '✅' : '⚠️') + '</span><span>' + (ok ? L(okAr, okEn) : L(noAr, noEn)) + '</span></div>';
+    }
+    let tplLine;
+    if(!tpl4){
+      tplLine = check(false, '', '', 'قالب رسالة التذكير: يُنشأ تلقائياً ويُرسل لميتا للاعتماد مع أول سلة متروكة.', 'Reminder message template: created automatically and sent to Meta for approval with your first abandoned cart.');
+    } else if(tpl4.status === 'approved'){
+      tplLine = check(true, 'قالب رسالة التذكير معتمد من ميتا', 'Reminder template approved by Meta', '', '');
+    } else if(tpl4.status === 'rejected'){
+      tplLine = check(false, '', '', 'قالب رسالة التذكير مرفوض من ميتا — راجع «قوالب الرسائل».', 'Reminder template was rejected by Meta — check "Message templates".');
+    } else {
+      tplLine = check(false, '', '', 'قالب رسالة التذكير بانتظار اعتماد ميتا (عادةً دقائق إلى ساعات).', 'Reminder template is awaiting Meta approval (usually minutes to hours).');
+    }
+    const checksHtml = '<div class="cart-box"><h3>' + L('شروط التشغيل', 'Requirements') + '</h3>' +
+      check(storeLinked, 'متجرك مربوط (' + (myClient.salla_store_id ? 'سلة' : 'زد') + ')', 'Your store is connected (' + (myClient.salla_store_id ? 'Salla' : 'Zid') + ')',
+            'اربط متجرك من «قنوات الربط» عشان توصلنا السلات المتروكة.', 'Connect your store from "Channels" so abandoned carts reach us.') +
+      check(waLinked, 'رقم واتساب مربوط — التذكير يوصل للعميل من رقمك', 'WhatsApp number connected — reminders go out from your number',
+            'اربط رقم واتساب من «قنوات الربط» — التذكير يُرسل من رقمك.', 'Connect a WhatsApp number from "Channels" — reminders are sent from your number.') +
+      tplLine + '</div>';
+
+    // ---- مراحل التذكير ----
+    const steps = [
+      { n: 1, ar: 'بعد 4 ساعات', en: 'After 4 hours', dAr: 'تذكير لطيف بالسلة', dEn: 'A friendly reminder' },
+      { n: 2, ar: 'بعد 24 ساعة', en: 'After 24 hours', dAr: policy.coupon ? 'تذكير + كوبون خصم 10%' : 'تذكير ثاني', dEn: policy.coupon ? 'Reminder + 10% coupon' : 'Second reminder' },
+      { n: 3, ar: 'بعد 48 ساعة', en: 'After 48 hours', dAr: 'آخر تذكير', dEn: 'Final reminder' }
+    ];
+    const stepsHtml = '<div class="cart-box"><h3>' + L('كيف تشتغل؟', 'How it works') + '</h3>' +
+      '<div class="helper-text" style="margin-bottom:6px;">' + L('العميل يضيف منتجات للسلة ويطلع بدون ما يدفع ← البوت يرسل له تذكير على واتساب. وإذا طلب، تتوقف التذكيرات تلقائياً.', 'A customer adds products and leaves without paying → the bot reminds them on WhatsApp. Once they order, reminders stop automatically.') + '</div>' +
+      '<div class="cart-steps">' + steps.map(function(s){
+        return '<div class="cart-step ' + (s.n <= limit ? 'on' : 'off') + '"><b>' + L(s.ar, s.en) + '</b><br>' + L(s.dAr, s.dEn) + (s.n > limit ? '<br><small>' + L('غير مشمول في باقتك', 'Not in your plan') + '</small>' : '') + '</div>';
+      }).join('') + '</div></div>';
+
+    // ---- الأرقام ----
+    const detected = events.length;
+    const recoveredList = events.filter(function(e){ return e.status === 'recovered'; });
+    const remindersSent = events.filter(function(e){ return /^reminder_/.test(e.status) || e.status === 'recovered' || e.status === 'expired'; }).length;
+    const recoveredSar = recoveredList.reduce(function(s, e){ return s + (parseFloat(e.order_total) || 0); }, 0);
+    const rate = detected ? Math.round(recoveredList.length / detected * 100) : 0;
+    const statsHtml = '<div class="cart-grid">' +
+      '<div class="cart-stat"><b>' + detected + '</b><span>' + L('سلة متروكة رصدناها', 'Carts detected') + '</span></div>' +
+      '<div class="cart-stat"><b>' + recoveredList.length + '</b><span>' + L('سلة رجعت وصارت طلب', 'Carts recovered') + '</span></div>' +
+      '<div class="cart-stat"><b>' + rate + '%</b><span>' + L('نسبة الاسترجاع', 'Recovery rate') + '</span></div>' +
+      '<div class="cart-stat"><b>' + Math.round(recoveredSar).toLocaleString('en-US') + '</b><span>' + L('ريال مبيعات مسترجعة', 'SAR in recovered sales') + '</span></div>' +
+      '</div>';
+
+    // ---- آخر السلات ----
+    const ST = {
+      received: ['بانتظار أول تذكير', 'Waiting for 1st reminder', '#FFF4D6', '#7A5A00'],
+      reminder_4h_sent: ['أُرسل التذكير 1', 'Reminder 1 sent', '#E3F2FD', '#0B5394'],
+      reminder_24h_sent: ['أُرسل التذكير 2', 'Reminder 2 sent', '#E3F2FD', '#0B5394'],
+      reminder_48h_sent: ['أُرسل التذكير 3', 'Reminder 3 sent', '#E3F2FD', '#0B5394'],
+      reminder_72h_sent: ['أُرسل التذكير 4', 'Reminder 4 sent', '#E3F2FD', '#0B5394'],
+      recovered: ['✓ رجعت وصارت طلب', '✓ Recovered', '#DCF8E7', '#0B6B3A'],
+      expired: ['انتهت', 'Ended', '#EEF0F2', '#5F6B76'],
+      error: ['تعذّر الإرسال', 'Send failed', '#FDE2E1', '#A1260D']
+    };
+    let listHtml;
+    if(!detected){
+      listHtml = '<div class="conv-empty">' + L('ما وصلت سلات متروكة بعد. أول ما يترك عميل سلته في متجرك بتظهر هنا.', 'No abandoned carts yet. They\'ll show up here as soon as a customer leaves their cart.') + '</div>';
+    } else {
+      listHtml = events.slice(0, 30).map(function(e){
+        const st = ST[e.status] || [e.status, e.status, '#EEF0F2', '#5F6B76'];
+        const when = new Date(e.created_at).toLocaleString(EN ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        return '<div class="cart-row"><div><b>' + escapeHtml(e.customer_name || L('عميل', 'Customer')) + '</b> · <span dir="ltr">' + escapeHtml(displayPhone(e.customer_phone || '')) + '</span>' +
+          '<div class="helper-text" style="margin:2px 0 0;">' + when + (e.order_total ? ' · ' + escapeHtml(String(e.order_total)) + L(' ريال', ' SAR') : '') + '</div></div>' +
+          '<span class="cart-badge" style="background:' + st[2] + '; color:' + st[3] + ';">' + L(st[0], st[1]) + '</span></div>';
+      }).join('');
+    }
+
+    box.innerHTML = statusHtml + statsHtml + checksHtml + stepsHtml +
+      '<div class="cart-box"><h3>' + L('آخر السلات', 'Latest carts') + '</h3>' + listHtml + '</div>';
+  }
   /* ---------- الإضافات المدفوعة ---------- */
   async function loadPortalAddonsTab(){
     // سياسة سلة: تاجر سلة يشتري الإضافات من سلة فقط
@@ -916,7 +1039,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     home: ['الرئيسية','Home'], inbox: ['المحادثات','Conversations'], orders: ['الطلبات','Orders'],
     support: ['الدعم الفني','Support'], analytics: ['التحليلات','Analytics'], broadcast: ['الرسائل الجماعية','Broadcasts'],
     templates: ['قوالب الرسائل','Message templates'], channels: ['قنوات الربط','Channels'], addons: ['الإضافات','Add-ons'],
-    settings: ['إعدادات البوت','Bot settings']
+    settings: ['إعدادات البوت','Bot settings'], carts: ['السلات المتروكة','Abandoned carts']
   };
   function v2AfterTabChange(tab){
     var t = V2_TITLES[tab];
