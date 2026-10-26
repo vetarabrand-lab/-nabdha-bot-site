@@ -34,7 +34,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         (a.has_ongoing_cost ? '<span class="cost-tag">تعتمد على استهلاك رصيدك من الرسائل</span>' : '') +
         '<p class="desc">' + escapeHtml(a.description_ar || '') + '</p>' +
         '<div class="addon-foot">' +
-          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>ريال دفعة وحدة · صلاحية سنة</span></div>' +
+          '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>ريال دفعة وحدة · طوال اشتراكك</span></div>' +
           '<button type="button" class="want-btn" data-id="' + escapeHtml(a.id) + '" data-name="' + escapeHtml(a.name_ar) + '">أبي هذي الإضافة</button>' +
         '</div>';
       grid.appendChild(card);
