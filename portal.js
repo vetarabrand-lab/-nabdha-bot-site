@@ -28,7 +28,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   /* 2026-10-26 — سياسة سلة: تاجر تطبيق سلة يشتري الباقات والإضافات من سلة فقط.
      ما نعرض له أي دفع أو طلب شراء خارج منصة سلة. */
   const SALLA_APPS_URL = 'https://s.salla.sa/apps';
-  function isSallaMerchant(){ return !!(myClient && myClient.salla_store_id); }
+  // تاجر سلة = تطبيق نبضة مثبّت عنده حالياً (رقم متجر + الربط فعّال). لو حذف التطبيق يرجع حساب عادي بأسعاره.
+  function isSallaMerchant(){ return !!(myClient && myClient.salla_store_id && myClient.salla_integration_enabled); }
   function sallaManageHtml(labelAr, labelEn){
     const EN = (window.PORTAL_LANG === 'en');
     return '<a class="addon-request-btn" style="display:inline-block; text-decoration:none;" href="' + SALLA_APPS_URL + '" target="_blank" rel="noopener">' +
@@ -196,7 +197,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       wa: !!clientRow.whatsapp_phone_number_id,
       prompt: (clientRow.system_prompt || '').trim().length > 15,
       welcome: (clientRow.welcome_message || '').trim().length > 3,
-      store: !!(clientRow.zid_integration_enabled || clientRow.zid_store_id || clientRow.salla_store_id),
+      store: !!(clientRow.zid_integration_enabled || clientRow.zid_store_id || (clientRow.salla_store_id && clientRow.salla_integration_enabled)),
       convo: convCount > 0
     };
     var doneCount = Object.keys(done).filter(function(k){ return done[k]; }).length;
@@ -411,7 +412,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         .order('created_at', { ascending: false }).limit(200),
       supabaseClient.from('whatsapp_message_templates').select('purpose, status')
         .eq('client_id', myClient.id).like('purpose', 'cart_reminder%'),
-      myClient.salla_store_id ? Promise.resolve({ data: true }) : Promise.resolve({ data: null }),
+      (myClient.salla_store_id && myClient.salla_integration_enabled) ? Promise.resolve({ data: true }) : Promise.resolve({ data: null }),
       myClient.zid_store_id ? Promise.resolve({ data: true }) : Promise.resolve({ data: null })
     ]);
 
@@ -873,7 +874,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -888,7 +889,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -1351,7 +1352,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(nameEl){ nameEl.textContent = name || '–'; }
     if(avEl){ avEl.textContent = v2Initial(name); }
     var links = [];
-    if(myClient.salla_store_id){ links.push(V2L('سلة', 'Salla')); }
+    if(myClient.salla_store_id && myClient.salla_integration_enabled){ links.push(V2L('سلة', 'Salla')); }
     if(myClient.zid_store_id || myClient.zid_integration_enabled){ links.push(V2L('زد', 'Zid')); }
     if(subEl){ subEl.textContent = (isOwner ? V2L('صاحب الحساب', 'Owner') : V2L('عضو فريق', 'Team member')) + (links.length ? ' · ' + links.join(V2L('، ', ', ')) : ''); }
     var wa = document.getElementById('v2WaState');
