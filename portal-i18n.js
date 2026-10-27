@@ -686,6 +686,8 @@ var portalDynamicStrings = {
   'تم ربط حساب انستقرام بنجاح ✅ البوت سيرد الآن على رسائل Direct.': 'Instagram account connected successfully ✅ The bot will now reply to Direct messages.',
   'تم إلغاء الربط من صفحة انستقرام.': 'The connection was cancelled on the Instagram page.',
   'تعذّر إكمال ربط انستقرام، حاول مرة ثانية.': 'Could not complete the Instagram connection, please try again.',
+  'ربط بوت انستقرام قريباً — بانتظار اعتماد ميتا للتطبيق. سنخبرك فور إتاحته.': 'Instagram bot connection is coming soon — we are waiting for Meta to approve the app. We will let you know as soon as it is available.',
+  'قريباً': 'Coming soon',
   'انتهت صلاحية طلب الربط، ابدأ الربط من جديد.': 'The connection request expired, please start again.',
   'لم تتم الموافقة على صلاحية الرسائل، أعد الربط ووافق على كل الصلاحيات.': 'The messaging permission was not approved. Reconnect and approve all permissions.',
   'الحساب ليس حساباً احترافياً (أعمال أو صانع محتوى). حوّله من إعدادات انستقرام ثم أعد الربط.': 'This is not a professional account (Business or Creator). Switch it in Instagram settings, then reconnect.',

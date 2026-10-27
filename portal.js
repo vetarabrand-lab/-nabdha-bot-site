@@ -2036,7 +2036,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       state: PT('انتهت صلاحية طلب الربط، ابدأ الربط من جديد.'),
       permissions: PT('لم تتم الموافقة على صلاحية الرسائل، أعد الربط ووافق على كل الصلاحيات.'),
       not_professional: PT('الحساب ليس حساباً احترافياً (أعمال أو صانع محتوى). حوّله من إعدادات انستقرام ثم أعد الربط.'),
-      in_use: PT('حساب انستقرام هذا مربوط بحساب آخر في نبضة.')
+      in_use: PT('حساب انستقرام هذا مربوط بحساب آخر في نبضة.'),
+      exchange: PT('ربط بوت انستقرام قريباً — بانتظار اعتماد ميتا للتطبيق. سنخبرك فور إتاحته.'),
+      long_token: PT('ربط بوت انستقرام قريباً — بانتظار اعتماد ميتا للتطبيق. سنخبرك فور إتاحته.')
     };
     history.replaceState(null, '', location.pathname + location.hash);
     if(r === 'connected') return { ok: true, text: PT('تم ربط حساب انستقرام بنجاح ✅ البوت سيرد الآن على رسائل Direct.') };
@@ -2066,6 +2068,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     statusBox.innerHTML = connected
       ? '<span class="status-badge telegram-connected">' + PT('✅ متصل') + (myClient.instagram_username ? ' — <span dir="ltr">@' + escapeHtml(myClient.instagram_username) + '</span>' : '') + '</span>'
       : '<span class="status-badge telegram-disconnected">⚪ ' + PT('غير متصل بعد') + '</span>';
+
+    // ربط انستقرام قريباً: التطبيق بانتظار اعتماد ميتا، فالربط الجديد مغلق لين تتم الموافقة.
+    // الحسابات المربوطة أصلاً (مثل حساب الاختبار) تبقى تشوف الزر لإعادة الربط.
+    const IG_COMING_SOON = true;
+    if(IG_COMING_SOON && !connected){
+      statusBox.innerHTML = '<span class="status-badge telegram-disconnected">🕒 ' + PT('قريباً') + '</span>';
+      btn.style.display = 'none';
+      lockedHint.style.display = 'block';
+      lockedHint.textContent = PT('ربط بوت انستقرام قريباً — بانتظار اعتماد ميتا للتطبيق. سنخبرك فور إتاحته.');
+      return;
+    }
 
     const { data: addonRow } = await supabaseClient
       .from('client_addons').select('enabled')
