@@ -2071,8 +2071,18 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
 
     // ربط انستقرام قريباً: التطبيق بانتظار اعتماد ميتا، فالربط الجديد مغلق لين تتم الموافقة.
     // الحسابات المربوطة أصلاً (مثل حساب الاختبار) تبقى تشوف الزر لإعادة الربط.
+    // استثناء: الحسابات اللي عندها علامة instagram_beta في client_addons (مثل حساب جُمان) يُفتح لها الربط مبكراً.
     const IG_COMING_SOON = true;
+    let igBeta = false;
     if(IG_COMING_SOON && !connected){
+      try{
+        const { data: betaRow } = await supabaseClient
+          .from('client_addons').select('enabled')
+          .eq('client_id', myClient.id).eq('addon_id', 'instagram_beta').maybeSingle();
+        igBeta = !!(betaRow && betaRow.enabled);
+      } catch(e){ igBeta = false; }
+    }
+    if(IG_COMING_SOON && !connected && !igBeta){
       statusBox.innerHTML = '<span class="status-badge telegram-disconnected">🕒 ' + PT('قريباً') + '</span>';
       btn.style.display = 'none';
       lockedHint.style.display = 'block';
