@@ -2118,17 +2118,24 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!status || !myClient) return;
     const body = document.getElementById('emailBody');
     const locked = document.getElementById('emailLockedHint');
-    const emailTab = document.querySelector('.tab-btn[data-tab="email"]');
-    if(emailTab) emailTab.style.display = 'none';
+    const badge = document.getElementById('emailComingBadge');
+    const subtitle = document.getElementById('emailSubtitle');
+    const refresh = document.getElementById('emailRefreshBtn');
     body.style.display = 'none';
     locked.style.display = 'none';
     status.style.display = 'block';
-    if(!isOwner){ status.innerHTML = '<div class="helper-text">إدارة البريد متاحة لصاحب الحساب فقط.</div>'; return; }
+    badge.style.display = '';
+    subtitle.textContent = 'ميزة جديدة نعمل على تجهيزها لك';
+    refresh.style.display = 'none';
+    status.innerHTML = '<div class="email-coming-card"><h3>البريد الإلكتروني قريبًا</h3><p>نعمل على تجهيز ربط البريد الإلكتروني وإدارة رسائل العملاء من داخل نبضة. سنخبرك عند إتاحة الميزة.</p></div>';
+    if(!isOwner) return;
     try{
       const { data: has, error: accessError } = await supabaseClient.rpc('client_has_addon', { p_client_id: myClient.id, p_addon_id: 'email_channel' });
       if(accessError) throw accessError;
-      if(has !== true){ status.style.display = 'none'; body.style.display = 'none'; locked.style.display = 'block'; return; }
-      if(emailTab) emailTab.style.display = 'inline-block';
+      if(has !== true) return;
+      badge.style.display = 'none';
+      subtitle.textContent = 'رسائل عملائك ومسودات الردود في مكان واحد';
+      refresh.style.display = '';
       const { data: ch, error } = await supabaseClient.rpc('ensure_email_channel', { p_client_id: myClient.id });
       if(error || !ch) throw new Error(error ? error.message : 'no channel');
       status.style.display = 'none'; locked.style.display = 'none'; body.style.display = 'block';

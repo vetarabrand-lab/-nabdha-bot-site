@@ -331,6 +331,9 @@
 <style>
   .email-page-header,.email-inbox-head,.email-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
   .email-page-header{margin-bottom:20px}.email-page-header h2{font-size:24px;font-weight:900}.email-page-header p,.email-inbox-head p{font-size:13px;color:var(--muted)}
+  .email-coming-badge{margin-inline-start:auto;background:#eaf4ef;color:#477061;border-radius:99px;padding:3px 9px;font-size:10px;font-weight:800}
+  .email-coming-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:30px;text-align:center;box-shadow:var(--shadow)}
+  .email-coming-card h3{font-size:20px;color:#075e54;margin-bottom:8px}.email-coming-card p{color:var(--muted);max-width:500px;margin:auto}
   .email-refresh,.email-copy,.email-filters button{border:1px solid #dcebe5;background:#fff;color:#075e54;border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:800}
   .email-topline{background:#eaf8f0;border:1px solid #cceadc;border-radius:15px;padding:14px 18px;margin-bottom:14px}
   .email-topline-label{font-weight:800;font-size:13px}.email-topline input{flex:1;min-width:180px;border:0;background:transparent;color:#075e54;font-weight:800;text-align:center;font-size:14px}
@@ -457,7 +460,7 @@
       <button class="tab-btn" data-tab="carts" data-i18n="nav.carts">السلات المتروكة</button>
       <button class="tab-btn" data-tab="broadcast" data-i18n="nav.broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="templates" data-i18n="nav.templates">قوالب الرسائل</button>
-      <button class="tab-btn" data-tab="email" style="display:none;">البريد الإلكتروني</button>
+      <button class="tab-btn" data-tab="email">البريد الإلكتروني <span class="email-coming-badge" id="emailComingBadge">قريبًا</span></button>
       <span class="nav-sec" data-i18n="nav.groupPlatform">إعدادات المنصة</span>
       <button class="tab-btn" data-tab="channels" data-i18n="nav.channels">قنوات الربط</button>
       <button class="tab-btn" data-tab="addons" data-i18n="nav.addons">الإضافات</button>
@@ -799,10 +802,10 @@
     </div>
     <div class="panel" id="panelEmail">
       <div class="email-page-header">
-        <div><h2>البريد الإلكتروني</h2><p>رسائل عملائك ومسودات الردود في مكان واحد</p></div>
-        <button class="email-refresh" type="button" id="emailRefreshBtn">↻ تحديث</button>
+        <div><h2>البريد الإلكتروني</h2><p id="emailSubtitle">ميزة جديدة نعمل على تجهيزها لك</p></div>
+        <button class="email-refresh" type="button" id="emailRefreshBtn" style="display:none;">↻ تحديث</button>
       </div>
-      <div id="emailStatus"><div class="conv-empty">جاري التحميل...</div></div>
+      <div id="emailStatus"><div class="email-coming-card"><h3>البريد الإلكتروني قريبًا</h3><p>نعمل على تجهيز ربط البريد الإلكتروني وإدارة رسائل العملاء من داخل نبضة. سنخبرك عند إتاحة الميزة.</p></div></div>
       <div id="emailLockedHint" class="settings-card" style="display:none;">إضافة قناة البريد غير مفعّلة في حسابك بعد. تواصل معنا لتفعيلها.</div>
       <div id="emailBody" style="display:none;">
         <div class="email-topline"><span class="email-topline-label">عنوان استقبال البريد</span><input type="text" id="emailAddress" readonly dir="ltr"><button type="button" class="email-copy" id="emailCopyBtn">نسخ العنوان</button></div>
