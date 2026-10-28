@@ -2118,10 +2118,17 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!status || !myClient) return;
     const body = document.getElementById('emailBody');
     const locked = document.getElementById('emailLockedHint');
+    const emailTab = document.querySelector('.tab-btn[data-tab="email"]');
+    if(emailTab) emailTab.style.display = 'none';
+    body.style.display = 'none';
+    locked.style.display = 'none';
+    status.style.display = 'block';
+    if(!isOwner){ status.innerHTML = '<div class="helper-text">إدارة البريد متاحة لصاحب الحساب فقط.</div>'; return; }
     try{
-      const { data: has } = await supabaseClient.rpc('client_has_addon', { p_client_id: myClient.id, p_addon_id: 'email_channel' });
+      const { data: has, error: accessError } = await supabaseClient.rpc('client_has_addon', { p_client_id: myClient.id, p_addon_id: 'email_channel' });
+      if(accessError) throw accessError;
       if(has !== true){ status.style.display = 'none'; body.style.display = 'none'; locked.style.display = 'block'; return; }
-      if(!isOwner){ status.innerHTML = '<div class="helper-text">إدارة البريد متاحة لصاحب الحساب فقط.</div>'; return; }
+      if(emailTab) emailTab.style.display = 'inline-block';
       const { data: ch, error } = await supabaseClient.rpc('ensure_email_channel', { p_client_id: myClient.id });
       if(error || !ch) throw new Error(error ? error.message : 'no channel');
       status.style.display = 'none'; locked.style.display = 'none'; body.style.display = 'block';
@@ -2207,6 +2214,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(filter){ emailFilter=filter.getAttribute('data-email-filter'); document.querySelectorAll('[data-email-filter]').forEach(function(b){b.classList.toggle('on',b===filter);}); loadEmailDrafts(); }
     if(ev.target.id==='emailRefreshBtn') loadEmailChannel();
     if(ev.target.id==='emailMoreBtn') loadEmailDrafts(true);
+    if(ev.target.id==='emailAddBtn'){
+      const settings=document.getElementById('emailSettings');
+      settings.open=true;
+      document.getElementById('emailMerchant').focus();
+      settings.scrollIntoView({behavior:'smooth',block:'start'});
+    }
   });
   document.addEventListener('click', async function(ev){
     const t = ev.target;

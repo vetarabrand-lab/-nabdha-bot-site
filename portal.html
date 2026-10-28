@@ -334,6 +334,8 @@
   .email-refresh,.email-copy,.email-filters button{border:1px solid #dcebe5;background:#fff;color:#075e54;border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:800}
   .email-topline{background:#eaf8f0;border:1px solid #cceadc;border-radius:15px;padding:14px 18px;margin-bottom:14px}
   .email-topline-label{font-weight:800;font-size:13px}.email-topline input{flex:1;min-width:180px;border:0;background:transparent;color:#075e54;font-weight:800;text-align:center;font-size:14px}
+  .email-setup{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:#fff;border:1px solid var(--border);border-radius:15px;padding:18px;margin-bottom:14px}.email-setup h3{font-size:16px;margin-bottom:3px}.email-setup p{color:var(--muted);font-size:13px}.email-setup .primary-btn{width:auto;padding:10px 20px}
+  .email-guide{background:#f5faf7;border:1px solid #deeee4;border-radius:12px;padding:14px 16px;margin:14px 0;color:#405b50;font-size:13px}.email-guide ol{padding-inline-start:20px;margin:7px 0}.email-guide li{margin:5px 0}.email-guide strong{color:#075e54}
   .email-settings{background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:18px}.email-settings summary{cursor:pointer;font-weight:800;padding:15px 18px;color:#075e54}.email-settings-body{padding:4px 18px 18px}
   .email-inbox{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
   .email-inbox-head{padding:19px 20px;border-bottom:1px solid var(--border)}.email-inbox-head h3{font-size:18px}.email-filters{display:flex;gap:6px;flex-wrap:wrap}.email-filters button{font-size:12px;padding:7px 13px}.email-filters button.on{background:#075e54;color:#fff;border-color:#075e54}
@@ -455,7 +457,7 @@
       <button class="tab-btn" data-tab="carts" data-i18n="nav.carts">السلات المتروكة</button>
       <button class="tab-btn" data-tab="broadcast" data-i18n="nav.broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="templates" data-i18n="nav.templates">قوالب الرسائل</button>
-      <button class="tab-btn" data-tab="email">البريد الإلكتروني</button>
+      <button class="tab-btn" data-tab="email" style="display:none;">البريد الإلكتروني</button>
       <span class="nav-sec" data-i18n="nav.groupPlatform">إعدادات المنصة</span>
       <button class="tab-btn" data-tab="channels" data-i18n="nav.channels">قنوات الربط</button>
       <button class="tab-btn" data-tab="addons" data-i18n="nav.addons">الإضافات</button>
@@ -804,14 +806,19 @@
       <div id="emailLockedHint" class="settings-card" style="display:none;">إضافة قناة البريد غير مفعّلة في حسابك بعد. تواصل معنا لتفعيلها.</div>
       <div id="emailBody" style="display:none;">
         <div class="email-topline"><span class="email-topline-label">عنوان استقبال البريد</span><input type="text" id="emailAddress" readonly dir="ltr"><button type="button" class="email-copy" id="emailCopyBtn">نسخ العنوان</button></div>
-        <details class="email-settings"><summary>⚙ إعدادات البريد والردود</summary>
+        <div class="email-setup"><div><h3>أضف بريد الإشعارات</h3><p>أضف بريدك لتصلك إشعارات المسودات ونسخ الردود، ثم اضبط تحويل رسائل العملاء إلى عنوان نبضة.</p></div><button type="button" class="primary-btn" id="emailAddBtn">+ إضافة بريدك</button></div>
+        <details class="email-settings" id="emailSettings"><summary>⚙ إعدادات البريد والردود</summary>
           <div class="email-settings-body">
             <div class="field"><label><input type="checkbox" id="emailEnabled"> تفعيل الرد على البريد</label></div>
             <div class="field"><label for="emailMode">وضع الرد</label><select id="emailMode"><option value="draft">مسودة — أراجع وأرسل أنا (موصى به)</option><option value="auto">رد مباشر تلقائي (تصلني نسخة)</option></select></div>
             <div class="field"><label for="emailMerchant">بريدي الشخصي لإشعارات المسودات ونسخ الردود</label><input type="email" id="emailMerchant" dir="ltr" placeholder="you@example.com"></div>
             <div class="field"><label for="emailSignature">التوقيع</label><textarea id="emailSignature" rows="2" placeholder="فريق متجرك"></textarea></div>
             <button type="button" class="primary-btn" id="emailSaveBtn" style="width:auto;padding:10px 24px;">حفظ الإعدادات</button>
-            <p class="helper-text" style="margin-top:12px;">يمكنك تحويل بريد خدمة العملاء إلى عنوان نبضة الظاهر أعلاه من إعدادات مزود البريد لديك.</p>
+            <div class="email-guide">
+              <strong>كيف تستقبل رسائل العملاء في نبضة؟</strong>
+              <ol><li>احفظ بريد الإشعارات أعلاه، ثم انسخ عنوان استقبال نبضة.</li><li>في Gmail افتح الإعدادات ← عرض جميع الإعدادات ← إعادة التوجيه وPOP/IMAP ← إضافة عنوان إعادة توجيه، وأدخل عنوان نبضة.</li><li>أكمل تأكيد عنوان إعادة التوجيه حسب تعليمات مزود بريدك، ثم فعّل إعادة توجيه الرسائل واحفظ التغييرات.</li></ol>
+              <p>إضافة بريد الإشعارات وحدها لا تسحب رسائل Gmail تلقائيًا؛ يلزم إعداد إعادة التوجيه بشكل منفصل. قد يطلب مزود البريد رمز تأكيد.</p>
+            </div>
           </div>
         </details>
         <div class="alert-box" id="emailMsg" role="status" style="display:none;margin:12px 0;"></div>
