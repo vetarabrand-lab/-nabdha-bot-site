@@ -779,6 +779,43 @@
         <div class="helper-text" id="instagramLockedHint" style="margin-top:10px; display:none;"></div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="channels.instagram.steps">اضغط "ربط حساب انستقرام" ← سجّل الدخول بحساب انستقرام الاحترافي لمتجرك (أعمال أو صانع محتوى) ← وافق على صلاحيات الرسائل ← ترجع هنا تلقائياً. بعدها يرد البوت على رسائل Direct خلال 24 ساعة من آخر رسالة للعميل (قيد ميتا).</div>
       </div>
+      <div class="settings-card" id="emailCard">
+        <div class="field" style="margin-bottom:16px;">
+          <label>📧 ربط البريد الإلكتروني (خدمة العملاء)</label>
+        </div>
+        <div id="emailStatus"><div class="conv-empty">جاري التحميل...</div></div>
+        <div id="emailBody" style="display:none;">
+          <div class="helper-text" style="margin-bottom:6px;">عنوان نبضة الخاص بك (حوّل إليه بريد الدعم):</div>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <input type="text" id="emailAddress" readonly dir="ltr" style="flex:1; min-width:220px;">
+            <button class="primary-btn" id="emailCopyBtn" style="width:auto; padding:10px 18px;">نسخ</button>
+          </div>
+          <div class="field" style="margin-top:14px;">
+            <label><input type="checkbox" id="emailEnabled"> تفعيل الرد على البريد</label>
+          </div>
+          <div class="field">
+            <label>وضع الرد</label>
+            <select id="emailMode">
+              <option value="draft">مسودة — أراجع وأرسل أنا (موصى به)</option>
+              <option value="auto">رد مباشر تلقائي (تصلني نسخة)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>بريدي الشخصي (لإشعار المسودات ونسخ الردود)</label>
+            <input type="email" id="emailMerchant" dir="ltr" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label>التوقيع (يُضاف أسفل كل رد)</label>
+            <textarea id="emailSignature" rows="2" placeholder="فريق متجرك"></textarea>
+          </div>
+          <button class="primary-btn" id="emailSaveBtn" style="width:auto; padding:12px 30px;">حفظ</button>
+          <div class="alert-box" id="emailMsg" style="display:none; margin-top:12px;"></div>
+          <div class="helper-text" style="margin-top:12px;">طريقة التحويل: في Gmail: الإعدادات ← إعادة التوجيه وبروتوكول POP/IMAP ← إضافة عنوان إعادة توجيه ← الصق عنوان نبضة أعلاه. (قد يصلك رمز تأكيد: يظهر في سجل البريد هنا أو في إشعارات النظام.) في استضافات الدومين: أضف Forwarder من بريد الدعم إلى هذا العنوان.</div>
+          <div class="field" style="margin-top:18px;"><label>المسودات بانتظار اعتمادك</label></div>
+          <div id="emailDrafts"></div>
+        </div>
+        <div class="helper-text" id="emailLockedHint" style="display:none; margin-top:10px;">إضافة قناة البريد غير مفعّلة في حسابك بعد. تواصل معنا لتفعيلها.</div>
+      </div>
     </div>
     <div class="panel" id="panelSettings">
       <div class="settings-card">

@@ -1027,6 +1027,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadShopifyStatus();
     loadTelegramStatus();
     loadInstagramStatus();
+    loadEmailChannel();
     loadWaAppStatus();
     loadTemplates();
     loadTopupInfo();
@@ -2105,6 +2106,85 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     btn.style.display = isOwner ? 'inline-block' : 'none';
     btn.textContent = connected ? PT('إعادة ربط حساب انستقرام') : PT('ربط حساب انستقرام');
   }
+
+  // ───────── قناة البريد الإلكتروني ─────────
+  const EMAIL_DOMAIN_UI = 'mail.nabdh.online';
+  function emailMsg(ok, text){
+    const m = document.getElementById('emailMsg'); if(!m) return;
+    m.style.display = 'block'; m.className = 'alert-box ' + (ok ? 'ok' : 'error'); m.textContent = text;
+  }
+  async function loadEmailChannel(){
+    const status = document.getElementById('emailStatus');
+    if(!status || !myClient) return;
+    const body = document.getElementById('emailBody');
+    const locked = document.getElementById('emailLockedHint');
+    try{
+      const { data: has } = await supabaseClient.rpc('client_has_addon', { p_client_id: myClient.id, p_addon_id: 'email_channel' });
+      if(has !== true){ status.style.display = 'none'; body.style.display = 'none'; locked.style.display = 'block'; return; }
+      if(!isOwner){ status.innerHTML = '<div class="helper-text">إدارة البريد متاحة لصاحب الحساب فقط.</div>'; return; }
+      const { data: ch, error } = await supabaseClient.rpc('ensure_email_channel', { p_client_id: myClient.id });
+      if(error || !ch) throw new Error(error ? error.message : 'no channel');
+      status.style.display = 'none'; locked.style.display = 'none'; body.style.display = 'block';
+      document.getElementById('emailAddress').value = ch.address_local + '@' + EMAIL_DOMAIN_UI;
+      document.getElementById('emailEnabled').checked = !!ch.enabled;
+      document.getElementById('emailMode').value = ch.mode || 'draft';
+      document.getElementById('emailMerchant').value = ch.merchant_email || '';
+      document.getElementById('emailSignature').value = ch.signature || '';
+      loadEmailDrafts();
+    } catch(e){
+      status.innerHTML = '<div class="helper-text">تعذّر تحميل إعدادات البريد.</div>';
+    }
+  }
+  async function loadEmailDrafts(){
+    const box = document.getElementById('emailDrafts'); if(!box) return;
+    const { data } = await supabaseClient.from('email_messages_log')
+      .select('id,from_email,from_name,subject,inbound_text,outbound_text,created_at')
+      .eq('client_id', myClient.id).eq('status', 'draft').order('created_at', { ascending: false }).limit(20);
+    if(!data || !data.length){ box.innerHTML = '<div class="helper-text">لا توجد مسودات حالياً.</div>'; return; }
+    box.innerHTML = '';
+    data.forEach(function(d){
+      const wrap = document.createElement('div');
+      wrap.className = 'settings-card'; wrap.style.margin = '10px 0';
+      wrap.innerHTML = '<div style="font-weight:700;">' + escapeHtml(d.from_name || d.from_email) + ' <span dir="ltr" style="font-weight:400;opacity:.7;">&lt;' + escapeHtml(d.from_email) + '&gt;</span></div>'
+        + '<div class="helper-text" style="margin:4px 0;">' + escapeHtml(d.subject || '(بدون عنوان)') + '</div>'
+        + '<div style="white-space:pre-wrap;opacity:.85;margin-bottom:8px;">' + escapeHtml((d.inbound_text || '').slice(0, 600)) + '</div>'
+        + '<textarea rows="6" style="width:100%;"></textarea>'
+        + '<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;"><button class="primary-btn" data-a="send" style="width:auto;padding:10px 22px;">إرسال</button><button class="primary-btn" data-a="dismiss" style="width:auto;padding:10px 22px;background:#888;">تجاهل</button></div>';
+      wrap.querySelector('textarea').value = d.outbound_text || '';
+      wrap.querySelectorAll('button').forEach(function(b){
+        b.addEventListener('click', async function(){
+          b.disabled = true;
+          const payload = { id: d.id, action: b.getAttribute('data-a') };
+          if(payload.action === 'send') payload.text = wrap.querySelector('textarea').value;
+          const { data: r, error } = await supabaseClient.functions.invoke('email-send-draft', { body: payload });
+          if(error || (r && r.error)){ b.disabled = false; emailMsg(false, 'تعذّر التنفيذ: ' + ((r && r.error) || (error && error.message) || '')); return; }
+          emailMsg(true, payload.action === 'send' ? 'تم إرسال الرد ✅' : 'تم تجاهل المسودة.');
+          loadEmailDrafts();
+        });
+      });
+      box.appendChild(wrap);
+    });
+  }
+  document.addEventListener('click', async function(ev){
+    const t = ev.target;
+    if(!t || !t.id) return;
+    if(t.id === 'emailCopyBtn'){
+      const v = document.getElementById('emailAddress').value;
+      try{ await navigator.clipboard.writeText(v); emailMsg(true, 'تم نسخ العنوان ✅'); } catch(e){ document.getElementById('emailAddress').select(); }
+    }
+    if(t.id === 'emailSaveBtn'){
+      const me = document.getElementById('emailMerchant').value.trim();
+      if(me && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(me)){ emailMsg(false, 'بريدك الشخصي غير صحيح.'); return; }
+      const { error } = await supabaseClient.from('client_email_channel').update({
+        enabled: document.getElementById('emailEnabled').checked,
+        mode: document.getElementById('emailMode').value,
+        merchant_email: me || null,
+        signature: document.getElementById('emailSignature').value.trim() || null,
+        updated_at: new Date().toISOString()
+      }).eq('client_id', myClient.id);
+      emailMsg(!error, error ? 'تعذّر الحفظ: ' + error.message : 'تم الحفظ ✅');
+    }
+  });
 
   document.getElementById('connectInstagramBtn').addEventListener('click', async function(){
     if(!myClient || !isOwner) return;
