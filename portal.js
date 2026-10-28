@@ -2109,6 +2109,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
 
   // ───────── قناة البريد الإلكتروني ─────────
   const EMAIL_DOMAIN_UI = 'mail.nabdh.online';
+  const EMAIL_CHANNEL_COMING_SOON = true;
   function emailMsg(ok, text){
     const m = document.getElementById('emailMsg'); if(!m) return;
     m.style.display = 'block'; m.className = 'alert-box ' + (ok ? 'ok' : 'error'); m.textContent = text;
@@ -2118,6 +2119,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(!status || !myClient) return;
     const body = document.getElementById('emailBody');
     const locked = document.getElementById('emailLockedHint');
+    if(EMAIL_CHANNEL_COMING_SOON){
+      body.style.display = 'none';
+      locked.style.display = 'none';
+      status.style.display = 'block';
+      return;
+    }
     const emailTab = document.querySelector('.tab-btn[data-tab="email"]');
     if(emailTab) emailTab.style.display = 'none';
     body.style.display = 'none';
