@@ -328,6 +328,20 @@
   }
 </style>
 <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<style>
+  .email-page-header,.email-inbox-head,.email-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .email-page-header{margin-bottom:20px}.email-page-header h2{font-size:24px;font-weight:900}.email-page-header p,.email-inbox-head p{font-size:13px;color:var(--muted)}
+  .email-refresh,.email-copy,.email-filters button{border:1px solid #dcebe5;background:#fff;color:#075e54;border-radius:10px;padding:9px 15px;cursor:pointer;font-weight:800}
+  .email-topline{background:#eaf8f0;border:1px solid #cceadc;border-radius:15px;padding:14px 18px;margin-bottom:14px}
+  .email-topline-label{font-weight:800;font-size:13px}.email-topline input{flex:1;min-width:180px;border:0;background:transparent;color:#075e54;font-weight:800;text-align:center;font-size:14px}
+  .email-settings{background:#fff;border:1px solid var(--border);border-radius:14px;margin-bottom:18px}.email-settings summary{cursor:pointer;font-weight:800;padding:15px 18px;color:#075e54}.email-settings-body{padding:4px 18px 18px}
+  .email-inbox{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .email-inbox-head{padding:19px 20px;border-bottom:1px solid var(--border)}.email-inbox-head h3{font-size:18px}.email-filters{display:flex;gap:6px;flex-wrap:wrap}.email-filters button{font-size:12px;padding:7px 13px}.email-filters button.on{background:#075e54;color:#fff;border-color:#075e54}
+  .email-message{border-bottom:1px solid #edf2ef}.email-message:last-child{border-bottom:0}.email-message summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:minmax(125px,1fr) minmax(0,2.3fr) auto;gap:12px;align-items:center;padding:15px 20px}.email-message summary::-webkit-details-marker{display:none}.email-message summary:hover,.email-message[open] summary{background:#f4faf7}
+  .email-from,.email-subject{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.email-from{font-weight:800;color:#173c33}.email-subject{font-weight:700}.email-preview{font-weight:400;color:var(--muted);margin-inline-start:8px}.email-meta{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);white-space:nowrap}
+  .email-badge{background:#eef3f0;color:#587067;padding:4px 9px;border-radius:99px;font-weight:800}.email-badge.draft{background:#fff3d5;color:#886100}.email-badge.sent{background:#dcf7e8;color:#08714e}.email-message-body{padding:18px 22px 22px;background:#fbfdfc}.email-message-body h4{margin:13px 0 7px;font-size:13px;color:#526a60}.email-content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75}.email-message-body textarea{width:100%;min-height:145px;resize:vertical}.email-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}.email-actions button{width:auto;padding:10px 20px}.email-error{color:#a62626;padding:14px 20px}
+  @media(max-width:640px){.email-message summary{grid-template-columns:1fr auto;gap:5px 10px}.email-message summary .email-subject{grid-column:1/-1;grid-row:2}.email-page-header h2{font-size:20px}.email-topline input{text-align:start}.email-preview{display:none}}
+</style>
 <style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
   @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
 </style>
@@ -441,6 +455,7 @@
       <button class="tab-btn" data-tab="carts" data-i18n="nav.carts">السلات المتروكة</button>
       <button class="tab-btn" data-tab="broadcast" data-i18n="nav.broadcast">الرسائل الجماعية</button>
       <button class="tab-btn" data-tab="templates" data-i18n="nav.templates">قوالب الرسائل</button>
+      <button class="tab-btn" data-tab="email">البريد الإلكتروني</button>
       <span class="nav-sec" data-i18n="nav.groupPlatform">إعدادات المنصة</span>
       <button class="tab-btn" data-tab="channels" data-i18n="nav.channels">قنوات الربط</button>
       <button class="tab-btn" data-tab="addons" data-i18n="nav.addons">الإضافات</button>
@@ -779,42 +794,32 @@
         <div class="helper-text" id="instagramLockedHint" style="margin-top:10px; display:none;"></div>
         <div class="helper-text" style="margin-top:10px;" data-i18n="channels.instagram.steps">اضغط "ربط حساب انستقرام" ← سجّل الدخول بحساب انستقرام الاحترافي لمتجرك (أعمال أو صانع محتوى) ← وافق على صلاحيات الرسائل ← ترجع هنا تلقائياً. بعدها يرد البوت على رسائل Direct خلال 24 ساعة من آخر رسالة للعميل (قيد ميتا).</div>
       </div>
-      <div class="settings-card" id="emailCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label>📧 ربط البريد الإلكتروني (خدمة العملاء)</label>
-        </div>
-        <div id="emailStatus"><div class="conv-empty">جاري التحميل...</div></div>
-        <div id="emailBody" style="display:none;">
-          <div class="helper-text" style="margin-bottom:6px;">عنوان نبضة الخاص بك (حوّل إليه بريد الدعم):</div>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <input type="text" id="emailAddress" readonly dir="ltr" style="flex:1; min-width:220px;">
-            <button class="primary-btn" id="emailCopyBtn" style="width:auto; padding:10px 18px;">نسخ</button>
+    </div>
+    <div class="panel" id="panelEmail">
+      <div class="email-page-header">
+        <div><h2>البريد الإلكتروني</h2><p>رسائل عملائك ومسودات الردود في مكان واحد</p></div>
+        <button class="email-refresh" type="button" id="emailRefreshBtn">↻ تحديث</button>
+      </div>
+      <div id="emailStatus"><div class="conv-empty">جاري التحميل...</div></div>
+      <div id="emailLockedHint" class="settings-card" style="display:none;">إضافة قناة البريد غير مفعّلة في حسابك بعد. تواصل معنا لتفعيلها.</div>
+      <div id="emailBody" style="display:none;">
+        <div class="email-topline"><span class="email-topline-label">عنوان استقبال البريد</span><input type="text" id="emailAddress" readonly dir="ltr"><button type="button" class="email-copy" id="emailCopyBtn">نسخ العنوان</button></div>
+        <details class="email-settings"><summary>⚙ إعدادات البريد والردود</summary>
+          <div class="email-settings-body">
+            <div class="field"><label><input type="checkbox" id="emailEnabled"> تفعيل الرد على البريد</label></div>
+            <div class="field"><label for="emailMode">وضع الرد</label><select id="emailMode"><option value="draft">مسودة — أراجع وأرسل أنا (موصى به)</option><option value="auto">رد مباشر تلقائي (تصلني نسخة)</option></select></div>
+            <div class="field"><label for="emailMerchant">بريدي الشخصي لإشعارات المسودات ونسخ الردود</label><input type="email" id="emailMerchant" dir="ltr" placeholder="you@example.com"></div>
+            <div class="field"><label for="emailSignature">التوقيع</label><textarea id="emailSignature" rows="2" placeholder="فريق متجرك"></textarea></div>
+            <button type="button" class="primary-btn" id="emailSaveBtn" style="width:auto;padding:10px 24px;">حفظ الإعدادات</button>
+            <p class="helper-text" style="margin-top:12px;">يمكنك تحويل بريد خدمة العملاء إلى عنوان نبضة الظاهر أعلاه من إعدادات مزود البريد لديك.</p>
           </div>
-          <div class="field" style="margin-top:14px;">
-            <label><input type="checkbox" id="emailEnabled"> تفعيل الرد على البريد</label>
-          </div>
-          <div class="field">
-            <label>وضع الرد</label>
-            <select id="emailMode">
-              <option value="draft">مسودة — أراجع وأرسل أنا (موصى به)</option>
-              <option value="auto">رد مباشر تلقائي (تصلني نسخة)</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>بريدي الشخصي (لإشعار المسودات ونسخ الردود)</label>
-            <input type="email" id="emailMerchant" dir="ltr" placeholder="you@example.com">
-          </div>
-          <div class="field">
-            <label>التوقيع (يُضاف أسفل كل رد)</label>
-            <textarea id="emailSignature" rows="2" placeholder="فريق متجرك"></textarea>
-          </div>
-          <button class="primary-btn" id="emailSaveBtn" style="width:auto; padding:12px 30px;">حفظ</button>
-          <div class="alert-box" id="emailMsg" style="display:none; margin-top:12px;"></div>
-          <div class="helper-text" style="margin-top:12px;">طريقة التحويل: في Gmail: الإعدادات ← إعادة التوجيه وبروتوكول POP/IMAP ← إضافة عنوان إعادة توجيه ← الصق عنوان نبضة أعلاه. (قد يصلك رمز تأكيد: يظهر في سجل البريد هنا أو في إشعارات النظام.) في استضافات الدومين: أضف Forwarder من بريد الدعم إلى هذا العنوان.</div>
-          <div class="field" style="margin-top:18px;"><label>المسودات بانتظار اعتمادك</label></div>
-          <div id="emailDrafts"></div>
-        </div>
-        <div class="helper-text" id="emailLockedHint" style="display:none; margin-top:10px;">إضافة قناة البريد غير مفعّلة في حسابك بعد. تواصل معنا لتفعيلها.</div>
+        </details>
+        <div class="alert-box" id="emailMsg" role="status" style="display:none;margin:12px 0;"></div>
+        <section class="email-inbox" aria-label="سجل البريد">
+          <div class="email-inbox-head"><div><h3>سجل البريد</h3><p>افتح أي رسالة لمراجعتها والتعامل مع المسودة</p></div><div class="email-filters" role="group" aria-label="تصفية الرسائل"><button type="button" data-email-filter="all" class="on">الكل</button><button type="button" data-email-filter="draft">المسودات</button><button type="button" data-email-filter="sent">المرسلة</button></div></div>
+          <div id="emailDrafts" aria-live="polite"></div>
+          <div id="emailMoreWrap" style="display:none;text-align:center;padding:18px;"><button type="button" class="email-refresh" id="emailMoreBtn">عرض المزيد</button></div>
+        </section>
       </div>
     </div>
     <div class="panel" id="panelSettings">
