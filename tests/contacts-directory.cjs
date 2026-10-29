@@ -19,13 +19,18 @@ const assert = require('node:assert/strict');
   document.getElementById('v2Title').textContent='الأرقام';
   window.mockRows=Array.from({length:1508},(_,i)=>({full_name:'عميل '+String(i).padStart(4,'0'),phone_number:'9665'+String(i).padStart(8,'0'),received_at:'2026-10-29T17:20:48Z'}));
   window.mockRows[0].full_name='<img src=x onerror=alert(1)>';
-  window.db={from(){let head=false,count=false,term='',lo=0,hi=999,limit=null;return {
+  window.synced=false;window.syncCalls=0;
+  window.db={async rpc(){window.syncCalls++;if(window.mockError)return {error:{message:'test'}};window.synced=true;return {data:1508,error:null}},from(){let head=false,count=false,term='',lo=0,hi=999,limit=null;return {
    select(s,o){head=!!o?.head;count=!!o?.count;return this},eq(){return this},or(s){term=s.split('full_name.ilike.%')[1].split('%')[0];return this},order(){return this},range(a,b){lo=a;hi=b;return this},limit(n){limit=n;return this},
-   then(resolve){let rows=window.mockRows.filter(r=>!term||r.full_name.includes(term)||r.phone_number.includes(term));resolve(window.mockError?{error:{message:'test'}}:{data:head?null:rows.slice(lo,limit===null?hi+1:limit),count:count?rows.length:null,error:null})}
+   then(resolve){let rows=(window.synced?window.mockRows:[]).filter(r=>!term||r.full_name.includes(term)||r.phone_number.includes(term));resolve(window.mockError?{error:{message:'test'}}:{data:head?null:rows.slice(lo,limit===null?hi+1:limit),count:count?rows.length:null,error:null})}
   }}};
   window.options={db:window.db,client:{id:'test',whatsapp_phone_number_id:'test-number',whatsapp_display_number:'+966547300317',coexistence_status:'active'},isOwner:true,lang:'ar'};
   window.NabdhContacts.load(window.options);
  });
+ await page.waitForFunction(()=>document.querySelector('#contactsEmpty').textContent.includes('اضغط'));
+ assert.equal(await page.evaluate(()=>window.syncCalls),0);
+ assert.equal(await page.locator('#contactsRows tr').count(),0);
+ await page.locator('#contactsRefresh').click();
  await page.waitForFunction(()=>document.querySelectorAll('#contactsRows tr').length===50);
  assert.equal(await page.locator('#contactsRows img').count(),0);
  await page.locator('#contactsNext').click();await page.waitForFunction(()=>document.querySelector('#contactsRows').textContent.includes('عميل 0050'));
