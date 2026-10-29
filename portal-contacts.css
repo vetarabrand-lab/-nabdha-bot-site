@@ -1,0 +1,26 @@
+#panelContacts .contacts-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+#panelContacts h2{font-size:22px;font-weight:900;margin:0}
+#panelContacts .contacts-sub{font-size:13px;color:var(--muted);margin-top:5px}
+#panelContacts .contacts-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+#panelContacts .contacts-stat{border:1px solid var(--border);border-radius:14px;background:var(--card);padding:17px}
+#panelContacts .contacts-stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+#panelContacts .contacts-stat b{font-size:19px;color:var(--wa-teal-dark);overflow-wrap:anywhere}
+#panelContacts .contacts-card{border:1px solid var(--border);border-radius:16px;background:var(--card);overflow:hidden}
+#panelContacts .contacts-tools{display:flex;gap:12px;align-items:center;padding:16px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+#panelContacts input{font:inherit;width:min(100%,380px);padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--bg);outline-offset:3px}
+#panelContacts button{font:inherit;font-weight:700;font-size:13px;padding:9px 16px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--wa-teal-dark);cursor:pointer;min-height:40px}
+#panelContacts button:hover{background:var(--bg)}
+#panelContacts button:disabled{opacity:.5;cursor:default}
+#panelContacts .contacts-scroll{overflow:auto}
+#panelContacts table{border-collapse:collapse;width:100%;min-width:540px;text-align:start;font-size:13px}
+#panelContacts th{text-align:start;padding:12px 18px;background:var(--bg);color:var(--muted);font-weight:700}
+#panelContacts td{padding:13px 18px;border-top:1px solid var(--border);vertical-align:middle}
+#panelContacts .contact-name{display:flex;align-items:center;gap:10px;font-weight:700}
+#panelContacts .contact-avatar{display:grid;place-items:center;width:32px;height:32px;flex-shrink:0;border-radius:10px;background:#E2F5EC;color:#075E54}
+#panelContacts .contacts-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-top:1px solid var(--border);flex-wrap:wrap;font-size:12px;color:var(--muted)}
+#panelContacts .contacts-empty{text-align:center;padding:38px 20px;color:var(--muted);font-size:14px}
+#panelContacts .contacts-notice{margin-bottom:15px;border-radius:12px;background:#EDF6F3;color:#075E54;padding:12px 16px;font-size:13px}
+#panelContacts .contacts-error{background:#FBE7E5;color:#A32B26}
+.tabs .tab-btn[data-tab="contacts"]{--ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Crect x='5' y='3' width='15' height='18' rx='2'/%3E%3Cpath d='M3 7h4M3 12h4M3 17h4M9 17c0-4 8-4 8 0'/%3E%3Ccircle cx='13' cy='9' r='2'/%3E%3C/svg%3E")}
+@media(max-width:600px){#panelContacts .contacts-stats{grid-template-columns:1fr 1fr}#panelContacts .contacts-stat:last-child{grid-column:1/-1}#panelContacts .contacts-stat b{font-size:16px}#panelContacts .contacts-tools input{width:100%}}
+@media(max-width:600px){#panelContacts table{min-width:0;font-size:12px}#panelContacts th,#panelContacts td{padding:12px 9px}#panelContacts th:last-child,#panelContacts td:last-child{display:none}#panelContacts td:first-child{overflow-wrap:anywhere}#panelContacts .contact-avatar{width:26px;height:26px}#panelContacts td:nth-child(2){white-space:nowrap}}
