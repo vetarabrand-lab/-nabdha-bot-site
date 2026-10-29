@@ -518,6 +518,43 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
 
     box.innerHTML = statusHtml + statsHtml + checksHtml + stepsHtml +
       '<div class="cart-box"><h3>' + L('آخر السلات', 'Latest carts') + '</h3>' + listHtml + '</div>';
+    if(isOwner && myClient.id === 'cec96230-388c-4d6e-94e4-2a2f95d228ef'){
+      const testBox = document.createElement('div');
+      testBox.className = 'cart-box';
+      testBox.innerHTML = '<h3>' + L('اختبار التذكير الفوري', 'Instant reminder test') + '</h3><p>' + L('خاص بالمتجر التجريبي. يرسل تذكير واتساب فعليًا إلى عميل السلة المختارة، مرة واحدة لكل سلة، بعد اعتماد القالب. لا يغيّر مواعيد التذكيرات المجدولة.', 'Test store only. Sends one real WhatsApp reminder per cart once the template is approved. Scheduled reminders remain unchanged.') + '</p>';
+      const select = document.createElement('select');
+      select.setAttribute('aria-label', L('اختر السلة', 'Choose cart'));
+      select.style.cssText = 'max-width:100%;padding:10px;margin:0 0 12px;display:block';
+      events.filter(e => !['recovered','expired'].includes(e.status)).forEach(e => {
+        const option = document.createElement('option');
+        option.value = e.id;
+        option.textContent = (e.customer_name || L('عميل','Customer')) + ' · ' + displayPhone(e.customer_phone || '') + ' · ' + (e.order_total || '0') + L(' ريال',' SAR');
+        select.append(option);
+      });
+      const send = document.createElement('button');
+      send.type = 'button'; send.className = 'btn primary';
+      send.textContent = L('إرسال تذكير فوري', 'Send instant reminder');
+      send.disabled = !select.options.length;
+      const result = document.createElement('p'); result.setAttribute('role','status');
+      if(!select.options.length)result.textContent = L('لا توجد سلة متاحة للاختبار.', 'No cart available for testing.');
+      let sending = false;
+      send.onclick = async function(){
+        if(sending)return;
+        sending = true; send.disabled = true; select.disabled = true;
+        result.textContent = L('جارٍ تنفيذ الاختبار…', 'Running test…');
+        try{
+          const response = await supabaseClient.functions.invoke('test-cart-reminder', { body: { cart_id: select.value } });
+          let data = response.data;
+          if(response.error){
+            try{ data = await response.error.context.json(); }catch(_e){}
+            if(!data?.message)throw response.error;
+          }
+          result.textContent = data?.message || L('تعذّر تأكيد النتيجة.', 'Could not confirm the result.');
+        }catch(_e){ result.textContent = L('تعذّر الاتصال. تحقق من واتساب العميل قبل إعادة المحاولة.', 'Connection failed. Check the customer’s WhatsApp before retrying.'); }
+        finally{sending = false;send.disabled = false;select.disabled = false;}
+      };
+      testBox.append(select,send,result);box.prepend(testBox);
+    }
   }
   /* ---------- الإضافات المدفوعة ---------- */
   async function loadPortalAddonsTab(){
