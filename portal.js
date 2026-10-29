@@ -246,6 +246,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     });
   }
   function showScreen(name){
+    if(name !== 'app' && window.NabdhContacts) window.NabdhContacts.reset();
     loginScreen.style.display = 'none';
     forgotScreen.style.display = 'none';
     resetScreen.style.display = 'none';
@@ -381,16 +382,18 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
+      if(btn.dataset.tab === 'contacts' && !isOwner) return;
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { home: 'panelHome', inbox: 'panelInbox', email: 'panelEmail', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels', carts: 'panelCarts' };
+      const map = { home: 'panelHome', contacts: 'panelContacts', inbox: 'panelInbox', email: 'panelEmail', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels', carts: 'panelCarts' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
       if(btn.dataset.tab === 'addons'){ loadPortalAddonsTab(); }
       if(btn.dataset.tab === 'carts'){ loadCartsTab(); }
       if(btn.dataset.tab === 'home'){ renderHome(); }
       if(btn.dataset.tab === 'email'){ loadEmailChannel(); }
+      if(btn.dataset.tab === 'contacts'){ window.NabdhContacts.load({db:supabaseClient,client:myClient,isOwner:isOwner,lang:window.PORTAL_LANG}); }
       v2AfterTabChange(btn.dataset.tab);
     });
   });
@@ -868,6 +871,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     window.addEventListener('appinstalled', dismiss);
   })();
   async function loadEverything(){
+    if(window.NabdhContacts) window.NabdhContacts.reset();
     const { data: { user } } = await supabaseClient.auth.getUser();
     myUserId = user.id;
     // نحاول أولاً كصاحب حساب، ولو ما لقينا نحاول كموظف مرتبط بحساب نشاط
@@ -944,6 +948,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     })();
     // الرسائل الجماعية إجراء تسويقي/مالي — نتركه لصاحب الحساب فقط لتفادي فتح تبويب يفشل بصمت للموظفين
     document.querySelector('.tab-btn[data-tab="broadcast"]').style.display = isOwner ? 'inline-block' : 'none';
+    document.querySelector('.tab-btn[data-tab="contacts"]').style.display = isOwner ? 'inline-block' : 'none';
     // تبويبات اختيارية للموظفين — صاحب الحساب يشوفها دايماً، والموظف حسب الصلاحيات اللي منحها له صاحب الحساب
     PERMISSION_DEFS.forEach(function(p){
       const tabEl = document.querySelector('.tab-btn[data-tab="' + p.key + '"]');
@@ -1034,11 +1039,14 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     renderSubscriptionBanner();
     renderPlanCard();
     renderHome();
+    if(document.getElementById('panelContacts').classList.contains('active')){
+      window.NabdhContacts.load({db:supabaseClient,client:myClient,isOwner:isOwner,lang:window.PORTAL_LANG});
+    }
   }
   /* ════════ v2: الهيكل الجديد (القائمة الجوال + الشريط العلوي) والصفحة الرئيسية ════════ */
   function V2L(ar, en){ return (window.PORTAL_LANG === 'en') ? en : ar; }
   var V2_TITLES = {
-    home: ['الرئيسية','Home'], inbox: ['المحادثات','Conversations'], orders: ['الطلبات','Orders'],
+    home: ['الرئيسية','Home'], contacts: ['الأرقام','Contacts'], inbox: ['المحادثات','Conversations'], orders: ['الطلبات','Orders'],
     support: ['الدعم الفني','Support'], analytics: ['التحليلات','Analytics'], broadcast: ['الرسائل الجماعية','Broadcasts'],
     templates: ['قوالب الرسائل','Message templates'], email: ['البريد الإلكتروني','Email'], channels: ['قنوات الربط','Channels'], addons: ['الإضافات','Add-ons'],
     settings: ['إعدادات البوت','Bot settings'], carts: ['السلات المتروكة','Abandoned carts']

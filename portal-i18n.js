@@ -1,5 +1,6 @@
 var portalTranslations = {
   ar: {
+    'nav.contacts': 'الأرقام',
     'addons.desc': 'إضافات اختيارية برسوم لمرة واحدة وتبقى فعّالة طوال اشتراكك. اطلب أي إضافة وبنتواصل معك لتأكيد الدفع وتفعيلها.',
     'analytics.avgResponseLabel': 'متوسط زمن رد البوت',
     'analytics.convoBreakdown': 'تصنيف المحادثات',
@@ -183,6 +184,7 @@ var portalTranslations = {
     'topbar.title': 'لوحة نشاطي',
   },
   en: {
+    'nav.contacts': 'Contacts',
     'addons.desc': 'Optional add-ons with a one-time fee, active for your whole subscription. Request any add-on and we’ll contact you to confirm payment and activate it.',
     'analytics.avgResponseLabel': 'Average bot response time',
     'analytics.convoBreakdown': 'Conversation breakdown',
