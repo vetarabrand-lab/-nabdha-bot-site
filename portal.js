@@ -1756,9 +1756,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   /* ---------- لوحة الطلبات الموحّدة ---------- */
   let ordersLoaded = false;
   async function loadOrdersTab(){
-    if(ordersLoaded){ return; }
     const container = document.getElementById('ordersContent');
-    if(!myPlan){ return; }
+    if(!myPlan){ container.textContent = PT('لوحة الطلبات الموحّدة متاحة من باقة نمو وما فوق.'); return; }
     if(!myPlan.order_table_included){
       container.innerHTML = '<div class="alert-box error" style="display:block;">'
         + (window.PORTAL_LANG === 'en'
@@ -1775,9 +1774,11 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       return;
     }
     ordersLoaded = true;
-    const { data: sessionData } = await supabaseClient.auth.getSession();
-    const token = sessionData.session.access_token;
     try{
+      container.textContent = PT('جاري التحميل...');
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if(!token){ throw new Error('session_missing'); }
       const res = await fetch(FUNCTIONS_BASE + '/list-store-orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
