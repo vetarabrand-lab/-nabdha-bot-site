@@ -104,7 +104,17 @@
       currency = b.getAttribute('data-currency') === 'USD' ? 'USD' : 'SAR';
       try{ localStorage.setItem('nabda_currency', currency); }catch(e){}
       render();
+      document.dispatchEvent(new CustomEvent('nabda:currency', { detail: { currency: currency } }));
     });
+  });
+
+  // تغيير العملة من مبدّل الهيدر ينعكس على الأسعار فوراً
+  document.addEventListener('nabda:currency', function(e){
+    var code = e && e.detail && e.detail.currency;
+    if(code !== 'USD' && code !== 'SAR') return;
+    if(code === currency) return;
+    currency = code;
+    render();
   });
 
   var langBtn = document.getElementById('langBtn');
