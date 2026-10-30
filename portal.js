@@ -1080,6 +1080,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadTelegramStatus();
     loadInstagramStatus();
     loadEmailChannel();
+    renderStoreCustomersCard();
     loadWaAppStatus();
     loadTemplates();
     loadTopupInfo();
@@ -1764,6 +1765,78 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       + '</div>'
       + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">' + PT('تواصل مع الدعم للتفعيل') + '</button>';
   }
+  /* ---------- دليل عملاء المتجر (استيراد سلة/زد) ---------- */
+  // الاستيراد للعرض والبحث فقط. الإرسال لأي رقم مستورد ممنوع حتى يراسلك العميل
+  // أو يوافق صراحةً — وهذا ما يحمي رقم واتساب التاجر من خفض الجودة ثم الحظر.
+  let storeCustomersBusy = false;
+  async function renderStoreCustomersCard(){
+    const root = document.getElementById('storeCustomersCard');
+    if(!root || !myClient) return;
+    const [{ count: total }, { count: granted }, { data: lastJob }] = await Promise.all([
+      supabaseClient.from('store_customers').select('id', { count: 'exact', head: true }).eq('client_id', myClient.id),
+      supabaseClient.from('store_customers').select('id', { count: 'exact', head: true }).eq('client_id', myClient.id).eq('opt_in_status', 'granted'),
+      supabaseClient.from('store_customer_imports').select('status,imported_count,total_reported,finished_at,error_message')
+        .eq('client_id', myClient.id).order('started_at', { ascending: false }).limit(1).maybeSingle()
+    ]);
+    const imported = Number(total) || 0;
+    const optedIn = Number(granted) || 0;
+    const job = lastJob || null;
+    const statusLine = job
+      ? (job.status === 'running'
+          ? PT('الاستيراد جارٍ') + ' — ' + PT('تم حتى الآن') + ': ' + (Number(job.imported_count)||0)
+          : job.status === 'failed'
+            ? PT('توقف الاستيراد') + (job.error_message ? ' (' + escapeHtml(String(job.error_message).slice(0,80)) + ')' : '')
+            : PT('اكتمل الاستيراد'))
+      : PT('لم تستورد عملاء متجرك بعد.');
+
+    root.innerHTML = '<div class="settings-card" style="margin-bottom:16px;">'
+      + '<div class="field" style="margin-bottom:10px;"><label>🗂️ ' + PT('عملاء متجرك (سلة أو زد)') + '</label></div>'
+      + '<div class="helper-text" style="margin-bottom:10px;">' + PT('اسحب عملاءك القدامى من متجرك لتبحث عنهم وتراجع بياناتهم داخل نبضة. الاستيراد لا يرسل أي رسالة.') + '</div>'
+      + '<div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:12px;">'
+        + '<div><div style="font-size:20px; font-weight:800;">' + imported + '</div><div class="helper-text">' + PT('عميل مستورد') + '</div></div>'
+        + '<div><div style="font-size:20px; font-weight:800; color:var(--wa-green-dark);">' + optedIn + '</div><div class="helper-text">' + PT('وافق على استقبال رسائلك') + '</div></div>'
+      + '</div>'
+      + '<div class="helper-text" style="margin-bottom:10px;">' + statusLine + '</div>'
+      + (isOwner ? '<button class="primary-btn" id="importStoreCustomersBtn" style="width:auto; padding:12px 26px;">' + PT('استيراد عملاء المتجر') + '</button>' : '')
+      + '<div class="alert-box" id="storeCustomersMsg" style="display:none; margin-top:12px;"></div>'
+      + '<div class="cost-note" style="margin-top:14px;">⚠️ ' + PT('الأرقام المستوردة للعرض والبحث فقط. ميتا تمنع إرسال حملات لمن لم يوافق مسبقاً، ومخالفة ذلك تخفض جودة رقمك ثم توقفه. يصبح العميل مؤهلاً للحملات تلقائياً أول ما يراسل البوت.') + '</div>'
+      + '</div>';
+
+    const btn = document.getElementById('importStoreCustomersBtn');
+    if(btn){ btn.addEventListener('click', runStoreCustomersImport); }
+  }
+  async function runStoreCustomersImport(){
+    if(storeCustomersBusy || !myClient || !isOwner) return;
+    storeCustomersBusy = true;
+    const btn = document.getElementById('importStoreCustomersBtn');
+    const msg = document.getElementById('storeCustomersMsg');
+    if(btn){ btn.disabled = true; btn.textContent = PT('جاري الاستيراد...'); }
+    const show = function(ok, t){ if(!msg) return; msg.style.display='block'; msg.className='alert-box ' + (ok?'ok':'error'); msg.textContent=t; };
+    try{
+      let guard = 0;
+      let last = null;
+      while(guard < 40){
+        guard++;
+        const { data, error } = await supabaseClient.functions.invoke('import-store-customers', { body: { client_id: myClient.id } });
+        if(error || !data || data.error){
+          show(false, PT('تعذّر الاستيراد') + ': ' + ((data && data.error) || (error && error.message) || ''));
+          break;
+        }
+        last = data;
+        if(btn) btn.textContent = PT('جاري الاستيراد...') + ' ' + (Number(data.imported_total)||0);
+        if(!data.has_more) break;
+      }
+      if(last && !last.error){
+        show(true, PT('تم استيراد') + ' ' + (Number(last.imported_total)||0) + ' ' + PT('عميل من متجرك.'));
+      }
+    } catch(e){
+      show(false, PT('حصل خطأ بالاتصال، حاول مرة ثانية.'));
+    }
+    storeCustomersBusy = false;
+    if(btn){ btn.disabled = false; btn.textContent = PT('استيراد عملاء المتجر'); }
+    renderStoreCustomersCard();
+  }
+
   /* ---------- لوحة الطلبات الموحّدة ---------- */
   let ordersLoaded = false;
   async function loadOrdersTab(){
