@@ -232,6 +232,14 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   .billing-toggle-knob{position:absolute; top:3px; inset-inline-start:3px; width:24px; height:24px; border-radius:50%; background:#fff; transition:inset-inline-start .2s ease; box-shadow:0 2px 6px rgba(0,0,0,.2);}
   .billing-toggle-switch[aria-checked="true"] .billing-toggle-knob{inset-inline-start:25px;}
   .billing-toggle-save{font-size:12.5px; font-weight:800; color:var(--wa-green-dark); background:rgba(37,211,102,.14); padding:4px 12px; border-radius:100px;}
+  .currency-toggle{display:flex; justify-content:center; gap:8px; margin:14px auto 0; flex-wrap:wrap;}
+  .currency-opt{
+    border:1.5px solid var(--border); background:transparent; color:var(--muted);
+    border-radius:999px; padding:7px 18px; font-size:13.5px; font-weight:700;
+    cursor:pointer; font-family:inherit; transition:.18s;
+  }
+  .currency-opt:hover{border-color:var(--wa-teal-dark); color:var(--ink);}
+  .currency-opt.is-active{background:var(--wa-teal-dark); border-color:var(--wa-teal-dark); color:#fff;}
   .price-annual-note{color:var(--muted); font-size:12.5px; margin-top:-2px; margin-bottom:10px; min-height:16px;}
   .price-num .price-strike{font-size:.48em; font-weight:700; color:var(--muted); text-decoration:line-through; margin-inline-end:6px; vertical-align:middle;}
 
@@ -1055,6 +1063,10 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <span class="billing-toggle-label" id="billingLabelAnnual" data-i18n="pricing.annualLabel">سنوي</span>
       <span class="billing-toggle-save" data-i18n="pricing.annualSave">شهرين مجاناً</span>
     </div>
+    <div class="currency-toggle reveal" role="group" aria-label="اختيار العملة">
+      <button type="button" class="currency-opt is-active" id="currencySarBtn" data-currency="SAR" data-i18n="pricing.currencySar">ريال سعودي</button>
+      <button type="button" class="currency-opt" id="currencyUsdBtn" data-currency="USD" data-i18n="pricing.currencyUsd">دولار أمريكي</button>
+    </div>
     <div class="pricing-grid">
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p1n">انطلاقة</h3>
@@ -1144,7 +1156,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           </ul>
         </div>
         <div class="prepaid-price">
-          <div class="price-value"><b>399</b><span data-i18n="pricing.prepaidUnit">ريال دفعة وحدة · 5,000 رد</span></div>
+          <div class="price-value"><b class="prepaid-num" data-sar="399">399</b><span data-i18n="pricing.prepaidUnit">ريال دفعة وحدة · 5,000 رد</span></div>
           <a href="signup.html?plan=prepaid_5000" class="btn btn-prepaid btn-block" data-i18n="pricing.prepaidCta">جرّب بدون اشتراك</a>
         </div>
       </div>
