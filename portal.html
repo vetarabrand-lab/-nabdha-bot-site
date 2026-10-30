@@ -669,6 +669,8 @@
       <div class="cost-note" data-i18n="templates.aiHint">💡 اكتب فكرة رسالتك بالعامية، والذكاء الاصطناعي بيصيغها كقالب واتساب صحيح ويرسلها لميتا للمراجعة تلقائياً. المراجعة عادة تاخذ من دقائق لساعات.</div>
       <div class="support-top">
         <button class="new-ticket-btn" id="newTemplateBtn" style="display:none;" data-i18n="templates.newTemplate">+ قالب جديد</button>
+        <button class="new-ticket-btn" id="refreshTemplatesBtn" style="display:none; background:transparent; border:1px solid var(--wa-green-dark); color:var(--wa-green-dark);">🔄 تحديث الحالة</button>
+        <div class="helper-text" id="templatesRefreshMsg" style="display:none; width:100%; margin-top:8px;"></div>
       </div>
       <div class="campaign-list" id="templateList">
         <div class="conv-empty" data-i18n="templates.loading">جاري تحميل القوالب...</div>
@@ -1105,6 +1107,7 @@
       <div class="field" id="tplVariableField" style="display:none;">
         <label data-i18n="modal.template.var1ExampleLabel">مثال على المتغيّر {{1}} (مطلوب من ميتا للمراجعة)</label>
         <input type="text" id="tplVariableExample">
+        <div id="tplVarsExtra"></div>
       </div>
       <div class="modal-actions">
         <button class="modal-cancel" id="tplBackBtn" data-i18n="common.back">رجوع</button>
