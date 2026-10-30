@@ -1080,6 +1080,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     loadTelegramStatus();
     loadInstagramStatus();
     loadEmailChannel();
+    renderStoreCustomersCard();
     loadWaAppStatus();
     loadTemplates();
     loadTopupInfo();
@@ -1764,6 +1765,120 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       + '</div>'
       + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">' + PT('تواصل مع الدعم للتفعيل') + '</button>';
   }
+  /* ---------- دليل عملاء المتجر (استيراد سلة/زد) ---------- */
+  // الاستيراد للعرض والبحث فقط. الإرسال لأي رقم مستورد ممنوع حتى يراسلك العميل
+  // أو يوافق صراحةً — وهذا ما يحمي رقم واتساب التاجر من خفض الجودة ثم الحظر.
+  let storeCustomersBusy = false;
+  async function renderStoreCustomersCard(){
+    const root = document.getElementById('storeCustomersCard');
+    if(!root || !myClient) return;
+    const [{ count: total }, { count: granted }, { data: lastJob }] = await Promise.all([
+      supabaseClient.from('store_customers').select('id', { count: 'exact', head: true }).eq('client_id', myClient.id),
+      supabaseClient.from('store_customers').select('id', { count: 'exact', head: true }).eq('client_id', myClient.id).eq('opt_in_status', 'granted'),
+      supabaseClient.from('store_customer_imports').select('status,imported_count,total_reported,finished_at,error_message')
+        .eq('client_id', myClient.id).order('started_at', { ascending: false }).limit(1).maybeSingle()
+    ]);
+    const imported = Number(total) || 0;
+    const optedIn = Number(granted) || 0;
+    const job = lastJob || null;
+    const statusLine = job
+      ? (job.status === 'running'
+          ? PT('الاستيراد جارٍ') + ' — ' + PT('تم حتى الآن') + ': ' + (Number(job.imported_count)||0)
+          : job.status === 'failed'
+            ? PT('توقف الاستيراد') + (job.error_message ? ' (' + escapeHtml(String(job.error_message).slice(0,80)) + ')' : '')
+            : PT('اكتمل الاستيراد'))
+      : PT('لم تستورد عملاء متجرك بعد.');
+
+    const waNumber = String(myClient.whatsapp_display_number || '').replace(/[^0-9]/g, '');
+    const inviteText = PT('مرحباً! تقدر تتواصل معنا على واتساب مباشرة لأي استفسار عن طلبك أو منتجاتنا، وتوصلك عروضنا أول بأول. ابدأ المحادثة من هنا:');
+    const waLink = waNumber ? ('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(PT('مرحباً، أبغى أتابع معكم على واتساب'))) : '';
+    const smsText = waLink ? (inviteText + ' ' + waLink) : '';
+
+    root.innerHTML = '<div class="settings-card" style="margin-bottom:16px;">'
+      + '<div class="field" style="margin-bottom:10px;"><label>🗂️ ' + PT('عملاء متجرك (سلة أو زد)') + '</label></div>'
+      + '<div class="helper-text" style="margin-bottom:10px;">' + PT('اسحب عملاءك القدامى من متجرك لتبحث عنهم وتراجع بياناتهم داخل نبضة. الاستيراد لا يرسل أي رسالة لأحد.') + '</div>'
+      + '<div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:12px;">'
+        + '<div><div style="font-size:20px; font-weight:800;">' + imported + '</div><div class="helper-text">' + PT('عميل مستورد') + '</div></div>'
+        + '<div><div style="font-size:20px; font-weight:800; color:var(--wa-green-dark);">' + optedIn + '</div><div class="helper-text">' + PT('وافقوا صراحةً') + '</div></div>'
+      + '</div>'
+      + '<div class="helper-text" style="margin-bottom:10px;">' + statusLine + '</div>'
+      + (isOwner ? '<button class="primary-btn" id="importStoreCustomersBtn" style="width:auto; padding:12px 26px;">' + PT('استيراد عملاء المتجر') + '</button>' : '')
+      + '<div class="alert-box" id="storeCustomersMsg" style="display:none; margin-top:12px;"></div>'
+
+      + '<div style="margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">'
+      + '<div class="field" style="margin-bottom:8px;"><label>' + PT('كيف ترسل حملات لعملائك القدامى؟') + '</label></div>'
+      + '<div class="helper-text" style="margin-bottom:14px;">' + PT('واتساب يمنع إرسال حملة لأي رقم لم يوافق مسبقاً على استقبال رسائلك. وهذا ليس قيداً من نبضة بل قاعدة من ميتا، ومخالفتها تخفض جودة رقمك ثم توقفه نهائياً. الخطوات الثلاث التالية تحوّل عميلك القديم إلى مؤهل بطريقة نظامية.') + '</div>'
+
+      + '<div style="display:flex; gap:10px; margin-bottom:12px;"><div style="flex:0 0 26px; height:26px; border-radius:50%; background:var(--wa-green-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">1</div>'
+      + '<div><div style="font-weight:700;">' + PT('استورد عملاءك') + '</div><div class="helper-text">' + PT('من الزر أعلاه. تظهر بياناتهم عندك للبحث والمراجعة فقط، ولا تُرسل لهم أي رسالة.') + '</div></div></div>'
+
+      + '<div style="display:flex; gap:10px; margin-bottom:12px;"><div style="flex:0 0 26px; height:26px; border-radius:50%; background:var(--wa-green-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">2</div>'
+      + '<div><div style="font-weight:700;">' + PT('ادعُهم ليبدأوا المحادثة معك') + '</div><div class="helper-text">' + PT('انشر رابط واتساب أدناه في متجرك وفواتيرك وبريد تأكيد الطلب وحساباتك في التواصل، أو أرسله لعملائك القدامى برسالة نصية أو بريد — وهي قنوات وافقوا عليها أصلاً عند الشراء منك.') + '</div></div></div>'
+
+      + '<div style="display:flex; gap:10px; margin-bottom:16px;"><div style="flex:0 0 26px; height:26px; border-radius:50%; background:var(--wa-green-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">3</div>'
+      + '<div><div style="font-weight:700;">' + PT('يصير مؤهلاً تلقائياً') + '</div><div class="helper-text">' + PT('أول ما يرسل لك العميل رسالة واحدة، يدخل قائمة المؤهلين للحملات بدون أي خطوة منك. ومن لم يراسلك ترفض نبضة إرساله حمايةً لرقمك.') + '</div></div></div>'
+
+      + (waNumber
+          ? ('<div class="field"><label>' + PT('رابط واتساب الخاص بك') + '</label>'
+             + '<div style="display:flex; gap:8px; flex-wrap:wrap;">'
+             + '<input type="text" id="waInviteLink" readonly dir="ltr" value="' + escapeHtml(waLink) + '" style="flex:1; min-width:220px;">'
+             + '<button class="primary-btn" id="waInviteCopyBtn" style="width:auto; padding:10px 18px;">' + PT('نسخ') + '</button>'
+             + '</div></div>'
+             + '<div class="field"><label>' + PT('نص دعوة جاهز (رسالة نصية أو بريد)') + '</label>'
+             + '<textarea id="waInviteText" rows="3" readonly>' + escapeHtml(smsText) + '</textarea>'
+             + '<button class="primary-btn" id="waInviteTextCopyBtn" style="width:auto; padding:10px 18px; margin-top:8px;">' + PT('نسخ النص') + '</button></div>'
+             + '<div class="field"><label>' + PT('رمز QR للطباعة على الفواتير والمتجر') + '</label>'
+             + '<img id="waInviteQr" alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(waLink) + '" style="width:160px; height:160px; border:1px solid var(--border); border-radius:10px; background:#fff; padding:6px;"></div>')
+          : ('<div class="helper-text">' + PT('اربط رقم واتساب أعمال من «قنوات الربط» ليظهر لك هنا رابط الدعوة ورمز QR جاهزين.') + '</div>'))
+      + '</div></div>';
+
+    const btn = document.getElementById('importStoreCustomersBtn');
+    if(btn){ btn.addEventListener('click', runStoreCustomersImport); }
+    const copyPairs = [['waInviteCopyBtn','waInviteLink'], ['waInviteTextCopyBtn','waInviteText']];
+    copyPairs.forEach(function(pair){
+      const b = document.getElementById(pair[0]);
+      const field = document.getElementById(pair[1]);
+      if(!b || !field) return;
+      b.addEventListener('click', async function(){
+        try{ await navigator.clipboard.writeText(field.value); } catch(e){ field.select(); }
+        const original = b.textContent;
+        b.textContent = PT('✓ تم النسخ');
+        setTimeout(function(){ b.textContent = original; }, 1500);
+      });
+    });
+  }
+  async function runStoreCustomersImport(){
+    if(storeCustomersBusy || !myClient || !isOwner) return;
+    storeCustomersBusy = true;
+    const btn = document.getElementById('importStoreCustomersBtn');
+    const msg = document.getElementById('storeCustomersMsg');
+    if(btn){ btn.disabled = true; btn.textContent = PT('جاري الاستيراد...'); }
+    const show = function(ok, t){ if(!msg) return; msg.style.display='block'; msg.className='alert-box ' + (ok?'ok':'error'); msg.textContent=t; };
+    try{
+      let guard = 0;
+      let last = null;
+      while(guard < 40){
+        guard++;
+        const { data, error } = await supabaseClient.functions.invoke('import-store-customers', { body: { client_id: myClient.id } });
+        if(error || !data || data.error){
+          show(false, PT('تعذّر الاستيراد') + ': ' + ((data && data.error) || (error && error.message) || ''));
+          break;
+        }
+        last = data;
+        if(btn) btn.textContent = PT('جاري الاستيراد...') + ' ' + (Number(data.imported_total)||0);
+        if(!data.has_more) break;
+      }
+      if(last && !last.error){
+        show(true, PT('تم استيراد') + ' ' + (Number(last.imported_total)||0) + ' ' + PT('عميل من متجرك.'));
+      }
+    } catch(e){
+      show(false, PT('حصل خطأ بالاتصال، حاول مرة ثانية.'));
+    }
+    storeCustomersBusy = false;
+    if(btn){ btn.disabled = false; btn.textContent = PT('استيراد عملاء المتجر'); }
+    renderStoreCustomersCard();
+  }
+
   /* ---------- لوحة الطلبات الموحّدة ---------- */
   // آخر تغيير حالة وصلنا من المتجر عبر الويب هوك. التحديث يظهر هنا فقط ولا يُرسل أي إشعار للعميل.
   function orderStatusUpdateCell(o){
