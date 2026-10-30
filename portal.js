@@ -66,7 +66,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   let staffList = [];
   let myStaffPermissions = {};
   const PERMISSION_DEFS = window.NabdhPermissions.definitions;
-  function canOpenTab(key){ return window.NabdhPermissions.canOpen(isOwner, myStaffPermissions, key); }
+  function canOpenTab(key){
+    if(key === 'shipments') return !!(isOwner && myClient && ['cec96230-388c-4d6e-94e4-2a2f95d228ef','96b4facc-c9ef-47d7-a5b9-c9ef3afe065f'].includes(myClient.id));
+    return window.NabdhPermissions.canOpen(isOwner, myStaffPermissions, key);
+  }
   function permissionLabel(p){ return window.PORTAL_LANG === 'en' ? p.en : p.ar; }
   function permissionChoices(perms, staffId){
     return window.NabdhPermissions.groups.map(function(group){
@@ -389,7 +392,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
       document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active');
-      const map = { home: 'panelHome', contacts: 'panelContacts', inbox: 'panelInbox', email: 'panelEmail', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', addons: 'panelAddons', channels: 'panelChannels', carts: 'panelCarts' };
+      const map = { home: 'panelHome', contacts: 'panelContacts', inbox: 'panelInbox', email: 'panelEmail', settings: 'panelSettings', support: 'panelSupport', broadcast: 'panelBroadcast', analytics: 'panelAnalytics', templates: 'panelTemplates', orders: 'panelOrders', shipments: 'panelShipments', addons: 'panelAddons', channels: 'panelChannels', carts: 'panelCarts' };
       document.getElementById(map[btn.dataset.tab]).classList.add('active');
       if(btn.dataset.tab === 'orders'){ loadOrdersTab(); }
       if(btn.dataset.tab === 'addons'){ loadPortalAddonsTab(); }
@@ -995,6 +998,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(!tabEl) return;
       tabEl.style.display = canOpenTab(p.key) ? 'inline-block' : 'none';
     });
+    document.querySelector('.tab-btn[data-tab="shipments"]').style.display = canOpenTab('shipments') ? 'inline-block' : 'none';
     const activeTab = document.querySelector('.tab-btn.active');
     if(activeTab && !canOpenTab(activeTab.dataset.tab)) document.querySelector('.tab-btn[data-tab="home"]').click();
     let planLabel = '—';
@@ -1091,6 +1095,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     home: ['الرئيسية','Home'], contacts: ['الأرقام','Contacts'], inbox: ['المحادثات','Conversations'], orders: ['الطلبات','Orders'],
     support: ['الدعم الفني','Support'], analytics: ['التحليلات','Analytics'], broadcast: ['الرسائل الجماعية','Broadcasts'],
     templates: ['قوالب الرسائل','Message templates'], email: ['البريد الإلكتروني','Email'], channels: ['قنوات الربط','Channels'], addons: ['الإضافات','Add-ons'],
+    shipments: ['تتبع الشحنات','Shipment tracking'],
     settings: ['إعدادات البوت','Bot settings'], carts: ['السلات المتروكة','Abandoned carts']
   };
   function v2AfterTabChange(tab){
