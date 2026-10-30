@@ -703,7 +703,14 @@ var portalDynamicStrings = {
   'انتهت صلاحية طلب الربط، ابدأ الربط من جديد.': 'The connection request expired, please start again.',
   'لم تتم الموافقة على صلاحية الرسائل، أعد الربط ووافق على كل الصلاحيات.': 'The messaging permission was not approved. Reconnect and approve all permissions.',
   'الحساب ليس حساباً احترافياً (أعمال أو صانع محتوى). حوّله من إعدادات انستقرام ثم أعد الربط.': 'This is not a professional account (Business or Creator). Switch it in Instagram settings, then reconnect.',
-  'حساب انستقرام هذا مربوط بحساب آخر في نبضة.': 'This Instagram account is already connected to another Nabda account.'
+  'حساب انستقرام هذا مربوط بحساب آخر في نبضة.': 'This Instagram account is already connected to another Nabda account.',
+  '🔄 تحديث الحالة': '🔄 Refresh status',
+  'جاري التحديث...': 'Refreshing...',
+  'تعذّر تحديث الحالة من ميتا.': 'Could not refresh the status from Meta.',
+  'تم تحديث حالة القوالب من ميتا': 'Templates updated from Meta',
+  'الحالة محدّثة — ما فيه تغيير عند ميتا. المراجعة عادة تاخذ حتى 24 ساعة.': 'Status is up to date — nothing changed at Meta. Review usually takes up to 24 hours.',
+  'مثال على المتغيّر': 'Example for variable',
+  'لازم تكتب مثالاً لكل متغيّر في الرسالة (ميتا ترفض القالب بدون مثال لكل {{n}}).': 'You must provide an example for every variable in the message (Meta rejects templates without an example for each {{n}}).'
 };
 
 function PT(text){

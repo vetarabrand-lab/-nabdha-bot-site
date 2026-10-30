@@ -61,6 +61,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   let myCampaigns = [];
   let myTemplates = [];
   let currentDraftTemplateId = null;
+  let currentDraftExamples = [];
   let allMessages = [];
   let simHistory = [];
   let staffList = [];
@@ -3497,6 +3498,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   async function loadTemplates(){
     if(!myClient){ return; }
     document.getElementById('newTemplateBtn').style.display = isOwner ? 'inline-block' : 'none';
+    const refreshBtn = document.getElementById('refreshTemplatesBtn');
+    if(refreshBtn) refreshBtn.style.display = isOwner ? 'inline-block' : 'none';
     const { data, error } = await supabaseClient
       .from('whatsapp_message_templates')
       .select('id, name, category, body_text, status, rejected_reason, created_at')
@@ -3553,6 +3556,79 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     document.getElementById('tplStep1').style.display = 'block';
     document.getElementById('tplStep2').style.display = 'none';
   });
+  // تحديث حالة القوالب: حالة القالب تجينا من ميتا عبر ويب هوك، ولو فُقدت رسالة واحدة
+  // يبقى القالب "قيد المراجعة" عندنا للأبد. هذا الزر يسأل ميتا مباشرة ويصحّح الحالة.
+  const refreshTplBtn = document.getElementById('refreshTemplatesBtn');
+  if(refreshTplBtn){
+    refreshTplBtn.addEventListener('click', async function(){
+      if(!myClient || !isOwner) return;
+      const msg = document.getElementById('templatesRefreshMsg');
+      const btn = this;
+      btn.disabled = true; btn.textContent = PT('جاري التحديث...');
+      msg.style.display = 'none';
+      const { data, error } = await supabaseClient.functions.invoke('sync-template-status', { body: { client_id: myClient.id } });
+      btn.disabled = false; btn.textContent = PT('🔄 تحديث الحالة');
+      msg.style.display = 'block';
+      if(error || !data || data.success !== true){
+        const detail = (data && (data.error || data.detail)) || (error && error.message) || '';
+        msg.style.color = 'var(--danger)';
+        msg.textContent = PT('تعذّر تحديث الحالة من ميتا.') + (detail ? ' (' + detail + ')' : '');
+        return;
+      }
+      await loadTemplates();
+      const changed = Number(data.changed) || 0;
+      msg.style.color = changed > 0 ? 'var(--wa-green-dark)' : 'var(--muted)';
+      msg.textContent = changed > 0
+        ? ('✓ ' + PT('تم تحديث حالة القوالب من ميتا') + ': ' + changed)
+        : PT('الحالة محدّثة — ما فيه تغيير عند ميتا. المراجعة عادة تاخذ حتى 24 ساعة.');
+    });
+  }
+
+  // ميتا تطلب مثالاً لكل متغيّر في القالب، لا مثالاً واحداً فقط — نولّد حقلاً لكل {{n}}
+  function templateVarCount(bodyText){
+    let n = 0;
+    const re = /\{\{\s*(\d+)\s*\}\}/g;
+    let m;
+    while((m = re.exec(bodyText)) !== null){ n = Math.max(n, parseInt(m[1], 10) || 0); }
+    return n;
+  }
+  function renderTemplateVarInputs(bodyText, examples){
+    const field = document.getElementById('tplVariableField');
+    const extra = document.getElementById('tplVarsExtra');
+    const first = document.getElementById('tplVariableExample');
+    if(!field || !extra || !first) return;
+    const count = templateVarCount(bodyText || '');
+    field.style.display = count > 0 ? 'block' : 'none';
+    if(count === 0){ extra.innerHTML = ''; return; }
+    if(Array.isArray(examples) && examples[0] && !first.value) first.value = examples[0];
+    const kept = {};
+    extra.querySelectorAll('input[data-var-index]').forEach(function(i){ kept[i.getAttribute('data-var-index')] = i.value; });
+    extra.innerHTML = '';
+    for(let i = 2; i <= count; i++){
+      const wrap = document.createElement('div');
+      wrap.style.marginTop = '10px';
+      const label = document.createElement('label');
+      label.textContent = PT('مثال على المتغيّر') + ' {{' + i + '}}';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.setAttribute('data-var-index', String(i));
+      input.value = kept[String(i)] || (Array.isArray(examples) && examples[i - 1] ? examples[i - 1] : '');
+      wrap.appendChild(label); wrap.appendChild(input);
+      extra.appendChild(wrap);
+    }
+  }
+  function collectTemplateExamples(){
+    const out = [];
+    const first = document.getElementById('tplVariableExample');
+    if(first) out.push(first.value.trim());
+    document.querySelectorAll('#tplVarsExtra input[data-var-index]').forEach(function(i){ out.push(i.value.trim()); });
+    return out;
+  }
+  const tplBodyEl = document.getElementById('tplBodyText');
+  if(tplBodyEl){
+    tplBodyEl.addEventListener('input', function(){ renderTemplateVarInputs(this.value, currentDraftExamples); });
+  }
+
   document.getElementById('tplGenerateBtn').addEventListener('click', async function(){
     const requestText = document.getElementById('tplRequestText').value.trim();
     const errBox = document.getElementById('newTemplateError');
@@ -3588,9 +3664,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       document.getElementById('tplName').value = tpl.name;
       document.getElementById('tplCategory').value = tpl.category;
       document.getElementById('tplBodyText').value = tpl.body_text;
-      const hasVar = Array.isArray(tpl.variable_examples) && tpl.variable_examples.length > 0;
-      document.getElementById('tplVariableExample').value = hasVar ? tpl.variable_examples[0] : '';
-      document.getElementById('tplVariableField').style.display = hasVar ? 'block' : 'none';
+      currentDraftExamples = Array.isArray(tpl.variable_examples) ? tpl.variable_examples : [];
+      document.getElementById('tplVariableExample').value = currentDraftExamples[0] || '';
+      document.getElementById('tplVarsExtra').innerHTML = '';
+      renderTemplateVarInputs(tpl.body_text, currentDraftExamples);
       document.getElementById('tplStep1').style.display = 'none';
       document.getElementById('tplStep2').style.display = 'block';
     } catch(e){
@@ -3606,17 +3683,19 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const name = document.getElementById('tplName').value.trim();
     const category = document.getElementById('tplCategory').value;
     const bodyText = document.getElementById('tplBodyText').value.trim();
-    const variableExample = document.getElementById('tplVariableExample').value.trim();
     if(!name || !bodyText){
       errBox.textContent = PT('الرجاء تعبئة اسم القالب ونص الرسالة.');
       errBox.style.display = 'block';
       return;
     }
-    if(bodyText.indexOf('{{1}}') !== -1 && !variableExample){
-      errBox.textContent = PT('الرسالة فيها {{1}} — لازم تكتب مثال على القيمة اللي بتحل محله (مطلوب من واتساب للمراجعة).');
+    const varCount = templateVarCount(bodyText);
+    const examples = collectTemplateExamples().slice(0, varCount);
+    if(varCount > 0 && (examples.length < varCount || examples.some(function(v){ return !v; }))){
+      errBox.textContent = PT('لازم تكتب مثالاً لكل متغيّر في الرسالة (ميتا ترفض القالب بدون مثال لكل {{n}}).');
       errBox.style.display = 'block';
       return;
     }
+    const variableExample = examples[0] || '';
     const btn = this;
     btn.disabled = true; btn.textContent = PT('جاري الإرسال...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
@@ -3635,6 +3714,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           category: category,
           body_text: bodyText,
           variable_example: variableExample || null,
+          variable_examples: examples,
           language: 'ar'
         })
       });
