@@ -1880,6 +1880,23 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
 
   /* ---------- لوحة الطلبات الموحّدة ---------- */
+  // آخر تغيير حالة وصلنا من المتجر عبر الويب هوك. التحديث يظهر هنا فقط ولا يُرسل أي إشعار للعميل.
+  function orderStatusUpdateCell(o){
+    if(!o.last_status_at){
+      return '<span style="opacity:.55;">' + PT('لا يوجد تحديث بعد') + '</span>';
+    }
+    const locale = (window.PORTAL_LANG === 'en') ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn';
+    const when = new Date(o.last_status_at);
+    const sameAsCurrent = o.last_status && o.status && String(o.last_status).trim() === String(o.status).trim();
+    const label = (!sameAsCurrent && o.last_status) ? escapeHtml(o.last_status) + ' — ' : '';
+    const times = (Number(o.status_changes) > 1)
+      ? '<div style="font-size:11.5px; opacity:.6;">' + PT('عدد التحديثات') + ': ' + Number(o.status_changes) + '</div>'
+      : '';
+    return '<div style="font-size:12.5px;">' + label
+      + when.toLocaleDateString(locale, { month:'short', day:'numeric' }) + ' '
+      + when.toLocaleTimeString(locale, { hour:'2-digit', minute:'2-digit' })
+      + '</div>' + times;
+  }
   let ordersLoaded = false;
   async function loadOrdersTab(){
     if(!canOpenTab('orders')) return;
@@ -1927,6 +1944,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         + '<th style="padding:10px 8px;">' + PT('رقم الطلب') + '</th>'
         + '<th style="padding:10px 8px;">' + PT('العميل') + '</th>'
         + '<th style="padding:10px 8px;">' + PT('الحالة') + '</th>'
+        + '<th style="padding:10px 8px;">' + PT('آخر تحديث للحالة') + '</th>'
         + '<th style="padding:10px 8px;">' + PT('القيمة') + '</th>'
         + '<th style="padding:10px 8px;">' + PT('التاريخ') + '</th>'
         + '</tr></thead><tbody>';
@@ -1935,6 +1953,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           + '<td style="padding:10px 8px;">' + escapeHtml(o.order_code || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.customer_name || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.status || '—') + '</td>'
+          + '<td style="padding:10px 8px;">' + orderStatusUpdateCell(o) + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.total || '—') + '</td>'
           + '<td style="padding:10px 8px;">' + escapeHtml(o.created_at ? new Date(o.created_at).toLocaleDateString((window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn')) : '—') + '</td>'
           + '</tr>';
