@@ -1,0 +1,17 @@
+.currency-trigger{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:7px 10px;border:1px solid #dce7e1;border-radius:24px;background:#fff;color:#075e54;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;}
+.currency-trigger:hover{border-color:#128c7e;background:#f0faf5;}
+.currency-dialog{margin:auto;inset:0;max-height:calc(100dvh - 32px);overflow:auto;box-sizing:border-box;width:min(420px,calc(100vw - 32px));padding:28px;border:1px solid #dce7e1;border-radius:20px;color:#123b32;background:#fff;box-shadow:0 24px 80px #001f1840;font-family:inherit;}
+.currency-dialog::backdrop{background:#001f1870;backdrop-filter:blur(3px);}
+.currency-dialog h2{font-size:20px;margin:8px 0 22px;}
+.currency-close{position:absolute;inset-inline-end:10px;top:8px;border:0;background:none;min-width:36px;min-height:36px;font-size:26px;color:#52675f;cursor:pointer;}
+.currency-options{display:grid;gap:10px;}
+.currency-options button{font-family:inherit;font-size:15px;padding:16px;text-align:start;border:1px solid #dce7e1;border-radius:12px;background:#fff;cursor:pointer;}
+.currency-options button[aria-pressed=true]{border-color:#128c7e;background:#edfaf2;color:#075e54;font-weight:700;}
+.currency-dialog p,[data-currency-disclaimer]{font-size:12px;line-height:1.8;color:#52675f;}
+[data-currency-disclaimer][hidden]{display:none!important;}
+.currency-trigger:focus-visible,.currency-dialog button:focus-visible{outline:3px solid #25d366;outline-offset:3px;}
+[data-currency-slot]{display:inline-flex;align-items:center;}
+
+.price-value b [data-nabdh-sar],.plan-card .p-price b [data-nabdh-sar],.addon-price > [data-nabdh-sar]{font-size:inherit!important;font-weight:inherit!important;color:inherit!important;display:inline!important;}
+
+.prepaid-price .price-value > span > span{display:inline;}

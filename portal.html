@@ -373,6 +373,8 @@
 <style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
   @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
 </style>
+<link rel="stylesheet" href="currency.css">
+<script src="currency.js"></script>
 </head>
 <body>
 <header>
@@ -984,7 +986,8 @@
           <label data-i18n="billing.subTitle">اشتراكك</label>
         </div>
         <div id="planInfoBox" class="helper-text" style="margin-bottom:14px;" data-i18n="common.loading">جاري التحميل...</div>
-        <div id="planPicker" class="plan-picker" style="display:none;">
+        <p data-currency-disclaimer hidden></p>
+<div id="planPicker" class="plan-picker" style="display:none;">
           <button type="button" class="plan-promo" id="planPromoNote" style="display:none;"></button>
           <div class="plan-cycle" id="planCycle" role="tablist" aria-label="مدة الاشتراك"></div>
           <div class="plan-options" id="planOptions" role="radiogroup" aria-label="الباقات"></div>

@@ -123,6 +123,8 @@
   .back-link{min-width:44px; min-height:44px; display:inline-flex; align-items:center; justify-content:center;}
   :focus-visible{outline:2.5px solid rgba(18,140,126,.6); outline-offset:3px;}
 </style>
+<link rel="stylesheet" href="currency.css">
+<script src="currency.js"></script>
 </head>
 <body>
 
@@ -134,6 +136,7 @@
       </div>
       <span>بوت <span style="color:var(--wa-teal-dark)">نبضة</span></span>
     </div>
+    <span data-currency-slot></span>
     <a class="back-link" href="index.html" aria-label="الرجوع للرئيسية"><span>→</span> <span class="txt">الرجوع للرئيسية</span></a>
   </nav>
 </header>
@@ -148,7 +151,8 @@
 
 <div class="container">
   <section class="section">
-    <div class="addon-grid" id="addonGrid">
+    <p data-currency-disclaimer hidden></p>
+<div class="addon-grid" id="addonGrid">
       <div class="loading-msg">جاري تحميل الإضافات...</div>
     </div>
   </section>

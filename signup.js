@@ -290,13 +290,13 @@ if(sallaPendingId || zidPendingId){
       var total = Number(plan.monthly_price_sar);
       var big, unit, strike = '', note = '';
       if(isPrepaid){
-        big = fmtN(total); unit = t['form.oneTime'];
+        big = window.NabdhCurrency.html(total,false); unit = '<span data-currency-unit></span> ' + (ar ? '(دفعة وحدة)' : '(one-time)');
       } else if(isAnnual){
-        big = fmtN(Math.round(total / 12));
-        unit = ar ? 'ريال / شهرياً' : 'SAR / month';
-        note = (ar ? 'يُدفع ' + fmtN(total) + ' ريال سنوياً' : 'Billed ' + fmtN(total) + ' SAR/year');
+        big = window.NabdhCurrency.html(total / 12,false);
+        unit = '<span data-currency-unit></span> ' + (ar ? '/ شهرياً' : '/ month');
+        note = (ar ? 'يُدفع ' + window.NabdhCurrency.html(total,true) + ' سنوياً' : 'Billed ' + window.NabdhCurrency.html(total,true) + '/year');
       } else {
-        big = fmtN(total); unit = ar ? 'ريال / شهرياً' : 'SAR / month';
+        big = window.NabdhCurrency.html(total,false); unit = '<span data-currency-unit></span> ' + (ar ? '/ شهرياً' : '/ month');
       }
       card.innerHTML =
         (card.classList.contains('popular') ? '<span class="p-badge">' + (ar ? 'الأكثر طلباً' : 'Most popular') + '</span>' : '') +

@@ -422,6 +422,8 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
 <style>/* تحسينات الوصول والجوال (تدقيق 2026-10) */
   @media (max-width:640px){input,select,textarea{font-size:16px !important;}}
 </style>
+<link rel="stylesheet" href="currency.css">
+<script src="currency.js"></script>
 </head>
 <body>
 
@@ -1067,11 +1069,12 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <button type="button" class="currency-opt is-active" id="currencySarBtn" data-currency="SAR" data-i18n="pricing.currencySar">ريال سعودي</button>
       <button type="button" class="currency-opt" id="currencyUsdBtn" data-currency="USD" data-i18n="pricing.currencyUsd">دولار أمريكي</button>
     </div>
+    <p data-currency-disclaimer hidden></p>
     <div class="pricing-grid">
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p1n">انطلاقة</h3>
         <p class="desc" data-i18n="pricing.p1d">للمشاريع الناشئة والحسابات الشخصية</p>
-        <div class="price-value"><b class="price-num">99</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">99</b><span><span data-currency-unit>ريال</span> <span data-i18n="pricing.perMonth">/ شهرياً</span></span></div>
         <div class="price-annual-note" data-monthly="99" data-annual-monthly="83" data-annual-total="990"></div>
         <div class="price-limit" data-i18n="pricing.p1limit">حتى 1,000 رد ذكي شهرياً</div>
         <ul class="price-features">
@@ -1089,7 +1092,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
         <span class="badge-popular" data-i18n="pricing.popular">الأكثر طلباً</span>
         <h3 data-i18n="pricing.pgn">نمو</h3>
         <p class="desc" data-i18n="pricing.pgd">للمتاجر النشطة اللي تبي تكبّر تفاعلها مع عملائها</p>
-        <div class="price-value"><b class="price-num">199</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">199</b><span><span data-currency-unit>ريال</span> <span data-i18n="pricing.perMonth">/ شهرياً</span></span></div>
         <div class="price-annual-note" data-monthly="199" data-annual-monthly="166" data-annual-total="1990"></div>
         <div class="price-limit" data-i18n="pricing.pglimit">حتى 2,500 رد ذكي شهرياً</div>
         <ul class="price-features">
@@ -1106,7 +1109,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p2n">احترافي</h3>
         <p class="desc" data-i18n="pricing.p2d">للأنشطة التجارية المتنامية</p>
-        <div class="price-value"><b class="price-num">399</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">399</b><span><span data-currency-unit>ريال</span> <span data-i18n="pricing.perMonth">/ شهرياً</span></span></div>
         <div class="price-annual-note" data-monthly="399" data-annual-monthly="333" data-annual-total="3990"></div>
         <div class="price-limit" data-i18n="pricing.p2limit">حتى 5,000 رد ذكي شهرياً</div>
         <ul class="price-features">
@@ -1124,7 +1127,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       <div class="price-card reveal">
         <h3 data-i18n="pricing.p3n">مؤسسات</h3>
         <p class="desc" data-i18n="pricing.p3d">لسلاسل المتاجر والفرق الكبيرة</p>
-        <div class="price-value"><b class="price-num">999</b><span data-i18n="pricing.perMonth">ريال / شهرياً</span></div>
+        <div class="price-value"><b class="price-num">999</b><span><span data-currency-unit>ريال</span> <span data-i18n="pricing.perMonth">/ شهرياً</span></span></div>
         <div class="price-annual-note" data-monthly="999" data-annual-monthly="833" data-annual-total="9990"></div>
         <div class="price-limit" data-i18n="pricing.p3limit">حتى 12,000 رد ذكي شهرياً</div>
         <ul class="price-features">
@@ -1156,7 +1159,7 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
           </ul>
         </div>
         <div class="prepaid-price">
-          <div class="price-value"><b class="prepaid-num" data-sar="399">399</b><span data-i18n="pricing.prepaidUnit">ريال دفعة وحدة · 5,000 رد</span></div>
+          <div class="price-value"><b class="prepaid-num" data-sar="399" data-nabdh-sar="399">399</b><span><span data-currency-unit>ريال</span> <span data-i18n="pricing.prepaidUnit">دفعة وحدة · 5,000 رد</span></span></div>
           <a href="signup.html?plan=prepaid_5000" class="btn btn-prepaid btn-block" data-i18n="pricing.prepaidCta">جرّب بدون اشتراك</a>
         </div>
       </div>

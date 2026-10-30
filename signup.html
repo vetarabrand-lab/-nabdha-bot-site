@@ -210,6 +210,8 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
   @media (max-width:640px){ .plans{grid-template-columns:repeat(2,1fr); gap:10px;} .plan-card{padding:16px 11px 12px;} .plan-card .p-price b{font-size:23px;} }
   @media (max-width:340px){ .plans{grid-template-columns:1fr;} }
 </style>
+<link rel="stylesheet" href="currency.css">
+<script src="currency.js"></script>
 </head>
 <body>
 
@@ -288,7 +290,8 @@ src="https://www.facebook.com/tr?id=1044045824919449&ev=PageView&noscript=1"
       </div>
 
       <div class="form-section-title" data-i18n="form.s4">اختر باقتك</div>
-      <div class="plans" id="plansContainer">
+      <p data-currency-disclaimer hidden></p>
+<div class="plans" id="plansContainer">
         <div class="plans-loading" data-i18n="form.loadingPlans">جاري تحميل الباقات...</div>
       </div>
       <input type="hidden" id="selectedPlanId">
