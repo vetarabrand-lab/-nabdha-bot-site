@@ -620,7 +620,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<div class="addon-foot">' +
           (sallaMode
             ? '<div class="addon-price" style="font-size:13px; font-weight:700;">' + escapeHtml(sallaBundleNote(a.id)) + '</div>'
-            : '<div class="addon-price">' + Number(a.price_sar).toLocaleString('ar') + '<span>' + PT('ريال دفعة وحدة · طوال اشتراكك') + '</span></div>') +
+            : '<div class="addon-price">' + window.NabdhCurrency.html(a.price_sar,true) + '<span>' + (window.PORTAL_LANG === 'en' ? 'One-time · throughout your subscription' : 'دفعة وحدة · طوال اشتراكك') + '</span></div>') +
           (statusHtml || (isOwner ? actionHtml : '')) +
         '</div>';
       grid.appendChild(card);
@@ -1558,7 +1558,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const isPrepaid = !!(myPlan && myPlan.is_prepaid);
     const isAnnual = !!(myPlan && myPlan.billing_cycle === 'annual');
     const LANG_EN = (window.PORTAL_LANG === 'en');
-    const priceLabel = (price !== null && !isSallaMerchant()) ? (' — ' + price + (isPrepaid ? (LANG_EN ? ' SAR (one-time)' : ' ريال (دفعة وحدة)') : (isAnnual ? (LANG_EN ? ' SAR/year' : ' ريال/سنة') : (LANG_EN ? ' SAR/month' : ' ريال/شهر')))) : '';
+    const priceLabel = (price !== null && !isSallaMerchant()) ? (' — ' + window.NabdhCurrency.html(price,true) + (isPrepaid ? (LANG_EN ? ' (one-time)' : ' (دفعة وحدة)') : (isAnnual ? (LANG_EN ? '/year' : '/سنة') : (LANG_EN ? '/month' : '/شهر')))) : '';
     const endsAtLabel = myClient.current_period_ends_at ? formatDateAr(myClient.current_period_ends_at) : (LANG_EN ? 'Not active yet' : 'غير مفعّل بعد');
     const endsAtWord = isPrepaid ? (LANG_EN ? 'Credit valid until: ' : 'صلاحية الرصيد حتى: ') : (isAnnual ? (LANG_EN ? 'Annual subscription ends on: ' : 'ينتهي الاشتراك السنوي بتاريخ: ') : (LANG_EN ? 'Ends on: ' : 'ينتهي بتاريخ: '));
     const statusLabel = myClient.subscription_status === 'active' ? (LANG_EN ? '✅ Active' : '✅ فعّال') : (myClient.subscription_status === 'trial' ? (LANG_EN ? '🕐 Trial period' : '🕐 فترة تجريبية') : (LANG_EN ? '🚫 Inactive' : '🚫 غير فعّال'));
@@ -1672,12 +1672,12 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const isCurrent = myClient && p.id === myClient.plan_id;
       let priceHtml;
       if(cyc === 'annual'){
-        priceHtml = (final < price ? '<s>' + fmtSar(price) + '</s> ' : '') + '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR/year' : 'ريال/سنة') +
-          '<span class="plan-sub">' + (EN ? '≈ ' + fmtSar(Math.round(final / 12)) + ' SAR/month' : '≈ ' + fmtSar(Math.round(final / 12)) + ' ريال/شهر') + '</span>';
+        priceHtml = (final < price ? '<s>' + window.NabdhCurrency.html(price,false) + '</s> ' : '') + '<b>' + window.NabdhCurrency.html(final,false) + '</b> ' + ('<span data-currency-unit></span>' + (EN ? '/year' : '/سنة')) +
+          '<span class="plan-sub">' + (EN ? '≈ ' + window.NabdhCurrency.html(final / 12,false) + ' <span data-currency-unit></span>/month' : '≈ ' + window.NabdhCurrency.html(final / 12,false) + ' <span data-currency-unit></span>/شهر') + '</span>';
       } else if(cyc === 'prepaid'){
-        priceHtml = '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR one-time' : 'ريال دفعة واحدة');
+        priceHtml = '<b>' + window.NabdhCurrency.html(final,false) + '</b> ' + ('<span data-currency-unit></span> ' + (EN ? 'one-time' : 'دفعة واحدة'));
       } else {
-        priceHtml = '<b>' + fmtSar(final) + '</b> ' + (EN ? 'SAR/month' : 'ريال/شهر');
+        priceHtml = '<b>' + window.NabdhCurrency.html(final,false) + '</b> ' + ('<span data-currency-unit></span>' + (EN ? '/month' : '/شهر'));
       }
       const limit = cyc === 'prepaid'
         ? (fmtSar(p.prepaid_credits || 0) + (EN ? ' AI replies' : ' رد ذكي'))
@@ -1695,8 +1695,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(sel){
       const final = planFinalPrice(sel);
       const isRenew = myClient && sel.id === myClient.plan_id;
-      btn.textContent = (EN ? (isRenew ? '💳 Renew — ' : '💳 Pay ') : (isRenew ? '💳 جدّد باقتك — ' : '💳 ادفع ')) + fmtSar(final) + (EN ? ' SAR' : ' ريال') +
-        (isRenew ? '' : (EN ? ' — ' : ' — ') + planDisplayName(sel));
+      btn.innerHTML = (EN ? (isRenew ? '💳 Renew — ' : '💳 Pay ') : (isRenew ? '💳 جدّد باقتك — ' : '💳 ادفع ')) + window.NabdhCurrency.html(final,true) +
+        (isRenew ? '' : (EN ? ' — ' : ' — ') + escapeHtml(planDisplayName(sel)));
       btn.style.display = 'inline-block';
       const activeNow = myClient && myClient.subscription_status === 'active' && myClient.current_period_ends_at && new Date(myClient.current_period_ends_at) > new Date();
       note.textContent = activeNow
@@ -1760,8 +1760,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const price = (myPlan && myPlan.store_integration_addon_price_sar) || 25;
     return '<div class="alert-box error" style="display:block; margin-top:10px;">'
       + (window.PORTAL_LANG === 'en'
-        ? ('Store connection isn\'t enabled on your current plan (' + escapeHtml(PT((myPlan && myPlan.name_ar) || 'الأساسية')) + '). Enable it for an extra ' + price + ' SAR/month, or upgrade to the Growth plan or higher to get it for free.')
-        : ('ربط المتجر غير مفعّل في باقتك الحالية (' + escapeHtml((myPlan && myPlan.name_ar) || 'الأساسية') + '). فعّله مقابل ' + price + ' ريال/شهر إضافية، أو رقّي لباقة نمو وما فوق ليكون مجانياً.'))
+        ? ('Store connection isn\'t enabled on your current plan (' + escapeHtml(PT((myPlan && myPlan.name_ar) || 'الأساسية')) + '). Enable it for an extra ' + window.NabdhCurrency.html(price,true) + '/month, or upgrade to the Growth plan or higher to get it for free.')
+        : ('ربط المتجر غير مفعّل في باقتك الحالية (' + escapeHtml((myPlan && myPlan.name_ar) || 'الأساسية') + '). فعّله مقابل ' + window.NabdhCurrency.html(price,true) + '/شهر إضافية، أو رقّي لباقة نمو وما فوق ليكون مجانياً.'))
       + '</div>'
       + '<button class="modal-cancel" id="storeAddonSupportBtn_' + suffix + '" style="margin-top:8px;">' + PT('تواصل مع الدعم للتفعيل') + '</button>';
   }
@@ -2254,7 +2254,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
           ? ((window.PORTAL_LANG === 'en')
               ? 'The Telegram channel add-on isn\'t enabled on your account yet. Get it in Salla as part of the Channels bundle: Salla dashboard → Apps → Nabda.'
               : 'إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من سلة ضمن "حزمة القنوات": لوحة سلة ← التطبيقات ← نبضة.')
-          : PT('إضافة قناة تليجرام غير مفعّلة في حسابك بعد. فعّلها من تبويب "الإضافات" (399 ريال دفعة وحدة وتبقى طوال اشتراكك، بدون رسوم شهرية).');
+          : ((window.PORTAL_LANG === 'en') ? 'The Telegram add-on is not active. Activate it from Add-ons (' + window.NabdhCurrency.html(399,true) + ' one-time, throughout your subscription).' : 'إضافة قناة تليجرام غير مفعّلة. فعّلها من تبويب الإضافات (' + window.NabdhCurrency.html(399,true) + ' دفعة وحدة طوال اشتراكك).');
       } else {
         lockedHint.style.display = 'none';
       }
@@ -3993,8 +3993,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(pending && pending.length > 0){
       pendingBox.innerHTML = pending.map(function(r){
         return (window.PORTAL_LANG === 'en')
-          ? ('<div class="cost-note">⏳ Pending request: ' + r.credits + ' message(s) for ' + r.price_sar + ' SAR — awaiting payment confirmation.</div>')
-          : ('<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + r.price_sar + ' ريال — بانتظار تأكيد الدفع.</div>');
+          ? ('<div class="cost-note">⏳ Pending request: ' + r.credits + ' message(s) for ' + window.NabdhCurrency.html(r.price_sar,true) + ' — awaiting payment confirmation.</div>')
+          : ('<div class="cost-note">⏳ طلب معلّق: ' + r.credits + ' رسالة مقابل ' + window.NabdhCurrency.html(r.price_sar,true) + ' — بانتظار تأكيد الدفع.</div>');
       }).join('');
     } else {
       pendingBox.innerHTML = '';
@@ -4018,9 +4018,9 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       const row = document.createElement('div');
       row.className = 'topup-row';
       row.innerHTML = (window.PORTAL_LANG === 'en')
-        ? ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' extra messages — <b>' + p.price_sar + ' SAR</b> (one-time)</span>' +
+        ? ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' extra messages — <b>' + window.NabdhCurrency.html(p.price_sar,true) + '</b> (one-time)</span>' +
            '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 Contact Us</button>')
-        : ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + p.price_sar + ' ريال</b> (لمرة واحدة)</span>' +
+        : ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + window.NabdhCurrency.html(p.price_sar,true) + '</b> (لمرة واحدة)</span>' +
            '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 تواصل معنا</button>');
       box.appendChild(row);
     });

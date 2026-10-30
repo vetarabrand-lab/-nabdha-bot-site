@@ -1,0 +1,52 @@
+const {chromium}=require('playwright');
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
+(async()=>{
+ const browser=await chromium.launch({headless:true});
+ const page=await browser.newPage({viewport:{width:1280,height:900}});
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/*',route=>{
+   const url=new URL(route.request().url());
+   if(url.hostname!=='currency.test')return route.abort();
+   const file=path.basename(url.pathname)||'index.html';
+   if(file==='index.html')return route.fulfill({contentType:'text/html',body:fs.readFileSync(file,'utf8').replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace('</body>','<script src="currency.js"></script><script src="index-pricing-toggle.js"></script><script src="index-i18n.js"></script></body>')});
+   if(['currency.js','index-pricing-toggle.js','index-i18n.js','currency.css'].includes(file))return route.fulfill({contentType:file.endsWith('.js')?'application/javascript':'text/css',body:fs.readFileSync(file,'utf8')});
+   return route.abort();
+ });
+ await page.goto('https://currency.test/index.html');
+ assert.equal(await page.locator('.price-num').first().textContent(),'99');
+ await page.locator('.currency-trigger').first().click();
+ await page.locator('[data-value=USD]').click();
+ await page.waitForFunction(()=>document.querySelector('.price-num').textContent==='26.40');
+ assert.equal(await page.locator('.prepaid-num').textContent(),'106.40');
+ await page.locator('#billingToggleBtn').click();
+ assert.equal(await page.locator('.price-num').first().textContent(),'22.00');
+ assert.match(await page.locator('.price-annual-note').first().textContent(),/264.00/);
+ assert.match(await page.locator('.price-limit').first().textContent(),/1,000/);
+ await page.locator('#langBtn').click();
+ await page.waitForFunction(()=>document.querySelector('.price-annual-note').textContent.includes('USD'));
+ for(let i=0;i<3;i++){await page.evaluate(()=>NabdhCurrency.set('SAR'));await page.evaluate(()=>NabdhCurrency.set('USD'));}
+ assert.match(await page.locator('.price-annual-note').first().textContent(),/264.00/);
+ await page.reload();
+ await page.waitForFunction(()=>document.querySelector('.price-num').textContent==='26.40');
+ assert.equal(await page.evaluate(()=>NabdhCurrency.number(0)),'0.00');
+ // Dynamic service prices added after initial page load are converted exactly once.
+ await page.evaluate(()=>{const el=document.createElement('div');el.id='service-test';el.innerHTML=NabdhCurrency.html(199,true);document.body.append(el);});
+ await page.waitForFunction(()=>document.getElementById('service-test').textContent==='53.07 USD');
+ await page.locator('#currencySarBtn').click();
+ assert.equal(await page.locator('.price-num').first().textContent(),'99');
+ await page.setViewportSize({width:390,height:844});
+ await page.locator('#burger').click();
+ await page.locator('#mobileMenu .currency-trigger').click();
+ assert.equal(await page.locator('.currency-dialog').isVisible(),true);
+ assert.ok(await page.locator('.currency-dialog').evaluate(e=>e.getBoundingClientRect().right<=innerWidth));
+ assert.ok(await page.locator('.currency-dialog').evaluate(e=>e.getBoundingClientRect().left>5));
+ await page.screenshot({path:'../currency-mobile.png'});
+ await page.keyboard.press('Escape');
+ assert.equal(await page.locator('.currency-dialog').isVisible(),false);
+ await page.setViewportSize({width:1280,height:900});
+ await page.locator('.currency-trigger').first().click();
+ await page.screenshot({path:'../currency-desktop.png'});
+ assert.deepEqual(errors,[]);
+ await browser.close();
+ console.log('PASS: SAR/USD monthly, annual, prepaid, dynamic service prices, zero, rounding, repeated toggles, persistence, language, mobile dialog, Escape, unchanged reply quantities.');
+})().catch(e=>{console.error(e);process.exit(1)});
