@@ -208,6 +208,13 @@
   .staff-permission-details summary{cursor:pointer;font-size:13px;color:#075E54;font-weight:700;}
   .permission-save-status{font-size:12px;min-height:20px;margin-top:6px;color:#075E54;}
   @media(max-width:520px){.permission-grid{grid-template-columns:1fr;}}
+  .shipment-soon-card{max-width:720px;margin:24px auto;padding:32px 24px;text-align:center;border:1px solid var(--border);border-radius:20px;background:#fff;}
+  .shipment-soon-icon{font-size:44px;margin-bottom:16px;}
+  .shipment-soon-card h2{margin:16px 0 12px;font-size:24px;}
+  .shipment-soon-card p{color:var(--muted);line-height:1.9;}
+  .shipment-soon-card .cost-note{margin:24px 0 12px;}
+  .shipment-soon-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:#e8f7ef;color:#075e54;white-space:nowrap;}
+  .tabs .tab-btn[data-tab="shipments"]::before{content:'🚚';}
   .staff-perms, .invite-perms{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px;}
   .staff-perm-chip{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; color:var(--ink); background:#fff; border:1px solid var(--border); border-radius:100px; padding:5px 11px; cursor:pointer; user-select:none;}
   .staff-perm-chip input[type="checkbox"]{margin:0; accent-color:var(--wa-teal-dark); cursor:pointer;}
@@ -471,6 +478,7 @@
       <button class="tab-btn" data-tab="inbox" data-i18n="nav.conversations">المحادثات</button>
       <button class="tab-btn" data-tab="contacts" data-i18n="nav.contacts" style="display:none">الأرقام</button>
       <button class="tab-btn" data-tab="orders" data-i18n="nav.orders">الطلبات</button>
+      <button class="tab-btn" data-tab="shipments" style="display:none;"><span data-i18n="nav.shipments">تتبع الشحنات</span> <span class="shipment-soon-badge" data-i18n="shipments.soon">قريبًا</span></button>
       <button class="tab-btn" data-tab="support" data-i18n="nav.support">الدعم الفني</button>
       <span class="nav-sec" data-i18n="nav.groupGrowth">النمو والتحليل</span>
       <button class="tab-btn" data-tab="analytics" data-i18n="nav.analytics">التحليلات</button>
@@ -670,6 +678,16 @@
       <div class="cost-note" data-i18n="orders.desc">📦 جدول موحّد لطلباتك من متجرك المربوط (زد أو سلة) — رقم الطلب، العميل، الحالة، والقيمة، في مكان واحد.</div>
       <div id="ordersContent">
         <div class="conv-empty" data-i18n="orders.loading">جاري تحميل الطلبات...</div>
+      </div>
+    </div>
+    <div class="panel" id="panelShipments">
+      <div class="shipment-soon-card">
+        <div class="shipment-soon-icon" aria-hidden="true">🚚</div>
+        <span class="shipment-soon-badge" data-i18n="shipments.soon">قريبًا</span>
+        <h2 data-i18n="nav.shipments">تتبع الشحنات</h2>
+        <p data-i18n="shipments.desc">تابع شحنات متجرك المرتبط بسلة أو زد من مكان واحد، مع حالة الشحنة ورقم التتبع وشركة الشحن.</p>
+        <div class="cost-note" data-i18n="shipments.plan">ستتوفر الخدمة لباقة نمو وما فوق عند إطلاقها.</div>
+        <p class="helper-text" data-i18n="shipments.pending">القسم قيد التجهيز، ولا يعرض بيانات شحنات فعلية حاليًا.</p>
       </div>
     </div>
     <div class="panel" id="panelCarts">
