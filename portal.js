@@ -1789,21 +1789,63 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
             : PT('اكتمل الاستيراد'))
       : PT('لم تستورد عملاء متجرك بعد.');
 
+    const waNumber = String(myClient.whatsapp_display_number || '').replace(/[^0-9]/g, '');
+    const inviteText = PT('مرحباً! تقدر تتواصل معنا على واتساب مباشرة لأي استفسار عن طلبك أو منتجاتنا، وتوصلك عروضنا أول بأول. ابدأ المحادثة من هنا:');
+    const waLink = waNumber ? ('https://wa.me/' + waNumber + '?text=' + encodeURIComponent(PT('مرحباً، أبغى أتابع معكم على واتساب'))) : '';
+    const smsText = waLink ? (inviteText + ' ' + waLink) : '';
+
     root.innerHTML = '<div class="settings-card" style="margin-bottom:16px;">'
       + '<div class="field" style="margin-bottom:10px;"><label>🗂️ ' + PT('عملاء متجرك (سلة أو زد)') + '</label></div>'
-      + '<div class="helper-text" style="margin-bottom:10px;">' + PT('اسحب عملاءك القدامى من متجرك لتبحث عنهم وتراجع بياناتهم داخل نبضة. الاستيراد لا يرسل أي رسالة.') + '</div>'
+      + '<div class="helper-text" style="margin-bottom:10px;">' + PT('اسحب عملاءك القدامى من متجرك لتبحث عنهم وتراجع بياناتهم داخل نبضة. الاستيراد لا يرسل أي رسالة لأحد.') + '</div>'
       + '<div style="display:flex; gap:18px; flex-wrap:wrap; margin-bottom:12px;">'
         + '<div><div style="font-size:20px; font-weight:800;">' + imported + '</div><div class="helper-text">' + PT('عميل مستورد') + '</div></div>'
-        + '<div><div style="font-size:20px; font-weight:800; color:var(--wa-green-dark);">' + optedIn + '</div><div class="helper-text">' + PT('وافق على استقبال رسائلك') + '</div></div>'
+        + '<div><div style="font-size:20px; font-weight:800; color:var(--wa-green-dark);">' + optedIn + '</div><div class="helper-text">' + PT('وافقوا صراحةً') + '</div></div>'
       + '</div>'
       + '<div class="helper-text" style="margin-bottom:10px;">' + statusLine + '</div>'
       + (isOwner ? '<button class="primary-btn" id="importStoreCustomersBtn" style="width:auto; padding:12px 26px;">' + PT('استيراد عملاء المتجر') + '</button>' : '')
       + '<div class="alert-box" id="storeCustomersMsg" style="display:none; margin-top:12px;"></div>'
-      + '<div class="cost-note" style="margin-top:14px;">⚠️ ' + PT('الأرقام المستوردة للعرض والبحث فقط. ميتا تمنع إرسال حملات لمن لم يوافق مسبقاً، ومخالفة ذلك تخفض جودة رقمك ثم توقفه. يصبح العميل مؤهلاً للحملات تلقائياً أول ما يراسل البوت.') + '</div>'
-      + '</div>';
+
+      + '<div style="margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">'
+      + '<div class="field" style="margin-bottom:8px;"><label>' + PT('كيف ترسل حملات لعملائك القدامى؟') + '</label></div>'
+      + '<div class="helper-text" style="margin-bottom:14px;">' + PT('واتساب يمنع إرسال حملة لأي رقم لم يوافق مسبقاً على استقبال رسائلك. وهذا ليس قيداً من نبضة بل قاعدة من ميتا، ومخالفتها تخفض جودة رقمك ثم توقفه نهائياً. الخطوات الثلاث التالية تحوّل عميلك القديم إلى مؤهل بطريقة نظامية.') + '</div>'
+
+      + '<div style="display:flex; gap:10px; margin-bottom:12px;"><div style="flex:0 0 26px; height:26px; border-radius:50%; background:var(--wa-green-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">1</div>'
+      + '<div><div style="font-weight:700;">' + PT('استورد عملاءك') + '</div><div class="helper-text">' + PT('من الزر أعلاه. تظهر بياناتهم عندك للبحث والمراجعة فقط، ولا تُرسل لهم أي رسالة.') + '</div></div></div>'
+
+      + '<div style="display:flex; gap:10px; margin-bottom:12px;"><div style="flex:0 0 26px; height:26px; border-radius:50%; background:var(--wa-green-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">2</div>'
+      + '<div><div style="font-weight:700;">' + PT('ادعُهم ليبدأوا المحادثة معك') + '</div><div class="helper-text">' + PT('انشر رابط واتساب أدناه في متجرك وفواتيرك وبريد تأكيد الطلب وحساباتك في التواصل، أو أرسله لعملائك القدامى برسالة نصية أو بريد — وهي قنوات وافقوا عليها أصلاً عند الشراء منك.') + '</div></div></div>'
+
+      + '<div style="display:flex; gap:10px; margin-bottom:16px;"><div style="flex:0 0 26px; height:26px; border-radius:50%; background:var(--wa-green-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px;">3</div>'
+      + '<div><div style="font-weight:700;">' + PT('يصير مؤهلاً تلقائياً') + '</div><div class="helper-text">' + PT('أول ما يرسل لك العميل رسالة واحدة، يدخل قائمة المؤهلين للحملات بدون أي خطوة منك. ومن لم يراسلك ترفض نبضة إرساله حمايةً لرقمك.') + '</div></div></div>'
+
+      + (waNumber
+          ? ('<div class="field"><label>' + PT('رابط واتساب الخاص بك') + '</label>'
+             + '<div style="display:flex; gap:8px; flex-wrap:wrap;">'
+             + '<input type="text" id="waInviteLink" readonly dir="ltr" value="' + escapeHtml(waLink) + '" style="flex:1; min-width:220px;">'
+             + '<button class="primary-btn" id="waInviteCopyBtn" style="width:auto; padding:10px 18px;">' + PT('نسخ') + '</button>'
+             + '</div></div>'
+             + '<div class="field"><label>' + PT('نص دعوة جاهز (رسالة نصية أو بريد)') + '</label>'
+             + '<textarea id="waInviteText" rows="3" readonly>' + escapeHtml(smsText) + '</textarea>'
+             + '<button class="primary-btn" id="waInviteTextCopyBtn" style="width:auto; padding:10px 18px; margin-top:8px;">' + PT('نسخ النص') + '</button></div>'
+             + '<div class="field"><label>' + PT('رمز QR للطباعة على الفواتير والمتجر') + '</label>'
+             + '<img id="waInviteQr" alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(waLink) + '" style="width:160px; height:160px; border:1px solid var(--border); border-radius:10px; background:#fff; padding:6px;"></div>')
+          : ('<div class="helper-text">' + PT('اربط رقم واتساب أعمال من «قنوات الربط» ليظهر لك هنا رابط الدعوة ورمز QR جاهزين.') + '</div>'))
+      + '</div></div>';
 
     const btn = document.getElementById('importStoreCustomersBtn');
     if(btn){ btn.addEventListener('click', runStoreCustomersImport); }
+    const copyPairs = [['waInviteCopyBtn','waInviteLink'], ['waInviteTextCopyBtn','waInviteText']];
+    copyPairs.forEach(function(pair){
+      const b = document.getElementById(pair[0]);
+      const field = document.getElementById(pair[1]);
+      if(!b || !field) return;
+      b.addEventListener('click', async function(){
+        try{ await navigator.clipboard.writeText(field.value); } catch(e){ field.select(); }
+        const original = b.textContent;
+        b.textContent = PT('✓ تم النسخ');
+        setTimeout(function(){ b.textContent = original; }, 1500);
+      });
+    });
   }
   async function runStoreCustomersImport(){
     if(storeCustomersBusy || !myClient || !isOwner) return;
