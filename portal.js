@@ -1830,10 +1830,26 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
              + '<div class="field"><label>' + PT('رمز QR للطباعة على الفواتير والمتجر') + '</label>'
              + '<img id="waInviteQr" alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=' + encodeURIComponent(waLink) + '" style="width:160px; height:160px; border:1px solid var(--border); border-radius:10px; background:#fff; padding:6px;"></div>')
           : ('<div class="helper-text">' + PT('اربط رقم واتساب أعمال من «قنوات الربط» ليظهر لك هنا رابط الدعوة ورمز QR جاهزين.') + '</div>'))
-      + '</div></div>';
+      + '</div>'
+      + '<div style="margin-top:22px; padding-top:18px; border-top:1px solid var(--border);">'
+        + '<div class="field" style="margin-bottom:8px;"><label>' + PT('قائمة العملاء المستوردين') + '</label></div>'
+        + '<input type="text" id="storeCustomersSearch" placeholder="' + PT('ابحث بالاسم أو الرقم أو البريد') + '" style="margin-bottom:10px;">'
+        + '<div id="storeCustomersList"><div class="conv-empty">' + PT('جاري التحميل...') + '</div></div>'
+      + '</div>'
+      + '</div>';
 
     const btn = document.getElementById('importStoreCustomersBtn');
     if(btn){ btn.addEventListener('click', runStoreCustomersImport); }
+    const search = document.getElementById('storeCustomersSearch');
+    if(search){
+      let t;
+      search.addEventListener('input', function(){
+        clearTimeout(t);
+        const v = this.value;
+        t = setTimeout(function(){ loadStoreCustomersList(v); }, 300);
+      });
+    }
+    loadStoreCustomersList('');
     const copyPairs = [['waInviteCopyBtn','waInviteLink'], ['waInviteTextCopyBtn','waInviteText']];
     copyPairs.forEach(function(pair){
       const b = document.getElementById(pair[0]);
@@ -1847,6 +1863,74 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
     });
   }
+  // قائمة العملاء المستوردين مع حالة الأهلية للحملات.
+  // «مؤهل» تعني أن نبضة ستسمح بإرساله: إما راسل البوت بنفسه أو وافق صراحةً.
+  async function loadStoreCustomersList(term){
+    const box = document.getElementById('storeCustomersList');
+    if(!box || !myClient) return;
+    const q = String(term || '').trim();
+    let query = supabaseClient.from('store_customers')
+      .select('id,full_name,phone,email,city,opt_in_status,orders_count')
+      .eq('client_id', myClient.id);
+    if(q){
+      const safe = q.replace(/[,%]/g, ' ');
+      query = query.or('full_name.ilike.%' + safe + '%,phone.ilike.%' + safe + '%,email.ilike.%' + safe + '%');
+    }
+    const { data, error } = await query.order('full_name', { ascending: true }).limit(100);
+    if(error){ box.innerHTML = '<div class="conv-empty">' + PT('تعذّر تحميل القائمة.') + '</div>'; return; }
+    if(!data || !data.length){
+      box.innerHTML = '<div class="conv-empty">' + (q ? PT('لا توجد نتائج مطابقة.') : PT('لم تستورد عملاء بعد. اضغط «استيراد عملاء المتجر» فوق.')) + '</div>';
+      return;
+    }
+    // من راسل البوت يصير مؤهلاً تلقائياً — نجلب أرقامهم مرة واحدة
+    const inbound = new Set();
+    const { data: msgs } = await supabaseClient.from('whatsapp_messages_log')
+      .select('customer_phone').eq('client_id', myClient.id).not('inbound_message', 'is', null).limit(2000);
+    (msgs || []).forEach(function(m){ if(m.customer_phone) inbound.add(String(m.customer_phone).replace(/[^0-9]/g,'')); });
+
+    let html = '<div class="table-wrap"><table style="width:100%; border-collapse:collapse;">'
+      + '<thead><tr style="text-align:right; border-bottom:1.5px solid var(--border);">'
+      + '<th style="padding:10px 8px;">' + PT('الاسم') + '</th>'
+      + '<th style="padding:10px 8px;">' + PT('الجوال') + '</th>'
+      + '<th style="padding:10px 8px;">' + PT('البريد') + '</th>'
+      + '<th style="padding:10px 8px;">' + PT('المدينة') + '</th>'
+      + '<th style="padding:10px 8px;">' + PT('الحملات') + '</th>'
+      + '</tr></thead><tbody>';
+    data.forEach(function(c){
+      const digits = String(c.phone || '').replace(/[^0-9]/g,'');
+      const messaged = digits && inbound.has(digits);
+      const granted = c.opt_in_status === 'granted';
+      let badge;
+      if(messaged) badge = '<span class="status-badge telegram-connected">' + PT('مؤهل — راسلك') + '</span>';
+      else if(granted) badge = '<span class="status-badge telegram-connected">' + PT('مؤهل — وافق') + '</span>';
+      else badge = '<span class="status-badge telegram-disconnected">' + PT('غير مؤهل') + '</span>'
+        + (isOwner ? ' <button class="modal-cancel" data-optin="' + c.id + '" style="padding:4px 10px; font-size:11.5px; margin-right:6px;">' + PT('وافق صراحةً') + '</button>' : '');
+      html += '<tr style="border-bottom:1px solid var(--border);">'
+        + '<td style="padding:10px 8px;">' + escapeHtml(c.full_name || '—') + '</td>'
+        + '<td style="padding:10px 8px;"><bdi dir="ltr">' + escapeHtml(c.phone || '—') + '</bdi></td>'
+        + '<td style="padding:10px 8px;">' + escapeHtml(c.email || '—') + '</td>'
+        + '<td style="padding:10px 8px;">' + escapeHtml(c.city || '—') + '</td>'
+        + '<td style="padding:10px 8px;">' + badge + '</td>'
+        + '</tr>';
+    });
+    html += '</tbody></table></div>'
+      + '<div class="helper-text" style="margin-top:8px;">' + PT('يظهر حتى 100 عميل. استخدم البحث للوصول لعميل معيّن.') + '</div>';
+    box.innerHTML = html;
+
+    box.querySelectorAll('button[data-optin]').forEach(function(b){
+      b.addEventListener('click', async function(){
+        const ok = window.confirm(PT('أؤكد أن هذا العميل وافق صراحةً على استقبال رسائل واتساب من متجري. الإرسال بدون موافقة حقيقية يعرّض رقمك للحظر من ميتا.'));
+        if(!ok) return;
+        b.disabled = true;
+        const { error: upErr } = await supabaseClient.from('store_customers')
+          .update({ opt_in_status: 'granted', opt_in_source: 'merchant_manual', opt_in_at: new Date().toISOString() })
+          .eq('id', b.getAttribute('data-optin')).eq('client_id', myClient.id);
+        if(upErr){ b.disabled = false; alert(PT('تعذّر الحفظ، حاول مرة ثانية.')); return; }
+        renderStoreCustomersCard();
+      });
+    });
+  }
+
   async function runStoreCustomersImport(){
     if(storeCustomersBusy || !myClient || !isOwner) return;
     storeCustomersBusy = true;
