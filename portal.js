@@ -3084,8 +3084,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const welcome = document.getElementById('settingWelcome').value.trim();
     const ownerPhoneRaw = document.getElementById('settingOwnerPhone').value.trim();
     const ownerPhoneError = document.getElementById('ownerPhoneError');
-    // تحقق بسيط فقط (مو حظر صارم) — رقم جوال سعودي بأي صيغة شائعة: 05xxxxxxxx / 5xxxxxxxx / 9665xxxxxxxx / +9665xxxxxxxx
-    const phoneLooksValid = ownerPhoneRaw === '' || /^(\+?966|0)?5\d{8}$/.test(ownerPhoneRaw.replace(/[\s-]/g, ''));
+    // تحقق بسيط فقط (مو حظر صارم) — أي رقم دولي بصيغة E.164: من 8 إلى 15 رقماً مع مفتاح الدولة.
+    // نبضة تخدم تجاراً خارج السعودية، فأي تقييد على مفتاح 966 يمنعهم من حفظ رقمهم أصلاً.
+    const ownerPhoneDigits = ownerPhoneRaw.replace(/[^0-9]/g, '');
+    const phoneLooksValid = ownerPhoneRaw === '' || (ownerPhoneDigits.length >= 8 && ownerPhoneDigits.length <= 15);
     if(!phoneLooksValid){
       ownerPhoneError.style.display = 'block';
       return;
