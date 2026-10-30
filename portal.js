@@ -3084,20 +3084,24 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const welcome = document.getElementById('settingWelcome').value.trim();
     const ownerPhoneRaw = document.getElementById('settingOwnerPhone').value.trim();
     const ownerPhoneError = document.getElementById('ownerPhoneError');
-    // تحقق بسيط فقط (مو حظر صارم) — أي رقم دولي بصيغة E.164: من 8 إلى 15 رقماً مع مفتاح الدولة.
-    // نبضة تخدم تجاراً خارج السعودية، فأي تقييد على مفتاح 966 يمنعهم من حفظ رقمهم أصلاً.
-    const ownerPhoneDigits = ownerPhoneRaw.replace(/[^0-9]/g, '');
-    const phoneLooksValid = ownerPhoneRaw === '' || (ownerPhoneDigits.length >= 8 && ownerPhoneDigits.length <= 15);
+    // رقم دولي بصيغة E.164 مع مفتاح الدولة إجبارياً.
+    // نشترط مفتاح الدولة لأن الدوال المجدولة ترسل للرقم كما هو؛ ورقم محلي يبدأ بصفر
+    // (مثل 01012345678 المصري) قد يُفسَّر خطأً كرقم سعودي فتصل رسالة التاجر لشخص غريب.
+    let ownerPhoneDigits = ownerPhoneRaw.replace(/[^0-9]/g, '');
+    if(ownerPhoneDigits.startsWith('00')) ownerPhoneDigits = ownerPhoneDigits.slice(2);
+    const phoneLooksValid = ownerPhoneRaw === ''
+      || (!ownerPhoneDigits.startsWith('0') && ownerPhoneDigits.length >= 8 && ownerPhoneDigits.length <= 15);
     if(!phoneLooksValid){
       ownerPhoneError.style.display = 'block';
       return;
     }
     ownerPhoneError.style.display = 'none';
+    const ownerPhoneNormalized = ownerPhoneDigits;
     const webhookUrlRaw = document.getElementById('settingWebhookUrl').value.trim();
     const status = document.getElementById('saveStatus');
     const { error } = await supabaseClient
       .from('clients')
-      .update({ system_prompt: prompt, welcome_message: welcome, owner_phone: ownerPhoneRaw || null, zapier_webhook_url: webhookUrlRaw || null })
+      .update({ system_prompt: prompt, welcome_message: welcome, owner_phone: ownerPhoneNormalized || null, zapier_webhook_url: webhookUrlRaw || null })
       .eq('id', myClient.id);
     if(!error){
       status.classList.add('show');
