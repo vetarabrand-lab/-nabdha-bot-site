@@ -137,11 +137,11 @@ Deno.serve(async (req: Request) => {
     if (!authorized) {
       const { data: staffRow } = await supabaseAdmin
         .from("client_staff")
-        .select("id")
+        .select("id, permissions")
         .eq("client_id", clientId)
         .eq("user_id", userId)
         .maybeSingle();
-      authorized = !!staffRow;
+      authorized = !!staffRow && (staffRow.permissions?.orders === undefined || staffRow.permissions.orders === true);
     }
     if (!authorized) return json({ error: "forbidden" }, 403);
 
