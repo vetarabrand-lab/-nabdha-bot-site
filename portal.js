@@ -1554,6 +1554,32 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     var mg = document.getElementById('v2ManagePlan'); if(mg){ mg.style.display = isOwner ? '' : 'none'; }
     v2RenderPromos(pct, allowance, used);
   }
+  /* ---------- قنوات الربط: شارة الحالة على كل بطاقة + ملخص أعلى الصفحة ---------- */
+  (function setupChannelBadges(){
+    var panel = document.getElementById('panelChannels');
+    if(!panel){ return; }
+    var map = { wa: 'waAppStatus', ig: 'instagramStatus', tg: 'telegramStatus', salla: 'sallaStatus', zid: 'zidStatus', woo: 'wooStatus', shopify: 'shopifyStatus' };
+    var scheduled = false;
+    function refresh(){
+      scheduled = false;
+      var on = 0, total = 0;
+      Object.keys(map).forEach(function(k){
+        var box = document.getElementById(map[k]);
+        var badge = document.getElementById('chBadge_' + k);
+        if(!box || !badge){ return; }
+        total++;
+        var connected = !!box.querySelector('.status-badge[class*="-connected"]');
+        var soon = k === 'zid' && !connected && document.getElementById('zidCard') && document.getElementById('zidCard').classList.contains('coming-soon');
+        if(connected){ on++; }
+        badge.className = 'ch-badge' + (connected ? ' on' : '');
+        badge.textContent = connected ? V2L('مربوط', 'Connected') : (soon ? '' : V2L('غير مربوط', 'Not connected'));
+      });
+      var sum = document.getElementById('chSummary');
+      if(sum){ sum.className = 'ch-summary' + (on ? ' has' : ''); sum.innerHTML = '<i></i>' + V2L(on + ' من ' + total + ' مربوطة', on + ' of ' + total + ' connected'); }
+    }
+    new MutationObserver(function(){ if(!scheduled){ scheduled = true; setTimeout(refresh, 60); } }).observe(panel, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    refresh();
+  })();
   /* ---------- بوسترات إعلانية بجانب فلتر الأيام: ربط المتجر + شحن الرصيد ---------- */
   function promoDismissed(k){ try{ var t = Number(localStorage.getItem('nabda_promo_' + k + '_' + (myClient && myClient.id)) || 0); return t && (Date.now() - t) < 7 * 86400000; }catch(e){ return false; } }
   function promoDismiss(k){ try{ localStorage.setItem('nabda_promo_' + k + '_' + (myClient && myClient.id), String(Date.now())); }catch(e){} }
