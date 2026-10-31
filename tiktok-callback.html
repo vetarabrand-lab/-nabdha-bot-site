@@ -22,8 +22,10 @@
 <main class="card">
   <div class="ico" id="ico">✓</div>
   <h1 id="title">تم استلام طلب الربط</h1>
+  <h1 id="titleEn" dir="ltr" style="font-size:16px;color:var(--muted);margin-bottom:12px">TikTok connection request received</h1>
   <p id="msg">يمكنك إغلاق هذه الصفحة والعودة إلى لوحة التحكم في نبضة.</p>
-  <a class="btn" href="/portal.html">العودة إلى لوحة التحكم</a>
+  <p id="msgEn" dir="ltr" style="margin-top:-8px">Request received. You can close this page and return to your Nabdh dashboard.</p>
+  <a class="btn" href="/portal.html">العودة إلى لوحة التحكم · Back to dashboard</a>
   <div class="brand">نبضة · nabdh.online</div>
 </main>
 <script>
@@ -34,6 +36,8 @@
       document.getElementById('ico').textContent = '!';
       document.getElementById('title').textContent = 'لم يكتمل الربط';
       document.getElementById('msg').textContent = 'تم إلغاء الربط أو رفضه. يمكنك المحاولة مرة أخرى من لوحة التحكم.';
+      document.getElementById('titleEn').textContent = 'Connection was not completed';
+      document.getElementById('msgEn').textContent = 'The connection was cancelled or denied. You can try again from your dashboard.';
     }
     // إزالة المعاملات من شريط العنوان (code/state) بعد القراءة
     if (location.search) history.replaceState(null, '', location.pathname);
