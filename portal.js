@@ -923,7 +923,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled, meta_payment_issue_at')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -938,7 +938,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled, meta_payment_issue_at')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;
@@ -1329,14 +1329,22 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     var countEl = document.getElementById('homeAttnCount');
     var cnt = document.getElementById('v2TabCnt');
     var waiting = items.filter(function(x){ return x.r.rank === 0; }).length;
-    if(countEl){ countEl.hidden = !items.length; countEl.textContent = items.length; }
+    // ميتا رفضت الإرسال بسبب الدفع (131042) — التنبيه يختفي تلقائياً بعد أول رسالة تصل بنجاح
+    var metaPay = myClient && myClient.meta_payment_issue_at;
+    var metaHtml = metaPay ? ('<a class="v2-row" href="https://business.facebook.com/wa/manage/home/" target="_blank" rel="noopener"><span class="v2-sev" style="background:#C0362C"></span>' +
+      '<span class="v2-row-mid"><b>' + V2L('ميتا أوقفت ردود البوت: أضف وسيلة دفع', 'Meta paused your bot replies: add a payment method') + '</b><span>' +
+      V2L('ليس خللاً في نبضة. افتح WhatsApp Manager ← الفوترة ← إضافة وسيلة دفع، والبوت يرجع يرد تلقائياً.', 'Not a Nabdh issue. Open WhatsApp Manager → Billing → Add payment method, and replies resume automatically.') +
+      '</span></span><span class="v2-row-end"><span class="v2-pill v2-p-bad">' + V2L('عاجل', 'Urgent') + '</span>' + v2Ago(metaPay) + '</span></a>') : '';
+    var attnTotal = items.length + (metaPay ? 1 : 0);
+    if(countEl){ countEl.hidden = !attnTotal; countEl.textContent = attnTotal; }
     if(cnt){ cnt.hidden = !waiting; cnt.textContent = waiting; }
+    if(!items.length && metaHtml){ box.innerHTML = metaHtml; return; }
     if(!items.length){
       box.innerHTML = '<div class="v2-empty"><span class="v2-empty-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><span><b>' +
         V2L('كل شيء تحت السيطرة', 'All caught up') + '</b>' + V2L('ما فيه محادثات تنتظر ردك أو شكاوى جديدة.', 'No conversations are waiting for you and no new complaints.') + '</span></div>';
       return;
     }
-    box.innerHTML = items.slice(0, 6).map(function(x){
+    box.innerHTML = metaHtml + items.slice(0, metaPay ? 5 : 6).map(function(x){
       return '<button type="button" class="v2-row" data-phone="' + escapeHtml(x.phone) + '"><span class="v2-sev" style="background:' + x.r.sev + '"></span>' +
         '<span class="v2-row-mid"><b>' + escapeHtml(displayConvName(x.conv, x.phone)) + '</b><span>' + escapeHtml(x.last ? x.last.text : '') + '</span></span>' +
         '<span class="v2-row-end"><span class="v2-pill ' + x.r.pill[0] + '">' + x.r.pill[1] + '</span>' + v2Ago(x.conv.lastAt) + '</span></button>';
