@@ -1327,7 +1327,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(t < start || t >= end){ return; }
       var slot = out[idx[v2DayKey(t)]]; if(!slot){ return; }
       if(r.inbound_message){ slot.inMsgs++; slot.phones[r.customer_phone] = 1; }
-      if(r.outbound_message){ slot.outMsgs++; }
+      // رد ذكاء اصطناعي = رسالة واردة وصادرة معاً (نفس قاعدة عدّاد الردود)
+      if(r.inbound_message && r.outbound_message){ slot.outMsgs++; }
     });
     return out;
   }
@@ -3479,7 +3480,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   /* ---------- ROI dashboard (قيمة البوت) ---------- */
   async function renderRoiDashboard(){
     if(!myClient){ return; }
-    const botReplies = allMessages.filter(function(m){ return m.outbound_message; }).length;
+    const botReplies = allMessages.filter(function(m){ return m.inbound_message && m.outbound_message; }).length;
     const minutesSaved = botReplies * 3;
     const hoursSaved = minutesSaved / 60;
     const hoursEl = document.getElementById('roiHoursSaved');
