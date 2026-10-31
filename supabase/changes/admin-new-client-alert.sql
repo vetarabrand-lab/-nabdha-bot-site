@@ -1,0 +1,6 @@
+-- إشعار إيميل للأدمن عند كل تسجيل تاجر جديد (2026-10-31). مطبّق على الإنتاج؛ هذا سجل فقط.
+-- trigger notify_admin_new_client_trg (AFTER INSERT على clients) يستدعي دالة notify_admin_new_client()
+-- اللي ترسل إيميل لـ vetarabrand@gmail.com عبر edge function send-notification-email
+-- (الاسم، الإيميل، الجوال، المصدر سلة/زد/مباشر، الحالة، الوقت بتوقيت الرياض).
+-- أي فشل في الإرسال لا يمنع تسجيل التاجر (exception block). السر الداخلي مضمّن داخل الدالة
+-- بنفس طريقة check_usage_alerts ولا يُكتب هنا.
