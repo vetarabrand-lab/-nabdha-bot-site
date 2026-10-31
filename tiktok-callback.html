@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ربط تيك توك | نبضة</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--teal:#075E54;--green:#25D366;--ink:#0B1A17;--muted:#5B6B67;--bg:#F6FAF8;--border:#E4ECE9}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Tajawal','Segoe UI',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;line-height:1.8}
+  .card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:36px 28px;max-width:440px;width:100%;text-align:center;box-shadow:0 10px 30px -12px rgba(7,94,84,.18)}
+  .ico{width:64px;height:64px;border-radius:50%;background:#E8F8EE;color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 16px}
+  h1{font-size:22px;font-weight:800;margin-bottom:8px}
+  p{color:var(--muted);font-size:15px;margin-bottom:20px}
+  a.btn{display:inline-block;background:var(--teal);color:#fff;padding:12px 26px;border-radius:12px;font-weight:700;text-decoration:none}
+  .brand{margin-top:22px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="ico" id="ico">✓</div>
+  <h1 id="title">تم استلام طلب الربط</h1>
+  <p id="msg">يمكنك إغلاق هذه الصفحة والعودة إلى لوحة التحكم في نبضة.</p>
+  <a class="btn" href="/portal.html">العودة إلى لوحة التحكم</a>
+  <div class="brand">نبضة · nabdh.online</div>
+</main>
+<script>
+  // صفحة إعادة توجيه (Redirect URL) لتطبيق تيك توك. لا تحفظ أي بيانات هنا.
+  try {
+    var q = new URLSearchParams(location.search);
+    if (q.get('error')) {
+      document.getElementById('ico').textContent = '!';
+      document.getElementById('title').textContent = 'لم يكتمل الربط';
+      document.getElementById('msg').textContent = 'تم إلغاء الربط أو رفضه. يمكنك المحاولة مرة أخرى من لوحة التحكم.';
+    }
+    // إزالة المعاملات من شريط العنوان (code/state) بعد القراءة
+    if (location.search) history.replaceState(null, '', location.pathname);
+  } catch (e) {}
+</script>
+</body>
+</html>
