@@ -2057,6 +2057,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       });
     }
   }
+  function canStartZidConnection(){ return !!(isOwner && myClient && ['cec96230-388c-4d6e-94e4-2a2f95d228ef','96b4facc-c9ef-47d7-a5b9-c9ef3afe065f'].includes(myClient.id)); }
   async function loadZidStatus(){
     // ربط زد الجديد متوقف مؤقتاً (قريباً) — لكن التجار المربوطين فعلاً قبل التوقف يستمر عرض اتصالهم الحقيقي.
     const statusBox = document.getElementById('zidStatus');
@@ -2076,11 +2077,16 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<span class="status-badge zid-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
     } else {
-      statusBox.innerHTML = '<span class="status-badge zid-disconnected">🔜 ' + PT('قريباً — ربط متاجر جديدة متوقف مؤقتاً') + '</span>';
+      if(canStartZidConnection()){
+        statusBox.innerHTML = '<span class="status-badge zid-disconnected">' + PT('⛔ غير متصل') + '</span>';
+        btn.style.display = 'inline-block';
+      } else {
+        statusBox.innerHTML = '<span class="status-badge zid-disconnected">🔜 ' + PT('قريباً — ربط متاجر جديدة متوقف مؤقتاً') + '</span>';
+      }
     }
   }
   document.getElementById('connectZidBtn').addEventListener('click', async function(){
-    if(!myClient || !isOwner){ return; }
+    if(!canStartZidConnection()){ return; }
     const btn = this;
     btn.disabled = true; btn.textContent = PT('جاري التحضير...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
