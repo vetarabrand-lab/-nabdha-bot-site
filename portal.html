@@ -555,6 +555,7 @@
     <div class="panel active" id="panelHome">
       <div class="v2-hello">
         <div><h2 id="homeHello">أهلاً بك</h2><p id="homeSummary"></p></div>
+        <div class="v2-promos" id="homePromos" style="display:none;"></div>
         <div class="v2-seg" id="homeRange" role="group">
           <button type="button" class="on" data-days="7" data-i18n="v2.range7">7 أيام</button>
           <button type="button" data-days="30" data-i18n="v2.range30">30 يوم</button>
@@ -1775,6 +1776,17 @@ html[dir="ltr"] .v2-side .tabs .tab-btn.active{box-shadow:inset -3px 0 0 var(--b
 .v2-backdrop{display:none;}
 /* ── الرئيسية ── */
 #panelHome.active{display:flex; flex-direction:column; gap:16px;}
+.v2-promos{display:flex; gap:10px; margin-inline-start:auto; align-items:stretch;}
+.v2-promo{position:relative; width:218px; padding:11px 13px 11px; border-radius:14px; display:flex; flex-direction:column; gap:3px; color:#fff; overflow:hidden; box-shadow:0 8px 20px -12px rgba(7,94,84,.5);}
+.v2-promo.p-store{background:linear-gradient(135deg,#075E54,#107D71);}
+.v2-promo.p-credit{background:linear-gradient(135deg,#167D3C,#25A85A);}
+.v2-promo.p-credit.hot{background:linear-gradient(135deg,#B45309,#D97706);}
+.v2-promo .ic{font-size:18px; line-height:1;}
+.v2-promo b{font-size:14px; font-weight:800;}
+.v2-promo small{font-size:11.5px; line-height:1.5; opacity:.92; min-height:34px;}
+.v2-promo .go{align-self:flex-start; margin-top:4px; min-height:30px; padding:0 14px; border:0; border-radius:9px; background:#fff; color:#075E54; font:inherit; font-weight:800; font-size:12.5px; cursor:pointer;}
+.v2-promo .x{position:absolute; top:6px; inset-inline-end:8px; background:transparent; border:0; color:#fff; opacity:.7; font-size:18px; line-height:1; cursor:pointer; padding:2px 4px;}
+@media (max-width:760px){ .v2-promos{width:100%; order:3;} .v2-promo{flex:1 1 0; width:auto; min-width:0;} .v2-promo small{min-height:0;} }
 .v2-hello{display:flex; align-items:flex-end; justify-content:space-between; gap:14px; flex-wrap:wrap;}
 .v2-hello h2{margin:0; font-size:23px; font-weight:900; letter-spacing:-.02em; text-wrap:balance;}
 .v2-hello p{margin:3px 0 0; color:var(--muted); font-size:13.5px; max-width:62ch;}

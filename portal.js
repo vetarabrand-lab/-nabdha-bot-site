@@ -1552,6 +1552,39 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     if(nm){ nm.style.width = pct + '%'; nm.parentNode.className = 'v2-meter ' + meterCls; nm.parentNode.style.display = allowance ? '' : 'none'; }
     if(nu){ nu.textContent = allowance ? (v2Fmt(used) + ' / ' + v2Fmt(allowance) + V2L(' رسالة', ' msgs')) : ''; }
     var mg = document.getElementById('v2ManagePlan'); if(mg){ mg.style.display = isOwner ? '' : 'none'; }
+    v2RenderPromos(pct, allowance, used);
+  }
+  /* ---------- بوسترات إعلانية بجانب فلتر الأيام: ربط المتجر + شحن الرصيد ---------- */
+  function promoDismissed(k){ try{ var t = Number(localStorage.getItem('nabda_promo_' + k + '_' + (myClient && myClient.id)) || 0); return t && (Date.now() - t) < 7 * 86400000; }catch(e){ return false; } }
+  function promoDismiss(k){ try{ localStorage.setItem('nabda_promo_' + k + '_' + (myClient && myClient.id), String(Date.now())); }catch(e){} }
+  function v2RenderPromos(pct, allowance, used){
+    var box = document.getElementById('homePromos');
+    if(!box || !myClient){ return; }
+    var html = '';
+    if(isOwner && !onbStoreConnected(myClient) && !promoDismissed('store')){
+      html += '<div class="v2-promo p-store" data-promo="store"><button type="button" class="x" data-promo-x="store" aria-label="' + V2L('إغلاق', 'Close') + '">×</button>' +
+        '<span class="ic">🛒</span><b>' + V2L('اربط متجرك', 'Connect your store') + '</b>' +
+        '<small>' + V2L('البوت يجاوب عن الطلبات والمنتجات', 'The bot answers orders and products') + '</small>' +
+        '<button type="button" class="go" data-promo-go="store">' + V2L('اربط الآن', 'Connect') + '</button></div>';
+    }
+    if(isOwner && !promoDismissed('credit')){
+      var line = allowance
+        ? V2L('استخدمت ' + pct + '% من ردودك (' + v2Fmt(used) + ' من ' + v2Fmt(allowance) + ')', 'You used ' + pct + '% of your replies (' + v2Fmt(used) + ' of ' + v2Fmt(allowance) + ')')
+        : V2L('اشحن رصيد ردود لمرة وحدة بدون اشتراك', 'Top up reply credits, one-time, no subscription');
+      html += '<div class="v2-promo p-credit' + (pct >= 80 ? ' hot' : '') + '" data-promo="credit"><button type="button" class="x" data-promo-x="credit" aria-label="' + V2L('إغلاق', 'Close') + '">×</button>' +
+        '<span class="ic">⚡</span><b>' + V2L('اشحن رصيدك', 'Top up credits') + '</b><small>' + line + '</small>' +
+        '<button type="button" class="go" data-promo-go="credit">' + V2L('اشحن الآن', 'Top up') + '</button></div>';
+    }
+    box.innerHTML = html;
+    box.style.display = html ? '' : 'none';
+    box.onclick = function(e){
+      var x = e.target.closest ? e.target.closest('[data-promo-x]') : null;
+      if(x){ promoDismiss(x.getAttribute('data-promo-x')); v2RenderPromos(pct, allowance, used); return; }
+      var g = e.target.closest ? e.target.closest('[data-promo-go]') : null;
+      if(!g){ return; }
+      if(g.getAttribute('data-promo-go') === 'store'){ onbGoTo('channels', 'wooCard'); }
+      else { onbGoTo('settings', 'topupCard'); }
+    };
   }
   function v2RenderTopState(){
     var name = myClient.business_name_ar || myClient.business_name || '';
