@@ -764,29 +764,67 @@
       </div>
     </div>
     <div class="panel" id="panelChannels">
-      <p style="color:var(--muted); font-size:13.5px; margin-bottom:18px;" data-i18n="channels.desc">اربط قنوات التواصل ومتجرك الإلكتروني ببوت نبضة — كل قناة تضيفها يقدر البوت يرد فيها تلقائياً بنفس تعليماتك.</p>
-      <div class="settings-card coming-soon" id="zidCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label><span data-i18n="channels.zid.title">ربط متجر زد (Zid)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></label>
+      <div class="ch-top"><div><h2 data-i18n="channels.pageTitle">قنوات الربط</h2><p data-i18n="channels.desc">اربط قنوات التواصل ومتجرك الإلكتروني ببوت نبضة — كل قناة تضيفها يقدر البوت يرد فيها تلقائياً بنفس تعليماتك.</p></div><div class="ch-summary" id="chSummary"></div></div>
+      <section class="ch-sec"><div class="ch-sec-h"><h3 data-i18n="channels.secMsg">قنوات المحادثة</h3><p data-i18n="channels.secMsgSub">من وين يراسلك عملاؤك</p></div><div class="ch-grid">
+      <div class="settings-card ch-card" id="waAppCard" data-ch="wa">
+        <div class="ch-head"><span class="ch-ic ch-ic-wa" aria-hidden="true">💬</span><div class="ch-t"><h3>ربط رقم واتساب بالبوت</h3><p data-i18n="channels.wa.sub">رقم متجرك على واتساب، القناة الأساسية للبوت</p></div><span class="ch-badge" id="chBadge_wa"></span></div>
+        <div id="waAppStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+          <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 24px; display:none;">ربط تطبيق واتساب للأعمال على جوالي</button>
+          <button class="new-ticket-btn" id="connectWaNewBtn" style="width:auto; padding:12px 24px; font-size:15px; display:none;">ربط رقم جديد</button>
         </div>
-        <div id="zidStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
-        <button class="primary-btn" id="connectZidBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.zid.connectBtn">ربط مع زد</button>
-        <div class="helper-text" id="zidHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.zid.desc">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div>
+        <div class="alert-box" id="waConnectMsg" style="display:none; margin-top:12px;"></div>
+        <div class="helper-text" id="waAppHelperNonOwner" style="display:none;" data-i18n="channels.wa.ownerOnly">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;" data-i18n="channels.wa.disconnected">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
+        <details class="ch-help"><summary data-i18n="channels.howTo">طريقة الربط</summary>
+        <div class="helper-text" data-i18n="channels.wa.selfConnectInfo"><b>رقمك الحالي (الأنسب):</b> إذا رقم متجرك شغّال على تطبيق "واتساب للأعمال" بجوالك، اضغط "ربط تطبيق واتساب للأعمال على جوالي" — يبقى التطبيق شغّال معك، والبوت يرد تلقائياً على نفس الرقم وتقدر ترد بنفسك متى ما تبي. لو رقمك على واتساب العادي، حوّله أولاً لتطبيق واتساب للأعمال (تنتقل محادثاتك معه).<br><b>رقم جديد:</b> رقم غير مستخدم في أي تطبيق واتساب، يصير رقم البوت مباشرة.<br>الربط يتم من نافذة ميتا الرسمية خلال دقيقتين، وبيانات الربط تُحفظ بأمان في خوادم نبضة فقط.</div></details>
       </div>
-      <div class="settings-card" id="sallaCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label><span data-i18n="channels.salla.title">ربط متجر سلة (Salla)</span></label>
+      <div class="settings-card ch-card" id="instagramCard" data-ch="ig">
+        <div class="ch-head"><span class="ch-ic ch-ic-ig" aria-hidden="true">📸</span><div class="ch-t"><h3>ربط حساب انستقرام (Instagram Direct)</h3><p data-i18n="channels.ig.sub">رسائل انستقرام المباشرة (Direct)</p></div><span class="ch-badge" id="chBadge_ig"></span></div>
+        <div id="instagramStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
+        <div style="margin-top:12px;">
+          <button class="primary-btn" id="connectInstagramBtn" style="width:auto; padding:12px 24px; display:none;">ربط حساب انستقرام</button>
         </div>
+        <div class="alert-box" id="instagramConnectMsg" style="display:none; margin-top:12px;"></div>
+        <div class="helper-text" id="instagramHelperNonOwner" style="display:none;" data-i18n="channels.instagram.ownerOnly">ربط انستقرام متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="instagramLockedHint" style="margin-top:10px; display:none;"></div>
+        <details class="ch-help"><summary data-i18n="channels.howTo">طريقة الربط</summary>
+        <div class="helper-text" data-i18n="channels.instagram.steps">اضغط "ربط حساب انستقرام" ← سجّل الدخول بحساب انستقرام الاحترافي لمتجرك (أعمال أو صانع محتوى) ← وافق على صلاحيات الرسائل ← ترجع هنا تلقائياً. بعدها يرد البوت على رسائل Direct خلال 24 ساعة من آخر رسالة للعميل (قيد ميتا).</div></details>
+      </div>
+      <div class="settings-card ch-card" id="telegramCard" data-ch="tg">
+        <div class="ch-head"><span class="ch-ic ch-ic-tg" aria-hidden="true">✈️</span><div class="ch-t"><h3>ربط بوت تليجرام (Telegram)</h3><p data-i18n="channels.tg.sub">بوت تليجرام لعملائك</p></div><span class="ch-badge" id="chBadge_tg"></span></div>
+        <div id="telegramStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
+        <div class="store-connect-form" id="telegramConnectForm" style="display:none;">
+          <div class="field" style="margin-bottom:0;">
+            <label data-i18n="channels.telegram.tokenLabel">توكن البوت (Bot Token)</label>
+            <input type="text" id="telegramBotToken" placeholder="123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
+          </div>
+          <div class="alert-box error" id="telegramConnectError" style="display:none;"></div>
+          <button class="primary-btn" id="connectTelegramBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.telegram.connectBtn">ربط مع تليجرام</button>
+        </div>
+        <div class="helper-text" id="telegramHelperNonOwner" style="display:none;" data-i18n="channels.telegram.ownerOnly">ربط تليجرام متاح فقط لصاحب الحساب.</div>
+        <div class="helper-text" id="telegramLockedHint" style="margin-top:10px; display:none;"></div>
+        <details class="ch-help"><summary data-i18n="channels.howTo">طريقة الربط</summary>
+        <div class="helper-text" data-i18n="channels.telegram.steps">خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.</div></details>
+      </div>
+      </div></section>
+      <section class="ch-sec"><div class="ch-sec-h"><h3 data-i18n="channels.secStores">المتاجر الإلكترونية</h3><p data-i18n="channels.storesIntro">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</p></div><div class="ch-grid">
+      <div class="settings-card ch-card" id="sallaCard" data-ch="salla">
+        <div class="ch-head"><span class="ch-ic ch-ic-salla" aria-hidden="true">🛍️</span><div class="ch-t"><h3><span data-i18n="channels.salla.title">ربط متجر سلة (Salla)</span></h3><p data-i18n="channels.store.sub">للإجابة عن الطلبات وتوفر المنتجات</p></div><span class="ch-badge" id="chBadge_salla"></span></div>
         <div id="sallaStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <button class="primary-btn" id="connectSallaBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.salla.connectBtn">ربط مع سلة</button>
         <div class="helper-text" id="sallaHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.storesIntro">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</div>
       </div>
-      <div class="settings-card" id="wooCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label data-i18n="channels.woo.title">ربط متجر ووكومرس (ووردبريس)</label>
-        </div>
+      <div class="settings-card ch-card coming-soon" id="zidCard" data-ch="zid">
+        <div class="ch-head"><span class="ch-ic ch-ic-zid" aria-hidden="true">🏪</span><div class="ch-t"><h3><span data-i18n="channels.zid.title">ربط متجر زد (Zid)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></h3><p data-i18n="channels.store.sub">للإجابة عن الطلبات وتوفر المنتجات</p></div><span class="ch-badge" id="chBadge_zid"></span></div>
+        <div id="zidStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
+        <button class="primary-btn" id="connectZidBtn" style="width:auto; padding:12px 30px; display:none; margin-top:10px;" data-i18n="channels.zid.connectBtn">ربط مع زد</button>
+        <div class="helper-text" id="zidHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
+        <details class="ch-help"><summary data-i18n="channels.howTo">طريقة الربط</summary>
+        <div class="helper-text" data-i18n="channels.zid.desc">بعد الربط، بيقدر البوت يجاوب تلقائياً عن حالة الطلب وتوفر المنتجات من متجرك بدون تدخل بشري. يتطلب أن يكون متجرك على باقة Zid احترافية أو مفعّل فيها API Access.</div></details>
+      </div>
+      <div class="settings-card ch-card" id="wooCard" data-ch="woo">
+        <div class="ch-head"><span class="ch-ic ch-ic-woo" aria-hidden="true">🔌</span><div class="ch-t"><h3>ربط متجر ووكومرس (ووردبريس)</h3><p data-i18n="channels.store.sub">للإجابة عن الطلبات وتوفر المنتجات</p></div><span class="ch-badge" id="chBadge_woo"></span></div>
         <div id="wooStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <div class="store-connect-form" id="wooConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
@@ -805,12 +843,11 @@
           <button class="primary-btn" id="connectWooBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.woo.connectBtn">ربط مع ووكومرس</button>
         </div>
         <div class="helper-text" id="wooHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.woo.desc">تسوي المفاتيح من لوحة ووردبريس: WooCommerce ← Settings ← Advanced ← REST API ← Add key، وتختار صلاحية "Read/Write". انسخ المفتاحين وألصقهم هنا.</div>
+        <details class="ch-help"><summary data-i18n="channels.howTo">طريقة الربط</summary>
+        <div class="helper-text" data-i18n="channels.woo.desc">تسوي المفاتيح من لوحة ووردبريس: WooCommerce ← Settings ← Advanced ← REST API ← Add key، وتختار صلاحية "Read/Write". انسخ المفتاحين وألصقهم هنا.</div></details>
       </div>
-      <div class="settings-card" id="shopifyCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label data-i18n="channels.shopify.title">ربط متجر شوبيفاي (Shopify)</label>
-        </div>
+      <div class="settings-card ch-card" id="shopifyCard" data-ch="shopify">
+        <div class="ch-head"><span class="ch-ic ch-ic-shopify" aria-hidden="true">🛒</span><div class="ch-t"><h3>ربط متجر شوبيفاي (Shopify)</h3><p data-i18n="channels.store.sub">للإجابة عن الطلبات وتوفر المنتجات</p></div><span class="ch-badge" id="chBadge_shopify"></span></div>
         <div id="shopifyStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
         <div class="store-connect-form" id="shopifyConnectForm" style="display:none;">
           <div class="field" style="margin-bottom:0;">
@@ -825,52 +862,10 @@
           <button class="primary-btn" id="connectShopifyBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.shopify.connectBtn">ربط مع شوبيفاي</button>
         </div>
         <div class="helper-text" id="shopifyHelperNonOwner" style="display:none;" data-i18n="channels.ownerOnlyStore">ربط المتجر متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.shopify.desc">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div>
+        <details class="ch-help"><summary data-i18n="channels.howTo">طريقة الربط</summary>
+        <div class="helper-text" data-i18n="channels.shopify.desc">تسوي التوكن من لوحة شوبيفاي: Settings ← Apps and sales channels ← Develop apps ← Create an app، تفعّل صلاحيات read_orders و read_products و read_checkouts، وتنسخ Admin API access token وتلصقه هنا.</div></details>
       </div>
-      <div class="settings-card" id="waAppCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label data-i18n="channels.wa.title2">ربط رقم واتساب بالبوت</label>
-        </div>
-        <div id="waAppStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
-          <button class="primary-btn" id="connectWaAppBtn" style="width:auto; padding:12px 24px; display:none;">ربط تطبيق واتساب للأعمال على جوالي</button>
-          <button class="new-ticket-btn" id="connectWaNewBtn" style="width:auto; padding:12px 24px; font-size:15px; display:none;">ربط رقم جديد</button>
-        </div>
-        <div class="alert-box" id="waConnectMsg" style="display:none; margin-top:12px;"></div>
-        <div class="helper-text" id="waAppHelperNonOwner" style="display:none;" data-i18n="channels.wa.ownerOnly">ربط تطبيق واتساب الأعمال متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" id="waAppDisconnectedHint" style="display:none; color:var(--danger); margin-top:10px;" data-i18n="channels.wa.disconnected">تم فصل الربط من داخل تطبيق واتساب الأعمال. اضغط "ابدأ الربط" لإعادة الربط من جديد.</div>
-        <div class="helper-text" style="margin-top:12px;" data-i18n="channels.wa.selfConnectInfo"><b>رقمك الحالي (الأنسب):</b> إذا رقم متجرك شغّال على تطبيق "واتساب للأعمال" بجوالك، اضغط "ربط تطبيق واتساب للأعمال على جوالي" — يبقى التطبيق شغّال معك، والبوت يرد تلقائياً على نفس الرقم وتقدر ترد بنفسك متى ما تبي. لو رقمك على واتساب العادي، حوّله أولاً لتطبيق واتساب للأعمال (تنتقل محادثاتك معه).<br><b>رقم جديد:</b> رقم غير مستخدم في أي تطبيق واتساب، يصير رقم البوت مباشرة.<br>الربط يتم من نافذة ميتا الرسمية خلال دقيقتين، وبيانات الربط تُحفظ بأمان في خوادم نبضة فقط.</div>
-      </div>
-      <div class="settings-card" id="telegramCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label data-i18n="channels.telegram.title">ربط بوت تليجرام (Telegram)</label>
-        </div>
-        <div id="telegramStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
-        <div class="store-connect-form" id="telegramConnectForm" style="display:none;">
-          <div class="field" style="margin-bottom:0;">
-            <label data-i18n="channels.telegram.tokenLabel">توكن البوت (Bot Token)</label>
-            <input type="text" id="telegramBotToken" placeholder="123456789:AAExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" dir="ltr">
-          </div>
-          <div class="alert-box error" id="telegramConnectError" style="display:none;"></div>
-          <button class="primary-btn" id="connectTelegramBtn" style="width:auto; padding:12px 30px;" data-i18n="channels.telegram.connectBtn">ربط مع تليجرام</button>
-        </div>
-        <div class="helper-text" id="telegramHelperNonOwner" style="display:none;" data-i18n="channels.telegram.ownerOnly">ربط تليجرام متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" id="telegramLockedHint" style="margin-top:10px; display:none;"></div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.telegram.steps">خطوات إنشاء البوت: افتح تطبيق تليجرام ← ابحث عن <b>BotFather</b> ← أرسل له <b>/newbot</b> ← اختر اسم واسم مستخدم لبوتك (لازم ينتهي بـ bot) ← يرسل لك BotFather توكن طويل يشبه <span dir="ltr">123456789:AA...</span> ← انسخه والصقه هنا.</div>
-      </div>
-      <div class="settings-card" id="instagramCard">
-        <div class="field" style="margin-bottom:16px;">
-          <label data-i18n="channels.instagram.title">ربط حساب انستقرام (Instagram Direct)</label>
-        </div>
-        <div id="instagramStatus"><div class="conv-empty" data-i18n="common.loading">جاري التحميل...</div></div>
-        <div style="margin-top:12px;">
-          <button class="primary-btn" id="connectInstagramBtn" style="width:auto; padding:12px 24px; display:none;">ربط حساب انستقرام</button>
-        </div>
-        <div class="alert-box" id="instagramConnectMsg" style="display:none; margin-top:12px;"></div>
-        <div class="helper-text" id="instagramHelperNonOwner" style="display:none;" data-i18n="channels.instagram.ownerOnly">ربط انستقرام متاح فقط لصاحب الحساب.</div>
-        <div class="helper-text" id="instagramLockedHint" style="margin-top:10px; display:none;"></div>
-        <div class="helper-text" style="margin-top:10px;" data-i18n="channels.instagram.steps">اضغط "ربط حساب انستقرام" ← سجّل الدخول بحساب انستقرام الاحترافي لمتجرك (أعمال أو صانع محتوى) ← وافق على صلاحيات الرسائل ← ترجع هنا تلقائياً. بعدها يرد البوت على رسائل Direct خلال 24 ساعة من آخر رسالة للعميل (قيد ميتا).</div>
-      </div>
+      </div></section>
     </div>
     <div class="panel" id="panelEmail">
       <div class="email-page-header">
@@ -1625,10 +1620,45 @@ nav{max-width:1440px; padding:13px 24px;}
 .cat-badge,.human-badge,.assignee-badge{border-radius:7px;}
 
 /* ─────────── قنوات الربط كشبكة بطاقات ─────────── */
-#panelChannels.active{display:grid; grid-template-columns:repeat(auto-fit,minmax(360px,1fr)); gap:18px; align-items:start;}
-#panelChannels > p:first-of-type, #panelAddons > p:first-of-type{display:none;}
-#panelChannels .settings-card{max-width:none; margin-bottom:0; height:100%;}
+#panelAddons > p:first-of-type{display:none;}
 
+
+/* ─────────── قنوات الربط: ترتيب احترافي (v3) ─────────── */
+#panelChannels.active{display:block;}
+#panelChannels > p:first-of-type{display:none;}
+.ch-top{display:flex; align-items:flex-end; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:18px;}
+.ch-top h2{font-size:21px; font-weight:900; letter-spacing:-.02em;}
+.ch-top p{color:var(--muted); font-size:13.5px; max-width:62ch; margin-top:3px;}
+.ch-summary{display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px; background:#fff; border:1px solid var(--border); font-size:13px; font-weight:800;}
+.ch-summary i{width:8px; height:8px; border-radius:50%; background:#C5D1CD; display:inline-block;}
+.ch-summary.has i{background:var(--wa-green);}
+.ch-sec{margin-bottom:26px;}
+.ch-sec-h{margin-bottom:12px;}
+.ch-sec-h h3{font-size:15px; font-weight:900;}
+.ch-sec-h p{color:var(--muted); font-size:12.5px; margin-top:2px; max-width:80ch;}
+.ch-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:14px; align-items:start;}
+#panelChannels .ch-card{padding:18px 18px 16px; height:auto; display:flex; flex-direction:column; gap:12px; margin:0;}
+.ch-head{display:flex; align-items:center; gap:12px;}
+.ch-ic{width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; background:#EEF3F1;}
+.ch-ic-wa{background:#DCF8C6;} .ch-ic-ig{background:linear-gradient(135deg,#FDE3EC,#FBE9C8);} .ch-ic-tg{background:#DDF0FB;}
+.ch-ic-salla{background:#D9F2EE;} .ch-ic-zid{background:#ECE3FA;} .ch-ic-woo{background:#EADFF5;} .ch-ic-shopify{background:#E3F3DA;}
+.ch-t{flex:1; min-width:0;}
+.ch-t h3{font-size:14.5px; font-weight:800; line-height:1.4; letter-spacing:-.01em;}
+.ch-t h3 .coming-soon-badge{margin-inline-start:6px;}
+.ch-t p{font-size:12px; color:var(--muted); margin-top:1px; line-height:1.5;}
+.ch-badge{flex-shrink:0; font-size:11.5px; font-weight:800; padding:4px 10px; border-radius:999px; background:#EEF3F1; color:var(--muted); white-space:nowrap;}
+.ch-badge.on{background:#DDF6E6; color:#167D3C;}
+.ch-badge:empty{display:none;}
+#panelChannels .ch-card .status-badge{display:inline-flex; max-width:100%; font-size:12.5px;}
+#panelChannels .ch-card .primary-btn,#panelChannels .ch-card .new-ticket-btn{width:100% !important; min-height:44px; padding:0 18px !important; font-size:14px !important; margin-top:0 !important; justify-content:center;}
+#panelChannels .ch-card .store-connect-form{display:flex; flex-direction:column; gap:10px;}
+.ch-help{border-top:1px dashed var(--border); padding-top:10px;}
+.ch-help summary{cursor:pointer; font-size:12.5px; font-weight:800; color:var(--wa-teal); list-style:none; display:flex; align-items:center; gap:6px;}
+.ch-help summary::-webkit-details-marker{display:none;}
+.ch-help summary::before{content:'▸'; font-size:11px; transition:transform .15s;}
+.ch-help[open] summary::before{transform:rotate(90deg);}
+.ch-help .helper-text{margin-top:8px !important; line-height:1.9;}
+@media (max-width:640px){ .ch-grid{grid-template-columns:1fr;} .ch-top h2{font-size:19px;} }
 /* ─────────── الإضافات ─────────── */
 .addon-grid{gap:16px;}
 .addon-card{padding:20px 22px; transition:transform .18s ease, box-shadow .22s ease;}
