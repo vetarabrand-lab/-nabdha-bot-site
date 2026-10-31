@@ -1048,7 +1048,8 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       conversations[phone].lastAt = row.created_at;
 
       const rowDate = new Date(row.created_at);
-      if(rowDate.getMonth() === now.getMonth() && rowDate.getFullYear() === now.getFullYear()){
+      // يُحتسب رد الذكاء الاصطناعي فقط: رد على رسالة من العميل (نفس شرط client_reply_quota)
+      if(row.inbound_message && row.outbound_message && rowDate.getMonth() === now.getMonth() && rowDate.getFullYear() === now.getFullYear()){
         monthCount++;
       }
     });
@@ -1362,7 +1363,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   }
   function v2MonthCount(){
     var now = new Date(), n = 0;
-    allMessages.forEach(function(r){ var d = new Date(r.created_at); if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()){ n++; } });
+    allMessages.forEach(function(r){ if(!r.inbound_message || !r.outbound_message){ return; } var d = new Date(r.created_at); if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()){ n++; } });
     return n;
   }
   function v2FmtDate(iso){ return new Date(iso).toLocaleDateString(window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA-u-ca-gregory-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' }); }

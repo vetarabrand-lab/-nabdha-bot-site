@@ -1560,7 +1560,10 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     const { data: msgs, error } = await supabaseClient
       .from('whatsapp_messages_log')
       .select('client_id')
-      .gte('created_at', monthStart);
+      .gte('created_at', monthStart)
+      // ردود الذكاء الاصطناعي فقط: رد على رسالة من العميل (نفس شرط client_reply_quota)
+      .not('inbound_message', 'is', null)
+      .not('outbound_message', 'is', null);
     if(error){
       tbody.innerHTML = '<tr class="empty-row"><td colspan="4">تعذّر تحميل بيانات الاستهلاك.</td></tr>';
       return;
