@@ -2107,6 +2107,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     }
   });
   /* ---------- ربط متجر سلة ---------- */
+  function canStartSallaConnection(){ return !!(isOwner && myClient && ['cec96230-388c-4d6e-94e4-2a2f95d228ef','96b4facc-c9ef-47d7-a5b9-c9ef3afe065f'].includes(myClient.id)); }
   async function loadSallaStatus(){
     const statusBox = document.getElementById('sallaStatus');
     const btn = document.getElementById('connectSallaBtn');
@@ -2125,12 +2126,16 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         '<span class="status-badge salla-connected">' + PT('✅ متصل') + (data.store_name ? ' — ' + escapeHtml(data.store_name) : '') + '</span>' +
         (dateStr ? '<div class="helper-text" style="margin-top:8px;">' + PT('تم الربط بتاريخ') + ' ' + dateStr + '</div>' : '');
     } else {
-      statusBox.innerHTML = '<span class="status-badge salla-disconnected">' + PT('⛔ غير متصل') + '</span>';
-      if(isOwner){ btn.style.display = 'inline-block'; } else { nonOwnerHint.style.display = 'block'; }
+      if(canStartSallaConnection()){
+        statusBox.innerHTML = '<span class="status-badge salla-disconnected">' + PT('⛔ غير متصل') + '</span>';
+        btn.style.display = 'inline-block';
+      } else {
+        statusBox.innerHTML = '<span class="status-badge salla-disconnected">🔜 ' + PT('قريباً — ربط متاجر جديدة متوقف مؤقتاً') + '</span>';
+      }
     }
   }
   document.getElementById('connectSallaBtn').addEventListener('click', async function(){
-    if(!myClient || !isOwner){ return; }
+    if(!canStartSallaConnection()){ return; }
     const btn = this;
     btn.disabled = true; btn.textContent = PT('جاري التحضير...');
     const { data: sessionData } = await supabaseClient.auth.getSession();
