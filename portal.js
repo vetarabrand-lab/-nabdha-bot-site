@@ -4212,15 +4212,21 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       row.className = 'topup-row';
       row.innerHTML = (window.PORTAL_LANG === 'en')
         ? ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' extra messages — <b>' + window.NabdhCurrency.html(p.price_sar,true) + '</b> (one-time)</span>' +
-           '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 Contact Us</button>')
+           '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">💳 Pay now</button>')
         : ('<span class="topup-info">' + p.credits.toLocaleString('en-US') + ' رسالة إضافية — <b>' + window.NabdhCurrency.html(p.price_sar,true) + '</b> (لمرة واحدة)</span>' +
-           '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">📞 تواصل معنا</button>');
+           '<button class="topup-request-btn" data-id="' + p.id + '" data-credits="' + p.credits + '" data-price="' + p.price_sar + '">💳 ادفع الآن</button>');
       box.appendChild(row);
     });
     document.querySelectorAll('.topup-request-btn').forEach(function(btn){
       btn.addEventListener('click', function(){
         if(!myClient || !isOwner){ return; }
-        document.querySelector('.tab-btn[data-tab="support"]').click();
+        // دفع مباشر عبر Geidea: المبلغ والرصيد يُحددهما الخادم من id الباقة، والرصيد يُضاف تلقائياً بعد تأكيد الدفع
+        var label = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = (window.PORTAL_LANG === 'en') ? 'Redirecting…' : 'جاري التحويل للدفع…';
+        startGeideaCheckout('topup', { package_id: btn.getAttribute('data-id') }, 'شحن الرصيد').finally(function(){
+          btn.disabled = false; btn.textContent = label;
+        });
       });
     });
   }
