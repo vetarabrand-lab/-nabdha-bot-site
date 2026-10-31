@@ -1,0 +1,16 @@
+-- Applied to production on 2026-10-31 (migration: meta_payment_issue_alert).
+-- When Meta refuses to send because the merchant's WhatsApp Business account has no
+-- valid payment method (error 131042), the merchant is alerted instead of the bot
+-- silently going quiet.
+--
+-- clients: meta_payment_issue_at, meta_payment_issue_code, meta_payment_issue_notified_at
+-- client_id_for_phone_number(phone_number_id) -> client id (primary or extra number)
+-- report_meta_send_error(phone_number_id, code, message):
+--     only code 131042 acts; sets the flag, emails the merchant + admin at most once per 24h.
+-- clear_meta_payment_issue(phone_number_id): called on the first `delivered` status.
+-- All three are revoked from anon/authenticated; only the service role (whatsapp-bot) calls them.
+--
+-- whatsapp-bot (edge function) now handles `statuses` webhooks:
+--   failed  -> report_meta_send_error for each error code
+--   delivered -> clear_meta_payment_issue
+-- and also reports synchronous send errors from sendWhatsAppText.
