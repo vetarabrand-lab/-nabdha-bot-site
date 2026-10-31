@@ -196,10 +196,149 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     { key: 'store', label: 'ربط متجرك (اختياري)', tab: 'channels' },
     { key: 'convo', label: 'أول محادثة حقيقية', tab: 'inbox' }
   ];
+  /* ---------- معالج الإعداد: ربط الرقم ← ربط المتجر ← أول رد حقيقي ---------- */
+  // الهدف: يشوف التاجر البوت يرد على عميل حقيقي خلال 10 دقائق من التسجيل.
+  // الخطوات تُقاس تلقائياً من قاعدة البيانات (triggers)، وهنا نسجّل فقط نشاط التاجر داخل المعالج.
+  var onbPollTimer = null;
+  var onbLoggedThisSession = {};
+  var onbJustReplied = null;
+  function onbLog(step){
+    if(onbLoggedThisSession[step]){ return; }
+    onbLoggedThisSession[step] = 1;
+    try{ supabaseClient.rpc('log_onboarding_event', { p_step: step }).then(function(){}, function(){}); }catch(e){}
+  }
+  function onbStoreConnected(c){
+    return !!(c.zid_integration_enabled || c.zid_store_id || (c.salla_store_id && c.salla_integration_enabled) || c.shopify_integration_enabled || c.woocommerce_integration_enabled);
+  }
+  function onbSkipKey(c){ return 'nabda_store_skipped_' + c.id; }
+  function onbStoreSkipped(c){ try{ return localStorage.getItem(onbSkipKey(c)) === '1'; }catch(e){ return false; } }
+  function onbWaLink(c){
+    var digits = String(c.whatsapp_display_number || '').replace(/[^0-9]/g, '');
+    if(!digits){ return ''; }
+    return 'https://wa.me/' + digits + '?text=' + encodeURIComponent(V2L('السلام عليكم، أبغى أستفسر عن خدماتكم', 'Hello, I would like to ask about your services'));
+  }
+  function onbGoTo(tab, targetId){
+    v2Go(tab);
+    if(targetId){ setTimeout(function(){ var t = document.getElementById(targetId); if(t){ t.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }, 120); }
+  }
+  function onbStopPoll(){ if(onbPollTimer){ clearInterval(onbPollTimer); onbPollTimer = null; } }
+  function onbStartPoll(clientRow, card){
+    onbStopPoll();
+    var busy = false;
+    onbPollTimer = setInterval(async function(){
+      if(busy || document.hidden || !document.body.contains(card)){ if(!document.body.contains(card)){ onbStopPoll(); } return; }
+      busy = true;
+      try{
+        var res = await supabaseClient.from('whatsapp_messages_log')
+          .select('inbound_message, outbound_message, created_at')
+          .eq('client_id', clientRow.id)
+          .not('inbound_message', 'is', null).not('outbound_message', 'is', null)
+          .order('created_at', { ascending: false }).limit(1);
+        var row = res && res.data && res.data[0];
+        if(row){
+          onbStopPoll();
+          onbJustReplied = { q: row.inbound_message, a: row.outbound_message };
+          renderSetupProgress(clientRow, 1);
+        }
+      }catch(e){}
+      busy = false;
+    }, 5000);
+  }
+  function renderOnboardingWizard(clientRow, card){
+    var hasReply = (allMessages || []).some(function(m){ return m.inbound_message && m.outbound_message; });
+    var d = {
+      wa: !!clientRow.whatsapp_phone_number_id,
+      store: onbStoreConnected(clientRow),
+      skipped: onbStoreSkipped(clientRow),
+      reply: hasReply || !!onbJustReplied
+    };
+    // يختفي المعالج لما يكتمل الأساس (الرقم + أول رد). ربط المتجر اختياري ويبقى في القائمة التالية.
+    if(d.wa && d.reply && !onbJustReplied){ onbStopPoll(); return false; }
+    onbLog('wizard_viewed');
+    var storeDone = d.store || d.skipped;
+    var doneCount = (d.wa ? 1 : 0) + (storeDone ? 1 : 0) + (d.reply ? 1 : 0);
+    var active = !d.wa ? 'wa' : (!storeDone ? 'store' : (!d.reply ? 'reply' : null));
+    var pct = Math.round((doneCount / 3) * 100);
+    var waLink = onbWaLink(clientRow);
+
+    function marker(n, isDone){ return '<span class="onb-mark' + (isDone ? ' done' : '') + '">' + (isDone ? '✓' : n) + '</span>'; }
+    function step(key, n, isDone, title, mins, bodyHtml, doneHtml){
+      var cls = 'onb-step' + (isDone ? ' done' : '') + (active === key ? ' active' : '');
+      var body = isDone ? ('<div class="onb-sum">' + doneHtml + '</div>') : (active === key ? bodyHtml : '');
+      return '<div class="' + cls + '" data-onb="' + key + '">' + marker(n, isDone) +
+        '<div class="onb-body"><div class="onb-title"><b>' + title + '</b>' + (!isDone ? '<span class="onb-time">' + mins + '</span>' : '') + '</div>' + body + '</div></div>';
+    }
+
+    var s1 = step('wa', 1, d.wa, V2L('اربط رقم واتساب', 'Connect your WhatsApp number'), V2L('≈ 3 دقائق', '≈ 3 min'),
+      '<p>' + V2L('تحتاج حساب فيسبوك مرتبط بنشاطك. نفتح لك شاشة الربط الرسمية من ميتا، وتخلّصها بضغطات قليلة.', 'You need a Facebook account tied to your business. We open Meta\'s official connect screen and you finish in a few taps.') + '</p>' +
+      '<div class="onb-actions"><button type="button" class="onb-btn primary" data-onb-act="go-wa">' + V2L('ابدأ ربط الرقم', 'Start connecting') + '</button></div>',
+      V2L('تم ربط الرقم', 'Number connected') + (clientRow.whatsapp_display_number ? ' — <span dir="ltr">' + escapeHtml(clientRow.whatsapp_display_number) + '</span>' : ''));
+
+    var s2 = step('store', 2, storeDone, V2L('اربط متجرك (اختياري)', 'Connect your store (optional)'), V2L('≈ 3 دقائق', '≈ 3 min'),
+      '<p>' + V2L('يخلّي البوت يجاوب عن «وين طلبي؟» ويعرض منتجاتك. ما يمنعك من تجربة البوت الحين، تقدر تربطه لاحقاً.', 'Lets the bot answer "where is my order?" and show your products. It does not block you from trying the bot now; you can connect it later.') + '</p>' +
+      '<p class="onb-note">' + V2L('ووكومرس وشوبيفاي متاحان للربط. ربط متاجر سلة وزد الجديدة متوقف مؤقتاً.', 'WooCommerce and Shopify are available. Connecting new Salla and Zid stores is paused for now.') + '</p>' +
+      '<div class="onb-actions"><button type="button" class="onb-btn primary" data-onb-act="go-store">' + V2L('اربط متجرك', 'Connect store') + '</button>' +
+      '<button type="button" class="onb-btn" data-onb-act="skip-store">' + V2L('تخطَّ الآن', 'Skip for now') + '</button></div>',
+      d.store ? V2L('متجرك مربوط', 'Store connected') : V2L('تخطّيت الربط، تقدر تربطه من «القنوات» وقت ما تبي', 'Skipped. You can connect it any time from Channels'));
+
+    var replyBody;
+    if(!d.wa){
+      replyBody = '<p>' + V2L('بعد ربط الرقم ترسل له رسالة من جوال ثاني وتشوف البوت يرد. وإذا تبي تشوف شخصيته الحين قبل الربط:', 'After connecting your number you message it from another phone and watch the bot reply. To see its personality right now:') + '</p>' +
+        '<div class="onb-actions"><button type="button" class="onb-btn" data-onb-act="preview">' + V2L('جرّب معاينة الرد', 'Try a reply preview') + '</button></div>';
+    } else {
+      replyBody = '<p>' + V2L('من <b>جوال ثاني</b> (مو جوال المتجر، لأنك ما تقدر ترسل لنفسك) أرسل رسالة لرقم متجرك، وبشوف الرد هنا مباشرة.', 'From <b>another phone</b> (not the store phone; you cannot message yourself) send a message to your store number and the reply will show here.') + '</p>' +
+        (waLink
+          ? '<div class="onb-actions"><a class="onb-btn primary" data-onb-act="open-link" href="' + escapeHtml(waLink) + '" target="_blank" rel="noopener">' + V2L('افتح واتساب وأرسل', 'Open WhatsApp and send') + '</a>' +
+            '<button type="button" class="onb-btn" data-onb-act="copy-link" data-link="' + escapeHtml(waLink) + '">' + V2L('انسخ الرابط لجوال ثاني', 'Copy link for another phone') + '</button></div>'
+          : '<p class="onb-note">' + V2L('أرسل رسالة لرقم متجرك المربوط.', 'Send a message to your connected store number.') + '</p>') +
+        '<div class="onb-wait"><span class="onb-pulse"></span>' + V2L('بانتظار رسالتك…', 'Waiting for your message…') + '</div>';
+    }
+    var replyDone = onbJustReplied
+      ? ('<div class="onb-chat"><div class="onb-b out">' + escapeHtml(onbJustReplied.q) + '</div><div class="onb-b in">' + escapeHtml(onbJustReplied.a) + '</div></div>' +
+         '<p class="onb-cheer">' + V2L('🎉 هذا اللي يشوفه عميلك. باقي لك تخصيص تعليمات البوت ليجاوب بأسلوب متجرك.', '🎉 This is what your customer sees. Next, tailor the bot instructions to your store.') + '</p>' +
+         '<div class="onb-actions"><button type="button" class="onb-btn primary" data-onb-act="go-settings">' + V2L('خصّص شخصية البوت', 'Customise the bot') + '</button><button type="button" class="onb-btn" data-onb-act="finish">' + V2L('تمام', 'Done') + '</button></div>')
+      : V2L('شفت البوت يرد على عميل حقيقي', 'You saw the bot reply to a real customer');
+    var s3 = step('reply', 3, d.reply, V2L('جرّب أول رد حقيقي', 'Try your first real reply'), V2L('≈ دقيقة', '≈ 1 min'), replyBody, replyDone);
+
+    card.style.display = 'block';
+    card.classList.add('onb-card');
+    card.innerHTML =
+      '<div class="onb-head"><div><div class="onb-h1">' + V2L('ابدأ في 3 خطوات', 'Get started in 3 steps') + '</div>' +
+      '<div class="onb-h2">' + V2L('الهدف: تشوف البوت يرد على عميل حقيقي خلال 10 دقائق.', 'Goal: see the bot reply to a real customer within 10 minutes.') + '</div></div>' +
+      '<span class="onb-count">' + doneCount + '/3</span></div>' +
+      '<div class="setup-progress-track"><div class="setup-progress-fill" style="width:' + pct + '%;"></div></div>' +
+      '<div class="onb-steps">' + s1 + s2 + s3 + '</div>';
+
+    card.onclick = function(e){
+      var b = e.target.closest ? e.target.closest('[data-onb-act]') : null;
+      if(!b){ return; }
+      var act = b.getAttribute('data-onb-act');
+      if(act === 'go-wa'){ onbLog('wizard_opened_wa'); onbGoTo('channels', 'waAppCard'); }
+      else if(act === 'go-store'){ onbLog('wizard_opened_store'); onbGoTo('channels', 'wooCard'); }
+      else if(act === 'skip-store'){ onbLog('store_skipped'); try{ localStorage.setItem(onbSkipKey(clientRow), '1'); }catch(err){} renderSetupProgress(clientRow, 0); }
+      else if(act === 'preview'){ onbLog('preview_used'); onbGoTo('settings', 'simChatBody'); }
+      else if(act === 'copy-link'){
+        onbLog('test_link_copied');
+        var link = b.getAttribute('data-link') || '';
+        var ok = function(){ b.textContent = V2L('تم النسخ ✓', 'Copied ✓'); };
+        if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(ok, function(){ window.prompt(V2L('انسخ الرابط:', 'Copy the link:'), link); }); }
+        else { window.prompt(V2L('انسخ الرابط:', 'Copy the link:'), link); }
+      }
+      else if(act === 'open-link'){ onbLog('test_link_copied'); }
+      else if(act === 'go-settings'){ onbJustReplied = null; onbGoTo('settings', 'settingPrompt'); renderSetupProgress(clientRow, 1); }
+      else if(act === 'finish'){ onbJustReplied = null; onbLog('wizard_dismissed'); renderSetupProgress(clientRow, 1); }
+    };
+
+    if(active === 'reply' && d.wa && !d.reply){ onbStartPoll(clientRow, card); } else { onbStopPoll(); }
+    if(location.hash === '#setup' && !onbLoggedThisSession.__scrolled){ onbLoggedThisSession.__scrolled = 1; setTimeout(function(){ card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 200); }
+    return true;
+  }
   function renderSetupProgress(clientRow, convCount){
     var card = document.getElementById('setupProgressCard');
     if(!card) return;
     if(!isOwner){ card.style.display = 'none'; return; } // الإعداد مسؤولية صاحب الحساب فقط
+    if(renderOnboardingWizard(clientRow, card)){ return; }
+    card.classList.remove('onb-card'); card.onclick = null;
     var done = {
       wa: !!clientRow.whatsapp_phone_number_id,
       prompt: (clientRow.system_prompt || '').trim().length > 15,
@@ -923,7 +1062,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     let clientRow = null;
     const ownerRes = await supabaseClient
       .from('clients')
-      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled, meta_payment_issue_at')
+      .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled, shopify_integration_enabled, woocommerce_integration_enabled, meta_payment_issue_at')
       .eq('user_id', user.id)
       .maybeSingle();
     if(ownerRes.data){
@@ -938,7 +1077,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
       if(staffRow){
         const { data: cr } = await supabaseClient
           .from('clients')
-          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled, meta_payment_issue_at')
+          .select('id, user_id, business_name_ar, business_name, plan_id, system_prompt, welcome_message, owner_phone, owner_email, zid_integration_enabled, extra_message_credits, current_period_ends_at, trial_ends_at, subscription_status, whatsapp_phone_number_id, zid_store_id, salla_store_id, telegram_connection_status, telegram_bot_username, instagram_connection_status, instagram_username, coexistence_status, coexistence_activated_at, coexistence_disconnected_at, whatsapp_business_account_id, whatsapp_display_number, zapier_webhook_url, hide_customer_phone_from_staff, salla_integration_enabled, shopify_integration_enabled, woocommerce_integration_enabled, meta_payment_issue_at')
           .eq('id', staffRow.client_id)
           .maybeSingle();
         clientRow = cr;

@@ -1488,6 +1488,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
   function loadTopupsPanel(){
     loadTopupRequestsTable();
     loadNearLimitTable();
+    loadOnboardingFunnel();
   }
   function clientLabelById(clientId){
     const c = allClients.find(function(x){ return x.id === clientId; });
@@ -1552,6 +1553,48 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         await loadTopupRequestsTable();
       });
     });
+  }
+  async function loadOnboardingFunnel(){
+    const tbody = document.getElementById('onbFunnelTbody');
+    const sum = document.getElementById('onbFunnelSummary');
+    if(!tbody){ return; }
+    const { data, error } = await supabaseClient.rpc('admin_onboarding_funnel');
+    if(error){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="3">تعذّر تحميل بيانات المعالج.</td></tr>';
+      return;
+    }
+    // نستثني الحسابات الملغية والمنتهية، ونركّز على اللي في التجربة أو نشط
+    const rows = (data || []).filter(function(r){ return r.subscription_status === 'trial' || r.subscription_status === 'active'; });
+    const total = rows.length;
+    const withWa = rows.filter(function(r){ return r.wa_connected; }).length;
+    const withStore = rows.filter(function(r){ return r.store_connected; }).length;
+    const withReply = rows.filter(function(r){ return r.first_reply; }).length;
+    const chip = function(label, n){
+      return '<span style="background:#fff;border:1px solid var(--border,#e4ece9);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;">' + label + ': ' + n + (total ? ' <small style="color:#5b6b67;">(' + Math.round(n / total * 100) + '%)</small>' : '') + '</span>';
+    };
+    sum.innerHTML = chip('سجّلوا', total) + chip('ربطوا الرقم', withWa) + chip('ربطوا المتجر', withStore) + chip('شافوا أول رد', withReply);
+    const stuckLabel = { number: 'ربط الرقم', store: 'ربط المتجر', first_reply: 'تجربة أول رد', done: '—' };
+    const pending = rows.filter(function(r){ return r.stuck_at !== 'done'; });
+    if(pending.length === 0){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="3">كل التجار أكملوا الإعداد 🎉</td></tr>';
+      return;
+    }
+    tbody.innerHTML = '';
+    pending.forEach(function(r){
+      const tr = document.createElement('tr');
+      const days = Math.max(0, Math.floor((Date.now() - new Date(r.created_at).getTime()) / 86400000));
+      const seen = r.wizard_viewed_at ? 'فتح المعالج' : 'ما فتح المعالج';
+      tr.innerHTML = '<td>' + escapeHtml(r.business_name || '—') + '</td>' +
+        '<td>يوم ' + (days + 1) + ' · ' + seen + '</td>' +
+        '<td><span class="badge expired">' + (stuckLabel[r.stuck_at] || r.stuck_at) + '</span></td>';
+      tbody.appendChild(tr);
+    });
+    // متوسط الوقت لأول رد عند اللي أكملوا (يظهر كشريحة)
+    const mins = rows.filter(function(r){ return r.minutes_to_first_reply != null; }).map(function(r){ return r.minutes_to_first_reply; }).sort(function(a,b){ return a-b; });
+    if(mins.length){
+      const med = mins[Math.floor(mins.length / 2)];
+      sum.innerHTML += '<span style="background:#fff;border:1px solid var(--border,#e4ece9);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:700;">الوسيط لأول رد: ' + (med < 90 ? med + ' دقيقة' : Math.round(med / 60) + ' ساعة') + '</span>';
+    }
   }
   async function loadNearLimitTable(){
     const tbody = document.getElementById('nearLimitTbody');
