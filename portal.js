@@ -1192,6 +1192,7 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
         monthCount++;
       }
     });
+    try{ renderMetaCostTip(); }catch(e){}
     // حالة "الرد اليدوي" والتعيين لكل محادثة
     const { data: states } = await supabaseClient
       .from('whatsapp_conversation_state')
@@ -1580,6 +1581,34 @@ const SUPABASE_URL = 'https://anptuwcfvfcjqtqqnirt.supabase.co';
     new MutationObserver(function(){ if(!scheduled){ scheduled = true; setTimeout(refresh, 60); } }).observe(panel, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     refresh();
   })();
+  /* ---------- نصيحة تخفيض تكلفة رسائل ميتا + عدّاد الرسائل المجانية (تقريبي) ---------- */
+  async function renderMetaCostTip(){
+    var box = document.getElementById('metaCostTip');
+    if(!box || !myClient){ return; }
+    var used = 0;
+    try{
+      var start = new Date(); start.setDate(1); start.setHours(0,0,0,0);
+      var r = await supabaseClient.from('whatsapp_messages_log').select('id', { count: 'exact', head: true })
+        .eq('client_id', myClient.id).gte('created_at', start.toISOString())
+        .not('inbound_message', 'is', null).not('outbound_message', 'is', null);
+      used = r && r.count ? r.count : 0;
+    }catch(e){ used = 0; }
+    var LIM = 1000, pct = Math.min(100, Math.round(used / LIM * 100));
+    var cls = pct >= 100 ? 'full' : (pct >= 80 ? 'warn' : '');
+    var fmt = function(n){ return Number(n).toLocaleString(window.PORTAL_LANG === 'en' ? 'en-US' : 'ar-SA'); };
+    box.innerHTML = '<details><summary class="mct-sum"><span class="ch-ic" style="width:36px;height:36px;">💡</span>' +
+      V2L('كيف توفّر تكلفة رسائل ميتا؟', 'How to lower your Meta messaging costs') + '<span class="mct-ar">▾</span></summary>' +
+      '<div style="margin-top:14px;"><b style="font-size:13.5px;">' + V2L('رسائلك المجانية هذا الشهر (تقريبي)', 'Your free messages this month (approx.)') + '</b>' +
+      '<div class="mct-bar"><i class="' + cls + '" style="width:' + pct + '%"></i></div>' +
+      '<div class="mct-meta"><span>' + V2L(fmt(used) + ' من ' + fmt(LIM), fmt(used) + ' of ' + fmt(LIM)) + '</span><span>' + pct + '%</span></div>' +
+      '<ul class="mct-list">' +
+      '<li><span>✅</span><span>' + V2L('ردود البوت خلال 24 ساعة من رسالة العميل: مجانية حتى 1000 رسالة شهرياً لكل رقم.', 'Bot replies within 24 hours of a customer message are free up to 1,000 per number each month.') + '</span></li>' +
+      '<li><span>✅</span><span>' + V2L('إعلانات Click to WhatsApp وزر واتساب في صفحة فيسبوك: 72 ساعة مجانية لكل محادثة تبدأ منها.', 'Click to WhatsApp ads and the Facebook Page button: 72 free hours for every conversation they start.') + '</span></li>' +
+      '<li><span>⚠️</span><span>' + V2L('الرسائل التسويقية الجماعية أغلى بنحو 5 أضعاف من الخدمية؛ استخدمها عند الحاجة فقط.', 'Marketing broadcasts cost roughly 5x service messages; use them only when needed.') + '</span></li>' +
+      '<li><span>ℹ️</span><span>' + V2L('ميتا تحاسبك مباشرة بسعرها، ونبضة لا تضيف أي هامش على رسائل واتساب.', 'Meta bills you directly at its own rates, and Nabdh adds no markup on WhatsApp messages.') + '</span></li></ul>' +
+      '<div class="mct-note">' + V2L('العدّاد تقريبي: ميتا تحسب بتوقيتها وبحسب نوع كل رسالة. الأسعار تتغيّر، راجع ', 'The counter is approximate: Meta counts by its own clock and message type. Prices change; see ') +
+      '<a href="https://developers.facebook.com/docs/whatsapp/pricing" target="_blank" rel="noopener">' + V2L('صفحة أسعار ميتا الرسمية', "Meta's official pricing page") + '</a>.</div></div></details>';
+  }
   /* ---------- بوسترات إعلانية بجانب فلتر الأيام: ربط المتجر + شحن الرصيد ---------- */
   function promoDismissed(k){ try{ var t = Number(localStorage.getItem('nabda_promo_' + k + '_' + (myClient && myClient.id)) || 0); return t && (Date.now() - t) < 7 * 86400000; }catch(e){ return false; } }
   function promoDismiss(k){ try{ localStorage.setItem('nabda_promo_' + k + '_' + (myClient && myClient.id), String(Date.now())); }catch(e){} }

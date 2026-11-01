@@ -810,6 +810,7 @@
       <div class="settings-card ch-card coming-soon" id="tiktokCard" data-ch="tiktok">
         <div class="ch-head"><span class="ch-ic ch-ic-tt"><img src="/assets/logos/tiktok.png" alt="TikTok" width="26" height="26" loading="lazy"></span><div class="ch-t"><h3><span data-i18n="channels.tt.title">ربط تيك توك (TikTok)</span> <span class="coming-soon-badge" data-i18n="common.comingSoon">قريباً</span></h3><p data-i18n="channels.tt.sub">الرد على رسائل وتعليقات تيك توك</p></div></div>
       </div>
+      <div class="settings-card ch-card" id="metaCostTip" style="grid-column:1/-1;"></div>
       </div></section>
       <section class="ch-sec"><div class="ch-sec-h"><h3 data-i18n="channels.secStores">المتاجر الإلكترونية</h3><p data-i18n="channels.storesIntro">اربط زد أو سلة أو ووكومرس أو شوبيفاي (أيهما يستخدمه نشاطك) — البوت يكتشف تلقائياً أي متجر مرتبط ويجاوب عن حالة الطلب وتوفر المنتجات منه.</p></div><div class="ch-grid">
       <div class="settings-card ch-card" id="sallaCard" data-ch="salla">
@@ -1644,6 +1645,19 @@ nav{max-width:1440px; padding:13px 24px;}
 .ch-head{display:flex; align-items:center; gap:12px;}
 .ch-ic{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:#fff; border:1px solid var(--border);}
 .ch-ic img{width:26px; height:26px; object-fit:contain; display:block;}
+
+.mct-sum{cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px; font-weight:800; font-size:14.5px;}
+.mct-sum::-webkit-details-marker{display:none;}
+.mct-sum .mct-ar{margin-inline-start:auto; color:var(--muted); transition:transform .2s;}
+details[open] > .mct-sum .mct-ar{transform:rotate(180deg);}
+.mct-bar{height:10px; border-radius:99px; background:#E4ECE9; overflow:hidden; margin:6px 0 4px;}
+.mct-bar i{display:block; height:100%; border-radius:99px; background:var(--wa-green); transition:width .4s;}
+.mct-bar i.warn{background:#F59E0B;} .mct-bar i.full{background:#DC2626;}
+.mct-meta{display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:12px;}
+.mct-list{list-style:none; display:grid; gap:8px; font-size:13.5px; line-height:1.7;}
+.mct-list li{display:flex; gap:8px; align-items:flex-start;}
+.mct-note{margin-top:12px; font-size:12px; color:var(--muted);}
+.mct-note a{color:var(--wa-teal); text-decoration:underline;}
 .ch-t{flex:1; min-width:0;}
 .ch-t h3{font-size:14.5px; font-weight:800; line-height:1.4; letter-spacing:-.01em;}
 .ch-t h3 .coming-soon-badge{margin-inline-start:6px;}
